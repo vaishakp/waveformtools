@@ -1,0 +1,7 @@
+This modules depends on:
+
+1. Pycbc
+2. Lalsuite
+3. Bilby(proposed)
+4. h5py
+5. Other default python libraries.

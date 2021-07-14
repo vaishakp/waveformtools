@@ -1,0 +1,16 @@
+#Ignore the all output folders
+#**/output
+#Ignore all .h5 files
+*.h5
+#Ignore any other file
+# ignare all logs
+#*.log
+#Ignore all output directories
+#**/output
+#Ignore compiled code
+*.pyc
+*.class
+*.tmp
+*.log
+**/__pycache__
+!.gitignore
