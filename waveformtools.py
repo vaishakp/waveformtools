@@ -994,7 +994,7 @@ def xtract_camp(tsdata_p,tsdata_x,dt=None):
 		**Returns:** 
 			nd array of extracted amplitude. '''
 		
-		#Assign the timestep. Real and imaginary parts are assumed to have same timestep.
+		# Assign the timestep. Real and imaginary parts are assumed to have same timestep.
 		if not dt:
 			try:
 				dt=tsdata_p.delta_t
@@ -1004,19 +1004,20 @@ def xtract_camp(tsdata_p,tsdata_x,dt=None):
 				except:
 					message('Input is not a TimeSeries. Please supply gridspacing as dt',message_verbosity=0)
 
-		#Complex modulous of the data
-				camp = np.sqrt(np.array(tsdata_p)**2 + np.array(tsdata_x)**2)
-				
-		#Plot amplitude vs time
-				plt.scatter(tsdata_p.sample_times,camp,s=1)
-				plt.title("Amplitude vs time")
-				plt.xlabel("cctk_time")
-				plt.ylabel("Amplitude")
-				plt.grid()
-				#plt.savefig('../graphs/waveform_phase_complete_{}_q1a0.pdf'.format(name)) 
-				plt.show()
+		# Complex modulous of the data
+		camp = np.sqrt(np.array(tsdata_p)**2 + np.array(tsdata_x)**2)
+		
+		if plot=='yes':
+			# Plot amplitude vs time
+			plt.scatter(tsdata_p.sample_times,camp,s=1)
+			plt.title("Amplitude vs time")
+			plt.xlabel("cctk_time")
+			plt.ylabel("Amplitude")
+			plt.grid()
+			#plt.savefig('../graphs/waveform_phase_complete_{}_q1a0.pdf'.format(name)) 
+			plt.show()
 		#Returns the 1d numpy array amplitude 
-				return camp
+		return camp
 
 def xtract_cphaseamp(tsdata_1,tsdata_2,dt=None):
 		''' Wrapper for extracting the amplitude and the phase of the complex vector.
