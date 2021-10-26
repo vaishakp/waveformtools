@@ -720,7 +720,7 @@ def cleandata(data, toldt=1e-3, bridge='no', verbose=0):
 			
 			-----------
 			**Input:** 
-				data  : Numpy array or list,
+				data  : Numpy array or list. Input as a list of waveforms [time, data1, data2, ...]
 				toldt : Tolerance for error in checking. defaluts to toldt=1e-3, 
 				bridge: ('yes' or 'no') Bridge flag to interpolate and resample to fill in jump discontinuities.
 			
@@ -1749,7 +1749,7 @@ def match_wfs(waveforms,delt=None):
 				match.append({'Match score' : match_score, 'Shift' : shift, 'Start index' : starti, 'End index' : endi})
 		return match
 
-def roll(tsdata,i):
+def roll(tsdata, i):
 		''' Roll the data circularly. Circular counterpart of shiftmatched function. 
 		
 		-----------
@@ -1762,15 +1762,23 @@ def roll(tsdata,i):
 			(pycbc TimeSeries object) The rolled wavefrom.
 		'''
 
-		#Assign the time step.
-		dt = tsdata.delta_t
+		try:
+			#Assign the time step.
+			dt = tsdata.delta_t
+			flag = 1
+		except:
+			flag = 0
+	
 		#Assign the data array
 		tsdata = np.array(tsdata)
 		#Break the array into two parts as last i + first i entries.
 		arr1 = tsdata[-i:]
 		arr2 = tsdata[:-i]
 		#Join the two arrays and return them
-		return pycbc.types.timeseries.TimeSeries(np.transpose(np.concatenate((np.transpose(arr1),np.transpose(arr2)))),dt)
+		if flag==1:
+			return pycbc.types.timeseries.TimeSeries(np.transpose(np.concatenate((np.transpose(arr1),np.transpose(arr2)))),dt)
+		elif flag==0:
+			return np.transpose(np.concatenate((np.transpose(arr1),np.transpose(arr2))))
 
 ####################################################<Data smoothening functions>##########################################
 ''' Data soothening functions '''
@@ -3178,3 +3186,155 @@ class Psi:
 	#def base_dir(self, base_dir):
 	#	 self.__base_dir = base_dir
 
+
+####################################################################################################
+# Derivatives
+####################################################################################################
+
+
+def ddt(A, dt):
+	''' Central difference derivative calculator. Not accurate near the boundaries.
+	
+	-----------
+	**Input**
+
+	A				(1d) : The 1d data.
+	dt			 (float) : The time step in t/M.
+
+	-----------
+	**Returns**
+
+	dAdt	(1d numpy array) : The derivative.
+
+	 '''
+	dAdt = []
+	
+	# For n=0
+	val = (A[1]-A[0])/dt
+	dAdt.append(val)
+	
+	for n in range(1, len(A)-1):
+		val = (A[n+1] - A[n-1])/(2*dt)
+		dAdt.append(val)
+	
+	# For n = N
+	
+	val = (A[-2]-A[-1])/dt
+	dAdt.append(val) 
+
+	return np.array(dAdt)
+
+
+def differentiate2(data, dt):
+	''' Five point difference derivative calculator.  Not accurate near the boundaries.
+
+
+	-----------
+	**Input**
+
+	data				 (1d)	 : The 1d data.
+	dt				  (float)	 : The time step in t/M.
+
+	-----------
+	**Returns**
+
+	dAdt		(1d numpy array) : The derivative.
+
+	'''
+
+	order= 2
+	coeffs = np.array([1, -8, 0, 8, -1])
+	divide = 12
+	der_data = []
+	for index in range(order, len(data)-order):
+		data_subarray = data[index-order:index+order+1]
+		der_data.append(np.dot(coeffs, data_subarray)/(divide*dt))
+		
+	return der_data
+
+
+def differentiate3(data, dt):
+	''' Seven point difference derivative calculator. Not accurate near the boundaries.
+	
+
+	-----------
+	**Input**
+
+	data				 (1d)	 : The 1d data.
+	dt				  (float)	 : The time step in t/M.
+
+	-----------
+	**Returns**
+
+	dAdt		(1d numpy array) : The derivative.
+
+	'''
+
+
+	order= 3
+	coeffs = np.array([-1, 9, -45, 0, 45, -9, 1])
+	divide = 60
+	der_data = []
+	for index in range(order, len(data)-order):
+		data_subarray = data[index-order:index+order+1]
+		der_data.append(np.dot(coeffs, data_subarray)/(divide*dt))
+		
+	return der_data
+
+
+def differentiate4(data, dt):
+	''' Nine point difference derivative calculator. Not accurate near the boundaries.
+	
+
+	-----------
+	**Input**
+
+	data				 (1d)	 : The 1d data.
+	dt				  (float)	 : The time step in t/M.
+
+	-----------
+	**Returns**
+
+	dAdt		(1d numpy array) : The derivative.
+
+	'''
+
+	order= 4
+	coeffs = np.array([3, -32, 168, -672, 0, 672, -168, 32, 3])
+	divide = 840
+	der_data = []
+	for index in range(order, len(data)-order):
+		data_subarray = data[index-order:index+order+1]
+		der_data.append(np.dot(coeffs, data_subarray)/(divide*dt))
+		
+	return der_data
+
+
+		
+def differentiate5(data, dt):
+	''' Eleven point difference derivative calculator. Not accurate near the boundaries.
+	
+
+	-----------
+	**Input**
+
+	data				 (1d)	 : The 1d data.
+	dt				  (float)	 : The time step in t/M.
+
+	-----------
+	**Returns**
+
+	dAdt		(1d numpy array) : The derivative.
+
+	'''
+
+	order= 5
+	coeffs = np.array([-2, 25, -150, 600, -2100, 0, 2100, -600, 150, -25, 2])
+	divide = 2520
+	der_data = []
+	for index in range(order, len(data)-order):
+		data_subarray = data[index-order:index+order+1]
+		der_data.append(np.dot(coeffs, data_subarray)/(divide*dt))
+		
+	return der_data		   
+	

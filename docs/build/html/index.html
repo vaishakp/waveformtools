@@ -148,6 +148,42 @@
   <hr class="docutils" />
 <p>Welcome to waveformtools documentation!</p>
 <p>Browse through these pages for details on the functions in this module. Please contact <a class="reference external" href="mailto:vaishak&#37;&#52;&#48;iucaa&#46;in">vaishak<span>&#64;</span>iucaa<span>&#46;</span>in</a> if you want to report any bugs or have comments/questions.</p>
+<p>waveformtools is a numerical relativity data handling package that was written to aid the handling and analysis of numerical relativity data.</p>
+<p>This package contains implementations of customized algorithms and techniques.  Some of these contain the usage of existing python based library functions from pycbc, scipy, etc but effort has been made to keep these to a minimum.</p>
+<ol class="arabic">
+<li><p>Handling of numerical relativity data, and retreiving specific information about the physical system.</p>
+<p>The class container and methods “sim” can load NR data into convenient lists and dictionaries, which can be used to retrieve specific data/ information about the numerical simulation. This offers the following functionality, like retreiving:</p>
+<p>a). Horizon masses, mass-ratios, and areas.</p>
+<p>b). Horizon multipole moments.</p>
+<p>c). Merger time/ formation time of common horizon.</p>
+<p>d). The strain waveform.</p>
+<p>e). The shear data of the dynamical horizons.</p>
+<p>f). And computing/ extracting the frequency, amplitude and phase of waveforms, etc.</p>
+</li>
+<li><p>Handling of waveforms.</p>
+<p>A basic class container for handling numerical waveforms. This offers functionality like:</p>
+<p>a). loading data from hdf5 files.</p>
+<p>b). basic information such as time step, time axis, data axis, etc.</p>
+<p>c). extracting a numerical waveform recorded at a finite radius to null infinity.</p>
+</li>
+<li><p>Tools for preparation/handling of numerical relativity data, like:</p>
+<p>a). checking for discontinuity, removal of duplicated rows, and interpolating for missing rows in the data.</p>
+<p>b). integration, differentiation of numerical data.</p>
+<p>c). equalizing lengths of waveforms.</p>
+<p>d). resampling</p>
+<p>e). computing the norm, shifting/ rolling the data, etc.</p>
+<p>f). smoothening, tapering.</p>
+</li>
+<li><p>Tools for basic data analysis on waveforms.</p>
+<p>a). match algorithms for matching two waveforms.</p>
+<p>b). binning and interpolation of data.</p>
+</li>
+<li><p>Miscellaneous tools:</p>
+<p>a). Progress bar to display progress of loops.</p>
+<p>b). A custom print function with message prioritization.</p>
+<p>c). Saving data to disk with protocol support (binary, text, etc.)</p>
+</li>
+</ol>
 <div class="toctree-wrapper compound">
 </div>
 <div class="section" id="indices-and-tables">
@@ -252,7 +288,7 @@ dt              :  The timestepping dt.</p>
 <code class="sig-prename descclassname"><span class="pre">waveformtools.</span></code><code class="sig-name descname"><span class="pre">cleandata</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toldt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bridge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'no'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#waveformtools.cleandata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check the data (time,datar,datai) for repetetive rows and remove them.</p>
 <dl class="simple">
-<dt><strong>Input:</strong> </dt><dd><p>data  : Numpy array or list,
+<dt><strong>Input:</strong> </dt><dd><p>data  : Numpy array or list. Input as a list of waveforms [time, data1, data2, …]
 toldt : Tolerance for error in checking. defaluts to toldt=1e-3, 
 bridge: (‘yes’ or ‘no’) Bridge flag to interpolate and resample to fill in jump discontinuities.</p>
 </dd>
@@ -325,6 +361,17 @@ the complex SNR and finding the maximum element.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="waveformtools.ddt">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.</span></code><code class="sig-name descname"><span class="pre">ddt</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#waveformtools.ddt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Central difference derivative calculator. Not accurate near the boundaries.</p>
+<p><strong>Input</strong></p>
+<p>A                               (1d) : The 1d data.
+dt                       (float) : The time step in t/M.</p>
+<p><strong>Returns</strong></p>
+<p>dAdt    (1d numpy array) : The derivative.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="waveformtools.differentiate">
 <code class="sig-prename descclassname"><span class="pre">waveformtools.</span></code><code class="sig-name descname"><span class="pre">differentiate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#waveformtools.differentiate" title="Permalink to this definition">¶</a></dt>
 <dd><p><a href="#id1"><span class="problematic" id="id2">**</span></a>Differentiate a timeseries (Simple Euler) **</p>
@@ -337,6 +384,50 @@ grid spacing dt. Supplying dt overrides the delta_t attribute of TimeSeries.</p>
 <dt><strong>Returns:</strong> </dt><dd><p>the differentiated 1d data as pycbc TimeSeries</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="waveformtools.differentiate2">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.</span></code><code class="sig-name descname"><span class="pre">differentiate2</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#waveformtools.differentiate2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Five point difference derivative calculator.  Not accurate near the boundaries.</p>
+<p><strong>Input</strong></p>
+<p>data                             (1d)    : The 1d data.
+dt                                (float)        : The time step in t/M.</p>
+<p><strong>Returns</strong></p>
+<p>dAdt            (1d numpy array) : The derivative.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="waveformtools.differentiate3">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.</span></code><code class="sig-name descname"><span class="pre">differentiate3</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#waveformtools.differentiate3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seven point difference derivative calculator. Not accurate near the boundaries.</p>
+<p><strong>Input</strong></p>
+<p>data                             (1d)    : The 1d data.
+dt                                (float)        : The time step in t/M.</p>
+<p><strong>Returns</strong></p>
+<p>dAdt            (1d numpy array) : The derivative.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="waveformtools.differentiate4">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.</span></code><code class="sig-name descname"><span class="pre">differentiate4</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#waveformtools.differentiate4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nine point difference derivative calculator. Not accurate near the boundaries.</p>
+<p><strong>Input</strong></p>
+<p>data                             (1d)    : The 1d data.
+dt                                (float)        : The time step in t/M.</p>
+<p><strong>Returns</strong></p>
+<p>dAdt            (1d numpy array) : The derivative.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="waveformtools.differentiate5">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.</span></code><code class="sig-name descname"><span class="pre">differentiate5</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#waveformtools.differentiate5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Eleven point difference derivative calculator. Not accurate near the boundaries.</p>
+<p><strong>Input</strong></p>
+<p>data                             (1d)    : The 1d data.
+dt                                (float)        : The time step in t/M.</p>
+<p><strong>Returns</strong></p>
+<p>dAdt            (1d numpy array) : The derivative.</p>
 </dd></dl>
 
 <dl class="py function">
