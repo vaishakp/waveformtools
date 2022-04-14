@@ -6,7 +6,7 @@
 
 ===================================
 
-Welcome to waveformtools documentation!
+** Welcome to waveformtools documentation! **
 
 Browse through these pages for details on the functions in this module. Please contact vaishak@iucaa.in if you want to report any bugs or have comments/questions. 
 

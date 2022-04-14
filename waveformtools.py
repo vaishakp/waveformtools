@@ -38,16 +38,22 @@ def message(*args,message_verbosity=2,print_verbosity=config.print_verbosity,log
 					2: Information
 			
 			-----------
-			**Input**: 
-				``*args`` : same as to that of print functions,
-				message_verbosity=2, 
-				print_verbosity, 
-				log_verbosity, 
+			**Input**:
+ 
+				1. ``*args`` : same as to that of print functions,
+
+				2. message_verbosity=2, 
+
+				3. print_verbosity, 
+
+				4. log_verbosity, 
+
 				``**kwargs`` to print function.
 			
 			------------
 			**Returns**: 
-				messages to stdout and logging of messages. Function returns 1.'''
+
+				messages to stdout and logging of messages, while the function returns 1.'''
 
 		
 		#If message verbosity matches the global verbosity level, then print
@@ -210,12 +216,14 @@ def integrate(data, t_start=None, t_end=None, dt=None, taper='no'):
 		
 		-----------
 		**Input**: 
-			pycbc TimeSeries or numpy nd array or list, 
-			grid spacing dt, 
-			taper flag (string 'yes' or 'no' )
+
+			1. data							(array)		:	A pycbc TimeSeries or numpy nd array or list, 
+			2. dt							(float)		:	The grid spacing dt, 
+			3. taper flag					(string)	:	'yes' or 'no'	
 		
 		-----------
 		**Returns**: 
+
 			TimeSeries of the time integrated data'''
 		
 		#Check if object is pycbc timeseries. Recover dt, t_start, t_end if yes.
@@ -272,12 +280,14 @@ def freq(tc,t,Mc):
 		
 		----------
 		**Input**: 
-			tc: coalescence time (float) , 
-			t: time (float or numpy 1d array) , 
-			Mc: chirpmass (float).
+
+			1. tc		(float) : coalescence time (float) , 
+			2. t		(array) : time (float or numpy 1d array) , 
+			3. Mc		(float) : chirpmass (float).
 		
 		-----------
 		**Returns**: 
+
 			The instantaneous frequency of the strain waveform (float)'''
 		
 		return (1./(np.pi * Mc))*(5./256)**(3./8) * (Mc/(tc-t))**(3./8)
@@ -287,11 +297,13 @@ def totalmass(q,mchirp):
 		
 		-----------
 		**Input**: 
-			mass ratio (float) and 
-			chirp mass (float).
+
+			1. q		(float) : The mass ratio and
+			2. mchirp	(float) : The chirp mass.
 		
 		-----------
 		**Returns**: 
+
 			Total mass (float)'''
 		
 		return ((mchirp * (1.+q)**(6./5))/q**(3./5))
@@ -301,31 +313,36 @@ def massratio(Mchirp):
 		
 		-----------
 		**Input:** 
+
 			Mchirp: Chirp mass of the system (float).
 		
 		-----------
 		**Returns**: 
+
 			Mass ratio of the system (float) '''
 		return ((Mchirp**(1./3) - 2. *Mchirp**2. - np.sqrt(Mchirp**(2./3) - 4.* Mchirp**(7./3)))/(2.* Mchirp**2.))
 
 
 #Defining function for calculating Chirpmass from a2
 def Mchirpc(a2):
+
 		''' Compute the chirpmass from a2, the coefficient of time of the Finn-Chernoff waform model.
 		
 		-----------
 		**Input:** 
+
 			a2 (float).
 		
 		-----------
 		**Returns:** 
+
 			ChirpMass (float)'''
 		return 2**(8./5) / (5* np.array(a2)**(8./5))
 
 ###############################################<Functions for handling data>#############################################
 # Reconciling the length of strain
 
-def lengtheq(data_a,data_b,dt=None, ts = 1):
+def lengtheq(data_a, data_b, dt=None, ts = 1):
 		''' Equalize the length of two timeseries/array by appending zeros at the end of the array. No tapering.
 
 		-----------
@@ -336,12 +353,17 @@ def lengtheq(data_a,data_b,dt=None, ts = 1):
 		3. Check if data_a is smaller then data_b ( or vice versa). Then augment zeroes at either ends of array to data_a ( data_b) and return.
 		-----------
 		**Input:** 
-			waveforms a and b as timeseries or arrays/lists.
+
+			1. data_a		(1d array) :	waveform A, 
+			2. data_b		(1d array) :	waveform B,
+			3. dt			   (float) :	The time step,
+			4. ts				 (int) :	A flag to determine if the input vector is a time series.
 
 		**Recommended usage**: change length of waveform 'a' to match with waveform 'b'.
 		
 		-----------
 		**Returns:** 
+
 			List containing the length equalized waveforms	as pycbc TimeSeries and a flag that conveys which input array has been modified.'''
 		
 		#Check if input data vectors are pycbc TimeSeries. If yes, create a copy of data and extract dt.
@@ -395,17 +417,20 @@ def lengtheq(data_a,data_b,dt=None, ts = 1):
 
 		return [signala, signalb, lflag]
 
-def taperlengtheq(data_a, data_b,dt = None):
-		''' Taper and equalize the lengths of two arrays
+def taperlengtheq(data_a, data_b, dt = None):
+		''' Taper and equalize the lengths of two arrays.
 			-----------
 			**Input:** 
-				waveforms data_a, data_b as pycbc timeseries or list/array, 
-				dt: grid spacing (float).
+
+				1. data_a		(1d array) :	waveform A, 
+				2. data_b		(1d array) :	waveform B,
+				3. dt			   (float) :    The time step.
 			
 			------------
 			**Returns:** 
-				Tapered, length equalized waveforms data_b and
-				A flag that determines which waveform's length was altered.'''
+
+				1. signal_a, signal_b, flag	   (list) :	The Tapered, length equalized waveforms data_a and data_b, and a flag denoting which waveform was changed, a or b.
+		'''
 		
 		#Check if input data is pycbc TimeSeries. If yes, then ectract dt.
 		if not dt:
@@ -432,18 +457,23 @@ def taperlengtheq(data_a, data_b,dt = None):
 #Check data for discontinuity
 def iscontinuous_old(timeaxis,dt=0):
 		''' Check if the data has discontinuities. This checks for repetitive time rows and jumps. 
+
 		Types of discontunuities:
+		-------------------------
+
 		0: Continuous.
 		1: Repetitive rows.
 		2: Jumps in timeaxis.
 	
 		-----------
 		**Input:** 
-			timeaxis: 1d array of timeaxis or a multi dimensional array of which the first axis is time.
-			dt:		  The timestep dt.	
+
+			1. timeaxis		: 1d array of timeaxis or a multi dimensional array of which the first axis is time.
+			2. dt			: The timestep dt.	
 		
 		------------
 		**Returns:** 
+
 			details of discontinuity (list) : actual location of discontinuity in time, value of time location of original array and the type of discontinuity.'''
 		
 		#If data array is supplied, assign first column as timeaxis
@@ -493,22 +523,27 @@ def iscontinuous_old(timeaxis,dt=0):
 def iscontinuous(data,dt=0,toldt=1e-3):
 		
 		''' Check if the data has discontinuities. This checks for repetitive time rows and jumps. 
+
 		Types of discontunuities:
+		--------------------------
+
 		0: Continuous.
 		1: Repetitive rows.
 		2: Jumps in timeaxis.
 
 		-----------
 		**Input:** 
-			data : 1d array of timeaxis or a multi dimensional array of which the first axis is time.
-			dt	 : timespacing.
-			toldt: tolerance for error in repetition checking.
+
+			1. data		: 1d array of timeaxis or a multi dimensional array of which the first axis is time.
+			2. dt		: timespacing.
+			3. toldt	: tolerance for error in repetition checking.
 		
 		------------
-		**Returns:** 
-			details of discontinuity: actual location of discontinuity in time,
-			value of time location of original array and
-			the type of discontinuity and the global discontinuity type.'''
+		**Returns:**
+
+			A list. It contains:
+				1. A list. details of discontinuity:  index location of original array, the corresponding discinbtinuity type.
+				2. A float. the global discontinuity type. '''
 
 		#Check the data (time,datar,datai) for locations of repetition and discontinuities.
 		message('Checking continuity of data',message_verbosity=1)
@@ -629,11 +664,13 @@ def cleandata_old(data,verbose='no'):
 			
 			-----------
 			**Input:** 
-				data   : Numpy array or list and
-				verbose: verbosity flag.
+
+				1. data		: Numpy array or list and
+				2. verbose	: verbosity flag.
 			
 			-------------
 			**Returns:** 
+
 				Data array with repetitive rows removed'''
 
 		#Ensure data as numpy array
@@ -720,12 +757,14 @@ def cleandata(data, toldt=1e-3, bridge='no', verbose=0):
 			
 			-----------
 			**Input:** 
-				data  : Numpy array or list. Input as a list of waveforms [time, data1, data2, ...]
-				toldt : Tolerance for error in checking. defaluts to toldt=1e-3, 
-				bridge: ('yes' or 'no') Bridge flag to interpolate and resample to fill in jump discontinuities.
+
+				1. data  : Numpy array or list. Input as a list of waveforms [time, data1, data2, ...]
+				2. toldt : Tolerance for error in checking. defaluts to toldt=1e-3, 
+				3. bridge: ('yes' or 'no') Bridge flag to interpolate and resample to fill in jump discontinuities.
 			
 			-----------
 			**Returns:** 
+
 				data array with repetitive rows and gaps (if bridge='yes') removed.
 
 		'''
@@ -838,12 +877,14 @@ def shiftmatched(hdat,ind,dt=None):
 		
 		-----------
 		**Input:**	
-			hdat: an array or a pycbc timeseries, 
-			ind : the number of timesteps to shift and
-			dt	: the grid spacing in time 'dt'.
+
+			1. hdat	: an array or a pycbc timeseries, 
+			2. ind	: the number of timesteps to shift and
+			3. dt	: the grid spacing in time 'dt'.
 		
 		-------------
-		**Returns:** 
+		**Returns:**
+ 
 			a pycbc timeseries	array of same length timeshifted by 'ind' units by prepending zeros. '''
 		
 		if not dt:
@@ -888,11 +929,13 @@ def xtract_cphase(tsdata_p,tsdata_x,dt=None, plot = 'no'):
 		
 		-----------
 		**Input:** 
-			tsdata_p, tsdata_x : plus and cross polarized components of the waveforms tsdata_p and tsdata_x as pycbc TimeSeries or 1d arrays and 
-			dt				   : gridspacing dt.
+
+			1. tsdata_p, tsdata_x  : plus and cross polarized components of the waveforms tsdata_p and tsdata_x as pycbc TimeSeries or 1d arrays and 
+			2. dt				   : gridspacing dt.
 		
 		-------------
 		**Returns:** 
+
 			nd array of extracted phase. '''
 		
 		#Assign the timestep. Real and imaginary parts are assumed to have same timestep.
@@ -1024,11 +1067,13 @@ def xtract_cphaseamp(tsdata_1,tsdata_2,dt=None):
 		
 		-----------
 		**Input:** 
-			tsdata_1, tsdata_2: Two timeseries vectors, the plus and cross polarized components.
-			dt				  : timestepping dt.
+
+			1. tsdata_1, tsdata_2 : Two timeseries vectors, the plus and cross polarized components.
+			2. dt				  : timestepping dt.
 		
 		-------------
 		**Returns:** 
+
 			list containing complex amplitude (list) and phase (list). '''
 
 		return xtract_camp(tsdata_1,tsdata_2,dt),xtract_cphase(tsdata_1,tsdata_2,dt)
@@ -1041,11 +1086,13 @@ def olap(data1,data2,psd=1.):
 		
 		-----------
 		**Input:** 
-			data vectors data1, data2: ndarray or list or pycbc TimeSeries.
-			psd						 : the power spectral density to weight.
+
+			1. data vectors data1, data2 : ndarray or list or pycbc TimeSeries.
+			2. psd						 : the power spectral density to weight.
 		
 		-------------
 		**Returns:** 
+
 			(float) overlap divided by the psd. '''
 
 		data1 = np.array(data1)
@@ -1058,13 +1105,15 @@ def norm(hdat,psd=1.):
 		''' Calculate the norm of a vector.
 		
 		-----------
-		**Input:** 
-			hdat		   : data. numpy 1d array/ list/ pycbc TimeSeries.
-			psd (1d array) : The noise power spectral density of the inner product.
+		**Input:**
+ 
+			1. hdat		   : data. numpy 1d array/ list/ pycbc TimeSeries.
+			2. psd (1d array) : The noise power spectral density of the inner product.
 		
 		-------------
 		**Returns:** 
-			The norm with weighting by the psd.'''
+
+			1. The norm with weighting by the psd.'''
 
 		hdat = np.array(hdat)
 
@@ -1077,10 +1126,12 @@ def flatten(nflist):
 		
 		-----------
 		**Input:** 
+
 			nflist : a list of list of lists ( a list of depth three).
 		
 		-----------
 		**Returns:** 
+
 			the flattened list'''
 		
 		flattened_list = []
@@ -1100,6 +1151,7 @@ def flatten(nflist):
 
 def startend(data):
 		''' Identify the start and endpoints of the data.
+
 		**Procedure**
 
 		The starting and ending index of the non-zero part of the data is the identification criterion. 
@@ -1107,10 +1159,12 @@ def startend(data):
 		
 		-----------
 		**Input:** 
+
 			data : 1d data as list or numpy nd array or pycbc TimeSeries
 		
 		-------------
 		**Returns:** 
+
 			(a pair) the pair of indices denoting the start and end points of an array '''
 		
 		try:
@@ -1136,11 +1190,13 @@ def apxstartend(data,tol=1e-5):
 		Requires the data to fall off to tol*peak absolute value outside a certain range.
 		
 		-----------
-		**Input:** 
+		**Input:**
+
 			data : 1d data as 1d list or numpy nd array or pycbc TimeSeries.
 		
 		-------------
 		**Returns:** 
+
 			the pair of indices denoting the start and end points of an array '''
 
 		data = np.array(data)
@@ -1159,6 +1215,7 @@ def addzeros(data,z):
 		
 		------------
 		**Returns:** 
+
 			data with 'z' zeros concatenated at the end as numpy 1d array
 			'''
 		
@@ -1170,10 +1227,12 @@ def removezeros(data,dt):
 			
 			-----------
 			**Input:** 
+
 				waveform as 1d list or numpy array or pycbc TimeSeries.
 			
 			-------------
 			**Returns:** 
+
 				(list) A list containing  waveforms with zeros removed on either sides, the start and end indices'''
 		
 			#Assign the timestep. Real and imaginary parts are assumed to have same timestep.
@@ -1192,10 +1251,12 @@ def shorten(tsdata,start,end,dt=None):
 			
 			-----------
 			**Input:** 
+
 				1d list or numpy array or pycbc TimeSeries.
 			
 			-------------
 			**Returns:** 
+
 				(pycbc TimeSeries object) The shortened data as pycbc TimeSeries.
 			'''
 			#Assign the timestep. Real and imaginary parts are assumed to have same timestep.
@@ -1212,12 +1273,14 @@ def taper(data,dt=1,z=150):
 			
 			-----------
 			**Input:** 
-				data : 1d data as list or numpy array or pycbc timeseries.
-				dt	 : the timestepping.
-				z	 : the number of zeros to be added.
+
+				1. data  : 1d data as list or numpy array or pycbc timeseries.
+				2. dt	 : the timestepping.
+				3. z	 : the number of zeros to be added.
 			
 			-------------
 			**Returns:** 
+
 				(pycbc TimeSeries object) 1d data tapered and zero padded as pycbc timeseries. '''
 
 		#Check if data is pycbc timeseries:
@@ -1252,8 +1315,10 @@ def taper(data,dt=1,z=150):
 
 def center(wvp,wvc=None ,dt=None):
 		''' Center a waveform (wvp, wvc) at the peak of the complex modulous sqrt(wvp**2 + wvc**2).
+
 			--------------
 			**Procedure**
+
 			1. Findout if both polarizations are supplied. If not assume cross pol is plus.
 			2. Find the absolute magnitde location in the array.
 			3. Construct the time limits using this information.
@@ -1264,11 +1329,13 @@ def center(wvp,wvc=None ,dt=None):
 			
 			-----------
 			**Input:** 
-				wvp, wvc:  The one/two components of the waveforms as 1d list or numpy arrays or pycbc timeseries.
-				dt		:  The timestepping dt.
+
+				1. wvp, wvc :  The one/two components of the waveforms as 1d list or numpy arrays or pycbc timeseries.
+				2. dt		:  The timestepping dt.
 			
 			------------
 			**Returns:** 
+
 				(a pair of pycbc TimeSeries) The two 1d centered waveform(s) as individual pycbc timeseries. '''
 		#Flag to find out if both polarizations are supplied or not.
 		flag = 0	   
@@ -1308,12 +1375,14 @@ def plot(x,fx, save = 'no'):
 		
 		-----------    
 		**Input:** 
-			x	 : x axis of the function, 
-			fx	 : y axis of the function. Can be supplied as 1d lists or arrays,
-			save : 'yes' or 'no'. Whether the plot should be saved or not.
+
+			1. x	 : x axis of the function, 
+			2. fx	 : y axis of the function. Can be supplied as 1d lists or arrays,
+			3. save : 'yes' or 'no'. Whether the plot should be saved or not.
 
 		------------
 		**Returns:**
+
 			1.
 			Displays the plot,
 			Saves with filename provided.
@@ -1345,11 +1414,13 @@ def coalignwfs(tsdata1,tsdata2,dt=None):
 		
 		-----------
 		**Input:** 
-			tsdata1, tsdata2 : two data vectors as 1d lists or numpy arrays or pycbc timeseries,
-			dt				 : time stepping.
+
+			1. tsdata1, tsdata2	 : two data vectors as 1d lists or numpy arrays or pycbc timeseries,
+			2. dt				 : time stepping.
 			
 		------------
 		**Returns:** 
+
 			(a pair of pycbc TimeSeries objects) The aligned waveforms.
 		'''
 
@@ -1443,10 +1514,12 @@ def coalignwfs2(tsdata1,tsdata2,dt = None):
 
 		-----------
 		**Input:** 
+
 			tsdata1, tsdata2 : two data vectors as 1d lists or numpy arrays or pycbc timeseries.
 		
 		------------
 		**Returns:** 
+
 			a list: [the aligned waveforms, [norm1, norm2, location of maximum]].
 		'''
 		# Lengths of the two input timeseries
@@ -1534,13 +1607,17 @@ def simplematch_wfs(waveforms, delt=None):
 		
 		-----------
 		**Input:** 
+
 			List of pairs [waveform A, waveform B].
 		
 
-		**Assumes:** delt is same for each pair.
+		**Assumes:** 
+		
+			delt is same for each pair.
 		
 		------------
 		**Returns:** 
+
 			(a list of dicts) [{ Aligned waveforms} , {match score (float), shift (number)}]
 		'''
 
@@ -1600,12 +1677,14 @@ def pmmatch_wfs(waveforms, offset=25, crop=None):
 
 	------------
 	**Inputs**
+
 	1. waveforms		(list of pairs) : pairs of waveforms to match.
 	2. offset			(int)			: Number of indices to shift the data.
 	3. crop				(string)		: Options 1. signal 2. template 3. both.
 
 	-----------
 	**Returns**
+
 	matchdet			(list of dicts) : A list of dictionaries. Each contains 1. waveform pair, 2. match score, 3. shift.
 
 	'''
@@ -1687,13 +1766,17 @@ def match_wfs(waveforms,delt=None):
 		
 		-----------
 		**Input:** 
+
 			List of pairs [waveform A, waveform B].
 		
 
-		**Assumes:** delt is same for each pair.
+		**Assumes:** 
+
+			delt is same for each pair.
 		
 		------------
 		**Returns:** 
+
 			(a list of dicts) {match score (float), shift (number), start_index, end_index}
 		'''
 		match=[]
@@ -1754,11 +1837,13 @@ def roll(tsdata, i):
 		
 		-----------
 		**Input:** 
-			tsdata : 1D data vector in the form of a list/ numpy array or timeseries.
-			i	   : The number of indices to roll the array. 
+
+			1. tsdata  : 1D data vector in the form of a list/ numpy array or timeseries.
+			2. i	   : The number of indices to roll the array. 
 		
 		------------
 		**Returns:** 
+
 			(pycbc TimeSeries object) The rolled wavefrom.
 		'''
 
@@ -1787,14 +1872,16 @@ def smoothen(fx,win,order, x=None, plot='no'):
 
 		-----------
 		**Input:** 
-			fx(1d)			: the y axis, 
-			win (int)		: Window for smoothening. Must be odd, 
-			order(int)		: Order of the polynomial used for interpolation,
-			x(1d)			: Optional. 1D list or numpy array, to plot the smoothened function. Only required if plot='yes'.
-			plot(string)	: 'yes' or 'no'. Whether or not to display the plot.
+
+			1. fx(1d)			: the y axis, 
+			2. win (int)		: Window for smoothening. Must be odd, 
+			3. order(int)		: Order of the polynomial used for interpolation,
+			4. x(1d)			: Optional. 1D list or numpy array, to plot the smoothened function. Only required if plot='yes'.
+			5. plot(string)	: 'yes' or 'no'. Whether or not to display the plot.
 		
 		------------
 		**Returns:** 
+
 			y		   : (1d) The Savgol filtered list.
 		
 		'''
@@ -1817,13 +1904,15 @@ def bintp(x,fx,width,order,plot=0):
 		
 		-----------
 		**Input:** 
-			x(1d)		: 1D list or numpy array, 
-			fx(1d)		: the y axis, 
-			width (int) : Window size for smoothening, 
-			order(int)	: Order of the polynomial used for interpolation.
+
+			1. x(1d)		: 1D list or numpy array, 
+			2. fx(1d)		: the y axis, 
+			3. width (int)  : Window size for smoothening, 
+			4. order(int)	: Order of the polynomial used for interpolation.
 		
 		------------
 		**Returns:** 
+
 			(a list). [binloc, yvals]: The location of the bins and the y values associated with the bins. 
 		
 		'''
@@ -1868,12 +1957,14 @@ def mavg(fx,width):
 			
 			-----------
 			**Input:** 
-				fx (1D)		:  A list or numpy array of y axis. 
-				Width (int) :  The width of the moving average window.
+
+				1. fx (1D)		:  A list or numpy array of y axis. 
+				2. Width (int)  :  The width of the moving average window.
 			
 			------------
 			**Returns:** 
-				fxavgd(1D)	:  1D array of moving averaged y axis. 
+
+				fxavgd(1D)		:  1D array of moving averaged y axis. 
 		
 		'''
 		
@@ -1896,13 +1987,15 @@ def interpolate_wfs(ts_data,interp_func,dt=None,**kwargs):
 		
 		-----------
 		**Input:** 
-			ts_data (List)		  : The 1d data. A list of waveforms as list or numpy array or pycbc TimeSeries, 
-			interp_fun (function) : An interpolating function, 
-			dt (float)			  : Timestep, 
-			``**kwargs``		  : additional arguments to the user specified interp_func.
+
+			1. ts_data (List)		  : The 1d data. A list of waveforms as list or numpy array or pycbc TimeSeries, 
+			2. interp_fun (function)  : An interpolating function, 
+			3. dt (float)			  : Timestep, 
+			``**kwargs``			  : additional arguments to the user specified interp_func.
 		
 		------------
 		**Returns:** 
+
 			interp_data (list).   : A list containing interpolated data. 
 		
 		'''
@@ -1936,13 +2029,15 @@ def resample(interp_data, new_dt, epoch,length,old_dt=None):
 		
 		-----------
 		**Input:** 
-			interp_data (1D) :	The yaxis to be interpolated, 
-			epoch (float)	 :	The starting point in time., 
-			dt(float)		 :	New grid spacing to be sampled at. 
-			length(int)		 :	The duration of x axis.
+
+			1. interp_data (1D) :	The yaxis to be interpolated, 
+			2. epoch (float)	 :	The starting point in time., 
+			3. dt(float)		 :	New grid spacing to be sampled at. 
+			4. length(int)		 :	The duration of x axis.
 		
 		------------
 		**Returns:** 
+
 			data(list)		 :	A list containing resampled data as pycbc TimeSeries.'''
 		
 
@@ -1971,12 +2066,14 @@ def interpolate_resample_wfs(ts_data, interp_func, new_dt, epoch, length, old_dt
 					
 					-----------
 					**Input:** 
-						interp_data (1D)			 : The yaxis to be interpolated, 
-						epoch (float)				 : The starting point in time., 
-						old_dt(float), new_dt(float) : Old and New grid spacing to be sampled at. length(int). The duration of x axis.
+
+						1. interp_data (1D)				 : The yaxis to be interpolated, 
+						2. epoch (float)				 : The starting point in time., 
+						3. old_dt(float), new_dt(float)	 : Old and New grid spacing to be sampled at. length(int). The duration of x axis.
 					
 					------------
 					**Returns:** 
+
 						(1D)						 : Interpolated and resampled data.
 				'''
 
@@ -1998,12 +2095,12 @@ def wavextractinf(data, r, t_start = None , t_end=None, dt=None, M=1.):
 	-----------
 	**Input**
 
-	data(1d)		: The 1d waveform data.
-	r (float)		: The (current) extraction radius of the data.
-	t_start (float) : The start time of the data in t/M.
-	t_end (float)	: The end time of the data in t/M.
-	dt (float)		: The time step in t/M.
-	M  (float)		: The total ADM mass of the spacetime.
+	1. data(1d)			: The 1d waveform data.
+	2. r (float)		: The (current) extraction radius of the data.
+	3. t_start (float)  : The start time of the data in t/M.
+	4. t_end (float)	: The end time of the data in t/M.
+	5. dt (float)		: The time step in t/M.
+	6. M  (float)		: The total ADM mass of the spacetime.
 
 	-----------
 	**Returns**
@@ -2054,26 +2151,32 @@ def progress():
 		
 		-----------
 		**Input:** 
+
 			Nothing.
 		
 		------------
 		**Returns:** 
+
 			1'''
 		
 		count = count + 1
 		message("%f"%(count*100./n))
 		return 1
+
 def progressbar(present_count,total_counts, normalize = 'yes'):
+
 		''' Display the progress bar to std out from present_count and total_count.
 		
 		-----------
 		**Input:** 
-			present_count (int) : The present count state. 
-			total_counts(int)	: The final state.
+
+			1. present_count (int)  : The present count state. 
+			2. total_counts(int)	: The final state.
 		
 		
 		------------
 		**Returns:** 
+
 			1
 			The progress bar is messageed to stdout.
 		
@@ -2123,27 +2226,46 @@ class sim:
 	Arrtibutes:
 			
 			--------
-			Primary:
+			Primary
 
 			0.1 ROOTDIR				(string)			: Root directory as a string containing the simulation folders.
+
 			0.2 WAVDIR				(string)			: Root directory as a string containing the simulation directies containing the wavefom data.
+
 			0.3 datadir				(string)			: The path of the folder containing data relative to the simulation direcory.
+
 			0.4 strain_dir			(string)			: The path of the folder containing the waveform data relative to the strain directory.
+
 			1.	aliases				(List of strings)	: The names/aliases for the simulations.
+
 			2.	multipoles			(dict of lists)		: The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.
+
 			3.	mass1				(dict of floats)	: The BH1 horizon mass.
+
 			4.	mass2				(dict of floats)	: The BH2 horizon mass.
+
 			5.	mass3				(dict of floats)	: The BH3 horizon mass.
+
 			6.	delta_t				(dict of floats)	: The time stepping in simulation units (dt/M).
+
 			7.	timeaxis			(dict of 1d)		: The timeaxis of the simulations.
+
 			8.	distance			(dict of 1d)		: The distances of simulations.
+
 			9.	merger_ind			(dict of ints)		: The merger index/ common horizon formation index of simulations.
+
 			10. dinit				(dict of floats)	: The initial distances.
+
 			11. multipoles			(dict of lists)		: The (2) mass multipoles of the three horizons. Axis 0 is usuall the time array.
+
 			12. mass_multipoles		(dict of lists)		: The mass multipoles upto (l=8).
+
 			13. spin_multipoles		(dict of lists)		: The spin multipoles upto (l=8). 
+
 			14. data_length			(dict of float)		: The data length of the multipole simulation data loaded. 
+
 			15. dist_data_length	(dict of ints)		: The data length of distances of simulations.
+
 		   
 			-------
 			Derived
@@ -2365,12 +2487,13 @@ class sim:
 		
 		''' Compute the indices and the starting distances of the system at timestamp t = 200.
 		
-		-------
-		Inputs:
+		-----------
+		**Inputs:**
+
 		1. tjn			  (float)  : The definition of time end of junk radiation. Default is 200.
 
-		---------
-		Computes:
+		--------------
+		**Computes:**
 
 		1. self.indjn	   (dict)  : A dictionary containing the index location corresponding to timestamp tjn.
 		2. self.distjn	   (dict)  : A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.
@@ -2507,8 +2630,8 @@ class sim:
 	def load_data(self):
 		''' Load data of the simulations. 
 			
-			--------------------
-			Data is assigned to:
+			------------------------
+			**Data is assigned to:**
 
 				1. multipoles.
 				2. mass_multipoles.
@@ -3198,8 +3321,8 @@ def ddt(A, dt):
 	-----------
 	**Input**
 
-	A				(1d) : The 1d data.
-	dt			 (float) : The time step in t/M.
+	1. A				(1d) : The 1d data.
+	2. dt			 (float) : The time step in t/M.
 
 	-----------
 	**Returns**
@@ -3232,8 +3355,8 @@ def differentiate2(data, dt):
 	-----------
 	**Input**
 
-	data				 (1d)	 : The 1d data.
-	dt				  (float)	 : The time step in t/M.
+	1. data					(1d)	 : The 1d data.
+	2. dt				  (float)	 : The time step in t/M.
 
 	-----------
 	**Returns**
@@ -3260,13 +3383,13 @@ def differentiate3(data, dt):
 	-----------
 	**Input**
 
-	data				 (1d)	 : The 1d data.
-	dt				  (float)	 : The time step in t/M.
+	1. data					(1d)	 : The 1d data.
+	2. dt				  (float)	 : The time step in t/M.
 
 	-----------
 	**Returns**
 
-	dAdt		(1d numpy array) : The derivative.
+	dAdt			(1d numpy array) : The derivative.
 
 	'''
 
@@ -3289,8 +3412,8 @@ def differentiate4(data, dt):
 	-----------
 	**Input**
 
-	data				 (1d)	 : The 1d data.
-	dt				  (float)	 : The time step in t/M.
+	1. data					(1d)	 : The 1d data.
+	2. dt				  (float)	 : The time step in t/M.
 
 	-----------
 	**Returns**
@@ -3318,13 +3441,13 @@ def differentiate5(data, dt):
 	-----------
 	**Input**
 
-	data				 (1d)	 : The 1d data.
-	dt				  (float)	 : The time step in t/M.
+	1. data					(1d)	 : The 1d data.
+	2. dt				  (float)	 : The time step in t/M.
 
 	-----------
 	**Returns**
 
-	dAdt		(1d numpy array) : The derivative.
+	dAdt			(1d numpy array) : The derivative.
 
 	'''
 
