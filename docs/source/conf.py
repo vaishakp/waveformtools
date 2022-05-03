@@ -19,7 +19,7 @@ from recommonmark.parser import CommonMarkParser
 
 # -- Project information -----------------------------------------------------
 
-from waveformtools import __version__ as waveformtools_version
+waveformtools_version = '03.05.2022'
 
 # -- Project information -----------------------------------------------------
 
