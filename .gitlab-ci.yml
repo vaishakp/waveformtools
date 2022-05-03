@@ -9,6 +9,8 @@
 
 
 image: python:3.9-alpine
+# Note: only 3.9 works with rinohtype
+
 #image: continuumio/miniconda3:latest
 #image: python:3.7-alpine3.9
 # Change pip's cache directory to be inside the project directory since we can
@@ -47,8 +49,8 @@ before_script:
  # - conda init
  # - source ~/.bashrc
  # - conda activate myenv
-  - which python
-  - python --version
+ # - which python
+ # - python --version
   - which pip
   - pip --version
 
