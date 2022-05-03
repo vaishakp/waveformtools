@@ -8,7 +8,7 @@
 
 
 
-image: python:latest
+image: python:3.9-alpine
 #image: continuumio/miniconda3:latest
 #image: python:3.7-alpine3.9
 # Change pip's cache directory to be inside the project directory since we can
