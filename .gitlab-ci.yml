@@ -39,7 +39,7 @@ before_script:
   - pip install virtualenv
   - virtualenv venv
  #- dnf install -y make
- #- apk add -y make
+  - apk add make
  #- source venv/bin/activate
  # - apt-get update -q -y
  # - apt-get install -y build-essential
