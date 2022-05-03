@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/vaishakp/waveformtools/badges/main/pipeline.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/screencam/localized.svg)](https://crowdin.com/project/screencam)
+[![pipeline status](https://gitlab.com/vaishakp/waveformtools/badges/main/pipeline.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main)
 
 Waveformtools 
 ===============
