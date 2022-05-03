@@ -3,8 +3,8 @@ name: myenv
 dependencies:
     - python>=3.6
     - sphinx
-    - sphinx-rtd-theme
-    - rinohtype
+#    - sphinx-rtd-theme
+#    - rinohtype
 
 channels:
     - defaults
