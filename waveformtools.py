@@ -924,7 +924,7 @@ def shiftmatched(hdat,ind,dt=None):
 
 
 #Complex Phase-Amplitude representation of data
-def xtract_cphase(tsdata_p,tsdata_x,dt=None, plot = 'no'):
+def xtract_cphase(tsdata_p,tsdata_x, plot = 'no'):
 		''' Given real and imaginary parts of a complex timeseries, extract the phase of the waveform :arctan_(Img(data)/Re(data))
 		
 		-----------
@@ -939,14 +939,14 @@ def xtract_cphase(tsdata_p,tsdata_x,dt=None, plot = 'no'):
 			nd array of extracted phase. '''
 		
 		#Assign the timestep. Real and imaginary parts are assumed to have same timestep.
-		if not dt:
-			try:
-				dt=tsdata_p.delta_t
-			except AttributeError:
-				try:
-					dt=tsdata_x.delta_t
-				except:
-					message('Input is not a TimeSeries. Please supply gridspacing as dt',message_verbosity=0)
+		#if not dt:
+		#	try:
+		#		dt=tsdata_p.delta_t
+		#	except AttributeError:
+		#		try:
+		#			dt=tsdata_x.delta_t
+		#		except:
+		#			message('Input is not a TimeSeries. Please supply gridspacing as dt',message_verbosity=0)
 
 
 		#Assign the timestep. Real and imaginary parts are assumed to have same timestep.
@@ -980,8 +980,8 @@ def xtract_cphase(tsdata_p,tsdata_x,dt=None, plot = 'no'):
 				#tpu = np.trim_zeros(tpu)
 				#tpd = np.trim_zeros(tpd)
 				#Calculate the timestamp of the turning points
-		tput = dt * np.array(tpu)
-		tpdt = dt * np.array(tpd)
+		#tput = dt * np.array(tpu)
+		#tpdt = dt * np.array(tpd)
 		
 				#Unwrapping the phase: Unwrap using the turning points
 		
@@ -1025,34 +1025,25 @@ def xtract_cphase(tsdata_p,tsdata_x,dt=None, plot = 'no'):
 			#Return a 1d list containing the unwrapped phase
 		return phic
 
-def xtract_camp(tsdata_p,tsdata_x,dt=None):
+
+def xtract_camp(tsdata_p, tsdata_x, plot='no'):
 		''' Given real and imaginary parts of a complex timeseries, extract the amplitude of the complex data vector : (tsdata_p + i * tsdata_x)
 		
 		-----------
 		**Input:** 
 			tsdata_p, tsdata_x : plus and cross polarized components of the waveforms tsdata_p and tsdata_x as pycbc TimeSeries or 1d arrays and 
-			dt				   : gridspacing dt.
 		
 		-------------
 		**Returns:** 
 			nd array of extracted amplitude. '''
 		
 		# Assign the timestep. Real and imaginary parts are assumed to have same timestep.
-		if not dt:
-			try:
-				dt=tsdata_p.delta_t
-			except AttributeError:
-				try:
-					dt=tsdata_x.delta_t
-				except:
-					message('Input is not a TimeSeries. Please supply gridspacing as dt',message_verbosity=0)
-
 		# Complex modulous of the data
 		camp = np.sqrt(np.array(tsdata_p)**2 + np.array(tsdata_x)**2)
 		
 		if plot=='yes':
 			# Plot amplitude vs time
-			plt.scatter(tsdata_p.sample_times,camp,s=1)
+			plt.plot(camp)
 			plt.title("Amplitude vs time")
 			plt.xlabel("cctk_time")
 			plt.ylabel("Amplitude")
@@ -1062,7 +1053,44 @@ def xtract_camp(tsdata_p,tsdata_x,dt=None):
 		#Returns the 1d numpy array amplitude 
 		return camp
 
-def xtract_cphaseamp(tsdata_1,tsdata_2,dt=None):
+#def xtract_camp(tsdata_p,tsdata_x,dt=None):
+#		''' Given real and imaginary parts of a complex timeseries, extract the amplitude of the complex data vector : (tsdata_p + i * tsdata_x)
+#		
+#		-----------
+#		**Input:** 
+#			tsdata_p, tsdata_x : plus and cross polarized components of the waveforms tsdata_p and tsdata_x as pycbc TimeSeries or 1d arrays and 
+#			dt				   : gridspacing dt.
+#		
+#		-------------
+#		**Returns:** 
+#			nd array of extracted amplitude. '''
+#		
+#		# Assign the timestep. Real and imaginary parts are assumed to have same timestep.
+#		if not dt:
+#			try:
+#				dt=tsdata_p.delta_t
+#			except AttributeError:
+#				try:
+#					dt=tsdata_x.delta_t
+#				except:
+#					message('Input is not a TimeSeries. Please supply gridspacing as dt',message_verbosity=0)
+#
+#		# Complex modulous of the data
+#		camp = np.sqrt(np.array(tsdata_p)**2 + np.array(tsdata_x)**2)
+#		
+#		if plot=='yes':
+#			# Plot amplitude vs time
+#			plt.scatter(tsdata_p.sample_times,camp,s=1)
+#			plt.title("Amplitude vs time")
+#			plt.xlabel("cctk_time")
+#			plt.ylabel("Amplitude")
+#			plt.grid()
+#			#plt.savefig('../graphs/waveform_phase_complete_{}_q1a0.pdf'.format(name)) 
+#			plt.show()
+#		#Returns the 1d numpy array amplitude 
+#		return camp
+
+def xtract_cphaseamp(tsdata_1,tsdata_2):
 		''' Wrapper for extracting the amplitude and the phase of the complex vector.
 		
 		-----------
@@ -1076,7 +1104,7 @@ def xtract_cphaseamp(tsdata_1,tsdata_2,dt=None):
 
 			list containing complex amplitude (list) and phase (list). '''
 
-		return xtract_camp(tsdata_1,tsdata_2,dt),xtract_cphase(tsdata_1,tsdata_2,dt)
+		return xtract_camp(tsdata_1,tsdata_2), xtract_cphase(tsdata_1,tsdata_2)
 
 
 
@@ -1268,7 +1296,7 @@ def shorten(tsdata,start,end,dt=None):
 		
 			return pycbc.types.timeseries.TimeSeries(np.array(tsdata)[start:end],dt)
 		
-def taper(data,dt=1,z=150):
+def taper(data, dt=1, z=150):
 		''' Function to taper and append additional zeros at either ends.
 			
 			-----------
@@ -1284,31 +1312,33 @@ def taper(data,dt=1,z=150):
 				(pycbc TimeSeries object) 1d data tapered and zero padded as pycbc timeseries. '''
 
 		#Check if data is pycbc timeseries:
-		if type(data)!=pycbc.types.timeseries.TimeSeries:
+		if type(data) != pycbc.types.timeseries.TimeSeries:
 				flag=1
 				#Convert to numpy array		   
-				data=np.array(data)
+				data	= np.array(data)
 				#First taper both sides of the data i.e. the start and end of the data.
 				#Convert to pycbc TimeSeries
-				data = pycbc.types.timeseries.TimeSeries(data,dt)
-		elif type(data)==pycbc.types.timeseries.TimeSeries:
-				flag=0
-				dt=data.delta_t
+				data	= pycbc.types.timeseries.TimeSeries(data,dt)
+		elif type(data) == pycbc.types.timeseries.TimeSeries:
+				flag	= 0
+				dt		= data.delta_t
 
+		
 		#Taper the timeseries
-		data = pycbc.waveform.utils.taper_timeseries(data,tapermethod='TAPER_STARTEND')
+		from pycbc.waveform.utils import taper_timeseries
+		data	= taper_timeseries(data, tapermethod='TAPER_STARTEND')
 		
 		#Append the zeros
-		data = np.array(data)
+		data	= np.array(data)
 
 		#Pad ends with extra zeros
-		z = np.zeros([z])
+		z		= np.zeros([z])
 		#Prepend with z zeros
-		data=np.transpose(np.concatenate((np.transpose(z),np.transpose(data))))
+		data	= np.transpose(np.concatenate((np.transpose(z), np.transpose(data))))
 		#Append with extra zeros
-		data=np.transpose(np.concatenate((np.transpose(data),np.transpose(z))))
+		data=np.transpose(np.concatenate((np.transpose(data), np.transpose(z))))
 		#Convert back to timeseries
-		data = pycbc.types.timeseries.TimeSeries(data,dt)
+		data	= pycbc.types.timeseries.TimeSeries(data, dt)
 		#Return the timeseries
 		return data
 
@@ -3369,10 +3399,25 @@ def differentiate2(data, dt):
 	coeffs = np.array([1, -8, 0, 8, -1])
 	divide = 12
 	der_data = []
+	
+	# For n=0, N
+	der0   = (data[1]-data[0])/dt
+	derN   = (data[-1]-data[-2])/dt
+
+	der_data.append(der0)
+	# for n=1
+	der1   = (data[2] - data[0])/(2*dt)
+	derNm1 = (data[-1] - data[-3])/(2*dt)
+	
+	der_data.append(der1)
+
 	for index in range(order, len(data)-order):
 		data_subarray = data[index-order:index+order+1]
 		der_data.append(np.dot(coeffs, data_subarray)/(divide*dt))
-		
+	
+	der_data.append(derNm1)
+	der_data.append(derN)
+	
 	return der_data
 
 
