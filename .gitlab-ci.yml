@@ -27,6 +27,10 @@ image: continuumio/miniconda3:latest
 #    - .cache/pip
 #    - venv/
 
+job_name: 
+  variables:
+    CI_DEBUG_TRACE: "true"
+
 
 before_script:
   - python --version  # For debugging
@@ -37,6 +41,8 @@ before_script:
   - apt-get update -q -y
   - apt-get install -y build-essential
   - conda env create -f docs/environment.yml
+  - conda init
+  - source ~/.bashrc
   - conda activate myenv
   - which python
   - which pip
@@ -55,3 +61,4 @@ pages:
     - public
   only:
   - main
+
