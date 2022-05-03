@@ -80,7 +80,7 @@ This package contains implementations of customized algorithms and techniques.  
    :caption: Contents:
 
    README.md
-   Basic features
+   basic_features
    api
 
 Indices and tables
