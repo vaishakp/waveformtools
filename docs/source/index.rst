@@ -4,9 +4,13 @@
    contain the root `toctree` directive.
 
 
-===================================
 
-** Welcome to waveformtools documentation! **
+
+Welcome to waveformtools' documentation!
+=========================================
+
+For basic information on this module, please look at the ` Readme file of the repository <README.md>`_file.
+
 
 Browse through these pages for details on the functions in this module. Please contact vaishak@iucaa.in if you want to report any bugs or have comments/questions. 
 
@@ -75,7 +79,9 @@ This package contains implementations of customized algorithms and techniques.  
    :maxdepth: 2
    :caption: Contents:
 
-
+   README.md
+   Basic features
+   api
 
 Indices and tables
 ==================
@@ -86,7 +92,7 @@ Indices and tables
 
 
 waveformtools main
-============
+===================
 .. automodule:: waveformtools
    :members:
 
