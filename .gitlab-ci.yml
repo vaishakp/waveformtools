@@ -27,9 +27,9 @@ image: continuumio/miniconda3:latest
 #    - .cache/pip
 #    - venv/
 
-job_name: build_pages
-  variables:
-    CI_DEBUG_TRACE: "true"
+#job_name: build_pages
+#  variables:
+#    CI_DEBUG_TRACE: "true"
 
 
 before_script:
