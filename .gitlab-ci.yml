@@ -56,6 +56,17 @@ before_script:
   - which pip
   - pip --version
   - git show -s --format=%ci >> date.txt
+  - echo $PYTHONPATH
+  - export PYTHONPATH='build/waveformtools':$PYTHONPATH
+  - echo $PYTHONPATH
+
+test:
+  script:
+# Lint code   
+    - pylint waveformtools
+    - flake8 waveformtools --statistics --count
+# Test code    
+    - pytest
 
 
 pages:
