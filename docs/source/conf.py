@@ -14,7 +14,7 @@ import os
 import sys
 
 import sphinx
-#import waveformtools
+import waveformtools
 from waveformtools import get_version
 
 from recommonmark.parser import CommonMarkParser
