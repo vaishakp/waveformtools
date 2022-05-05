@@ -58,7 +58,7 @@ before_script:
   - git show -s --format=%ci >> date.txt
   - pwd
   - echo $PYTHONPATH
-  - export PYTHONPATH='build/waveformtools':$PYTHONPATH
+  - export PYTHONPATH='builds/vaishakp/waveformtools':$PYTHONPATH
   - echo $PYTHONPATH
   - pip install pylint flake8
 
