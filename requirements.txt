@@ -1,7 +1,14 @@
-This modules depends on:
+# Modules to install
 
-1. Pycbc
-2. Lalsuite
-3. Bilby(proposed)
-4. h5py
-5. Other default python libraries.
+pycbc
+lalsuite
+ligo-commons
+h5py
+numpy
+scipy
+math
+matplotlib
+statistics
+termcolor
+pickle
+datetime
