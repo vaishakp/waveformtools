@@ -62,13 +62,13 @@ before_script:
   - echo $PYTHONPATH
   - pip install pylint flake8
 
-test:
-  script:
+#test:
+#  script:
 # Lint code   
-    - pylint waveformtools
-    - flake8 waveformtools --statistics --count
+#    - pylint waveformtools
+#    - flake8 waveformtools --statistics --count
 # Test code    
-    - pytest
+#    - pytest
 
 
 pages:
