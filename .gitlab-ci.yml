@@ -59,7 +59,7 @@ before_script:
   - pwd
   - ls -l
   - echo $PYTHONPATH
-  - export PYTHONPATH="$PYTHONPATH:."
+  - export PYTHONPATH=$PYTHONPATH:"/builds/vaishakp/waveformtools/"
   - echo $PYTHONPATH
   - pip install pylint flake8
 
