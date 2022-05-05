@@ -53,6 +53,7 @@ before_script:
  # - python --version
   - which pip
   - pip --version
+  - git show -s --format=%ci >> date.txt
 
 
 pages:

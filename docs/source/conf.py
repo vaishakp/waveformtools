@@ -14,12 +14,14 @@ import os
 import sys
 
 import sphinx
+#import waveformtools
+from waveformtools import get_version
 
 from recommonmark.parser import CommonMarkParser
 
 # -- Project information -----------------------------------------------------
 
-waveformtools_version = '03.05.2022'
+waveformtools_version = get_version()
 
 # -- Project information -----------------------------------------------------
 
