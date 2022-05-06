@@ -66,11 +66,11 @@ before_script:
  # - pip install pylint flake8
   - conda install pylint flake8
 
-#test:
-#  script:
+test:
+  script:
 # Lint code   
-#    - pylint waveformtools
-#    - flake8 waveformtools --statistics --count
+    - pylint waveformtools
+    - flake8 waveformtools --statistics --count
 # Test code    
 #    - pytest
 
@@ -91,4 +91,5 @@ pages:
     - public
   only:
   - main
+  - test
 
