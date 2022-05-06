@@ -10,9 +10,8 @@ dependencies:
     - matplotlib
     - statistics
     - termcolor
-    - datetime
     - sphinx
-    - sphinx-rtd-theme
+
 
 channels:
     - defaults
