@@ -2,9 +2,20 @@ name: myenv
 
 dependencies:
     - python=3
+    - numpy
+    - scipy
+    - pycbc
+    - lalsuite
+    - ligo-commons
+    - math
+    - matplotlib
+    - statistics
+    - termcolor
+    - pickle
+    - datetime
     - sphinx
-#    - sphinx-rtd-theme
-#    - rinohtype
+    - sphinx-rtd-theme
+    - rinohtype
 
 channels:
     - defaults
