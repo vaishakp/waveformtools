@@ -5,4 +5,4 @@ line-length = 120
 profile = "black"
 
 [tool.pylint]
-disable=W0311
+disable=#W0311
