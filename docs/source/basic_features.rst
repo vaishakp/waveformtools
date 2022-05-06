@@ -1,3 +1,7 @@
+*********************
+Basic Features
+*********************
+
 This is a python module for the handling and analysis of waveforms and data from Numerical Relativity codes, and for carrying out gravitational wave data analysis.  
 
 waveformtools is a numerical relativity data handling package that was written to aid the handling and analysis of numerical relativity data.
