@@ -6,16 +6,13 @@ dependencies:
     - scipy
     - pycbc
     - lalsuite
-    - ligo-commons
-    - math
+    - ligo-common
     - matplotlib
     - statistics
     - termcolor
-    - pickle
     - datetime
     - sphinx
     - sphinx-rtd-theme
-    - rinohtype
 
 channels:
     - defaults
