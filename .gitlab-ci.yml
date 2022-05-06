@@ -8,8 +8,57 @@
 
 
 
+stages:
+  - linting
+
+isort:
+  stage: linting
+  image: registry.gitlab.com/mafda/python-linting
+  script:
+    - isort . --check-only
+  only
+  - merge_requests
+
+black:
+  stage: linting
+  image: registry.gitlab.com/mafda/python-linting
+  script:
+    - black --check .
+  only:
+    - merge-requests
+
+flake8:
+  stage: linting
+  image: registry.gitlab.com/mafda/python-linting
+  script:
+    - flake8 .
+  only:
+    - merge-requests
+
+pylint:
+  stage: linting
+  image: registry.gitlab.com/mafda/python-linting
+  script:
+    - find . -type f -iname "*.py" | xargs pylint
+  only:
+    - merge_requests
+test:
+  stage: Lint
+  allow_failure: True 
+  script:
+# Lint code   
+    - pylint waveformtools
+    - flake8 waveformtools --statistics --count
+# Test code    
+#    - pytest
+
+
+
+
 # image: python:3.9-alpine
 # Note: only 3.9 works with rinohtype
+
+
 
 image: continuumio/miniconda3:latest
 #image: python:3.7-alpine3.9
@@ -64,17 +113,9 @@ before_script:
   - export PYTHONPATH=$PYTHONPATH:"/builds/vaishakp/waveformtools/"
   - echo $PYTHONPATH
  # - pip install pylint flake8
-  - conda install pylint flake8
+ # - conda install pylint flake8
 
-test:
-  stage: Lint
-  allow_failure: True 
-  script:
-# Lint code   
-    - pylint waveformtools
-    - flake8 waveformtools --statistics --count
-# Test code    
-#    - pytest
+
 
 
 pages:
