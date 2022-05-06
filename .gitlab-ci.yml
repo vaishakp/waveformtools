@@ -64,13 +64,15 @@ before_script:
   - export PYTHONPATH=$PYTHONPATH:"/builds/vaishakp/waveformtools/"
   - echo $PYTHONPATH
  # - pip install pylint flake8
- # - conda install pylint flake8
+  - conda install pylint flake8
 
-#test:
-#  script:
+test:
+  stage: Lint
+  allow_failure: True 
+  script:
 # Lint code   
-#    - pylint waveformtools
-#    - flake8 waveformtools --statistics --count
+    - pylint waveformtools
+    - flake8 waveformtools --statistics --count
 # Test code    
 #    - pytest
 
