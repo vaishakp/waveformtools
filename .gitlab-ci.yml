@@ -20,7 +20,7 @@ isort:
     - isort .
   only:
   - merge_requests
-  - main
+  #- main
 
 black:
   stage: linting
@@ -29,7 +29,7 @@ black:
     - black .
   only:
     - merge-requests
-    - main
+    #- main
 
 flake8:
   stage: linting
@@ -39,7 +39,7 @@ flake8:
     - flake8 .
   only:
     - merge-requests
-    - main
+    #- main
 
 pylint:
   stage: linting

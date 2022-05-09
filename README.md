@@ -117,10 +117,12 @@ git clone https://gitlab.com/vaishakp/waveformtools.git
 
 ```
 
-* Second, create an environment with dependencies resolved.
+* Second, create an environment with dependencies resolved, and activate it.
 ```sh
 conda create env -f docs/environment.yml
+conda activate myenv
 ```
+
 
 * Third, add the path to the $PYTHONPATH variable
 
