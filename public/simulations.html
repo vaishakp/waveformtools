@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Basic Features &mdash; waveformtools 2022-05-03 documentation</title>
+  <title>Simulations &mdash; waveformtools 2022-05-03 documentation</title>
   
 
   
@@ -33,9 +33,7 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Package API" href="api.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="README.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,8 +82,8 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Features</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Package API</a></li>
 </ul>
 
@@ -132,13 +130,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Basic Features</li>
+      <li>Simulations</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/basic_features.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/simulations.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -151,73 +149,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="basic-features">
-<h1>Basic Features<a class="headerlink" href="#basic-features" title="Permalink to this headline">¶</a></h1>
-<p>This is a python module for the handling and analysis of waveforms and data from Numerical Relativity codes, and for carrying out gravitational wave data analysis.</p>
-<p>waveformtools is a numerical relativity data handling package that was written to aid the handling and analysis of numerical relativity data.</p>
-<p>This package contains implementations of customized algorithms and techniques.  Some of these contain the usage of existing python based library functions from pycbc, scipy, etc but effort has been made to keep these to a minimum.</p>
-<ul>
-<li><p>Handling of numerical relativity data, and retreiving specific information about the physical system.</p>
-<blockquote>
-<div><p>The class container and methods “sim” can load NR data into convenient lists and dictionaries, which can be used to     retrieve specific data/ information about the numerical simulation.</p>
-<p>This offers the following functionality, like retreiving:</p>
-<ul>
-<li><p>Horizon masses, mass-ratios, and areas.</p></li>
-<li><p>Horizon multipole moments.</p></li>
-<li><p>Merger time/ formation time of common horizon.</p></li>
-<li><p>The strain waveform.</p></li>
-<li><p>The shear data of the dynamical horizons.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>And computing/ extracting the Frequency, amplitude and phase of waveforms, etc.</p></li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
-</div></blockquote>
-</li>
-<li><p>Handling of waveforms.</p>
-<blockquote>
-<div><p>A  basic class container for handling numerical waveforms.</p>
-<p>This offers functionality like:</p>
-<ul class="simple">
-<li><p>loading data from hdf5 files.</p></li>
-<li><p>basic information such as time step, time axis, data axis, etc.</p></li>
-<li><p>extrapolating a numerical waveform recorded at a finite radius to null infinity (to be added soon).</p></li>
-<li><p>integrating and differentiating waveforms in the frequency domain (to be added soon).</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p>Tools for preparation/handling of numerical relativity data, like:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>checking for discontinuity, removal of duplicated rows, and interpolating for missing rows in the data.</p></li>
-<li><p>integration, differentiation of numerical data.</p></li>
-<li><p>equalizing lengths of waveforms.</p></li>
-<li><p>resampling</p></li>
-<li><p>computing the norm, shifting/ rolling the data, etc.</p></li>
-<li><p>Smoothening, tapering.</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p>Tools for basic data analysis.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>A match algorithms for matching two waveforms.</p></li>
-<li><p>Binning and interpolation of data.</p></li>
-</ul>
-</div></blockquote>
-</li>
-<li><p>Miscellaneous tools:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Progress bar to display progress of loops.</p></li>
-<li><p>A custom print function with message prioritization.</p></li>
-<li><p>Saving data to disk with protocol support (binary, text, etc.)</p></li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
+  <div class="section" id="simulations">
+<h1>Simulations<a class="headerlink" href="#simulations" title="Permalink to this headline">¶</a></h1>
+<p>This is a class to conveniently access, handle and retrieve information and data from Numerical Relativity smulations.</p>
+<p>The <a href="#id1"><span class="problematic" id="id2">`</span></a>sim’ class provides a basic information and data storage container functionality and methods for handling the NR data.</p>
 </div>
 
 
@@ -225,15 +160,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="api.html" class="btn btn-neutral float-right" title="Package API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="README.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
