@@ -176,6 +176,7 @@ pages:
     #- pip install -U 'sphinx==3.5.4' 'sphinx-rtd-theme==0.4.3' 'rinohtype==0.5.2'
     #- pip install sphinx-rtd-theme rinohtype
     #- sphinx build -b html docs/sources public
+    - which sphinx
     - cd docs
     - make html
     - mv build/html/ ../public/
