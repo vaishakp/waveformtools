@@ -33,6 +33,7 @@ black:
 
 flake8:
   stage: linting
+  allow_failure: True
   image: registry.gitlab.com/mafda/python-linting
   script:
     - flake8 .
@@ -42,6 +43,7 @@ flake8:
 
 pylint:
   stage: linting
+  allow_failure: True
   image: registry.gitlab.com/mafda/python-linting
   script:
     - find . -type f -iname "*.py" | xargs pylint
