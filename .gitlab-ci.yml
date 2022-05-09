@@ -10,6 +10,7 @@
 
 stages:
   - linting
+  - predeploy
   - deploy
 
 isort:
@@ -18,8 +19,8 @@ isort:
   script:
     - isort .
   only:
-  - merge_requests
-  #- main
+  #- merge_requests
+  - main
 
 black:
   stage: linting
@@ -27,28 +28,26 @@ black:
   script:
     - black .
   only:
-    - merge-requests
-    #- main
+    #- merge-requests
+    - main
 
 flake8:
   stage: linting
-  allow_failure: True
   image: registry.gitlab.com/mafda/python-linting
   script:
     - flake8 .
   only:
-    - merge-requests
-    #- main
+    #- merge-requests
+    - main
 
 pylint:
   stage: linting
-  allow_failure: True
   image: registry.gitlab.com/mafda/python-linting
   script:
     - find . -type f -iname "*.py" | xargs pylint
   only:
-    - merge_requests
-    #- main
+    #- merge_requests
+    - main
 #test:
 #  stage: linting
 #  allow_failure: True 
@@ -60,42 +59,42 @@ pylint:
 #    - pytest
 
 
-pages:
-  stage: deploy
+prepare:
+  stage: predeploy
   image: continuumio/miniconda3:latest
   script:
-    # image: python:3.9-alpine
-    # Note: only 3.9 works with rinohtype
-    #image: python:3.7-alpine3.9
-    # Change pip's cache directory to be inside the project directory since we can
-    # only cache local items.
-    #variables:
-    #  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  # image: python:3.9-alpine
+  # Note: only 3.9 works with rinohtype
+  #image: python:3.7-alpine3.9
+  # Change pip's cache directory to be inside the project directory since we can
+  # only cache local items.
+  #variables:
+  #  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
 
-    # Pip's cache doesn't store the python packages
-    # https://pip.pypa.io/en/stable/topics/caching/
-    #
-    # If you want to also cache the installed packages, you have to install
-    # them in a virtualenv and cache it as well.
-    #cache:
-    #  paths:
-    #    - .cache/pip
-    #    - venv/
+  # Pip's cache doesn't store the python packages
+  # https://pip.pypa.io/en/stable/topics/caching/
+  #
+  # If you want to also cache the installed packages, you have to install
+  # them in a virtualenv and cache it as well.
+  #cache:
+  #  paths:
+  #    - .cache/pip
+  #    - venv/
 
-    #job_name: build_pages
-    #  variables:
-    #    CI_DEBUG_TRACE: "true"
+  #job_name: build_pages
+  #  variables:
+  #    CI_DEBUG_TRACE: "true"
     - uname -a
     - python --version  # For debugging
     - which python
-    # - pip install virtualenv
-    # - virtualenv venv
-    #- dnf install -y make
-    # - apk update
-    # - apk add make
-    # - apk add git
-    #- source venv/bin/activate
+  # - pip install virtualenv
+  # - virtualenv venv
+  #- dnf install -y make
+  # - apk update
+  # - apk add make
+  # - apk add git
+  #- source venv/bin/activate
     - apt-get update -q -y
     - apt-get install -y build-essential git
     - conda env create -f docs/environment.yml
@@ -106,17 +105,25 @@ pages:
     - which conda
     - conda --version
     - python --version
-    # - which pip
-    # - pip --version
+  # - which pip
+  # - pip --version
     - git show -s --format=%ci >> date.txt
     - pwd
     - ls -l
     - echo $PYTHONPATH
     - export PYTHONPATH=$PYTHONPATH:"/builds/vaishakp/waveformtools/"
     - echo $PYTHONPATH
-    # - pip install pylint flake8
-    # - conda install pylint flake8
+  # - pip install pylint flake8
+  # - conda install pylint flake8
+  only:
+    - main
 
+
+
+
+pages:
+  stage: deploy
+  script:
     - pip install -U sphinx sphinx-rtd-theme rinohtype numpydoc
     #- pip install rinohtype numpydoc
     #- pip install -r requirements.txt
@@ -125,10 +132,8 @@ pages:
     - cd docs
     - make html
     - mv build/html/ ../public/
-    artifacts:
-      paths:
-        - public
-    only:
-      - main
-      #- merge_requests
-
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
