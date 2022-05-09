@@ -165,7 +165,7 @@ pages:
     - pwd
     - ls -l
     - echo $PYTHONPATH
-    - export PYTHONPATH=$PYTHONPATH:"/builds/vaishakp/waveformtools/"
+    - export PYTHONPATH=$PYTHONPATH:"/builds/vaishakp/waveformtools"
     - echo $PYTHONPATH
   # - pip install pylint flake8
   # - conda install pylint flake8
