@@ -1,5 +1,11 @@
 ''' Data container for Numerical Relativity data '''
 
+###############################################
+# Imports
+##############################################
+
+import numpy as np
+from waveformtools.waveformtools import *
 
 class sim:
 
@@ -11,131 +17,159 @@ class sim:
                     Primary
 					---------
 
-                    0.1 ROOTDIR				(string)			: Root directory as a string containing the simulation folders.
+                    ROOTDIR :	string
+								Root directory as a string containing the simulation folders.
 
-                    0.2 WAVDIR				(string)			: Root directory as a string containing the simulation directies containing the wavefom data.
+                    WAVDIR :	string
+								Root directory as a string containing the simulation directies containing the wavefom data.
 
-                    0.3 datadir				(string)			: The path of the folder containing data relative to the simulation direcory.
+                    datadir :	string
+								The path of the folder containing data relative to the simulation direcory.
 
-                    0.4 strain_dir			(string)			: The path of the folder containing the waveform data relative to the strain directory.
+                    strain_dir :	string
+									The path of the folder containing the waveform data relative to the strain directory.
 
-                    1.	aliases				(List of strings)	: The names/aliases for the simulations.
+                    aliases :	a list of strings
+								The names/aliases for the simulations.
 
-                    2.	multipoles			(dict of lists)		: The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.
+                    multipoles :	dict of lists
+									The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.
 
-                    3.	mass1				(dict of floats)	: The BH1 horizon mass.
+                    mass1 :	dict of floats
+							The BH1 horizon mass.
 
-                    4.	mass2				(dict of floats)	: The BH2 horizon mass.
+                    mass2 :	dict of floats)
+							The BH2 horizon mass.
 
-                    5.	mass3				(dict of floats)	: The BH3 horizon mass.
+                    mass3 :	dict of floats
+							The BH3 horizon mass.
 
-                    6.	delta_t				(dict of floats)	: The time stepping in simulation units (dt/M).
+                    delta_t :	dict of floats
+								The time stepping in simulation units (dt/M).
 
-                    7.	timeaxis			(dict of 1d)		: The timeaxis of the simulations.
+                    timeaxis :	dict of 1d arrays
+								The timeaxis of the simulations.
 
-                    8.	distance			(dict of 1d)		: The distances of simulations.
+                    distance :	dict of 1d arrays
+								The distances of simulations.
 
-                    9.	merger_ind			(dict of ints)		: The merger index/ common horizon formation index of simulations.
+                    merger_ind :	dict of ints
+									The merger index/ common horizon formation index of simulations.
 
-                    10. dinit				(dict of floats)	: The initial distances.
+                    dinit :	dict of floats
+							The initial distances.
 
-                    11. multipoles			(dict of lists)		: The (2) mass multipoles of the three horizons. Axis 0 is usuall the time array.
+                    multipoles :	dict of lists
+									The two sets of  mass multipoles of the three horizons. Axis 0 is usuall the time array.
 
-                    12. mass_multipoles		(dict of lists)		: The mass multipoles upto (l=8).
+                    mass_multipoles :	dict of lists
+										The mass multipoles upto (ell=8).
 
-                    13. spin_multipoles		(dict of lists)		: The spin multipoles upto (l=8).
+                    spin_multipoles :	dict of lists
+										The spin multipoles upto (l=8).
 
-                    14. data_length			(dict of float)		: The data length of the multipole simulation data loaded.
+                    data_length :	dict of float
+									The data length of the multipole simulation data loaded.
 
-                    15. dist_data_length	(dict of ints)		: The data length of distances of simulations.
+                    dist_data_length :	dict of ints
+										The data length of distances of simulations.
 
 
                     Derived
 					--------
 
-                    1. merger_distance	   (dict of floats)    : The distance between the blackholes at the merger index.
-                    2. true_merger_dist    (dict of floats)    : The true merger distance (non normalized).
-                    3. sampling_f		   (dict of floats)    : The sampling frequency of simulations (1./dt).
-                    4. merger_time		   (dict of floats)    : The cctk_time stamp at merger.
-                    5. massratio		   (dict of floats)    : The massratio of the simulations.
-                    6. chirpmass		   (dict of floats)    : The chirpmass of the simulations.
-                    7. totalmass		   (dict of floats)    : The total mass of the simulations.
-                    8. log_multipoles	   (dict of lists)	   : The natural logarithm of the negative of the multipole moments as list [time, multipole1, multipole2, multipole3(if exists)].
-                    9. data_duration	   (dict of floats)    : The total cctk_time units of simulations present.
+                    merger_distance :	dict of floats
+										The distance between the blackholes at the merger index.
+                    true_merger_dist :	dict of floats
+										The true merger distance (non-normalized).
+                    sampling_f :	dict of floats
+									The sampling frequency of simulations (1/dt).
+                    merger_time :	dict of floats
+									The cctk_time stamp at merger.
+                    massratio :	dict of floats
+								The massratio of the simulations.
+                    chirpmass :	dict of floats
+								The chirpmass of the simulations.
+                    totalmass :	dict of floats
+								The total mass of the simulations.
+                    log_multipoles :	dict of lists
+										The natural logarithm of the negative of the multipole moments as list [time, multipole1, multipole2, multipole3(if exists)].
+                    data_duration :	dict of floats
+									The total cctk_time units of simulations present.
 
-            Functions:
-			-----------
+            Methods
+			-------
 
-                    1. calc_ref_multipoles						: Calculate the reference multipoles as time average of first few timesclices of (2) multipole moment data.
+                    calc_ref_multipoles						:	Calculate the reference multipoles as time average of first few timesclices of (2) multipole moment data.
 
-                                                                                                              Assignes/Updates:
-                                                                                                              -----
-                                                                                                              1. ref_multipoles.
+																Assignes/Updates
+																-----------------
+                                                                ref_multipoles.
 
 
-                    2. calc_log_multipoles						: Calculate the natural logarithm of the negative of the (2) multipole moment.
+                    calc_log_multipoles						:	Calculate the natural logarithm of the negative of the two sets of multipole moment.
 
-                                                                                                              Assignes/ Updates:
-                                                                                                              -----
-                                                                                                              1. log_multipoles.
+																Assignes/ Updates
+																-----------------
+                                                                log_multipoles.
 
-                    3. calc_delta_multipoles					: Calculate the delta (2) multipoles - ref multipoles.
+					calc_delta_multipoles					:	Calculate the two delta multipoles - ref multipoles.
 
-                                                                                                              Assignes/ Updates:
-                                                                                                              -----
-                                                                                                              1. delta_multipoles.
+																Assignes/ Updates
+																-----------------
+                                                                delta_multipoles.
 
-                    4. calc_amp_phase							: Extract the amplitudes and phases of the strain waveforms.
+                    calc_amp_phase							:	Extract the amplitudes and phases of the strain waveforms.
 
-                                                                                                              Assignes/Updates:
-                                                                                                              -----
-                                                                                                              1. strain_amp.
-                                                                                                              2. strain_phase.
+                                                                Assignes/Updates
+																----------------
+                                                                strain_amp
+                                                                strain_phase.
 
-                    5. load_data								: Load the multipole and distance data of the simulations.
+                    load_data								:	Load the multipole and distance data of the simulations.
 
-                                                                                                              Assignes/Updates:
-                                                                                                              -----
-                                                                                                              1. distance.
-                                                                                                              2. dinit.
-                                                                                                              3. mass1.
-                                                                                                              4. mass2.
-                                                                                                              5. merger_index.
-                                                                                                              6. merger_time.
-                                                                                                              7. merger_distance.
-                                                                                                              8. true_merger_distance.
-                                                                                                              9. data_length.
-                                                                                                              10. data_duration.
-                                                                                                              11. multipoles.
-                                                                                                              12. mass_multipoles.
-                                                                                                              13. spin_multipoles.
+																Assignes/Updates
+                                                                ----------------
+                                                                distance.
+																dinit.
+																mass1.
+																mass2.
+																merger_index.
+																merger_time.
+																merger_distance.
+																true_merger_distance.
+																data_length.
+																data_duration.
+																multipoles.
+																mass_multipoles.
+																spin_multipoles.
 
-                    6. load_strain								: Load the strain data of the simulations from waveform directories.
+                    load_strain								:	Load the strain data of the simulations from waveform directories.
 
-                                                                                                              Assignes/Updates
-                                                                                                              -----
-                                                                                                              1. strain.
-                                                                                                              2. strain_amp.
-                                                                                                              3. strain_phase.
-                                                                                                              4. strain_shift.
+                                                                Assignes/Updates
+                                                                ----------------
+                                                                strain.
+                                                                strain_amp.
+                                                                strain_phase.
+                                                                strain_shift.
 
-                    7. load_shears								: Load the shear data at a pole of respective horizons of the simulations from waveform directories.
+					load_shears								:	Load the shear data at a pole of respective horizons of the simulations from waveform directories.
 
-                                                                                                              Assignes/Updates
-                                                                                                              -----
-                                                                                                              1. shear.
-                                                                                                              2. shear_amp.
-                                                                                                              3. shear_phase.
-                                                                                                              4. shear_shift.
+                                                                Assignes/Updates
+																----------------
+                                                                shear.
+                                                                shear_amp.
+                                                                shear_phase.
+                                                                shear_shift.
 
-                    8. ret_horizon_radii						: A method to retrieve the areal radii of the horizons.
+                    ret_horizon_radii						:	A method to retrieve the areal radii of the horizons.
 
-                                                                                                              Assigns/Updates
-                                                                                                              -----
-                                                                                                              1. areal_radii
+																Assigns/Updates
+																---------------
+                                                                areal_radii
 
-                    9. _resize_multipoles						: Private method to resize the sim.multipoles after retrieving the length of distance.
-                    10. _ifreversal								 : Provate method to reverse the data of BH 1 and 2 if mass2 > mass1.
+                    _resize_multipoles						:	Private method to resize the sim.multipoles after retrieving the length of distance.
+                    _ifreversal								:	Private method to reverse the data of BH 1 and 2 if mass2 > mass1.
 
 
     '''
@@ -295,13 +329,16 @@ class sim:
         Inputs
 		-------
 
-        1. tjn			  (float)  : The definition of time end of junk radiation. Default is 200.
+        tjn :	float
+				The definition of time end of junk radiation. Default is 200.
 
         Computes
 		---------
 
-        1. self.indjn	   (dict)  : A dictionary containing the index location corresponding to timestamp tjn.
-        2. self.distjn	   (dict)  : A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.
+        self.indjn :	dict
+						A dictionary containing the index location corresponding to timestamp tjn.
+        self.distjn :	dict
+						A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.
 
         '''
 
@@ -456,23 +493,23 @@ class sim:
     def load_data(self):
         ''' Load data of the simulations.
 
-                ------------------------
-                **Data is assigned to:**
+                Data is assigned to
+				--------------------
 
-                        1. multipoles.
-                        2. mass_multipoles.
-                        3. spin_multipoles.
-                        4. timeaxis.
-                        5. mass1.
-                        6. mass2.
-                        7. mass3.
-                        8. delta_t.
-                        9. distance.
-                        10. merger_ind.
-                        11. actmerger_time.
-                        12. dinit.
-                        13. data_length
-                        14. dist_data_length
+                        multipoles :	list
+                        mass_multipoles :	list
+                        spin_multipoles :	list
+                        timeaxis :	list
+                        mass1 :	float
+                        mass2 :	float
+                        mass3 :	float
+                        delta_t :	float
+						distance :	list
+                        merger_ind :	int
+                        actmerger_time :	float
+                        dinit :	float
+                        data_length :	int
+                        dist_data_length :	int
 
                         '''
         ''' Common variables '''

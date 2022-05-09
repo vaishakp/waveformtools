@@ -163,131 +163,159 @@
 <span class="sd">                    Primary</span>
 <span class="sd">					---------</span>
 
-<span class="sd">                    0.1 ROOTDIR				(string)			: Root directory as a string containing the simulation folders.</span>
+<span class="sd">                    ROOTDIR :	string</span>
+<span class="sd">								Root directory as a string containing the simulation folders.</span>
 
-<span class="sd">                    0.2 WAVDIR				(string)			: Root directory as a string containing the simulation directies containing the wavefom data.</span>
+<span class="sd">                    WAVDIR :	string</span>
+<span class="sd">								Root directory as a string containing the simulation directies containing the wavefom data.</span>
 
-<span class="sd">                    0.3 datadir				(string)			: The path of the folder containing data relative to the simulation direcory.</span>
+<span class="sd">                    datadir :	string</span>
+<span class="sd">								The path of the folder containing data relative to the simulation direcory.</span>
 
-<span class="sd">                    0.4 strain_dir			(string)			: The path of the folder containing the waveform data relative to the strain directory.</span>
+<span class="sd">                    strain_dir :	string</span>
+<span class="sd">									The path of the folder containing the waveform data relative to the strain directory.</span>
 
-<span class="sd">                    1.	aliases				(List of strings)	: The names/aliases for the simulations.</span>
+<span class="sd">                    aliases :	a list of strings</span>
+<span class="sd">								The names/aliases for the simulations.</span>
 
-<span class="sd">                    2.	multipoles			(dict of lists)		: The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.</span>
+<span class="sd">                    multipoles :	dict of lists</span>
+<span class="sd">									The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.</span>
 
-<span class="sd">                    3.	mass1				(dict of floats)	: The BH1 horizon mass.</span>
+<span class="sd">                    mass1 :	dict of floats</span>
+<span class="sd">							The BH1 horizon mass.</span>
 
-<span class="sd">                    4.	mass2				(dict of floats)	: The BH2 horizon mass.</span>
+<span class="sd">                    mass2 :	dict of floats)</span>
+<span class="sd">							The BH2 horizon mass.</span>
 
-<span class="sd">                    5.	mass3				(dict of floats)	: The BH3 horizon mass.</span>
+<span class="sd">                    mass3 :	dict of floats</span>
+<span class="sd">							The BH3 horizon mass.</span>
 
-<span class="sd">                    6.	delta_t				(dict of floats)	: The time stepping in simulation units (dt/M).</span>
+<span class="sd">                    delta_t :	dict of floats</span>
+<span class="sd">								The time stepping in simulation units (dt/M).</span>
 
-<span class="sd">                    7.	timeaxis			(dict of 1d)		: The timeaxis of the simulations.</span>
+<span class="sd">                    timeaxis :	dict of 1d arrays</span>
+<span class="sd">								The timeaxis of the simulations.</span>
 
-<span class="sd">                    8.	distance			(dict of 1d)		: The distances of simulations.</span>
+<span class="sd">                    distance :	dict of 1d arrays</span>
+<span class="sd">								The distances of simulations.</span>
 
-<span class="sd">                    9.	merger_ind			(dict of ints)		: The merger index/ common horizon formation index of simulations.</span>
+<span class="sd">                    merger_ind :	dict of ints</span>
+<span class="sd">									The merger index/ common horizon formation index of simulations.</span>
 
-<span class="sd">                    10. dinit				(dict of floats)	: The initial distances.</span>
+<span class="sd">                    dinit :	dict of floats</span>
+<span class="sd">							The initial distances.</span>
 
-<span class="sd">                    11. multipoles			(dict of lists)		: The (2) mass multipoles of the three horizons. Axis 0 is usuall the time array.</span>
+<span class="sd">                    multipoles :	dict of lists</span>
+<span class="sd">									The two sets of  mass multipoles of the three horizons. Axis 0 is usuall the time array.</span>
 
-<span class="sd">                    12. mass_multipoles		(dict of lists)		: The mass multipoles upto (l=8).</span>
+<span class="sd">                    mass_multipoles :	dict of lists</span>
+<span class="sd">										The mass multipoles upto (ell=8).</span>
 
-<span class="sd">                    13. spin_multipoles		(dict of lists)		: The spin multipoles upto (l=8).</span>
+<span class="sd">                    spin_multipoles :	dict of lists</span>
+<span class="sd">										The spin multipoles upto (l=8).</span>
 
-<span class="sd">                    14. data_length			(dict of float)		: The data length of the multipole simulation data loaded.</span>
+<span class="sd">                    data_length :	dict of float</span>
+<span class="sd">									The data length of the multipole simulation data loaded.</span>
 
-<span class="sd">                    15. dist_data_length	(dict of ints)		: The data length of distances of simulations.</span>
+<span class="sd">                    dist_data_length :	dict of ints</span>
+<span class="sd">										The data length of distances of simulations.</span>
 
 
 <span class="sd">                    Derived</span>
 <span class="sd">					--------</span>
 
-<span class="sd">                    1. merger_distance	   (dict of floats)    : The distance between the blackholes at the merger index.</span>
-<span class="sd">                    2. true_merger_dist    (dict of floats)    : The true merger distance (non normalized).</span>
-<span class="sd">                    3. sampling_f		   (dict of floats)    : The sampling frequency of simulations (1./dt).</span>
-<span class="sd">                    4. merger_time		   (dict of floats)    : The cctk_time stamp at merger.</span>
-<span class="sd">                    5. massratio		   (dict of floats)    : The massratio of the simulations.</span>
-<span class="sd">                    6. chirpmass		   (dict of floats)    : The chirpmass of the simulations.</span>
-<span class="sd">                    7. totalmass		   (dict of floats)    : The total mass of the simulations.</span>
-<span class="sd">                    8. log_multipoles	   (dict of lists)	   : The natural logarithm of the negative of the multipole moments as list [time, multipole1, multipole2, multipole3(if exists)].</span>
-<span class="sd">                    9. data_duration	   (dict of floats)    : The total cctk_time units of simulations present.</span>
+<span class="sd">                    merger_distance :	dict of floats</span>
+<span class="sd">										The distance between the blackholes at the merger index.</span>
+<span class="sd">                    true_merger_dist :	dict of floats</span>
+<span class="sd">										The true merger distance (non-normalized).</span>
+<span class="sd">                    sampling_f :	dict of floats</span>
+<span class="sd">									The sampling frequency of simulations (1/dt).</span>
+<span class="sd">                    merger_time :	dict of floats</span>
+<span class="sd">									The cctk_time stamp at merger.</span>
+<span class="sd">                    massratio :	dict of floats</span>
+<span class="sd">								The massratio of the simulations.</span>
+<span class="sd">                    chirpmass :	dict of floats</span>
+<span class="sd">								The chirpmass of the simulations.</span>
+<span class="sd">                    totalmass :	dict of floats</span>
+<span class="sd">								The total mass of the simulations.</span>
+<span class="sd">                    log_multipoles :	dict of lists</span>
+<span class="sd">										The natural logarithm of the negative of the multipole moments as list [time, multipole1, multipole2, multipole3(if exists)].</span>
+<span class="sd">                    data_duration :	dict of floats</span>
+<span class="sd">									The total cctk_time units of simulations present.</span>
 
-<span class="sd">            Functions:</span>
-<span class="sd">			-----------</span>
+<span class="sd">            Methods</span>
+<span class="sd">			-------</span>
 
-<span class="sd">                    1. calc_ref_multipoles						: Calculate the reference multipoles as time average of first few timesclices of (2) multipole moment data.</span>
+<span class="sd">                    calc_ref_multipoles						:	Calculate the reference multipoles as time average of first few timesclices of (2) multipole moment data.</span>
 
-<span class="sd">                                                                                                              Assignes/Updates:</span>
-<span class="sd">                                                                                                              -----</span>
-<span class="sd">                                                                                                              1. ref_multipoles.</span>
+<span class="sd">																Assignes/Updates</span>
+<span class="sd">																-----------------</span>
+<span class="sd">                                                                ref_multipoles.</span>
 
 
-<span class="sd">                    2. calc_log_multipoles						: Calculate the natural logarithm of the negative of the (2) multipole moment.</span>
+<span class="sd">                    calc_log_multipoles						:	Calculate the natural logarithm of the negative of the two sets of multipole moment.</span>
 
-<span class="sd">                                                                                                              Assignes/ Updates:</span>
-<span class="sd">                                                                                                              -----</span>
-<span class="sd">                                                                                                              1. log_multipoles.</span>
+<span class="sd">																Assignes/ Updates</span>
+<span class="sd">																-----------------</span>
+<span class="sd">                                                                log_multipoles.</span>
 
-<span class="sd">                    3. calc_delta_multipoles					: Calculate the delta (2) multipoles - ref multipoles.</span>
+<span class="sd">					calc_delta_multipoles					:	Calculate the two delta multipoles - ref multipoles.</span>
 
-<span class="sd">                                                                                                              Assignes/ Updates:</span>
-<span class="sd">                                                                                                              -----</span>
-<span class="sd">                                                                                                              1. delta_multipoles.</span>
+<span class="sd">																Assignes/ Updates</span>
+<span class="sd">																-----------------</span>
+<span class="sd">                                                                delta_multipoles.</span>
 
-<span class="sd">                    4. calc_amp_phase							: Extract the amplitudes and phases of the strain waveforms.</span>
+<span class="sd">                    calc_amp_phase							:	Extract the amplitudes and phases of the strain waveforms.</span>
 
-<span class="sd">                                                                                                              Assignes/Updates:</span>
-<span class="sd">                                                                                                              -----</span>
-<span class="sd">                                                                                                              1. strain_amp.</span>
-<span class="sd">                                                                                                              2. strain_phase.</span>
+<span class="sd">                                                                Assignes/Updates</span>
+<span class="sd">																----------------</span>
+<span class="sd">                                                                strain_amp</span>
+<span class="sd">                                                                strain_phase.</span>
 
-<span class="sd">                    5. load_data								: Load the multipole and distance data of the simulations.</span>
+<span class="sd">                    load_data								:	Load the multipole and distance data of the simulations.</span>
 
-<span class="sd">                                                                                                              Assignes/Updates:</span>
-<span class="sd">                                                                                                              -----</span>
-<span class="sd">                                                                                                              1. distance.</span>
-<span class="sd">                                                                                                              2. dinit.</span>
-<span class="sd">                                                                                                              3. mass1.</span>
-<span class="sd">                                                                                                              4. mass2.</span>
-<span class="sd">                                                                                                              5. merger_index.</span>
-<span class="sd">                                                                                                              6. merger_time.</span>
-<span class="sd">                                                                                                              7. merger_distance.</span>
-<span class="sd">                                                                                                              8. true_merger_distance.</span>
-<span class="sd">                                                                                                              9. data_length.</span>
-<span class="sd">                                                                                                              10. data_duration.</span>
-<span class="sd">                                                                                                              11. multipoles.</span>
-<span class="sd">                                                                                                              12. mass_multipoles.</span>
-<span class="sd">                                                                                                              13. spin_multipoles.</span>
+<span class="sd">																Assignes/Updates</span>
+<span class="sd">                                                                ----------------</span>
+<span class="sd">                                                                distance.</span>
+<span class="sd">																dinit.</span>
+<span class="sd">																mass1.</span>
+<span class="sd">																mass2.</span>
+<span class="sd">																merger_index.</span>
+<span class="sd">																merger_time.</span>
+<span class="sd">																merger_distance.</span>
+<span class="sd">																true_merger_distance.</span>
+<span class="sd">																data_length.</span>
+<span class="sd">																data_duration.</span>
+<span class="sd">																multipoles.</span>
+<span class="sd">																mass_multipoles.</span>
+<span class="sd">																spin_multipoles.</span>
 
-<span class="sd">                    6. load_strain								: Load the strain data of the simulations from waveform directories.</span>
+<span class="sd">                    load_strain								:	Load the strain data of the simulations from waveform directories.</span>
 
-<span class="sd">                                                                                                              Assignes/Updates</span>
-<span class="sd">                                                                                                              -----</span>
-<span class="sd">                                                                                                              1. strain.</span>
-<span class="sd">                                                                                                              2. strain_amp.</span>
-<span class="sd">                                                                                                              3. strain_phase.</span>
-<span class="sd">                                                                                                              4. strain_shift.</span>
+<span class="sd">                                                                Assignes/Updates</span>
+<span class="sd">                                                                ----------------</span>
+<span class="sd">                                                                strain.</span>
+<span class="sd">                                                                strain_amp.</span>
+<span class="sd">                                                                strain_phase.</span>
+<span class="sd">                                                                strain_shift.</span>
 
-<span class="sd">                    7. load_shears								: Load the shear data at a pole of respective horizons of the simulations from waveform directories.</span>
+<span class="sd">					load_shears								:	Load the shear data at a pole of respective horizons of the simulations from waveform directories.</span>
 
-<span class="sd">                                                                                                              Assignes/Updates</span>
-<span class="sd">                                                                                                              -----</span>
-<span class="sd">                                                                                                              1. shear.</span>
-<span class="sd">                                                                                                              2. shear_amp.</span>
-<span class="sd">                                                                                                              3. shear_phase.</span>
-<span class="sd">                                                                                                              4. shear_shift.</span>
+<span class="sd">                                                                Assignes/Updates</span>
+<span class="sd">																----------------</span>
+<span class="sd">                                                                shear.</span>
+<span class="sd">                                                                shear_amp.</span>
+<span class="sd">                                                                shear_phase.</span>
+<span class="sd">                                                                shear_shift.</span>
 
-<span class="sd">                    8. ret_horizon_radii						: A method to retrieve the areal radii of the horizons.</span>
+<span class="sd">                    ret_horizon_radii						:	A method to retrieve the areal radii of the horizons.</span>
 
-<span class="sd">                                                                                                              Assigns/Updates</span>
-<span class="sd">                                                                                                              -----</span>
-<span class="sd">                                                                                                              1. areal_radii</span>
+<span class="sd">																Assigns/Updates</span>
+<span class="sd">																---------------</span>
+<span class="sd">                                                                areal_radii</span>
 
-<span class="sd">                    9. _resize_multipoles						: Private method to resize the sim.multipoles after retrieving the length of distance.</span>
-<span class="sd">                    10. _ifreversal								 : Provate method to reverse the data of BH 1 and 2 if mass2 &gt; mass1.</span>
+<span class="sd">                    _resize_multipoles						:	Private method to resize the sim.multipoles after retrieving the length of distance.</span>
+<span class="sd">                    _ifreversal								:	Private method to reverse the data of BH 1 and 2 if mass2 &gt; mass1.</span>
 
 
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -447,13 +475,16 @@
 <span class="sd">        Inputs</span>
 <span class="sd">		-------</span>
 
-<span class="sd">        1. tjn			  (float)  : The definition of time end of junk radiation. Default is 200.</span>
+<span class="sd">        tjn :	float</span>
+<span class="sd">				The definition of time end of junk radiation. Default is 200.</span>
 
 <span class="sd">        Computes</span>
 <span class="sd">		---------</span>
 
-<span class="sd">        1. self.indjn	   (dict)  : A dictionary containing the index location corresponding to timestamp tjn.</span>
-<span class="sd">        2. self.distjn	   (dict)  : A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.</span>
+<span class="sd">        self.indjn :	dict</span>
+<span class="sd">						A dictionary containing the index location corresponding to timestamp tjn.</span>
+<span class="sd">        self.distjn :	dict</span>
+<span class="sd">						A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.</span>
 
 <span class="sd">        &#39;&#39;&#39;</span>
 
@@ -608,23 +639,23 @@
 <div class="viewcode-block" id="sim.load_data"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Load data of the simulations.</span>
 
-<span class="sd">                ------------------------</span>
-<span class="sd">                **Data is assigned to:**</span>
+<span class="sd">                Data is assigned to</span>
+<span class="sd">				--------------------</span>
 
-<span class="sd">                        1. multipoles.</span>
-<span class="sd">                        2. mass_multipoles.</span>
-<span class="sd">                        3. spin_multipoles.</span>
-<span class="sd">                        4. timeaxis.</span>
-<span class="sd">                        5. mass1.</span>
-<span class="sd">                        6. mass2.</span>
-<span class="sd">                        7. mass3.</span>
-<span class="sd">                        8. delta_t.</span>
-<span class="sd">                        9. distance.</span>
-<span class="sd">                        10. merger_ind.</span>
-<span class="sd">                        11. actmerger_time.</span>
-<span class="sd">                        12. dinit.</span>
-<span class="sd">                        13. data_length</span>
-<span class="sd">                        14. dist_data_length</span>
+<span class="sd">                        multipoles :	list</span>
+<span class="sd">                        mass_multipoles :	list</span>
+<span class="sd">                        spin_multipoles :	list</span>
+<span class="sd">                        timeaxis :	list</span>
+<span class="sd">                        mass1 :	float</span>
+<span class="sd">                        mass2 :	float</span>
+<span class="sd">                        mass3 :	float</span>
+<span class="sd">                        delta_t :	float</span>
+<span class="sd">						distance :	list</span>
+<span class="sd">                        merger_ind :	int</span>
+<span class="sd">                        actmerger_time :	float</span>
+<span class="sd">                        dinit :	float</span>
+<span class="sd">                        data_length :	int</span>
+<span class="sd">                        dist_data_length :	int</span>
 
 <span class="sd">                        &#39;&#39;&#39;</span>
         <span class="sd">&#39;&#39;&#39; Common variables &#39;&#39;&#39;</span>

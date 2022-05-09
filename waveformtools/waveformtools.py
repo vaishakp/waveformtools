@@ -1056,6 +1056,8 @@ def cleandata(
 		message(
 			'The data will be interpolated to bridge the gaps',
 			message_verbosity=2)
+
+		from scipy import interpolate
 		# Interpolate the data to fill in the discontinuities
 		t_final		= time[-1]
 		t_initial	= time[0]
