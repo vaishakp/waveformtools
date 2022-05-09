@@ -19,7 +19,8 @@ isort:
   script:
     - isort . --check-only
   only:
-  - merge_requests
+  #- merge_requests
+  - main
 
 black:
   stage: linting
@@ -27,7 +28,8 @@ black:
   script:
     - black --check .
   only:
-    - merge-requests
+    #- merge-requests
+    - main
 
 flake8:
   stage: linting
@@ -35,7 +37,8 @@ flake8:
   script:
     - flake8 .
   only:
-    - merge-requests
+    #- merge-requests
+    - main
 
 pylint:
   stage: linting
@@ -43,7 +46,8 @@ pylint:
   script:
     - find . -type f -iname "*.py" | xargs pylint
   only:
-    - merge_requests
+    #- merge_requests
+    - main
 #test:
 #  stage: linting
 #  allow_failure: True 
@@ -111,6 +115,8 @@ prepare:
     - echo $PYTHONPATH
   # - pip install pylint flake8
   # - conda install pylint flake8
+  only:
+    - main
 
 
 
