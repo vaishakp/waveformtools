@@ -10,6 +10,7 @@
 
 stages:
   - linting
+  - predeploy
   - deploy
 
 isort:
@@ -43,25 +44,26 @@ pylint:
     - find . -type f -iname "*.py" | xargs pylint
   only:
     - merge_requests
-test:
-  stage: linting
-  allow_failure: True 
-  script:
+#test:
+#  stage: linting
+#  allow_failure: True 
+#  script:
 # Lint code   
-    - pylint waveformtools
-    - flake8 waveformtools --statistics --count
+ #   - pylint waveformtools
+  #  - flake8 waveformtools --statistics --count
 # Test code    
 #    - pytest
 
 
+prepare:
+  stage: predeploy
 
-
-# image: python:3.9-alpine
+   # image: python:3.9-alpine
 # Note: only 3.9 works with rinohtype
 
 
 
-image: continuumio/miniconda3:latest
+  image: continuumio/miniconda3:latest
 #image: python:3.7-alpine3.9
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -82,9 +84,6 @@ image: continuumio/miniconda3:latest
 #job_name: build_pages
 #  variables:
 #    CI_DEBUG_TRACE: "true"
-
-
-before_script:
   - uname -a
   - python --version  # For debugging
   - which python
@@ -135,5 +134,4 @@ pages:
     - public
   only:
   - main
-  - test
 
