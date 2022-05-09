@@ -18,8 +18,8 @@ isort:
   script:
     - isort .
   only:
-  #- merge_requests
-  - main
+  - merge_requests
+  #- main
 
 black:
   stage: linting
@@ -27,8 +27,8 @@ black:
   script:
     - black .
   only:
-    #- merge-requests
-    - main
+    - merge-requests
+    #- main
 
 flake8:
   stage: linting
@@ -37,8 +37,8 @@ flake8:
   script:
     - flake8 .
   only:
-    #- merge-requests
-    - main
+    - merge-requests
+    #- main
 
 pylint:
   stage: linting
@@ -47,8 +47,8 @@ pylint:
   script:
     - find . -type f -iname "*.py" | xargs pylint
   only:
-    #- merge_requests
-    - main
+    - merge_requests
+    #- main
 #test:
 #  stage: linting
 #  allow_failure: True 
