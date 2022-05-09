@@ -17,7 +17,7 @@ isort:
   stage: linting
   image: registry.gitlab.com/mafda/python-linting
   script:
-    - isort . --check-only
+    - isort .
   only:
   #- merge_requests
   - main
@@ -26,7 +26,7 @@ black:
   stage: linting
   image: registry.gitlab.com/mafda/python-linting
   script:
-    - black --check .
+    - black .
   only:
     #- merge-requests
     - main
