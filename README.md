@@ -93,10 +93,14 @@ This module has the following dependencies:
 * Standard packages (come with full anaconda installation)
     * [`numpy`](http://www.numpy.org/)
     * [`scipy`](http://scipy.org/)
+    * [`statistics'](https://docs.python.org/3/library/statistics.html)
     * [`matplotlib`](http://matplotlib.org/)
     * [`h5py`](http://www.h5py.org/)
 * The pyCBC module
     * [`pyCBC`](https://pycbc.org/).
+* Third party modules
+    * [`termcolor'](https://pypi.org/project/termcolor/)
+
 
 
 ## Installing this module
@@ -104,19 +108,29 @@ This module has the following dependencies:
 
 ### Recommended method
 
-I recommend installing this module simply by cloning it and adding the path to the $PYTHONPATH variable
+I recommend installing this module using anaconda 3. 
+
+* First, clone this repository:
 
 ```sh
 git clone https://gitlab.com/vaishakp/waveformtools.git
+
+```
+
+* Second, create an environment with dependencies resolved.
+```sh
+conda create env -f docs/environment.yml
+```
+
+* Third, add the path to the $PYTHONPATH variable
+
+```sh
 PYTHONPATH="/path/to/this/cloned/repo":$PYTHONPATH
 export PYTHONPATH
 ```
 
-And resolving the dependencies manually by using the anaconda distribution.
+* Alternatively, steps 1-2 can be replaced by a manual environment creation and conda package installation.
 
-```sh
-conda install ....
-```
 
 ### Manual method
 
