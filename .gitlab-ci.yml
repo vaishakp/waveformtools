@@ -170,16 +170,16 @@ pages:
   # - pip install pylint flake8
   # - conda install pylint flake8
 
-    - pip install -U sphinx sphinx-rtd-theme rinohtype numpydoc
+    #- pip install -U sphinx sphinx-rtd-theme rinohtype numpydoc
     #- pip install rinohtype numpydoc
     #- pip install -r requirements.txt
-    #- pip install -U 'sphinx==3.5.4' 'sphinx-rtd-theme==0.4.3' 'rinohtype==0.5.2'
+    - pip install -U 'sphinx==3.5.4' 'sphinx-rtd-theme==0.4.3' 'rinohtype==0.5.2' numpydoc
     #- pip install sphinx-rtd-theme rinohtype
-    - sphinx-build -b html docs/source public
+    #- sphinx-build -b html docs/source public
     #- which sphinx
-    #- cd docs
-    #- make html
-    #- mv build/html/ ../public/
+    - cd docs
+    - make html
+    - mv build/html/ ../public/
   artifacts:
     paths:
       - public
