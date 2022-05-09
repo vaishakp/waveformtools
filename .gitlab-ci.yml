@@ -43,7 +43,7 @@ pylint:
   only:
     - merge_requests
 test:
-  stage: Lint
+  stage: linting
   allow_failure: True 
   script:
 # Lint code   
