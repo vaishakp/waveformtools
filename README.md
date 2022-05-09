@@ -93,13 +93,13 @@ This module has the following dependencies:
 * Standard packages (come with full anaconda installation)
     * [`numpy`](http://www.numpy.org/)
     * [`scipy`](http://scipy.org/)
-    * [`statistics'](https://docs.python.org/3/library/statistics.html)
+    * [`statistics`](https://docs.python.org/3/library/statistics.html)
     * [`matplotlib`](http://matplotlib.org/)
     * [`h5py`](http://www.h5py.org/)
 * The pyCBC module
     * [`pyCBC`](https://pycbc.org/).
 * Third party modules
-    * [`termcolor'](https://pypi.org/project/termcolor/)
+    * [`termcolor`](https://pypi.org/project/termcolor/)
 
 
 
