@@ -4,14 +4,14 @@
    contain the root `toctree` directive.
  
 Welcome to waveformtools' documentation!
-=========================================
+========================================
 
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   README
+   README.md
    basic_features
    api
 

@@ -7,6 +7,4 @@ Package API
    :recursive:
 
    waveformtools
-   simulations
-   waveforms
    
