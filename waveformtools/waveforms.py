@@ -2,19 +2,15 @@
 # A Class for handling the waveform data
 ##########################################################################
 
+
 class Psi:
-    ''' A class for handling waveforms.'''
+    """ A class for handling waveforms."""
 
-    def __init__(self,
-                 timeaxis=None,
-                 wavedata=None,
-                 base_dir=None,
-                 data_dir=None,
-                 filename=None):
+    def __init__(self, timeaxis=None, wavedata=None, base_dir=None, data_dir=None, filename=None):
 
-        self.base_dir = base_dir or ''
-        self.data_dir = data_dir or ''
-        self.filename = filename or ''
+        self.base_dir = base_dir or ""
+        self.data_dir = data_dir or ""
+        self.filename = filename or ""
         self.timeaxis = timeaxis or []
         self.wavedata = wavedata or []
 
@@ -28,14 +24,14 @@ class Psi:
             index = 0
             token = -1
 
-            while (token < 0 and index < len(keys)):
+            while token < 0 and index < len(keys):
                 key = keys[index]
-                token = key.find('Psi')
+                token = key.find("Psi")
                 # message(key)
                 index += 1
 
             if token < 0:
-                message('Waveform dataset not found')
+                message("Waveform dataset not found")
             else:
                 message(key)
 
@@ -51,5 +47,4 @@ class Psi:
 
     # @base_dir.setter
     # def base_dir(self, base_dir):
-    #	 self.__base_dir = base_dir
-
+    # 	 self.__base_dir = base_dir

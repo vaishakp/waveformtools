@@ -14,10 +14,10 @@ import os
 import sys
 
 import sphinx
+from recommonmark.parser import CommonMarkParser
+
 import waveformtools
 from waveformtools import get_version
-
-from recommonmark.parser import CommonMarkParser
 
 # -- Project information -----------------------------------------------------
 
@@ -25,9 +25,9 @@ waveformtools_version = get_version()
 
 # -- Project information -----------------------------------------------------
 
-project = 'waveformtools'
-copyright = '2020, Vaishak Prasad'
-author = 'Vaishak Prasad'
+project = "waveformtools"
+copyright = "2020, Vaishak Prasad"
+author = "Vaishak Prasad"
 
 # The short X.Y version
 version = waveformtools_version
@@ -93,14 +93,14 @@ else:
 html_theme = "sphinx_rtd_theme"
 
 html_theme_options = {
-    'analytics_id': 'G-XXXXXXXXXX',  #  Provided by Google in your dashboard
+    "analytics_id": "G-XXXXXXXXXX",  #  Provided by Google in your dashboard
     #'analytics_anonymize_ip': False,
     #'logo_only': False,
-    'display_version': True,
+    "display_version": True,
     #'prev_next_buttons_location': 'bottom',
     #'style_external_links': False,
     #'vcs_pageview_mode': '',
-    'style_nav_header_background': 'green',
+    "style_nav_header_background": "green",
     # Toc options
     #'collapse_navigation': True,
     #'sticky_navigation': True,
