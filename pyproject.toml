@@ -4,6 +4,6 @@ line-length = 120
 [tool.isort]
 profile = "black"
 
-[tool.pylint]
-[MESSAGES CONTROL]
-disable=W0311
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 120
+disable= "W0311"
