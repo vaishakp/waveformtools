@@ -2,6 +2,8 @@
 # A Class for handling the waveform data
 ##########################################################################
 
+import numpy as np
+import h5py
 
 class Psi:
     """ A class for handling waveforms."""
