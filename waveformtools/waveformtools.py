@@ -118,13 +118,13 @@ def save_obj(
 	-----------
 
 	obj						:	object
-															The python object to be saved.
+								The python object to be saved.
 	name					:	string
-															The filename.
+								The filename.
 	obj_dir					:	string
-															The path to directory to be saved in. Defaults to PWD
+								The path to directory to be saved in. Defaults to PWD
 	protocol				:	int
-															The protocol to be used to save. Default is binary.
+								The protocol to be used to save. Default is binary.
 
 	Protocols
 	----------
