@@ -16,7 +16,7 @@ isort:
   image: registry.gitlab.com/mafda/python-linting
   script:
     - isort . --check-only
-  only
+  only:
   - merge_requests
 
 black:
