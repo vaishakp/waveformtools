@@ -1208,6 +1208,8 @@
 		<span class="n">message</span><span class="p">(</span>
 			<span class="s1">&#39;The data will be interpolated to bridge the gaps&#39;</span><span class="p">,</span>
 			<span class="n">message_verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+		<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
 		<span class="c1"># Interpolate the data to fill in the discontinuities</span>
 		<span class="n">t_final</span>		<span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 		<span class="n">t_initial</span>	<span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
