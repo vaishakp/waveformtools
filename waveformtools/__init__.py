@@ -16,7 +16,6 @@ sim : Base class for NR data
 import os
 import sys
 
-import numpy as np
 
 # __version__ = importlib_metadata.version(__name__)
 
