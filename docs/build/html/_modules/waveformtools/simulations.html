@@ -150,18 +150,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for waveformtools.simulations</h1><div class="highlight"><pre>
-<span></span><span class="sd">&#39;&#39;&#39; Data container for Numerical Relativity data &#39;&#39;&#39;</span>
+<span></span><span class="sd">&quot;&quot;&quot; Data container for Numerical Relativity data &quot;&quot;&quot;</span>
 
 <span class="c1">###############################################</span>
 <span class="c1"># Imports</span>
 <span class="c1">##############################################</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="o">*</span>
+
 
 <div class="viewcode-block" id="sim"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim">[docs]</a><span class="k">class</span> <span class="nc">sim</span><span class="p">:</span>
 
-    <span class="sd">&#39;&#39;&#39; A data container for simulation data.</span>
+    <span class="sd">&quot;&quot;&quot; A data container for simulation data.</span>
 
 <span class="sd">    Arrtibutes</span>
 <span class="sd">	-----------</span>
@@ -324,38 +326,40 @@
 <span class="sd">                    _ifreversal								:	Private method to reverse the data of BH 1 and 2 if mass2 &gt; mass1.</span>
 
 
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="c1"># Variables for initialization.</span>
-                 <span class="n">aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">multipoles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">mass_multipoles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">spin_multipoles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">mass1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">mass2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">mass3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">merger_ind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">actmerger_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">timeaxis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">dinit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">distance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">ROOTDIR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">WAVDIR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">simdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">datadir</span><span class="o">=</span><span class="s1">&#39;data/primary/&#39;</span><span class="p">,</span>
-                 <span class="n">data_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">dist_data_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">comm_data_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">strain_dir</span><span class="o">=</span><span class="s1">&#39;output/&#39;</span><span class="p">,</span>
-                 <span class="n">strain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">strain_phase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">strain_frequency</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">strain_amplitude</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">strain_indexshifts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">indexjn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">distjn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="c1"># Variables for initialization.</span>
+        <span class="n">aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">multipoles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mass_multipoles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">spin_multipoles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mass1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mass2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mass3</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">merger_ind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">actmerger_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">timeaxis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dinit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">distance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ROOTDIR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">WAVDIR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">simdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">datadir</span><span class="o">=</span><span class="s2">&quot;data/primary/&quot;</span><span class="p">,</span>
+        <span class="n">data_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dist_data_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">comm_data_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">strain_dir</span><span class="o">=</span><span class="s2">&quot;output/&quot;</span><span class="p">,</span>
+        <span class="n">strain</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">strain_phase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">strain_frequency</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">strain_amplitude</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">strain_indexshifts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">indexjn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">distjn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
 
         <span class="c1"># Load the variables at initialization.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span> <span class="o">=</span> <span class="n">aliases</span> <span class="ow">or</span> <span class="p">{}</span>
@@ -389,94 +393,75 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Compute and return the data duration of the simulations.&#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot;Compute and return the data duration of the simulations.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">comm_data_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the duration of the common data (multipole and Bhdiag/distance) of the simulations. &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the duration of the common data (multipole and Bhdiag/distance) of the simulations. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">pm_data_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the duration of post-merger data present in the simulations.&#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_duration</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">merger_time</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the duration of post-merger data present in the simulations.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_duration</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_time</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">pm_data_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the post merger data length avaialable for all simulations. &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the post merger data length avaialable for all simulations. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">merger_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the distance at the merger index of the simulations. &#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the distance at the merger index of the simulations. &quot;&quot;&quot;</span>
         <span class="n">merger_dist</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">merger_dist</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                    <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]]})</span>
+                <span class="n">merger_dist</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]]})</span>
             <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
                 <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">merger_dist</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                        <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]})</span>
+                    <span class="n">merger_dist</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]})</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">message</span><span class="p">(</span>
-                        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> :Distance upto merger not defined. Setting final value&quot;</span> <span class="o">%</span>
-                        <span class="n">alias</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> :Distance upto merger not defined. Setting final value&quot;</span> <span class="o">%</span> <span class="n">alias</span><span class="p">)</span>
                     <span class="n">merger_dist</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]})</span>
         <span class="k">return</span> <span class="n">merger_dist</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">true_merger_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the true (i.e. non-normalized) distance at merger for the simulations.&#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dinit</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">merger_distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the true (i.e. non-normalized) distance at merger for the simulations.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dinit</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sampling_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the sampling frequency of the simulations. &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="mf">1.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the sampling frequency of the simulations. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">merger_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the cctk_time stamp at the merger for the simulations. &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the cctk_time stamp at the merger for the simulations. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">massratio</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the massratio of the simulations. &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the massratio of the simulations. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">chirpmass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the chirp mass of the simulations. &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span><span class="o">**</span><span class="p">(</span><span class="mf">3.</span> <span class="o">/</span>
-                                              <span class="mi">5</span><span class="p">))</span> <span class="o">/</span>
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">+</span>
-                 <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span>
-                                      <span class="mi">5</span><span class="p">)</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the chirp mass of the simulations. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">alias</span><span class="p">:</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span> <span class="o">**</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mi">5</span><span class="p">))</span>
+            <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span>
+        <span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">totalmass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the total mass of the simulations. &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the total mass of the simulations. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
 <div class="viewcode-block" id="sim.calc_junkend"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_junkend">[docs]</a>    <span class="k">def</span> <span class="nf">calc_junkend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tjn</span><span class="o">=</span><span class="mf">200.0</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute the indices and the starting distances of the system at timestamp t = 200.</span>
+        <span class="sd">&quot;&quot;&quot; Compute the indices and the starting distances of the system at timestamp t = 200.</span>
 
 <span class="sd">        Inputs</span>
 <span class="sd">		-------</span>
@@ -492,7 +477,7 @@
 <span class="sd">        self.distjn :	dict</span>
 <span class="sd">						A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.</span>
 
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Find the starting distance at t = 200M.</span>
         <span class="c1"># Initialize the directory.</span>
@@ -503,14 +488,14 @@
             <span class="n">indjn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span> <span class="n">tjn</span><span class="p">))</span>
             <span class="c1"># Update the sjn dictionary.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">indjn</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="n">indjn</span><span class="p">})</span>
-            <span class="c1">#message(len(sim_A.distance[alias]), ind)</span>
+            <span class="c1"># message(len(sim_A.distance[alias]), ind)</span>
             <span class="c1"># Update th djn dictionary.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">distjn</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="n">indjn</span><span class="p">]})</span>
         <span class="c1"># Return 1</span>
         <span class="k">return</span> <span class="mi">1</span></div>
 
 <div class="viewcode-block" id="sim.calc_ref_multipoles"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_ref_multipoles">[docs]</a>    <span class="k">def</span> <span class="nf">calc_ref_multipoles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and assign the reference (l=2) multuipoles to sim.ref_multipoles of the simulations. &#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot; Compute and assign the reference (l=2) multuipoles to sim.ref_multipoles of the simulations. &quot;&quot;&quot;</span>
         <span class="n">refmult</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
@@ -521,10 +506,14 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">ml_length</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][:</span><span class="n">ml_length</span><span class="p">]</span>
             <span class="n">message</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="sd">&#39;&#39;&#39;Unpack data as 1d arrays&#39;&#39;&#39;</span>
-            <span class="n">time</span><span class="p">,</span> <span class="n">Ml12</span><span class="p">,</span> <span class="n">Ml22</span><span class="p">,</span> <span class="n">Ml32</span> <span class="o">=</span> <span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span>
-                                                                                  <span class="mi">1</span><span class="p">],</span> <span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">2</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]:,</span> <span class="mi">3</span><span class="p">]</span>
-            <span class="sd">&#39;&#39;&#39;Compute delta multipoles&#39;&#39;&#39;</span>
+            <span class="sd">&quot;&quot;&quot;Unpack data as 1d arrays&quot;&quot;&quot;</span>
+            <span class="n">time</span><span class="p">,</span> <span class="n">Ml12</span><span class="p">,</span> <span class="n">Ml22</span><span class="p">,</span> <span class="n">Ml32</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">2</span><span class="p">],</span>
+                <span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="sd">&quot;&quot;&quot;Compute delta multipoles&quot;&quot;&quot;</span>
             <span class="n">Ml12_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml12</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">100</span><span class="p">])</span>
             <span class="n">Ml22_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml22</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">100</span><span class="p">])</span>
             <span class="n">Ml32_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml32</span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">:])</span>
@@ -533,7 +522,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">ref_multipoles</span> <span class="o">=</span> <span class="n">refmult</span></div>
 
 <div class="viewcode-block" id="sim.calc_log_multipoles"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_log_multipoles">[docs]</a>    <span class="k">def</span> <span class="nf">calc_log_multipoles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. &#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot; Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. &quot;&quot;&quot;</span>
         <span class="n">log_mult</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
             <span class="n">message</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
@@ -543,93 +532,43 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">ml_length</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][:</span><span class="n">ml_length</span><span class="p">]</span>
             <span class="n">message</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="n">log_mult</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span>
-                                          <span class="mi">0</span><span class="p">],</span>
-                                     <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span>
-                                                              <span class="mi">1</span><span class="p">])),</span>
-                                     <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span>
-                                                              <span class="mi">2</span><span class="p">])),</span>
-                                     <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]:,</span>
-                                                              <span class="mi">3</span><span class="p">]))]})</span>
+            <span class="n">log_mult</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">alias</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">1</span><span class="p">])),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">2</span><span class="p">])),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">])),</span>
+                    <span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_multipoles</span> <span class="o">=</span> <span class="n">log_mult</span></div>
 
 <div class="viewcode-block" id="sim.calc_delta_multipoles"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_delta_multipoles">[docs]</a>    <span class="k">def</span> <span class="nf">calc_delta_multipoles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) &#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) &quot;&quot;&quot;</span>
         <span class="n">log_deltmult</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
             <span class="n">message</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
             <span class="c1"># Multipole data</span>
             <span class="n">item</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span>
-            <span class="sd">&#39;&#39;&#39;Length of multipoles&#39;&#39;&#39;</span>
+            <span class="sd">&quot;&quot;&quot;Length of multipoles&quot;&quot;&quot;</span>
             <span class="n">ml_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
 
-            <span class="sd">&#39;&#39;&#39;Check the lengths of multipole and distance data&#39;&#39;&#39;</span>
+            <span class="sd">&quot;&quot;&quot;Check the lengths of multipole and distance data&quot;&quot;&quot;</span>
             <span class="k">if</span> <span class="n">ml_length</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]:</span>
-                <span class="sd">&#39;&#39;&#39;Reset the datalengths&#39;&#39;&#39;</span>
+                <span class="sd">&quot;&quot;&quot;Reset the datalengths&quot;&quot;&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">ml_length</span>
-                <span class="sd">&#39;&#39;&#39;Resize the distance array&#39;&#39;&#39;</span>
+                <span class="sd">&quot;&quot;&quot;Resize the distance array&quot;&quot;&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][:</span><span class="n">ml_length</span><span class="p">]</span>
             <span class="n">message</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="sd">&#39;&#39;&#39;Unpack data as 1d arrays&#39;&#39;&#39;</span>
-            <span class="n">time</span><span class="p">,</span> <span class="n">Ml12</span><span class="p">,</span> <span class="n">Ml22</span><span class="p">,</span> <span class="n">Ml32</span> <span class="o">=</span> <span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span>
-                                                                                  <span class="mi">1</span><span class="p">],</span> <span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">2</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]:,</span> <span class="mi">3</span><span class="p">]</span>
-            <span class="sd">&#39;&#39;&#39;Compute delta multipoles&#39;&#39;&#39;</span>
-            <span class="n">Ml12_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml12</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">100</span><span class="p">])</span>
-            <span class="n">Ml22_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml22</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">100</span><span class="p">])</span>
-            <span class="n">Ml32_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml32</span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">:])</span>
-            <span class="n">dMl12</span> <span class="o">=</span> <span class="n">Ml12</span> <span class="o">-</span> <span class="n">Ml12_ref</span>
-            <span class="n">dMl22</span> <span class="o">=</span> <span class="n">Ml22</span> <span class="o">-</span> <span class="n">Ml22_ref</span>
-            <span class="n">dMl32</span> <span class="o">=</span> <span class="n">Ml32</span> <span class="o">-</span> <span class="n">Ml32_ref</span>
-
-            <span class="n">log_deltmult</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">time</span><span class="p">,</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">dMl12</span><span class="p">)),</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">dMl22</span><span class="p">)),</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">dMl32</span><span class="p">))]})</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">log_deltamultipoles</span> <span class="o">=</span> <span class="n">log_deltmult</span></div>
-
-<div class="viewcode-block" id="sim.calc_log_multipoles2"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_log_multipoles2">[docs]</a>    <span class="k">def</span> <span class="nf">calc_log_multipoles2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. &#39;&#39;&#39;</span>
-        <span class="n">log_mult</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
-            <span class="n">message</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span>
-            <span class="n">ml_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">ml_length</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">ml_length</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][:</span><span class="n">ml_length</span><span class="p">]</span>
-            <span class="n">message</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="n">log_mult</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span>
-                                          <span class="mi">0</span><span class="p">],</span>
-                                     <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span>
-                                                  <span class="mi">1</span><span class="p">]),</span>
-                                     <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span>
-                                                  <span class="mi">2</span><span class="p">]),</span>
-                                     <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]:,</span>
-                                                  <span class="mi">3</span><span class="p">])]})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log_multipoles2</span> <span class="o">=</span> <span class="n">log_mult</span></div>
-
-<div class="viewcode-block" id="sim.calc_delta_multipoles2"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_delta_multipoles2">[docs]</a>    <span class="k">def</span> <span class="nf">calc_delta_multipoles2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) &#39;&#39;&#39;</span>
-        <span class="n">log_deltmult</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
-            <span class="n">message</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
-            <span class="c1"># Multipole data</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span>
-            <span class="sd">&#39;&#39;&#39;Length of multipoles&#39;&#39;&#39;</span>
-            <span class="n">ml_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
-
-            <span class="sd">&#39;&#39;&#39;Check the lengths of multipole and distance data&#39;&#39;&#39;</span>
-            <span class="k">if</span> <span class="n">ml_length</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]:</span>
-                <span class="sd">&#39;&#39;&#39;Reset the datalengths&#39;&#39;&#39;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">ml_length</span>
-                <span class="sd">&#39;&#39;&#39;Resize the distance array&#39;&#39;&#39;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][:</span><span class="n">ml_length</span><span class="p">]</span>
-            <span class="n">message</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="sd">&#39;&#39;&#39;Unpack data as 1d arrays&#39;&#39;&#39;</span>
-            <span class="n">time</span><span class="p">,</span> <span class="n">Ml12</span><span class="p">,</span> <span class="n">Ml22</span><span class="p">,</span> <span class="n">Ml32</span> <span class="o">=</span> <span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span>
-                                                                                  <span class="mi">1</span><span class="p">],</span> <span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">2</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]:,</span> <span class="mi">3</span><span class="p">]</span>
-            <span class="sd">&#39;&#39;&#39;Compute delta multipoles&#39;&#39;&#39;</span>
+            <span class="sd">&quot;&quot;&quot;Unpack data as 1d arrays&quot;&quot;&quot;</span>
+            <span class="n">time</span><span class="p">,</span> <span class="n">Ml12</span><span class="p">,</span> <span class="n">Ml22</span><span class="p">,</span> <span class="n">Ml32</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">2</span><span class="p">],</span>
+                <span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="sd">&quot;&quot;&quot;Compute delta multipoles&quot;&quot;&quot;</span>
             <span class="n">Ml12_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml12</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">100</span><span class="p">])</span>
             <span class="n">Ml22_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml22</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">100</span><span class="p">])</span>
             <span class="n">Ml32_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml32</span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">:])</span>
@@ -638,12 +577,72 @@
             <span class="n">dMl32</span> <span class="o">=</span> <span class="n">Ml32</span> <span class="o">-</span> <span class="n">Ml32_ref</span>
 
             <span class="n">log_deltmult</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">dMl12</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">dMl22</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">dMl32</span><span class="p">)]})</span>
+                <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">dMl12</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">dMl22</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="o">-</span><span class="n">dMl32</span><span class="p">))]}</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_deltamultipoles</span> <span class="o">=</span> <span class="n">log_deltmult</span></div>
+
+<div class="viewcode-block" id="sim.calc_log_multipoles2"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_log_multipoles2">[docs]</a>    <span class="k">def</span> <span class="nf">calc_log_multipoles2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. &quot;&quot;&quot;</span>
+        <span class="n">log_mult</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span>
+            <span class="n">ml_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">ml_length</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">ml_length</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][:</span><span class="n">ml_length</span><span class="p">]</span>
+            <span class="n">message</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">log_mult</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">alias</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">1</span><span class="p">]),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">2</span><span class="p">]),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]),</span>
+                    <span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_multipoles2</span> <span class="o">=</span> <span class="n">log_mult</span></div>
+
+<div class="viewcode-block" id="sim.calc_delta_multipoles2"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_delta_multipoles2">[docs]</a>    <span class="k">def</span> <span class="nf">calc_delta_multipoles2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) &quot;&quot;&quot;</span>
+        <span class="n">log_deltmult</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+            <span class="c1"># Multipole data</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span>
+            <span class="sd">&quot;&quot;&quot;Length of multipoles&quot;&quot;&quot;</span>
+            <span class="n">ml_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+
+            <span class="sd">&quot;&quot;&quot;Check the lengths of multipole and distance data&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">ml_length</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]:</span>
+                <span class="sd">&quot;&quot;&quot;Reset the datalengths&quot;&quot;&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">ml_length</span>
+                <span class="sd">&quot;&quot;&quot;Resize the distance array&quot;&quot;&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][:</span><span class="n">ml_length</span><span class="p">]</span>
+            <span class="n">message</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="sd">&quot;&quot;&quot;Unpack data as 1d arrays&quot;&quot;&quot;</span>
+            <span class="n">time</span><span class="p">,</span> <span class="n">Ml12</span><span class="p">,</span> <span class="n">Ml22</span><span class="p">,</span> <span class="n">Ml32</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="mi">2</span><span class="p">],</span>
+                <span class="n">item</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="sd">&quot;&quot;&quot;Compute delta multipoles&quot;&quot;&quot;</span>
+            <span class="n">Ml12_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml12</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">100</span><span class="p">])</span>
+            <span class="n">Ml22_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml22</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">100</span><span class="p">])</span>
+            <span class="n">Ml32_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Ml32</span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">:])</span>
+            <span class="n">dMl12</span> <span class="o">=</span> <span class="n">Ml12</span> <span class="o">-</span> <span class="n">Ml12_ref</span>
+            <span class="n">dMl22</span> <span class="o">=</span> <span class="n">Ml22</span> <span class="o">-</span> <span class="n">Ml22_ref</span>
+            <span class="n">dMl32</span> <span class="o">=</span> <span class="n">Ml32</span> <span class="o">-</span> <span class="n">Ml32_ref</span>
+
+            <span class="n">log_deltmult</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">dMl12</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">dMl22</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">dMl32</span><span class="p">)]})</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">log_deltamultipoles2</span> <span class="o">=</span> <span class="n">log_deltmult</span></div>
 
 <div class="viewcode-block" id="sim.load_data"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Load data of the simulations.</span>
+        <span class="sd">&quot;&quot;&quot; Load data of the simulations.</span>
 
 <span class="sd">                Data is assigned to</span>
 <span class="sd">				--------------------</span>
@@ -663,8 +662,8 @@
 <span class="sd">                        data_length :	int</span>
 <span class="sd">                        dist_data_length :	int</span>
 
-<span class="sd">                        &#39;&#39;&#39;</span>
-        <span class="sd">&#39;&#39;&#39; Common variables &#39;&#39;&#39;</span>
+<span class="sd">                        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Common variables &quot;&quot;&quot;</span>
         <span class="n">multipoles_one</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">masses_one</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">masses_one_all</span> <span class="o">=</span> <span class="p">[]</span>
@@ -697,7 +696,7 @@
         <span class="n">all_spin_multipoles_3</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># simulation directories.</span>
-        <span class="n">sim1</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">]</span>
+        <span class="n">sim1</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">]</span>
         <span class="c1"># Array for merger index.</span>
         <span class="n">ind_merger_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
@@ -705,14 +704,12 @@
             <span class="c1"># Loop over simulations.</span>
 
             <span class="n">message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">])</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;------------------&#39;</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;------------------&quot;</span><span class="p">)</span>
 
             <span class="c1"># Load the qlm_multipole moment data.</span>
             <span class="n">f0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span>
-                <span class="n">sim1</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span>
-                <span class="s1">&#39;quasilocalmeasures-qlm_multipole_moments..asc&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span> <span class="n">sim1</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;quasilocalmeasures-qlm_multipole_moments..asc&quot;</span>
+            <span class="p">)</span>
 
             <span class="c1"># Assign the timeaxis.</span>
             <span class="n">cctk_time</span> <span class="o">=</span> <span class="n">f0</span><span class="p">[:,</span> <span class="mi">8</span><span class="p">]</span>
@@ -731,9 +728,9 @@
 
             <span class="c1">###################################################################</span>
             <span class="c1"># I.</span>
-            <span class="c1">#	1. Load multipole data.</span>
-            <span class="c1">#	2. Mass data.</span>
-            <span class="c1">#	3. Find merger index.</span>
+            <span class="c1"># 	1. Load multipole data.</span>
+            <span class="c1"># 	2. Mass data.</span>
+            <span class="c1"># 	3. Find merger index.</span>
             <span class="c1">###################################################################</span>
 
             <span class="c1"># Lists to hold mass multipole data of the three horizons of a</span>
@@ -769,7 +766,7 @@
             <span class="n">data3</span> <span class="o">=</span> <span class="p">[</span><span class="n">cctk_time</span><span class="p">]</span> <span class="o">+</span> <span class="n">amm3</span>
 
             <span class="c1"># Prepend the timeaxis to the spin multipoles</span>
-            <span class="c1">#message(len(data1), len(amm1))</span>
+            <span class="c1"># message(len(data1), len(amm1))</span>
 
             <span class="n">data4</span> <span class="o">=</span> <span class="p">[</span><span class="n">cctk_time</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm1</span>
             <span class="n">data5</span> <span class="o">=</span> <span class="p">[</span><span class="n">cctk_time</span><span class="p">]</span> <span class="o">+</span> <span class="n">asm2</span>
@@ -804,7 +801,8 @@
                 <span class="c1"># Else set merger_one_a to length of mass3.</span>
                 <span class="n">merger_one_a</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">M3_one_all</span><span class="p">)</span>
                 <span class="n">message</span><span class="p">(</span>
-                    <span class="s1">&#39;Mass3 not non-zero anywhere in the data. Merger has probably not happened yet.  Reverting to data length.&#39;</span><span class="p">)</span>
+                    <span class="s2">&quot;Mass3 not non-zero anywhere in the data. Merger has probably not happened yet.  Reverting to data length.&quot;</span>
+                <span class="p">)</span>
             <span class="c1"># When merger happens, the BH horizon masses mass1 and mass2 acquire the same mass as the common horizon. Find the index where mass1 jumps by more than 0.1.</span>
             <span class="c1"># Assign to merger_one.</span>
 
@@ -814,10 +812,9 @@
 
             <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
                 <span class="n">merger_one</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">M1_one_all</span><span class="p">)</span>
-                <span class="n">message</span><span class="p">(</span>
-                    <span class="s1">&#39;Mass1 has no jumps. Merger has probably not happened. Reverting to data length.&#39;</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Mass1 has no jumps. Merger has probably not happened. Reverting to data length.&quot;</span><span class="p">)</span>
 
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger index (through jump in mass1):&#39;</span><span class="p">,</span> <span class="n">merger_one</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger index (through jump in mass1):&quot;</span><span class="p">,</span> <span class="n">merger_one</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">merger_one_a</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">and</span> <span class="n">merger_one</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                 <span class="c1"># If both indices have been found, select the least of the two</span>
@@ -825,36 +822,35 @@
                 <span class="n">merger_one</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">merger_one_a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">merger_one</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
                 <span class="k">if</span> <span class="n">merger_one</span> <span class="o">==</span> <span class="n">merger_one_a</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                    <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger data set from Mass3.&#39;</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger data set from Mass3.&quot;</span><span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger data set from Mass1 jump.&#39;</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger data set from Mass1 jump.&quot;</span><span class="p">)</span>
 
             <span class="k">elif</span> <span class="ow">not</span> <span class="n">merger_one_a</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">merger_one</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                 <span class="c1"># If index of non-zero mass3 and mass1 jump was not found,</span>
                 <span class="c1"># declare no merger data exists.</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;No merger data exists&#39;</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;No merger data exists&quot;</span><span class="p">)</span>
                 <span class="n">merger_one</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># If both indices are not equal, declare inconsistency but</span>
                 <span class="c1"># accept the result from either.</span>
 
-                <span class="n">message</span><span class="p">(</span>
-                    <span class="s1">&#39;Merger index inconsistency found. Mergertime may not be correct&#39;</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger index inconsistency found. Mergertime may not be correct&quot;</span><span class="p">)</span>
 
                 <span class="k">try</span><span class="p">:</span>
                     <span class="c1"># First try with non-zero mass3 index.</span>
                     <span class="n">merger_one</span> <span class="o">=</span> <span class="n">merger_one</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger time set from Mass3&#39;</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger time set from Mass3&quot;</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
                     <span class="c1"># Else assign from mass1 jump.</span>
                     <span class="n">merger_one</span> <span class="o">=</span> <span class="n">merger_one_a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger time set from Mass1 jump&#39;</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger time set from Mass1 jump&quot;</span><span class="p">)</span>
 
             <span class="c1"># Declare merger time.</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger time:&#39;</span><span class="p">,</span> <span class="n">dt_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">*</span> <span class="n">merger_one</span><span class="p">)</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger index:&#39;</span><span class="p">,</span> <span class="n">merger_one</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger time:&quot;</span><span class="p">,</span> <span class="n">dt_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">*</span> <span class="n">merger_one</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger index:&quot;</span><span class="p">,</span> <span class="n">merger_one</span><span class="p">)</span>
 
             <span class="c1"># Update the merger index of the simulation.</span>
             <span class="n">ind_merger_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">merger_one</span>
@@ -870,7 +866,7 @@
             <span class="n">Ml22_one</span> <span class="o">=</span> <span class="n">f0</span><span class="p">[:,</span> <span class="mi">19</span><span class="p">]</span>
             <span class="n">Ml32_one</span> <span class="o">=</span> <span class="n">f0</span><span class="p">[:,</span> <span class="mi">20</span><span class="p">]</span>
 
-            <span class="c1">#message(&#39;Ml32_one&#39;, len(Ml32_one))</span>
+            <span class="c1"># message(&#39;Ml32_one&#39;, len(Ml32_one))</span>
 
             <span class="c1"># Update the mass multipoles for all l.</span>
             <span class="n">all_mass_multipoles_1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">amm1</span><span class="p">)</span>
@@ -889,8 +885,7 @@
             <span class="c1"># message(len(cctk_time))</span>
 
             <span class="c1"># Gather the l=2 mass multipoles.</span>
-            <span class="n">multipoles_one</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cctk_time</span><span class="p">,</span> <span class="n">Ml12_one</span><span class="p">,</span> <span class="n">Ml22_one</span><span class="p">,</span> <span class="n">Ml32_one</span><span class="p">]))</span>
+            <span class="n">multipoles_one</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cctk_time</span><span class="p">,</span> <span class="n">Ml12_one</span><span class="p">,</span> <span class="n">Ml22_one</span><span class="p">,</span> <span class="n">Ml32_one</span><span class="p">]))</span>
 
             <span class="c1"># Gather the masses.</span>
             <span class="n">masses_one</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">M1_one</span><span class="p">,</span> <span class="n">M2_one</span><span class="p">,</span> <span class="n">M3_one</span><span class="p">])</span>
@@ -900,22 +895,14 @@
             <span class="c1"># II . Load the distance data.</span>
             <span class="c1"># Compute the distance using the coordinate positions in BHdiagnostics files.</span>
             <span class="c1">###################################################################</span>
-            <span class="n">temp0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span>
-                <span class="n">sim1</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span>
-                <span class="s1">&#39;BH_diagnostics.ah1.gp&#39;</span><span class="p">)</span>
-            <span class="n">temp1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span>
-                <span class="n">sim1</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span>
-                <span class="s1">&#39;BH_diagnostics.ah2.gp&#39;</span><span class="p">)</span>
+            <span class="n">temp0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span> <span class="n">sim1</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;BH_diagnostics.ah1.gp&quot;</span><span class="p">)</span>
+            <span class="n">temp1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span> <span class="n">sim1</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;BH_diagnostics.ah2.gp&quot;</span><span class="p">)</span>
 
             <span class="n">t0</span> <span class="o">=</span> <span class="n">temp0</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
             <span class="n">x0_locs</span> <span class="o">=</span> <span class="n">temp0</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
             <span class="n">y0_locs</span> <span class="o">=</span> <span class="n">temp0</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
 
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Coord len&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">t0</span><span class="p">))</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Coord len&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">t0</span><span class="p">))</span>
             <span class="n">t1</span> <span class="o">=</span> <span class="n">temp1</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
             <span class="n">x1_locs</span> <span class="o">=</span> <span class="n">temp1</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
             <span class="n">y1_locs</span> <span class="o">=</span> <span class="n">temp1</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
@@ -923,7 +910,7 @@
             <span class="n">temp0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t0</span><span class="p">,</span> <span class="n">x0_locs</span><span class="p">,</span> <span class="n">y0_locs</span><span class="p">]))</span>
             <span class="n">temp1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t1</span><span class="p">,</span> <span class="n">x1_locs</span><span class="p">,</span> <span class="n">y1_locs</span><span class="p">]))</span>
 
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Dist shapes&#39;</span><span class="p">,</span> <span class="n">temp0</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">temp1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Dist shapes&quot;</span><span class="p">,</span> <span class="n">temp0</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">temp1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
             <span class="c1"># check for data continuity.</span>
             <span class="c1"># Load data.</span>
             <span class="n">data0</span> <span class="o">=</span> <span class="n">temp0</span>
@@ -933,7 +920,7 @@
             <span class="n">temp0</span> <span class="o">=</span> <span class="n">cleandata</span><span class="p">(</span><span class="n">data0</span><span class="p">)</span>
             <span class="n">temp1</span> <span class="o">=</span> <span class="n">cleandata</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span>
 
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Dist shapes after cleaning&#39;</span><span class="p">,</span> <span class="n">temp0</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">temp1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Dist shapes after cleaning&quot;</span><span class="p">,</span> <span class="n">temp0</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">temp1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
             <span class="c1"># Retrieve shape.</span>
             <span class="n">shape0</span> <span class="o">=</span> <span class="n">temp0</span><span class="o">.</span><span class="n">shape</span>
@@ -942,15 +929,13 @@
             <span class="c1"># Retrieve timestepping.</span>
             <span class="n">dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">temp0</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
-            <span class="c1">#message(&#39;Time step&#39;,dt)</span>
+            <span class="c1"># message(&#39;Time step&#39;,dt)</span>
 
             <span class="c1"># Retrieve merger index.</span>
             <span class="n">mergerind</span> <span class="o">=</span> <span class="n">ind_merger_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span>
 
             <span class="c1"># Update the merger time list.</span>
-            <span class="n">merger_time_one</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">ind_merger_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">*</span>
-                <span class="n">dt_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">])</span>
+            <span class="n">merger_time_one</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind_merger_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">*</span> <span class="n">dt_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">])</span>
 
             <span class="c1"># Find the shorter data. BHdiag1,2 or multipole data.</span>
             <span class="n">act_len</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">shape0</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ml_data_length</span><span class="p">[</span><span class="n">sim_index</span><span class="p">])</span>
@@ -958,22 +943,22 @@
             <span class="c1"># If BHdiag 1 and 2 are equal in length and equal to multipole</span>
             <span class="c1"># length:</span>
             <span class="k">if</span> <span class="n">shape0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">shape1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">shape0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">ml_data_length</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;BH_data length is consistent with multipole data length&#39;</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;BH_data length is consistent with multipole data length&quot;</span><span class="p">)</span>
 
             <span class="c1"># If the shortest data length is different from multipole length.</span>
             <span class="k">if</span> <span class="n">act_len</span> <span class="o">==</span> <span class="n">shape0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">act_len</span> <span class="o">==</span> <span class="n">shape1</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;BH_diagnostics data is shorter&#39;</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;BH_diagnostics data is shorter&quot;</span><span class="p">)</span>
 
             <span class="c1"># If multipole data is shorter.</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Multipole data is shorter&#39;</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Multipole data is shorter&quot;</span><span class="p">)</span>
 
             <span class="c1"># Update the actual length array.</span>
             <span class="n">act_shape_one</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act_len</span><span class="p">)</span>
 
-            <span class="c1">#message(&#39;Data length&#39;,act_len)</span>
+            <span class="c1"># message(&#39;Data length&#39;,act_len)</span>
 
-            <span class="c1">#act_shape_one.append()#</span>
+            <span class="c1"># act_shape_one.append()#</span>
             <span class="c1"># act_shape_one.append(min(shape1[0],shape2[0]))</span>
             <span class="c1"># message(temp0.shape,temp1.shape)</span>
 
@@ -981,16 +966,9 @@
             <span class="k">try</span><span class="p">:</span>
 
                 <span class="c1"># Try to load the BH_diagnostics file for BH3.</span>
-                <span class="n">temp2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span>
-                    <span class="n">sim1</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span>
-                    <span class="s1">&#39;BH_diagnostics.ah3.gp&#39;</span><span class="p">)[</span>
-                    <span class="p">:,</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span>
-                        <span class="mi">1</span><span class="p">,</span>
-                        <span class="mi">2</span><span class="p">,</span>
-                        <span class="mi">3</span><span class="p">]]</span>
+                <span class="n">temp2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span> <span class="n">sim1</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;BH_diagnostics.ah3.gp&quot;</span><span class="p">)[</span>
+                    <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+                <span class="p">]</span>
 
                 <span class="c1"># If merger index is not found from masses set using BH_diag3.</span>
 
@@ -1001,24 +979,22 @@
                     <span class="n">merger_time_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
                     <span class="n">mergerind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">dt</span><span class="p">)</span>
                     <span class="n">ind_merger_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">mergerind</span>
-                    <span class="n">message</span><span class="p">(</span>
-                        <span class="s1">&#39;Merger time acquired from BHdiag3&#39;</span><span class="p">,</span>
-                        <span class="n">mergerind</span> <span class="o">*</span> <span class="n">dt</span><span class="p">)</span>
-                    <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger index has been updated with info from BHdiag3&#39;</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger time acquired from BHdiag3&quot;</span><span class="p">,</span> <span class="n">mergerind</span> <span class="o">*</span> <span class="n">dt</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger index has been updated with info from BHdiag3&quot;</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger time acquired from masses&#39;</span><span class="p">,</span> <span class="n">mergerind</span> <span class="o">*</span> <span class="n">dt</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger time acquired from masses&quot;</span><span class="p">,</span> <span class="n">mergerind</span> <span class="o">*</span> <span class="n">dt</span><span class="p">)</span>
 
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Merger index&#39;</span><span class="p">,</span> <span class="n">mergerind</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Merger index&quot;</span><span class="p">,</span> <span class="n">mergerind</span><span class="p">)</span>
 
             <span class="c1"># FInd shape of data.</span>
             <span class="n">shape0</span> <span class="o">=</span> <span class="n">temp0</span><span class="o">.</span><span class="n">shape</span>
             <span class="n">shape1</span> <span class="o">=</span> <span class="n">temp1</span><span class="o">.</span><span class="n">shape</span>
 
             <span class="c1"># if shape0[0] &lt; shape0[1]:</span>
-            <span class="c1">#	 temp1 = np.transpose(temp1)</span>
+            <span class="c1"># 	 temp1 = np.transpose(temp1)</span>
 
             <span class="c1"># if shape1[0] &lt; shape1[1]:</span>
-            <span class="c1">#	 temp2 = np.transpose(temp2)</span>
+            <span class="c1"># 	 temp2 = np.transpose(temp2)</span>
 
             <span class="c1"># Assign the centroid locations to variables.</span>
 
@@ -1030,17 +1006,17 @@
             <span class="n">x1</span> <span class="o">=</span> <span class="n">x1_locs</span>  <span class="c1"># temp1[:, 1]</span>
             <span class="n">y1</span> <span class="o">=</span> <span class="n">y1_locs</span>  <span class="c1"># temp1[:, 2]</span>
 
-            <span class="c1">#t0		 =	 temp0[:, 0]</span>
-            <span class="c1">#x0		 =	 temp0[:, 1]</span>
-            <span class="c1">#y0		 =	 temp0[:, 2]</span>
+            <span class="c1"># t0		 =	 temp0[:, 0]</span>
+            <span class="c1"># x0		 =	 temp0[:, 1]</span>
+            <span class="c1"># y0		 =	 temp0[:, 2]</span>
             <span class="c1">#</span>
-            <span class="c1">#t1		 =	 temp1[:, 0]</span>
-            <span class="c1">#x1		 =	 temp1[:, 1]</span>
-            <span class="c1">#y1		 =	 temp1[:, 2]</span>
+            <span class="c1"># t1		 =	 temp1[:, 0]</span>
+            <span class="c1"># x1		 =	 temp1[:, 1]</span>
+            <span class="c1"># y1		 =	 temp1[:, 2]</span>
 
             <span class="c1"># if int((x0-x0_locs)[0])!=0:</span>
-            <span class="c1">#	 message(&#39;ERRORRRRRRR!&#39;)</span>
-            <span class="c1">#	 sys.exit(0)</span>
+            <span class="c1"># 	 message(&#39;ERRORRRRRRR!&#39;)</span>
+            <span class="c1"># 	 sys.exit(0)</span>
             <span class="c1"># Compute lengths</span>
 
             <span class="n">l0</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
@@ -1068,71 +1044,61 @@
             <span class="n">dy</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">-</span> <span class="n">y1</span>
 
             <span class="c1"># if sim_index==3:</span>
-            <span class="c1">#d.append(np.sqrt((temp0[:3014,1]-temp1[:ind_merger[sim_index],1])**2 + (temp0[:3014,2]-temp1[:ind_merger[sim_index],2])**2))</span>
+            <span class="c1"># d.append(np.sqrt((temp0[:3014,1]-temp1[:ind_merger[sim_index],1])**2 + (temp0[:3014,2]-temp1[:ind_merger[sim_index],2])**2))</span>
 
             <span class="c1"># Compute the Eucledian distance.</span>
             <span class="n">d_sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">dy</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
             <span class="n">d_sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d_sim</span><span class="p">)</span>
             <span class="n">d0_sim</span> <span class="o">=</span> <span class="n">d_sim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Initial true distance&#39;</span><span class="p">,</span> <span class="n">d0_sim</span><span class="p">)</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Initial true distance&quot;</span><span class="p">,</span> <span class="n">d0_sim</span><span class="p">)</span>
             <span class="n">d0_one</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d0_sim</span><span class="p">)</span>
             <span class="n">d_sim</span> <span class="o">=</span> <span class="n">d_sim</span> <span class="o">/</span> <span class="n">d0_sim</span>
-            <span class="c1">#d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-temp1[:act_shape_one[sim_index],1])**2 + (temp0[:act_shape_one[sim_index],2]-temp1[:act_shape_one[sim_index],2])**2))</span>
+            <span class="c1"># d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-temp1[:act_shape_one[sim_index],1])**2 + (temp0[:act_shape_one[sim_index],2]-temp1[:act_shape_one[sim_index],2])**2))</span>
             <span class="n">d_one</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">t0</span><span class="p">,</span> <span class="n">d_sim</span><span class="p">])</span>
             <span class="n">message</span><span class="p">(</span>
-                <span class="s1">&#39;ml_timeaxis_length: </span><span class="si">%d</span><span class="s1">, Multipole data length: </span><span class="si">%d</span><span class="s1">, BHdiag length: </span><span class="si">%d</span><span class="s1">, Distance length: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span>
-                <span class="p">(</span><span class="nb">len</span><span class="p">(</span>
-                    <span class="n">timeaxis_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]),</span> <span class="n">ml_data_length</span><span class="p">[</span><span class="n">sim_index</span><span class="p">],</span> <span class="n">shape1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span>
-                    <span class="n">d_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">])))</span>
+                <span class="s2">&quot;ml_timeaxis_length: </span><span class="si">%d</span><span class="s2">, Multipole data length: </span><span class="si">%d</span><span class="s2">, BHdiag length: </span><span class="si">%d</span><span class="s2">, Distance length: </span><span class="si">%d</span><span class="s2">&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timeaxis_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]),</span> <span class="n">ml_data_length</span><span class="p">[</span><span class="n">sim_index</span><span class="p">],</span> <span class="n">shape1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">d_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]))</span>
+            <span class="p">)</span>
             <span class="n">dist_data_length</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_sim</span><span class="p">))</span>
 
-        <span class="c1">#multipoles = np.array(multipoles)</span>
+        <span class="c1"># multipoles = np.array(multipoles)</span>
         <span class="c1"># Convert the acquired data lists into numpy arrays.</span>
         <span class="n">masses_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">masses_one</span><span class="p">)</span>
         <span class="n">M1_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">M1_one</span><span class="p">)</span>
         <span class="n">M2_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">M2_one</span><span class="p">)</span>
         <span class="n">M3_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">M3_one</span><span class="p">)</span>
 
-        <span class="c1">#message(&#39;Multipoles shape&#39;,multipoles.shape)</span>
+        <span class="c1"># message(&#39;Multipoles shape&#39;,multipoles.shape)</span>
 
-        <span class="c1">#message(&#39;Masses shape:&#39;,masses_one.shape)</span>
+        <span class="c1"># message(&#39;Masses shape:&#39;,masses_one.shape)</span>
 
         <span class="n">d_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d_one</span><span class="p">)</span>
         <span class="c1"># d_one.shape</span>
-        <span class="c1">#d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-temp1[:act_shape_one[sim_index],1])**2 + (temp0[:act_shape_one[sim_index],2]-temp1[:act_shape_one[sim_index],2])**2))</span>
+        <span class="c1"># d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-temp1[:act_shape_one[sim_index],1])**2 + (temp0[:act_shape_one[sim_index],2]-temp1[:act_shape_one[sim_index],2])**2))</span>
         <span class="c1"># d_one=np.array(d_one)</span>
 
         <span class="c1"># d_one.shape</span>
 
         <span class="c1"># Plot the distance</span>
-        <span class="c1">#message(&#39;multipoles length&#39;,len(multipoles_one))</span>
+        <span class="c1"># message(&#39;multipoles length&#39;,len(multipoles_one))</span>
 
         <span class="c1"># Assign data to sim variables.</span>
         <span class="k">for</span> <span class="n">sim_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">multipoles_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mass_multipoles</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">all_mass_multipoles_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spin_multipoles</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">all_spin_multipoles_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">timeaxis_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">multipoles_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mass_multipoles</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">all_mass_multipoles_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spin_multipoles</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">all_spin_multipoles_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">timeaxis_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">M1_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">M2_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mass3</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">M3_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">dt_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">d_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">ind_merger_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">actmerger_time</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">merger_time_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">ind_merger_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actmerger_time</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">merger_time_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dinit</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">d0_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data_length</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">ml_data_length</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">act_shape_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dist_data_length</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">dist_data_length</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_length</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">ml_data_length</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">act_shape_one</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dist_data_length</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]:</span> <span class="n">dist_data_length</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]})</span>
         <span class="c1"># message(self.multipoles)</span>
 
         <span class="c1"># Resize the multipoles data if merger index was updated from BHdiag3.</span>
@@ -1150,52 +1116,49 @@
             <span class="c1"># message(x,y)</span>
 
             <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Distance vs t/M &#39;</span> <span class="o">+</span> <span class="n">alias</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$d/d_</span><span class="si">{init}</span><span class="s1">$&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distance vs t/M &quot;</span> <span class="o">+</span> <span class="n">alias</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$d/d_</span><span class="si">{init}</span><span class="s2">$&quot;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_resize_multipoles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Private method to resize the (l=2) multipole data. Useful when merger index was updated from BHdiag3.&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot; Private method to resize the (l=2) multipole data. Useful when merger index was updated from BHdiag3.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
             <span class="c1"># Loop over simulations.</span>
             <span class="c1"># message(alias)</span>
-            <span class="c1">#self.timeaxis[alias] = [item[:self.dist_data_length[alias]] for item in self.timeaxis[alias]]</span>
+            <span class="c1"># self.timeaxis[alias] = [item[:self.dist_data_length[alias]] for item in self.timeaxis[alias]]</span>
             <span class="c1"># Resize the lengths of the data.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">dist_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]]</span>
-                                      <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">]]</span>
-            <span class="c1">#self.data_length.update({alias : len(self.multipoles[alias][0])})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">]]</span>
+            <span class="c1"># self.data_length.update({alias : len(self.multipoles[alias][0])})</span>
             <span class="c1"># self.mass_multipoles[alias] = [item[:self.dist_data_length[alias] for item in self.mass_multipoles[alias]]]</span>
             <span class="c1"># self.spin_multipoles[alias] = [item[:self.dist_data_length[alias]</span>
             <span class="c1"># for item in self.spin_multipoles[alias]]]</span>
 
     <span class="k">def</span> <span class="nf">_ifreversal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Private method to reverse the (l=2) multipole data if mass2&gt;mass1.</span>
+        <span class="sd">&quot;&quot;&quot; Private method to reverse the (l=2) multipole data if mass2&gt;mass1.</span>
 
 <span class="sd">                --------</span>
 <span class="sd">                Updates:</span>
 
 <span class="sd">                sim.multipoles : Resized (l=2) multipole moment data.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Flag to identify if reversal is required.</span>
         <span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
             <span class="c1"># Loop over simulations.</span>
-            <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Check for puncture reversal, </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">alias</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">alias</span> <span class="o">!=</span> <span class="s1">&#39;q1a0_a&#39;</span> <span class="ow">and</span> <span class="n">alias</span> <span class="o">!=</span> <span class="s1">&#39;q1a0_b&#39;</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Check for puncture reversal, </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">alias</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">alias</span> <span class="o">!=</span> <span class="s2">&quot;q1a0_a&quot;</span> <span class="ow">and</span> <span class="n">alias</span> <span class="o">!=</span> <span class="s2">&quot;q1a0_b&quot;</span><span class="p">:</span>
                 <span class="c1"># Condition for reversal decision.</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]:</span>
                     <span class="c1"># Toggle the flag.</span>
                     <span class="n">flag</span> <span class="o">=</span> <span class="mi">1</span>
-                    <span class="n">message</span><span class="p">(</span><span class="s1">&#39;**************************************************&#39;</span><span class="p">)</span>
-                    <span class="n">message</span><span class="p">(</span><span class="s1">&#39;BH 1 and 2 reversal found!!! </span><span class="se">\n</span><span class="s1"> Reversing data...&#39;</span><span class="p">)</span>
-                    <span class="n">message</span><span class="p">(</span><span class="s1">&#39;**************************************************&#39;</span><span class="p">)</span>
-                    <span class="n">message</span><span class="p">(</span>
-                        <span class="s1">&#39;original mass1:</span><span class="si">%f</span><span class="s1">, mass2: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span>
-                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]))</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;**************************************************&quot;</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;BH 1 and 2 reversal found!!! </span><span class="se">\n</span><span class="s2"> Reversing data...&quot;</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;**************************************************&quot;</span><span class="p">)</span>
+                    <span class="n">message</span><span class="p">(</span><span class="s2">&quot;original mass1:</span><span class="si">%f</span><span class="s2">, mass2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]))</span>
                     <span class="c1"># Reverse the data.</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
                     <span class="c1"># Unpack the multipoles data.</span>
@@ -1203,14 +1166,13 @@
                     <span class="c1"># Reverse the multipole data.</span>
                     <span class="n">multipole1</span><span class="p">,</span> <span class="n">multipole2</span> <span class="o">=</span> <span class="n">multipole2</span><span class="p">,</span> <span class="n">multipole1</span>
                     <span class="c1"># Repack the data.</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                        <span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="n">multipole1</span><span class="p">,</span> <span class="n">multipole2</span><span class="p">,</span> <span class="n">multipole3</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">multipoles</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">time</span><span class="p">,</span> <span class="n">multipole1</span><span class="p">,</span> <span class="n">multipole2</span><span class="p">,</span> <span class="n">multipole3</span><span class="p">])</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Data O.K.&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="mf">1.</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Data O.K.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
 
 <div class="viewcode-block" id="sim.load_strain"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.load_strain">[docs]</a>    <span class="k">def</span> <span class="nf">load_strain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Method to load the shear data of simulations. &#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot; Method to load the shear data of simulations. &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">sim_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">)):</span>
             <span class="c1"># Loop over simulations.</span>
@@ -1219,13 +1181,14 @@
             <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># start_index = 0#int(190/deltat[j])</span>
             <span class="c1"># Load the strain data.</span>
             <span class="n">sim_strain_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">WAVDIR</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span>
-                <span class="s1">&#39;/&#39;</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">strain_dir</span> <span class="o">+</span>
-                <span class="s1">&#39;/strain_&#39;</span> <span class="o">+</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span> <span class="o">+</span>
-                <span class="s2">&quot;_wavextcpm.dat&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">WAVDIR</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span>
+                <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">strain_dir</span>
+                <span class="o">+</span> <span class="s2">&quot;/strain_&quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;_wavextcpm.dat&quot;</span>
+            <span class="p">)</span>
 
             <span class="c1"># Load the timeaxis, plus and cross polarized data.</span>
             <span class="n">htdat</span> <span class="o">=</span> <span class="n">sim_strain_data</span><span class="p">[</span><span class="n">m</span><span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
@@ -1234,18 +1197,19 @@
 
             <span class="n">message</span><span class="p">(</span><span class="s2">&quot;The strain file is&quot;</span><span class="p">)</span>
             <span class="n">message</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">WAVDIR</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span> <span class="o">+</span>
-                <span class="s1">&#39;/&#39;</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">strain_dir</span> <span class="o">+</span>
-                <span class="s1">&#39;/strain_&#39;</span> <span class="o">+</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span> <span class="o">+</span>
-                <span class="s2">&quot;_wavextcpm.dat&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">WAVDIR</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">[</span><span class="n">sim_index</span><span class="p">]</span>
+                <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">strain_dir</span>
+                <span class="o">+</span> <span class="s2">&quot;/strain_&quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;_wavextcpm.dat&quot;</span>
+            <span class="p">)</span>
 
             <span class="c1"># Align the peak of the strain with the formation of the common</span>
             <span class="c1"># horizon (merger index).</span>
 
-            <span class="n">Lpeak_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">hpdat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">hxdat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">Lpeak_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">hpdat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">hxdat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 
             <span class="c1"># Load the common horizon location.</span>
             <span class="n">commhor_loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
@@ -1261,18 +1225,18 @@
 
             <span class="c1"># Shift the timeaxis and clip the beginning of data.</span>
             <span class="n">htdat</span> <span class="o">=</span> <span class="n">htdat</span><span class="p">[</span><span class="n">m</span><span class="p">:</span><span class="o">-</span><span class="n">shift</span><span class="p">]</span>
-            <span class="n">hpdat</span> <span class="o">=</span> <span class="n">hpdat</span><span class="p">[</span><span class="n">m</span> <span class="o">+</span> <span class="n">shift</span><span class="p">:]</span>
-            <span class="n">hxdat</span> <span class="o">=</span> <span class="n">hxdat</span><span class="p">[</span><span class="n">m</span> <span class="o">+</span> <span class="n">shift</span><span class="p">:]</span>
+            <span class="n">hpdat</span> <span class="o">=</span> <span class="n">hpdat</span><span class="p">[</span><span class="n">m</span> <span class="o">+</span> <span class="n">shift</span> <span class="p">:]</span>
+            <span class="n">hxdat</span> <span class="o">=</span> <span class="n">hxdat</span><span class="p">[</span><span class="n">m</span> <span class="o">+</span> <span class="n">shift</span> <span class="p">:]</span>
 
             <span class="c1"># Update the sim.strain</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">strain</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">htdat</span><span class="p">,</span> <span class="n">hpdat</span><span class="p">,</span> <span class="n">hxdat</span><span class="p">]})</span>
 
             <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">print_verbosity</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># Plot the strains.</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">htdat</span><span class="p">,</span> <span class="n">hpdat</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;data &#39;</span> <span class="o">+</span> <span class="n">alias</span><span class="p">)</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Strain&#39;</span><span class="p">)</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">htdat</span><span class="p">,</span> <span class="n">hpdat</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;data &quot;</span> <span class="o">+</span> <span class="n">alias</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Strain&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
                 <span class="c1"># plt.xlim(-600,400)</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -1280,7 +1244,7 @@
         <span class="k">return</span> <span class="mi">1</span></div>
 
 <div class="viewcode-block" id="sim.calc_amp_phase"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_amp_phase">[docs]</a>    <span class="k">def</span> <span class="nf">calc_amp_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Extract the amplitude and the phase from strain data. &#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot; Extract the amplitude and the phase from strain data. &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
             <span class="c1"># Loop over simulations.</span>
 
@@ -1290,16 +1254,13 @@
             <span class="c1"># Load the time stepping.</span>
             <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
             <span class="c1"># Extract and update the amplitude and phases.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">strain_phase</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="p">(</span><span class="n">xtract_cphase</span><span class="p">(</span><span class="n">hpdat</span><span class="p">,</span> <span class="n">hxdat</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="s1">&#39;yes&#39;</span><span class="p">))})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">strain_amplitude</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="n">xtract_camp</span><span class="p">(</span><span class="n">hpdat</span><span class="p">,</span> <span class="n">hxdat</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">)})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">strain_frequency</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strain_phase</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span> <span class="o">/</span> <span class="n">dt</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strain_phase</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">(</span><span class="n">xtract_cphase</span><span class="p">(</span><span class="n">hpdat</span><span class="p">,</span> <span class="n">hxdat</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">))})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strain_amplitude</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="n">xtract_camp</span><span class="p">(</span><span class="n">hpdat</span><span class="p">,</span> <span class="n">hxdat</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">)})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strain_frequency</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strain_phase</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span> <span class="o">/</span> <span class="n">dt</span><span class="p">})</span>
         <span class="k">return</span> <span class="mi">1</span></div>
 
 <div class="viewcode-block" id="sim.ret_horizon_radii"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.ret_horizon_radii">[docs]</a>    <span class="k">def</span> <span class="nf">ret_horizon_radii</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Retrieve the radius of the common horizon at the time of formation. &#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot; Retrieve the radius of the common horizon at the time of formation. &quot;&quot;&quot;</span>
 
         <span class="c1"># Dictionary to hold the areal radii of the horizons.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">areal_radii</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1307,34 +1268,13 @@
             <span class="c1"># Loop over simulations.</span>
 
             <span class="c1"># Load the BHdiagnostics file to load the radius.</span>
-            <span class="n">ar_rad0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span>
-                <span class="n">alias</span> <span class="o">+</span>
-                <span class="s1">&#39;/&#39;</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span>
-                <span class="s1">&#39;BH_diagnostics.ah1.gp&#39;</span><span class="p">)[</span>
-                <span class="p">:,</span>
-                <span class="mi">27</span><span class="p">]</span>
-            <span class="n">ar_rad1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span>
-                <span class="n">alias</span> <span class="o">+</span>
-                <span class="s1">&#39;/&#39;</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span>
-                <span class="s1">&#39;BH_diagnostics.ah2.gp&#39;</span><span class="p">)[</span>
-                <span class="p">:,</span>
-                <span class="mi">27</span><span class="p">]</span>
+            <span class="n">ar_rad0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span> <span class="n">alias</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;BH_diagnostics.ah1.gp&quot;</span><span class="p">)[:,</span> <span class="mi">27</span><span class="p">]</span>
+            <span class="n">ar_rad1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span> <span class="n">alias</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;BH_diagnostics.ah2.gp&quot;</span><span class="p">)[:,</span> <span class="mi">27</span><span class="p">]</span>
             <span class="n">ar_rad2</span> <span class="o">=</span> <span class="mf">1.75</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">ar_rad2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span>
-                    <span class="n">alias</span> <span class="o">+</span>
-                    <span class="s1">&#39;/&#39;</span> <span class="o">+</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span>
-                    <span class="s1">&#39;BH_diagnostics.ah3.gp&#39;</span><span class="p">)[</span>
-                    <span class="p">:,</span>
-                    <span class="mi">27</span><span class="p">]</span>
+                <span class="n">ar_rad2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span> <span class="n">alias</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;BH_diagnostics.ah3.gp&quot;</span><span class="p">)[:,</span> <span class="mi">27</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;No BHdiagnostics 3 file found for </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">alias</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;No BHdiagnostics 3 file found for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">alias</span><span class="p">)</span>
 
             <span class="c1"># Load the data for this simulation in to a dictionary.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">areal_radii</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">ar_rad0</span><span class="p">,</span> <span class="n">ar_rad1</span><span class="p">,</span> <span class="n">ar_rad2</span><span class="p">]})</span>

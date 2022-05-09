@@ -83,6 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
 </ul>
 
@@ -153,19 +154,15 @@
 <span class="c1"># A Class for handling the waveform data</span>
 <span class="c1">##########################################################################</span>
 
+
 <div class="viewcode-block" id="Psi"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.Psi">[docs]</a><span class="k">class</span> <span class="nc">Psi</span><span class="p">:</span>
-    <span class="sd">&#39;&#39;&#39; A class for handling waveforms.&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot; A class for handling waveforms.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">timeaxis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">wavedata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">base_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">data_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeaxis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wavedata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">base_dir</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">base_dir</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span> <span class="o">=</span> <span class="n">timeaxis</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavedata</span> <span class="o">=</span> <span class="n">wavedata</span> <span class="ow">or</span> <span class="p">[]</span>
 
@@ -179,14 +176,14 @@
             <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">token</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
-            <span class="k">while</span> <span class="p">(</span><span class="n">token</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)):</span>
+            <span class="k">while</span> <span class="n">token</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
                 <span class="n">key</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-                <span class="n">token</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Psi&#39;</span><span class="p">)</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Psi&quot;</span><span class="p">)</span>
                 <span class="c1"># message(key)</span>
                 <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="k">if</span> <span class="n">token</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s1">&#39;Waveform dataset not found&#39;</span><span class="p">)</span>
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Waveform dataset not found&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">message</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -202,8 +199,7 @@
 
     <span class="c1"># @base_dir.setter</span>
     <span class="c1"># def base_dir(self, base_dir):</span>
-    <span class="c1">#	 self.__base_dir = base_dir</span>
-
+    <span class="c1"># 	 self.__base_dir = base_dir</span>
 </pre></div>
 
            </div>
