@@ -5,4 +5,5 @@ line-length = 120
 profile = "black"
 
 [tool.pylint]
-disable=#W0311
+[MESSAGES CONTROL]
+disable=W0311
