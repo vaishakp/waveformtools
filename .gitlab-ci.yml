@@ -59,7 +59,7 @@ prepare:
   stage: predeploy
 
    # image: python:3.9-alpine
-# Note: only 3.9 works with rinohtype
+   # Note: only 3.9 works with rinohtype
 
 
 
@@ -80,7 +80,7 @@ prepare:
 #  paths:
 #    - .cache/pip
 #    - venv/
-
+script:
 #job_name: build_pages
 #  variables:
 #    CI_DEBUG_TRACE: "true"
