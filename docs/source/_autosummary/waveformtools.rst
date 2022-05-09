@@ -33,7 +33,6 @@
    :toctree:
    :recursive:
 
-   waveformtools.meta
    waveformtools.simulations
    waveformtools.waveforms
    waveformtools.waveformtools
