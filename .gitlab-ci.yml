@@ -10,6 +10,7 @@
 
 stages:
   - linting
+  - deploy
 
 isort:
   stage: linting
