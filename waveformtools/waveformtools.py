@@ -1579,9 +1579,9 @@ def taper(data, delta_t=1, zeros=150):
 
 
 			data :	1d array or a pycbc TimeSeries
-							The waveform data as list or numpy array or pycbc timeseries.
+					The waveform data as list or numpy array or pycbc timeseries.
 			delta_t :	float
-							The timestepping.
+						The timestepping.
 			zeros :	int
 					The number of zeros to be added.
 
@@ -1589,7 +1589,7 @@ def taper(data, delta_t=1, zeros=150):
 			--------
 
 			tapered_data :	1d array or a pycbc TimeSeries object
-											The waveform data tapered and zero padded. Returns a pycbc TimeSeries object if the input waveform was also one.
+							The waveform data tapered and zero padded. Returns a pycbc TimeSeries object.
 
 
 			Notes
@@ -1624,9 +1624,8 @@ def taper(data, delta_t=1, zeros=150):
     # Append with extra zeros
     tapered_data = np.transpose(np.concatenate((np.transpose(tapered_data), np.transpose(zeros))))
 
-    if flag == 0:
-        # Convert back to timeseries if the input was a time series.
-        tapered_data = pycbc.types.timeseries.TimeSeries(tapered_data, delta_t)
+    # Convert back to timeseries if the input was a time series.
+    tapered_data = pycbc.types.timeseries.TimeSeries(tapered_data, delta_t)
 
     # Return the timeseries
     return tapered_data
@@ -2684,183 +2683,3 @@ def progressbar(present_count, total_counts, normalize="yes"):
 # 		message("%f"%(count*100./n))
 # 		return 1
 #######################################END################################
-
-
-##########################################################################
-# Derivatives
-##########################################################################
-
-
-def ddt(data, delta_t):
-    """ Central difference derivative calculator. Not accurate near the boundaries.
-
-	Inputs
-	--------
-
-	data :	1d array
-			The 1d data.
-	delta_t :	float
-				The time step in units of t/M.
-
-	Returns
-	--------
-
-	dAdt :	1d array
-			The derivative.
-
-	 """
-    dAdt = []
-
-    # For n=0
-    val = (data[1] - data[0]) / delta_t
-    dAdt.append(val)
-
-    for index in range(1, len(data) - 1):
-        val = (data[index + 1] - data[index - 1]) / (2 * delta_t)
-        dAdt.append(val)
-
-    # For n = N
-
-    val = (data[-2] - data[-1]) / delta_t
-    dAdt.append(val)
-
-    return np.array(dAdt)
-
-
-def differentiate2(data, delta_t):
-    """ Five point difference derivative calculator.  Not accurate near the boundaries.
-
-
-	Inputs
-	--------
-
-	data :	1d array
-					The 1d data.
-	delta_t :	float
-					The time step in t/M.
-
-	Returns
-	---------
-
-	dAdt :	1d array
-					The derivative.
-
-	"""
-
-    order = 2
-    coeffs = np.array([1, -8, 0, 8, -1])
-    divide = 12
-    der_data = []
-
-    # For n=0, N
-    der0 = (data[1] - data[0]) / delta_t
-    derN = (data[-1] - data[-2]) / delta_t
-
-    der_data.append(der0)
-    # for n=1
-    der1 = (data[2] - data[0]) / (2 * delta_t)
-    derNm1 = (data[-1] - data[-3]) / (2 * delta_t)
-
-    der_data.append(der1)
-
-    for index in range(order, len(data) - order):
-        data_subarray = data[index - order : index + order + 1]
-        der_data.append(np.dot(coeffs, data_subarray) / (divide * delta_t))
-
-    der_data.append(derNm1)
-    der_data.append(derN)
-
-    return der_data
-
-
-def differentiate3(data, delta_t):
-    """ Seven point difference derivative calculator. Not accurate near the boundaries.
-
-
-	Inputs
-	---------
-
-	data :	1d array
-					The 1d data.
-	delta_t :	float
-					The time step in t/M.
-
-	Returns
-	----------
-
-	dAdt :	1d array
-					The derivative.
-
-	"""
-
-    order = 3
-    coeffs = np.array([-1, 9, -45, 0, 45, -9, 1])
-    divide = 60
-    der_data = []
-    for index in range(order, len(data) - order):
-        data_subarray = data[index - order : index + order + 1]
-        der_data.append(np.dot(coeffs, data_subarray) / (divide * delta_t))
-
-    return der_data
-
-
-def differentiate4(data, delta_t):
-    """ Nine point difference derivative calculator. Not accurate near the boundaries.
-
-
-	Inputs
-	--------
-
-	data :	1d
-					The 1d data.
-	delta_t :	float
-					The time step in t/M.
-
-	Returns
-	---------
-
-	dAdt :	1d array
-					The derivative.
-
-	"""
-
-    order = 4
-    coeffs = np.array([3, -32, 168, -672, 0, 672, -168, 32, 3])
-    divide = 840
-    der_data = []
-    for index in range(order, len(data) - order):
-        data_subarray = data[index - order : index + order + 1]
-        der_data.append(np.dot(coeffs, data_subarray) / (divide * delta_t))
-
-    return der_data
-
-
-def differentiate5(data, delta_t):
-    """ Eleven point difference derivative calculator. Not accurate near the boundaries.
-
-
-	Inputs
-	---------
-
-	data :	1d array
-					The 1d data.
-	delta_t :	float
-					The time step in t/M.
-
-	Returns
-	---------
-
-	dAdt :	1d array
-					The derivative of the data.
-
-	"""
-
-    order = 5
-    coeffs = np.array([-2, 25, -150, 600, -2100, 0, 2100, -600, 150, -25, 2])
-    divide = 2520
-    der_data = []
-    for index in range(order, len(data) - order):
-        data_subarray = data[index - order : index + order + 1]
-        der_data.append(np.dot(coeffs, data_subarray) / (divide * delta_t))
-
-    return der_data
