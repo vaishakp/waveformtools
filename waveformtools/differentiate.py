@@ -91,6 +91,10 @@ def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.in
 	utilde_differentiated :	1d array
 							The FFT of the frixed frequency differentiated array in good conventions.
 
+
+	new_x_axis :	1d array
+					The new x-axis, assuming the data may have been changed in length
+
 	freq_axis :	1d array
 				The frequency axis of the FFT of data.
 
@@ -110,7 +114,7 @@ def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.in
 		from waveformtools.transforms import find_fft, unset_fft_conven
 		from waveformtools.waveformtools import taper
 		udata_x = taper(udata_x, delta_t = delta_x)
-		x_axis = udata_x.sample_times
+		new_x_axis = udata_x.sample_times
 		udata_x = np.array(udata_x)
 		freq_axis, utilde_conven		= find_fft(udata_x, delta_x)
 
@@ -154,8 +158,8 @@ def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.in
 				if abs(element) > omega0:
 					omega_axis[index] = sign*omega0
 
-		# Set the zero frequency element separately.
-		omega_axis[zero_index]		= omega0
+	# Set the zero frequency element separately.
+	omega_axis[zero_index]		= omega0
 
 	#print(omega_axis)
 	# Differentiate in frequency space
@@ -171,7 +175,7 @@ def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.in
 
 	udata_differentiated		= ifft(utilde_differentiated_np)
 
-	return udata_differentiated, utilde_differentiated, x_axis, freq_axis
+	return udata_differentiated, utilde_differentiated, new_x_axis, freq_axis
 
 #########################################################
 # Finite difference differentiation
@@ -534,4 +538,44 @@ def differentiate5(data, delta_t):
 	der_data.append(derNm1)
 
 	return der_data
+
+
+######################################################################################
+# Complex Amplitude-Phase differentiation
+######################################################################################
+
+def differentiate_cwaveform(time_axis, waveform):
+	''' Differentiate a given waveform by differentiating the Amplitude-Phase form.
+
+	Inputs
+	-------
+
+	time_axis :	1d array
+				The time axis of the waveform.
+
+	waveform :	1d array
+				The complex 1d array of the waveform timeseries.
+
+
+	Returns
+	--------
+
+	differentiated_waveform :	1d array
+								The waveform differentiated in time.
+
+	'''
+
+	# Get the amplitude and phase of the complex 1d waveform.
+	from waveformtools import xtract_camp_phase
+	waveform_amp, waveform_phase = xtract_camp_phase(waveform.real, waveform.imag)
+
+	# Differentiate the waveform.
+
+	Amplitude_dot = Chebyshev_differential(time_axis, waveform_amp, degree=25)
+	Phase_dot	  = Chebyshev_differential(time_axis, waveform_phase, degree=25)
+
+
+	differentiated_waveform = (Amplitude_dot + waveform_amp * 1j * Phase_dot) * np.exp(1j * waveform_phase)
+
+	return differentiated_waveform
 
