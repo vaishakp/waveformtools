@@ -7,14 +7,15 @@ import numpy as np
 def find_fft(udata_x, delta_x):
 	''' Find the FFT of the samples in time-space, and return with the frequencies.
 
-	Inputs
-	------
+	Parameters
+	----------
 
 	udata_x :	1d array
 				The samples in time-space.
 
 	delta_x :	float
 				The stepping delta_x
+
 	Returns
 	-------
 
@@ -56,8 +57,8 @@ def set_fft_conven(utilde_orig):
 		This takes care of the zero mode factor and array position.
 		Also, it shifts the negative frequencies using numpy's fftshift.
 
-	Inputs
-	------
+	Parameters
+	----------
 
 	utilde_orig :	1d array
 					The result of a numpy fft.
@@ -83,14 +84,14 @@ def unset_fft_conven(utilde_conven):
 		The inverse of set_conv.
 
 
-	Inputs
-	------
+	Parameters
+	----------
 
 	utilde_conven :	1d array
 					The conventional fft data vector.
 
 	Returns
-	--------
+	-------
 
 	utilde_np
 	 '''

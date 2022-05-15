@@ -101,6 +101,7 @@ html_theme_options = {
     #'style_external_links': False,
     #'vcs_pageview_mode': '',
     "style_nav_header_background": "green",
+	"bgcolor" : "black",
     # Toc options
     #'collapse_navigation': True,
     #'sticky_navigation': True,

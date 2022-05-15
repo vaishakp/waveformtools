@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="waveformtools.simulations" href="waveformtools.simulations.html" />
+    <link rel="next" title="waveformtools.extrapolate" href="waveformtools.extrapolate.html" />
     <link rel="prev" title="Package API" href="../api.html" /> 
 </head>
 
@@ -88,7 +88,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">waveformtools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
@@ -195,8 +197,20 @@ sim : Base class for NR data</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.simulations.html#module-waveformtools.simulations" title="waveformtools.simulations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.simulations</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate" title="waveformtools.waveformtools.differentiate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.differentiate</span></code></a>(data[, delta_t])</p></td>
+<td><p>Differentiate a timeseries in time domain using the Simple Euler method</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.extrapolate.html#module-waveformtools.extrapolate" title="waveformtools.extrapolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.extrapolate</span></code></a></p></td>
+<td><p>Methods for waveform extrapolation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.integrate</span></code>(data[, t_start, …])</p></td>
+<td><p>Integrate a timeseries using first order method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.simulations.html#module-waveformtools.simulations" title="waveformtools.simulations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.simulations</span></code></a></p></td>
 <td><p>Data container for Numerical Relativity data</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.transforms.html#module-waveformtools.transforms" title="waveformtools.transforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.transforms</span></code></a></p></td>
+<td><p>Methods to transform the waveform</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="waveformtools.waveforms.html#module-waveformtools.waveforms" title="waveformtools.waveforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveforms</span></code></a></p></td>
 <td><p></p></td>
@@ -216,7 +230,7 @@ sim : Base class for NR data</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="waveformtools.simulations.html" class="btn btn-neutral float-right" title="waveformtools.simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="waveformtools.extrapolate.html" class="btn btn-neutral float-right" title="waveformtools.extrapolate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../api.html" class="btn btn-neutral float-left" title="Package API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

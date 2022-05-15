@@ -1,4 +1,4 @@
-waveformtools.waveformtools
+﻿waveformtools.waveformtools
 ===========================
 
 .. automodule:: waveformtools.waveformtools
@@ -23,14 +23,11 @@ waveformtools.waveformtools
       coalignwfs2
       compute_chirp_mass
       compute_frequencies
-      ddt
       differentiate
-      differentiate2
-      differentiate3
-      differentiate4
-      differentiate5
       flatten
-      integrate
+      get_centered_taxis
+      get_waveform_angular_frequency
+      integrate_first_order
       interpolate_resample_wfs
       interpolate_wfs
       iscontinuous
@@ -61,8 +58,8 @@ waveformtools.waveformtools
       totalmass
       wavextractinf
       xtract_camp
+      xtract_camp_phase
       xtract_cphase
-      xtract_cphaseamp
    
    
 

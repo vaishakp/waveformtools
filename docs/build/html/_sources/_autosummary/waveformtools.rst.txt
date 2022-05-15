@@ -33,7 +33,11 @@
    :toctree:
    :recursive:
 
+   waveformtools.differentiate
+   waveformtools.extrapolate
+   waveformtools.integrate
    waveformtools.simulations
+   waveformtools.transforms
    waveformtools.waveforms
    waveformtools.waveformtools
 
