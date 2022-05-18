@@ -62,12 +62,20 @@ This package contains implementations of customized algorithms and techniques.  
 
     * Smoothening, tapering.
 
+    * Extrapolation of waveforms to null infinity.
+
+    * Center of Mass corrections to waveforms.
+
+    * BMS Supertranslations of waveforms.
+
 
 * Tools for basic data analysis.
 
     * A match algorithms for matching two waveforms.
 
     * Binning and interpolation of data. 
+
+    * Smooth derivatives: spectral and finite difference derivatives.
 
 * Miscellaneous tools:
 
