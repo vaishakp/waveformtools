@@ -150,58 +150,559 @@
            <div itemprop="articleBody">
             
   <h1>Source code for waveformtools.waveforms</h1><div class="highlight"><pre>
-<span></span><span class="c1">##########################################################################</span>
-<span class="c1"># A Class for handling the waveform data</span>
-<span class="c1">##########################################################################</span>
+<span></span><span class="sd">&#39;&#39;&#39;  A Class for handling the waveform data &#39;&#39;&#39;</span>
+
+
+<span class="c1">############################</span>
+<span class="c1"># Imports</span>
+<span class="c1">############################</span>
+
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">message</span>
 
-<div class="viewcode-block" id="Psi"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.Psi">[docs]</a><span class="k">class</span> <span class="nc">Psi</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; A class for handling waveforms.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="waveform"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform">[docs]</a><span class="k">class</span> <span class="nc">waveform</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot; A class for handling waveforms.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeaxis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wavedata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>	<span class="n">timeaxis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+						<span class="n">wavedata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+						<span class="n">base_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+						<span class="n">data_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+						<span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+						<span class="n">frequency_series</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+						<span class="n">key_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+						<span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+						<span class="n">ell_max</span> <span class="o">=</span> <span class="mi">8</span>
+						<span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">base_dir</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span> <span class="o">=</span> <span class="n">timeaxis</span> <span class="ow">or</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wavedata</span> <span class="o">=</span> <span class="n">wavedata</span> <span class="ow">or</span> <span class="p">[]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">basedir</span>						<span class="o">=</span> <span class="n">base_dir</span> <span class="c1"># The base directory containing the.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">datadir</span>						<span class="o">=</span> <span class="n">data_dir</span> <span class="c1"># The directory inside the base directory containing the waveform data.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">filename</span>						<span class="o">=</span> <span class="n">filename</span> <span class="c1"># The name of the file containing the data.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">time_axis</span>						<span class="o">=</span> <span class="n">time_axis</span> <span class="c1"># The time axis of the data.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">time_domain_waveform</span>			<span class="o">=</span> <span class="n">time_domain_waveform</span> <span class="c1"># The 2D time domain waveform defined on a sphere.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span>						<span class="o">=</span> <span class="n">delta_t</span> <span class="c1"># The uniform time stepping delta_t</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">frequency_domain_waveform</span>		<span class="o">=</span> <span class="n">frequency_domain_waveform</span> <span class="c1"># The frequency domain waveform</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">frequency_axis</span>					<span class="o">=</span> <span class="n">frequency_axis</span> <span class="c1"># The frequency axis.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">key_format</span>						<span class="o">=</span> <span class="n">key_format</span> <span class="c1"># An example key to fetch data from h5 file.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">modes</span>							<span class="o">=</span> <span class="n">modes</span> <span class="c1"># The list of modes present in the waveform.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">modes_time_domain</span>				<span class="o">=</span> <span class="n">modes_time_domain</span> <span class="c1"># The time-domain waveform decomposed into modes.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">modes_frequency_domain</span>			<span class="o">=</span> <span class="n">modes_frequency_domain</span> <span class="c1"># The frequency-domain waveform decomposed into modes.</span>
 
-<div class="viewcode-block" id="Psi.load_data"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.Psi.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">full_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
 
-        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="c1"># List all groups</span>
-            <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<div class="viewcode-block" id="waveform.load_modes"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.load_modes">[docs]</a>	<span class="k">def</span> <span class="nf">load_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ell_max</span><span class="p">,</span> <span class="n">pre_key</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode_numbers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Load the waveform mode data from an hdf file.</span>
 
-            <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">token</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
 
-            <span class="k">while</span> <span class="n">token</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-                <span class="n">token</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Psi&quot;</span><span class="p">)</span>
-                <span class="c1"># message(key)</span>
-                <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="sd">		pre_key :	str, optional</span>
+<span class="sd">					A string containing the key of the group in</span>
+<span class="sd">					the HDF file in which the modes` dataset exists.</span>
+<span class="sd">					It defaults to `None`.</span>
 
-            <span class="k">if</span> <span class="n">token</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Waveform dataset not found&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">message</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="sd">		mode_numbers :	list</span>
+<span class="sd">						The mode numbers to load from the file.</span>
+<span class="sd">						Each item in the list is a list that</span>
+<span class="sd">						contains two integrer numbers, one for</span>
+<span class="sd">						the mode index :math:`\\ell` and the</span>
+<span class="sd">						other for the mode index :math:`m`.</span>
 
-            <span class="c1"># Get the data</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wavedata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+<span class="sd">		waveform_obj :	3d array</span>
+<span class="sd">						Sets the three dimensional array `waveform.modes` that contains</span>
+<span class="sd">						the required :math:`\\ell, m` modes.</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+<span class="sd">		Examples</span>
+<span class="sd">		--------</span>
 
-    <span class="c1"># @base_dir.setter</span>
-    <span class="c1"># def base_dir(self, base_dir):</span>
-    <span class="c1"># 	 self.__base_dir = base_dir</span>
+<span class="sd">		&gt;&gt;&gt; from waveformtools.waveforms import waveform</span>
+<span class="sd">		&gt;&gt;&gt; waveform.set_basedir(&#39;./&#39;)</span>
+<span class="sd">		&gt;&gt;&gt; waveform.set_datadir(&#39;data/&#39;)</span>
+<span class="sd">		&gt;&gt;&gt; mode_numbers = [[2, 2], [3, 3]]</span>
+<span class="sd">		&gt;&gt;&gt; waveform.load_data(mode_numbers=mode_numbers)</span>
+<span class="sd">		&#39;&#39;&#39;</span>
+
+		<span class="c1"># get the full path.</span>
+		<span class="n">full_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+
+		<span class="c1"># Load the modes listed in mode_numbers list</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">mode_numbers</span><span class="p">:</span>
+			<span class="n">ell</span><span class="p">,</span> <span class="n">emm</span> <span class="o">=</span> <span class="n">item</span>
+
+			<span class="c1"># Find the data key in the file</span>
+			<span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wfile</span><span class="p">:</span>
+
+				<span class="c1"># List all dataset keys.</span>
+				<span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">wfile</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+				<span class="c1"># Iteration index</span>
+				<span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="c1"># Key found token</span>
+				<span class="n">token</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+				<span class="c1"># Find the key corresponding to the mode</span>
+				<span class="k">while</span> <span class="n">token</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+					<span class="c1"># Get the current key</span>
+					<span class="n">key</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+					<span class="c1"># Update the token if the required mode string is found</span>
+					<span class="n">token</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">_m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+					<span class="c1"># message(key)</span>
+					<span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+				<span class="k">if</span> <span class="n">token</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Waveform dataset not found&quot;</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">message</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+				<span class="c1"># Get the data</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wfile</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+				<span class="c1"># set the time and data axis</span>
+				<span class="n">time_axis</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+				<span class="n">data_re</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+				<span class="n">data_im</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+
+				<span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">timeaxis</span><span class="p">)</span>
+
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">waveform</span><span class="o">.</span><span class="n">modes</span><span class="p">:</span>
+					<span class="c1"># Create an array for the waveform mode object</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">modes_data</span>	<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">ell_max</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">ell_max</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_len</span><span class="p">])</span>
+
+				<span class="bp">self</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="n">time_axis</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">modes_data</span><span class="p">[</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_re</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">data_im</span></div>
+
+
+
+<div class="viewcode-block" id="waveform.set_delta_t"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.set_delta_t">[docs]</a>	<span class="k">def</span> <span class="nf">set_delta_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta_t</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Set the time step of the waveform. Sets the value from the timeaxis</span>
+<span class="sd">			if the optional argument `delta_t` is not specified.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		delta_t :	float</span>
+<span class="sd">					The time stepping `delta_t`</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		Sets the variable `waveform.delta_t`.`</span>
+
+<span class="sd">		&#39;&#39;&#39;</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeaxis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="waveform.get_frequency_domain_waveform"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.get_frequency_domain_waveform">[docs]</a>	<span class="k">def</span> <span class="nf">get_frequency_domain_waveform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_delta_f</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the frequency domain waveform from the timedomain waveform.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		new_delta_f :	float, optional</span>
+<span class="sd">						The sampling frequency. If set, then the frequency domain</span>
+<span class="sd">						data is resampled at the requested sampling frequency.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		frequency_axis :	1d array</span>
+<span class="sd">							The frequency axis of the FFT. Also sets the</span>
+<span class="sd">							variable `waveforms.frequency_axis`</span>
+
+<span class="sd">		frequency_domain_waveform :	1d array</span>
+<span class="sd">									The frequency domain waveform. Also sets</span>
+<span class="sd">									the variable `waveforms.frequency_axis`</span>
+
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+
+
+<div class="viewcode-block" id="waveform.get_angular_frequencies"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.get_angular_frequencies">[docs]</a>	<span class="k">def</span> <span class="nf">get_angular_frequencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;CS&#39;</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the instantaneous angular frequency of the waveform.</span>
+
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		method :	str</span>
+<span class="sd">					The method to use for computing the derivative.</span>
+<span class="sd">					The available methods are &#39;CS&#39; (Chebyshev series)</span>
+<span class="sd">					or &#39;FD&#39; (Smoothened finite differences).</span>
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		waveforms.omega :	1d array</span>
+<span class="sd">							The instantaneous frequencies of the waveform.</span>
+<span class="sd">							Also sets the corresponding variable.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="waveform.reconstr_waveform"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.reconstr_waveform">[docs]</a>	<span class="k">def</span> <span class="nf">reconstr_waveform</span><span class="p">(</span><span class="n">delta_theta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">delta_phi</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Reconstruct the waveforms on a sphere given it`s modes.</span>
+
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		delta_theta :	float</span>
+<span class="sd">						The polar angle step size.</span>
+
+<span class="sd">		delta_phi :	float</span>
+<span class="sd">					The aximuthal angle step size.</span>
+
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		waveform_data :	func</span>
+<span class="sd">						The waveform on a sphere.</span>
+
+
+<span class="sd">		Notes</span>
+<span class="sd">		-----</span>
+
+<span class="sd">		The waveform is interpolated using `scipy.interpolate.interp1d` using third order</span>
+<span class="sd">		method.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+<div class="viewcode-block" id="waveform.decompose_waaveform"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.decompose_waaveform">[docs]</a>	<span class="k">def</span> <span class="nf">decompose_waaveform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Decompose the given waveform into SWSHs.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		spin_weight :	int, optional</span>
+<span class="sd">						The spin weight of the SWSH basis.</span>
+
+<span class="sd">		ell_max :	int</span>
+<span class="sd">					The maximum angular mode number in the basis.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		waveform_data :	1d array</span>
+<span class="sd">						The one dimensional array of SWSH coefficients, one for each</span>
+<span class="sd">						time/ frequency step.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="waveform.resample_mode_data"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.resample_mode_data">[docs]</a>	<span class="k">def</span> <span class="nf">resample_mode_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_delta_f</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Resample the given timeseries/ frequencyseries waveform mode data. Resamples at available `delta_t` or `delta_f`</span>
+<span class="sd">			by default. If `new_delta_x` is given, the resampling happens at the supplied new value.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		new_delta_t :	float, optional</span>
+<span class="sd">						The new time domain sampling width.</span>
+
+<span class="sd">		new_delta_f :	float, optional</span>
+<span class="sd">						The new frequency domain sampling width.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		waveform_mode_data :	1d array</span>
+<span class="sd">								The array of resampled waveform modes.</span>
+
+<span class="sd">		Notes</span>
+<span class="sd">		-----</span>
+
+<span class="sd">		Resamples the timeseries and frequencyseries modes	if `new_delta_t` and `new_delta_f` are given, respectively.</span>
+<span class="sd">		If none are given, then it resamples the timedomain modes at the default time stepping `delta_t`.</span>
+
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+
+
+<div class="viewcode-block" id="waveform.extrapolate_to_inf_per"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.extrapolate_to_inf_per">[docs]</a>	<span class="k">def</span> <span class="nf">extrapolate_to_inf_per</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">spin</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Extrapolate the given set of waveform modes to null infinity using the 2.5 order perturbative method.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		mass :	float, optional</span>
+<span class="sd">				The total mass of the system.</span>
+
+<span class="sd">		spin :	float, optional</span>
+<span class="sd">				The total spin of the system.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		extrapolated_waveform_modes :	waveforms object</span>
+<span class="sd">										A wavwforms object containig the extrapolated waveform.</span>
+
+
+<span class="sd">		See Also</span>
+<span class="sd">		--------</span>
+
+<span class="sd">		waveformtools.extrapolate.extrapolate_to_inf_pert_2p5_order</span>
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="waveform.extrapolate_to_inf_numeric"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.extrapolate_to_inf_numeric">[docs]</a>	<span class="k">def</span> <span class="nf">extrapolate_to_inf_numeric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ext_radii</span><span class="p">,</span> <span class="n">set_of_waveforms</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Extrapolate a given set of waveform modes to null infinity using the numerical</span>
+<span class="sd">			method.</span>
+
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		ext_radii :	list</span>
+<span class="sd">					A list containing the values of the extraction radii of the waveforms.</span>
+
+<span class="sd">		set_of_waveforms :	list</span>
+<span class="sd">							A list of waveforms at the various extraction radii.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		waveform_at_inf :	1d array</span>
+<span class="sd">							A 1d array of modes of the approximate extrapolated waveform at future null infninity.</span>
+
+
+<span class="sd">		See Also</span>
+<span class="sd">		--------</span>
+
+<span class="sd">		waveformtools.extrapolate.extrapolate_to_inf_numeric</span>
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="waveform.apply_CoM_correction"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.apply_CoM_correction">[docs]</a>	<span class="k">def</span> <span class="nf">apply_CoM_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Apply the Centre of Mass corrections to the waveform modes, given its mean motion.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		alpha :	list</span>
+<span class="sd">				The list containig the mean displacement of the CoM.</span>
+<span class="sd">		beta :	list</span>
+<span class="sd">				The list containig the mean drift oi the CoM.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		com_corrected_modes :	waveforms obj</span>
+<span class="sd">								A waveforms object containing the CoM corrected waveform modes.</span>
+
+
+<span class="sd">		See Also</span>
+<span class="sd">		--------</span>
+
+<span class="sd">		waveformttools.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="waveform.get_strain_from_psi4"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.get_strain_from_psi4">[docs]</a>	<span class="k">def</span> <span class="nf">get_strain_from_psi4</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the strain modes from :math:`\\Psi_4` modes.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		omega0 :	float, optional</span>
+<span class="sd">					The cutoff angular frequency for fixed frequency integration.</span>
+<span class="sd">					Defaults to one-tenth of the initial frequency of the mode if not</span>
+<span class="sd">					given.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		strain_modes :	waveforms obj</span>
+<span class="sd">						The mode coefficients of the stain modes obtained by a double time</span>
+<span class="sd">						integration of :math:`\\Psi_4`.</span>
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+<div class="viewcode-block" id="waveform.get_news_from_psi4"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.get_news_from_psi4">[docs]</a>	<span class="k">def</span> <span class="nf">get_news_from_psi4</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the news modes from :math:`\\Psi_4` modes.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		omega0 :	float, optional</span>
+<span class="sd">					The cutoff angular frequency for fixed frequency integration.</span>
+<span class="sd">					Defaults to one-tenth of the initial frequency of the mode if not</span>
+<span class="sd">					given.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		news_modes :	waveforms obj</span>
+<span class="sd">						The mode coefficients of the News, obtained by a single time</span>
+<span class="sd">						integration of :math:`\\Psi_4`.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="waveform.get_psi4_from_news"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.get_psi4_from_news">[docs]</a>	<span class="k">def</span> <span class="nf">get_psi4_from_news</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;CS&#39;</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the :math:`\\Psi_4` modes from the News function by differentiation.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		method :	str</span>
+<span class="sd">					The method to use for computing the derivative.</span>
+<span class="sd">					The available methods are &#39;CS&#39; (Chebyshev series)</span>
+<span class="sd">					or &#39;FD&#39; (Smoothened finite differences).</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		Psi4 :	waveforms obj</span>
+<span class="sd">				The modes coefficients of the :math:`\\Psi_4` waveform, obtained by differentiating the news</span>
+<span class="sd">				function once in the time domain.</span>
+
+
+<span class="sd">		See Also</span>
+<span class="sd">		--------</span>
+
+<span class="sd">		waveformtools.differentiate.Chebyshev_differential, wavefotmtools.differentiate.differentiate5</span>
+
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="waveform.get_strain_from_news"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.get_strain_from_news">[docs]</a>	<span class="k">def</span> <span class="nf">get_strain_from_news</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the strain	modes from the News modes.</span>
+
+<span class="sd">			Parameters</span>
+<span class="sd">			----------</span>
+
+<span class="sd">			omega0 :	float, optional</span>
+<span class="sd">						The cutoff angular frequency for fixed frequency integration.</span>
+<span class="sd">						Defaults to one-tenth of the initial frequency of the mode if not</span>
+<span class="sd">						given.</span>
+
+<span class="sd">			Returns</span>
+<span class="sd">			-------</span>
+
+<span class="sd">			strain_modes :	waveforms obj</span>
+<span class="sd">							The mode coefficients of the stain modes obtained by a single time</span>
+<span class="sd">							integration of the News.</span>
+
+<span class="sd">			&#39;&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="waveform.get_psi4_from_strain"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.get_psi4_from_strain">[docs]</a>	<span class="k">def</span> <span class="nf">get_psi4_from_strain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;CS&#39;</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the :math:`\\Psi_4` modes from the strain by differentiation.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		method :	str</span>
+<span class="sd">					The method to use for computing the derivative.</span>
+<span class="sd">					The available methods are &#39;CS&#39; (Chebyshev series)</span>
+<span class="sd">					or &#39;FD&#39; (Smoothened finite differences).</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		Psi4 :	waveforms obj</span>
+<span class="sd">				The modes coefficients of the :math:`\\Psi_4` waveform, obtained by differentiating the strain</span>
+<span class="sd">				function twice in the time domain.</span>
+
+
+<span class="sd">		See Also</span>
+<span class="sd">		--------</span>
+
+<span class="sd">		waveformtools.differentiate.Chebyshev_differential, wavefotmtools.differentiate.differentiate5</span>
+
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+<div class="viewcode-block" id="waveform.get_news_from_strain"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.get_news_from_strain">[docs]</a>	<span class="k">def</span> <span class="nf">get_news_from_strain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the :math:`\\Psi_4` modes from the strain by differentiation.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		method :	str</span>
+<span class="sd">					The method to use for computing the derivative.</span>
+<span class="sd">					The available methods are &#39;CS&#39; (Chebyshev series)</span>
+<span class="sd">					or &#39;FD&#39; (Smoothened finite differences).</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		News :	waveforms obj</span>
+<span class="sd">				The modes coefficients of the News waveform, obtained by differentiating the strain</span>
+<span class="sd">				function once in the time domain.</span>
+
+
+<span class="sd">		See Also</span>
+<span class="sd">		--------</span>
+
+<span class="sd">		waveformtools.differentiate.Chebyshev_differential, wavefotmtools.differentiate.differentiate5</span>
+
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="waveform.apply_supertranslation"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.apply_supertranslation">[docs]</a>	<span class="k">def</span> <span class="nf">apply_supertranslation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Apply the given supertranslation transfoamation :math:`\\alpha` approximately to the waveform.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		alpha :	list</span>
+<span class="sd">				The list containing the supertranslation three-vector.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		supertranslated_waveform :	waveforms obj</span>
+<span class="sd">									The supertranslated waveform modes.</span>
+
+<span class="sd">		Notes</span>
+<span class="sd">		-----</span>
+
+<span class="sd">		The supertranslation applied is approximate, given....</span>
+
+<span class="sd">		&#39;&#39;&#39;</span></div>
+
+<div class="viewcode-block" id="waveform.apply_boost"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.waveform.apply_boost">[docs]</a>	<span class="k">def</span> <span class="nf">apply_boost</span><span class="p">():</span>
+		<span class="sd">&#39;&#39;&#39; Apply the given boost transfoamation :math:`\\beta` to the waveform.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		beta :	list</span>
+<span class="sd">				The list containing the boost three-vector.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		supertranslated_waveform :	waveforms obj</span>
+<span class="sd">									The boosted waveform modes.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span></div></div>
+
+
+
+
+
+	<span class="c1"># @base_dir.setter</span>
+	<span class="c1"># def base_dir(self, base_dir):</span>
+	<span class="c1">#	 self.__base_dir = base_dir</span>
 </pre></div>
 
            </div>

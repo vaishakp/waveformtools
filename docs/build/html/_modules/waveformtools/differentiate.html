@@ -150,7 +150,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for waveformtools.differentiate</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Tools for differentiating a function &quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot; Tools for differentiating data. &quot;&quot;&quot;</span>
 
 <span class="c1">#######################################################</span>
 <span class="c1"># Imports</span>
@@ -257,8 +257,8 @@
 	<span class="k">if</span> <span class="ow">not</span> <span class="n">utilde_conven</span><span class="p">:</span>
 		<span class="c1"># Compute the FFT of data</span>
 		<span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="n">ifft</span>
-		<span class="kn">from</span> <span class="nn">waveformtools.transforms</span> <span class="kn">import</span> <span class="n">find_fft</span><span class="p">,</span> <span class="n">unset_fft_conven</span>
-		<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">taper</span>
+		<span class="kn">from</span> <span class="nn">transforms</span> <span class="kn">import</span> <span class="n">find_fft</span><span class="p">,</span> <span class="n">unset_fft_conven</span>
+		<span class="kn">from</span> <span class="nn">waveformtools</span> <span class="kn">import</span> <span class="n">taper</span>
 
 		<span class="n">udata_x</span> <span class="o">=</span> <span class="n">taper</span><span class="p">(</span><span class="n">udata_x</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="n">delta_x</span><span class="p">)</span>
 		<span class="n">new_x_axis</span> <span class="o">=</span> <span class="n">udata_x</span><span class="o">.</span><span class="n">sample_times</span>
@@ -690,7 +690,7 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># Get the amplitude and phase of the complex 1d waveform.</span>
-	<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">xtract_camp_phase</span>
+	<span class="kn">from</span> <span class="nn">waveformtools</span> <span class="kn">import</span> <span class="n">xtract_camp_phase</span>
 
 	<span class="n">waveform_amp</span><span class="p">,</span> <span class="n">waveform_phase</span> <span class="o">=</span> <span class="n">xtract_camp_phase</span><span class="p">(</span><span class="n">waveform</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">waveform</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
 

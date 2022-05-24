@@ -16,156 +16,167 @@ class sim:
 	Arrtibutes
 	----------
 
-					Primary:
+	ROOTDIR :	string
+				Root directory as a string containing the simulation folders.
 
-						ROOTDIR :	string
-									Root directory as a string containing the simulation folders.
+	WAVDIR :	string
+				Root directory as a string containing the simulation directies containing the wavefom data.
 
-						WAVDIR :	string
-									Root directory as a string containing the simulation directies containing the wavefom data.
+	datadir :	string
+				The path of the folder containing data relative to the simulation direcory.
 
-						datadir :	string
-									The path of the folder containing data relative to the simulation direcory.
+	strain_dir :	string
+					The path of the folder containing the waveform data relative to the strain directory.
 
-						strain_dir :	string
-										The path of the folder containing the waveform data relative to the strain directory.
+	aliases :	a list of strings
+				The names/aliases for the simulations.
 
-						aliases :	a list of strings
-									The names/aliases for the simulations.
+	multipoles :	dict of lists
+					The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.
 
-						multipoles :	dict of lists
-										The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.
+	mass1 :	dict of floats
+			The BH1 horizon mass.
 
-						mass1 :	dict of floats
-								The BH1 horizon mass.
+	mass2 :	dict of floats)
+			The BH2 horizon mass.
 
-						mass2 :	dict of floats)
-								The BH2 horizon mass.
+	mass3 :	dict of floats
+			The BH3 horizon mass.
 
-						mass3 :	dict of floats
-								The BH3 horizon mass.
+	delta_t :	dict of floats
+				The time stepping in simulation units (dt/M).
 
-						delta_t :	dict of floats
-									The time stepping in simulation units (dt/M).
+	timeaxis :	dict of 1d arrays
+				The timeaxis of the simulations.
 
-						timeaxis :	dict of 1d arrays
-									The timeaxis of the simulations.
+	distance :	dict of 1d arrays
+				The distances of simulations.
 
-						distance :	dict of 1d arrays
-									The distances of simulations.
+	merger_ind :	dict of ints
+					The merger index/ common horizon formation index of simulations.
 
-						merger_ind :	dict of ints
-										The merger index/ common horizon formation index of simulations.
+	dinit :	dict of floats
+			The initial distances.
 
-						dinit :	dict of floats
-								The initial distances.
+	multipoles :	dict of lists
+					The two sets of  mass multipoles of the three horizons. Axis 0 is usuall the time array.
 
-						multipoles :	dict of lists
-										The two sets of  mass multipoles of the three horizons. Axis 0 is usuall the time array.
+	mass_multipoles :	dict of lists
+						The mass multipoles upto (ell=8).
 
-						mass_multipoles :	dict of lists
-											The mass multipoles upto (ell=8).
+	spin_multipoles :	dict of lists
+						The spin multipoles upto (l=8).
 
-						spin_multipoles :	dict of lists
-											The spin multipoles upto (l=8).
+	data_length :	dict of float
+					The data length of the multipole simulation data loaded.
 
-						data_length :	dict of float
-										The data length of the multipole simulation data loaded.
+	dist_data_length :	dict of ints
+						The data length of distances of simulations.
 
-						dist_data_length :	dict of ints
-											The data length of distances of simulations.
+	merger_distance :	dict of floats
+						The distance between the blackholes at the merger index.
+
+	true_merger_dist :	dict of floats
+						The true merger distance (non-normalized).
+
+	sampling_f :	dict of floats
+					The sampling frequency of simulations (1/dt).
+
+	merger_time :	dict of floats
+					The cctk_time stamp at merger.
+
+	massratio :	dict of floats
+				The massratio of the simulations.
+
+	chirpmass :	dict of floats
+				The chirpmass of the simulations.
+
+	totalmass :	dict of floats
+				The total mass of the simulations.
+
+	log_multipoles :	dict of lists
+						The natural logarithm of the negative of the multipole moments as list [time, multipole1, multipole2, multipole3(if exists)].
+
+	data_duration :	dict of floats
+					The total cctk_time units of simulations present.
+
+	Methods
+	-------
+
+	calc_ref_multipoles
+		Calculate the reference multipoles as time average of first few timesclices of (2) multipole moment data.
+
+		Assignes/Updates:
+			* ref_multipoles.
 
 
-					Derived:
+	calc_log_multipoles
+		Calculate the natural logarithm of the negative of the two sets of multipole moment.
 
-						merger_distance :	dict of floats
-											The distance between the blackholes at the merger index.
-						true_merger_dist :	dict of floats
-											The true merger distance (non-normalized).
-						sampling_f :	dict of floats
-										The sampling frequency of simulations (1/dt).
-						merger_time :	dict of floats
-										The cctk_time stamp at merger.
-						massratio :	dict of floats
-									The massratio of the simulations.
-						chirpmass :	dict of floats
-									The chirpmass of the simulations.
-						totalmass :	dict of floats
-									The total mass of the simulations.
-						log_multipoles :	dict of lists
-											The natural logarithm of the negative of the multipole moments as list [time, multipole1, multipole2, multipole3(if exists)].
-						data_duration :	dict of floats
-										The total cctk_time units of simulations present.
+		Assignes/ Updates:
+			* log_multipoles.
 
-			Methods
-			-------
+	calc_delta_multipoles
+		Calculate the two delta multipoles - ref multipoles.
 
-					calc_ref_multipoles						:	Calculate the reference multipoles as time average of first few timesclices of (2) multipole moment data.
+		Assignes/ Updates:
+			* delta_multipoles.
 
-																Assignes/Updates:
+	calc_amp_phase
+		Extract the amplitudes and phases of the strain waveforms.
 
-																	ref_multipoles.
+		Assignes/Updates:
+			* strain_amp
+			* strain_phase.
 
+	load_data
+		Load the multipole and distance data of the simulations.
 
-					calc_log_multipoles						:	Calculate the natural logarithm of the negative of the two sets of multipole moment.
+		Assignes/Updates:
 
-																Assignes/ Updates:
-																	log_multipoles.
+			* distance.
+			* dinit.
+			* mass1.
+			* mass2.
+			* merger_index.
+			* merger_time.
+			* merger_distance.
+			* true_merger_distance.
+			* data_length.
+			* data_duration.
+			* multipoles.
+			* mass_multipoles.
+			* spin_multipoles.
 
-					calc_delta_multipoles					:	Calculate the two delta multipoles - ref multipoles.
+	load_strain
+		Load the strain data of the simulations from waveform directories.
 
-																Assignes/ Updates:
-																	delta_multipoles.
+		Assignes/Updates:
+			* strain.
+			* strain_amp.
+			* strain_phase.
+			* strain_shift.
 
-					calc_amp_phase							:	Extract the amplitudes and phases of the strain waveforms.
+	load_shears
+		Load the shear data at a pole of respective horizons of the simulations from waveform directories.
 
-																Assignes/Updates:
+		Assignes/Updates:
+			* shear.
+			* shear_amp.
+			* shear_phase.
+			* shear_shift.
 
-																	strain_amp
-																	strain_phase.
+	ret_horizon_radii
+		A method to retrieve the areal radii of the horizons.
 
-					load_data								:	Load the multipole and distance data of the simulations.
+		Assigns/Updates
+			* areal_radii
 
-																Assignes/Updates:
+	_resize_multipoles
+		Private method to resize the sim.multipoles after retrieving the length of distance.
 
-																	distance.
-																	dinit.
-																	mass1.
-																	mass2.
-																	merger_index.
-																	merger_time.
-																	merger_distance.
-																	true_merger_distance.
-																	data_length.
-																	data_duration.
-																	multipoles.
-																	mass_multipoles.
-																	spin_multipoles.
-
-					load_strain								:	Load the strain data of the simulations from waveform directories.
-
-																Assignes/Updates:
-																	strain.
-																	strain_amp.
-																	strain_phase.
-																	strain_shift.
-
-					load_shears								:	Load the shear data at a pole of respective horizons of the simulations from waveform directories.
-
-																Assignes/Updates:
-																	shear.
-																	shear_amp.
-																	shear_phase.
-																	shear_shift.
-
-					ret_horizon_radii						:	A method to retrieve the areal radii of the horizons.
-
-																Assigns/Updates:
-
-																	areal_radii
-
-					_resize_multipoles						:	Private method to resize the sim.multipoles after retrieving the length of distance.
-					_ifreversal								:	Private method to reverse the data of BH 1 and 2 if mass2 > mass1.
+	_ifreversal
+		Private method to reverse the data of BH 1 and 2 if mass2 > mass1.
 
 
 	"""
@@ -238,20 +249,24 @@ class sim:
 		"""Compute and return the data duration of the simulations."""
 		return {alias: self.data_length[alias] * self.delta_t[alias] for alias in self.aliases}
 
+
 	@property
 	def comm_data_duration(self):
 		""" Compute and return the duration of the common data (multipole and Bhdiag/distance) of the simulations. """
 		return {alias: self.comm_data_length[alias] * self.delta_t[alias] for alias in self.aliases}
+
 
 	@property
 	def pm_data_duration(self):
 		""" Compute and return the duration of post-merger data present in the simulations."""
 		return {alias: self.data_duration[alias] - self.merger_time[alias] for alias in self.aliases}
 
+
 	@property
 	def pm_data_length(self):
 		""" Compute and return the post merger data length avaialable for all simulations. """
 		return {alias: self.data_length[alias] - self.merger_ind[alias] for alias in self.aliases}
+
 
 	@property
 	def merger_distance(self):
@@ -268,25 +283,30 @@ class sim:
 					merger_dist.update({alias: self.distance[alias][-1]})
 		return merger_dist
 
+
 	@property
 	def true_merger_distance(self):
 		""" Compute and return the true (i.e. non-normalized) distance at merger for the simulations."""
 		return {alias: self.dinit[alias] * self.merger_distance[alias] for alias in self.aliases}
+
 
 	@property
 	def sampling_f(self):
 		""" Compute and return the sampling frequency of the simulations. """
 		return {alias: 1.0 / self.delta_t[alias] for alias in self.aliases}
 
+
 	@property
 	def merger_time(self):
 		""" Compute and return the cctk_time stamp at the merger for the simulations. """
 		return {alias: self.merger_ind[alias] * self.delta_t[alias] for alias in self.aliases}
 
+
 	@property
 	def massratio(self):
 		""" Compute and return the massratio of the simulations. """
 		return {alias: self.mass2[alias] / self.mass1[alias] for alias in self.aliases}
+
 
 	@property
 	def chirpmass(self):
@@ -297,10 +317,12 @@ class sim:
 			for alias in self.aliases
 		}
 
+
 	@property
 	def totalmass(self):
 		""" Compute and return the total mass of the simulations. """
 		return {alias: self.mass1[alias] + self.mass2[alias] for alias in self.aliases}
+
 
 	def calc_junkend(self, tjn=200.0):
 		""" Compute the indices and the starting distances of the system at timestamp t = 200.
@@ -337,6 +359,7 @@ class sim:
 		# Return 1
 		return 1
 
+
 	def calc_ref_multipoles(self):
 		""" Compute and assign the reference (l=2) multuipoles to sim.ref_multipoles of the simulations. """
 		refmult = {}
@@ -364,6 +387,7 @@ class sim:
 			refmult.update({alias: [Ml12_ref, Ml22_ref, Ml32_ref]})
 			self.ref_multipoles = refmult
 
+
 	def calc_log_multipoles(self):
 		""" Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. """
 		log_mult = {}
@@ -386,6 +410,7 @@ class sim:
 				}
 			)
 		self.log_multipoles = log_mult
+
 
 	def calc_delta_multipoles(self):
 		""" Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) """
@@ -425,6 +450,7 @@ class sim:
 
 		self.log_deltamultipoles = log_deltmult
 
+
 	def calc_log_multipoles2(self):
 		""" Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. """
 		log_mult = {}
@@ -447,6 +473,7 @@ class sim:
 				}
 			)
 		self.log_multipoles2 = log_mult
+
 
 	def calc_delta_multipoles2(self):
 		""" Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) """
@@ -483,6 +510,7 @@ class sim:
 			log_deltmult.update({alias: [time, np.log(-dMl12), np.log(-dMl22), np.log(dMl32)]})
 
 		self.log_deltamultipoles2 = log_deltmult
+
 
 	def load_data(self):
 		""" Load data of the simulations.
@@ -967,6 +995,7 @@ class sim:
 			plt.ylabel(r"$d/d_{init}$")
 			plt.show()
 
+
 	def _resize_multipoles(self):
 		""" Private method to resize the (l=2) multipole data. Useful when merger index was updated from BHdiag3."""
 		for alias in self.aliases:
@@ -979,6 +1008,7 @@ class sim:
 			# self.mass_multipoles[alias] = [item[:self.dist_data_length[alias] for item in self.mass_multipoles[alias]]]
 			# self.spin_multipoles[alias] = [item[:self.dist_data_length[alias]
 			# for item in self.spin_multipoles[alias]]]
+
 
 	def _ifreversal(self):
 		""" Private method to reverse the (l=2) multipole data if mass2>mass1.
@@ -1016,6 +1046,7 @@ class sim:
 			if not flag:
 				message("Data O.K.")
 			return 1.0
+
 
 	def load_strain(self, start_index=0):
 		""" Method to load the shear data of simulations. """
@@ -1089,6 +1120,7 @@ class sim:
 
 		return 1
 
+
 	def calc_amp_phase(self):
 		""" Extract the amplitude and the phase from strain data. """
 		for alias in self.aliases:
@@ -1104,6 +1136,7 @@ class sim:
 			self.strain_amplitude.update({alias: xtract_camp(hpdat, hxdat, dt=dt)})
 			self.strain_frequency.update({alias: np.diff(self.strain_phase[alias]) / dt})
 		return 1
+
 
 	def ret_horizon_radii(self):
 		""" Retrieve the radius of the common horizon at the time of formation. """

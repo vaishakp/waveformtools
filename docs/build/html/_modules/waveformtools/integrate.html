@@ -204,8 +204,8 @@
 	<span class="k">if</span> <span class="ow">not</span> <span class="n">utilde_conven</span><span class="p">:</span>
 		<span class="c1"># Compute the FFT of data</span>
 		<span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="n">ifft</span>
-		<span class="kn">from</span> <span class="nn">waveformtools.transforms</span> <span class="kn">import</span> <span class="n">find_fft</span><span class="p">,</span> <span class="n">unset_fft_conven</span>
-		<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">taper</span>
+		<span class="kn">from</span> <span class="nn">transforms</span> <span class="kn">import</span> <span class="n">find_fft</span><span class="p">,</span> <span class="n">unset_fft_conven</span>
+		<span class="kn">from</span> <span class="nn">waveformtools</span> <span class="kn">import</span> <span class="n">taper</span>
 
 		<span class="c1">#udata_x_re = taper(u_time.real, delta_t=delta_t)</span>
 		<span class="c1">#udata_x_im = taper(u_time.imag, delta_t=delta_t)</span>

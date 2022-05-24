@@ -1,4 +1,4 @@
-waveformtools.waveforms
+﻿waveformtools.waveforms
 =======================
 
 .. automodule:: waveformtools.waveforms
@@ -17,7 +17,7 @@ waveformtools.waveforms
 
    .. autosummary::
    
-      Psi
+      waveform
    
    
 

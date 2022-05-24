@@ -168,156 +168,167 @@
 <span class="sd">	Arrtibutes</span>
 <span class="sd">	----------</span>
 
-<span class="sd">					Primary:</span>
+<span class="sd">	ROOTDIR :	string</span>
+<span class="sd">				Root directory as a string containing the simulation folders.</span>
 
-<span class="sd">						ROOTDIR :	string</span>
-<span class="sd">									Root directory as a string containing the simulation folders.</span>
+<span class="sd">	WAVDIR :	string</span>
+<span class="sd">				Root directory as a string containing the simulation directies containing the wavefom data.</span>
 
-<span class="sd">						WAVDIR :	string</span>
-<span class="sd">									Root directory as a string containing the simulation directies containing the wavefom data.</span>
+<span class="sd">	datadir :	string</span>
+<span class="sd">				The path of the folder containing data relative to the simulation direcory.</span>
 
-<span class="sd">						datadir :	string</span>
-<span class="sd">									The path of the folder containing data relative to the simulation direcory.</span>
+<span class="sd">	strain_dir :	string</span>
+<span class="sd">					The path of the folder containing the waveform data relative to the strain directory.</span>
 
-<span class="sd">						strain_dir :	string</span>
-<span class="sd">										The path of the folder containing the waveform data relative to the strain directory.</span>
+<span class="sd">	aliases :	a list of strings</span>
+<span class="sd">				The names/aliases for the simulations.</span>
 
-<span class="sd">						aliases :	a list of strings</span>
-<span class="sd">									The names/aliases for the simulations.</span>
+<span class="sd">	multipoles :	dict of lists</span>
+<span class="sd">					The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.</span>
 
-<span class="sd">						multipoles :	dict of lists</span>
-<span class="sd">										The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.</span>
+<span class="sd">	mass1 :	dict of floats</span>
+<span class="sd">			The BH1 horizon mass.</span>
 
-<span class="sd">						mass1 :	dict of floats</span>
-<span class="sd">								The BH1 horizon mass.</span>
+<span class="sd">	mass2 :	dict of floats)</span>
+<span class="sd">			The BH2 horizon mass.</span>
 
-<span class="sd">						mass2 :	dict of floats)</span>
-<span class="sd">								The BH2 horizon mass.</span>
+<span class="sd">	mass3 :	dict of floats</span>
+<span class="sd">			The BH3 horizon mass.</span>
 
-<span class="sd">						mass3 :	dict of floats</span>
-<span class="sd">								The BH3 horizon mass.</span>
+<span class="sd">	delta_t :	dict of floats</span>
+<span class="sd">				The time stepping in simulation units (dt/M).</span>
 
-<span class="sd">						delta_t :	dict of floats</span>
-<span class="sd">									The time stepping in simulation units (dt/M).</span>
+<span class="sd">	timeaxis :	dict of 1d arrays</span>
+<span class="sd">				The timeaxis of the simulations.</span>
 
-<span class="sd">						timeaxis :	dict of 1d arrays</span>
-<span class="sd">									The timeaxis of the simulations.</span>
+<span class="sd">	distance :	dict of 1d arrays</span>
+<span class="sd">				The distances of simulations.</span>
 
-<span class="sd">						distance :	dict of 1d arrays</span>
-<span class="sd">									The distances of simulations.</span>
+<span class="sd">	merger_ind :	dict of ints</span>
+<span class="sd">					The merger index/ common horizon formation index of simulations.</span>
 
-<span class="sd">						merger_ind :	dict of ints</span>
-<span class="sd">										The merger index/ common horizon formation index of simulations.</span>
+<span class="sd">	dinit :	dict of floats</span>
+<span class="sd">			The initial distances.</span>
 
-<span class="sd">						dinit :	dict of floats</span>
-<span class="sd">								The initial distances.</span>
+<span class="sd">	multipoles :	dict of lists</span>
+<span class="sd">					The two sets of  mass multipoles of the three horizons. Axis 0 is usuall the time array.</span>
 
-<span class="sd">						multipoles :	dict of lists</span>
-<span class="sd">										The two sets of  mass multipoles of the three horizons. Axis 0 is usuall the time array.</span>
+<span class="sd">	mass_multipoles :	dict of lists</span>
+<span class="sd">						The mass multipoles upto (ell=8).</span>
 
-<span class="sd">						mass_multipoles :	dict of lists</span>
-<span class="sd">											The mass multipoles upto (ell=8).</span>
+<span class="sd">	spin_multipoles :	dict of lists</span>
+<span class="sd">						The spin multipoles upto (l=8).</span>
 
-<span class="sd">						spin_multipoles :	dict of lists</span>
-<span class="sd">											The spin multipoles upto (l=8).</span>
+<span class="sd">	data_length :	dict of float</span>
+<span class="sd">					The data length of the multipole simulation data loaded.</span>
 
-<span class="sd">						data_length :	dict of float</span>
-<span class="sd">										The data length of the multipole simulation data loaded.</span>
+<span class="sd">	dist_data_length :	dict of ints</span>
+<span class="sd">						The data length of distances of simulations.</span>
 
-<span class="sd">						dist_data_length :	dict of ints</span>
-<span class="sd">											The data length of distances of simulations.</span>
+<span class="sd">	merger_distance :	dict of floats</span>
+<span class="sd">						The distance between the blackholes at the merger index.</span>
+
+<span class="sd">	true_merger_dist :	dict of floats</span>
+<span class="sd">						The true merger distance (non-normalized).</span>
+
+<span class="sd">	sampling_f :	dict of floats</span>
+<span class="sd">					The sampling frequency of simulations (1/dt).</span>
+
+<span class="sd">	merger_time :	dict of floats</span>
+<span class="sd">					The cctk_time stamp at merger.</span>
+
+<span class="sd">	massratio :	dict of floats</span>
+<span class="sd">				The massratio of the simulations.</span>
+
+<span class="sd">	chirpmass :	dict of floats</span>
+<span class="sd">				The chirpmass of the simulations.</span>
+
+<span class="sd">	totalmass :	dict of floats</span>
+<span class="sd">				The total mass of the simulations.</span>
+
+<span class="sd">	log_multipoles :	dict of lists</span>
+<span class="sd">						The natural logarithm of the negative of the multipole moments as list [time, multipole1, multipole2, multipole3(if exists)].</span>
+
+<span class="sd">	data_duration :	dict of floats</span>
+<span class="sd">					The total cctk_time units of simulations present.</span>
+
+<span class="sd">	Methods</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	calc_ref_multipoles</span>
+<span class="sd">		Calculate the reference multipoles as time average of first few timesclices of (2) multipole moment data.</span>
+
+<span class="sd">		Assignes/Updates:</span>
+<span class="sd">			* ref_multipoles.</span>
 
 
-<span class="sd">					Derived:</span>
+<span class="sd">	calc_log_multipoles</span>
+<span class="sd">		Calculate the natural logarithm of the negative of the two sets of multipole moment.</span>
 
-<span class="sd">						merger_distance :	dict of floats</span>
-<span class="sd">											The distance between the blackholes at the merger index.</span>
-<span class="sd">						true_merger_dist :	dict of floats</span>
-<span class="sd">											The true merger distance (non-normalized).</span>
-<span class="sd">						sampling_f :	dict of floats</span>
-<span class="sd">										The sampling frequency of simulations (1/dt).</span>
-<span class="sd">						merger_time :	dict of floats</span>
-<span class="sd">										The cctk_time stamp at merger.</span>
-<span class="sd">						massratio :	dict of floats</span>
-<span class="sd">									The massratio of the simulations.</span>
-<span class="sd">						chirpmass :	dict of floats</span>
-<span class="sd">									The chirpmass of the simulations.</span>
-<span class="sd">						totalmass :	dict of floats</span>
-<span class="sd">									The total mass of the simulations.</span>
-<span class="sd">						log_multipoles :	dict of lists</span>
-<span class="sd">											The natural logarithm of the negative of the multipole moments as list [time, multipole1, multipole2, multipole3(if exists)].</span>
-<span class="sd">						data_duration :	dict of floats</span>
-<span class="sd">										The total cctk_time units of simulations present.</span>
+<span class="sd">		Assignes/ Updates:</span>
+<span class="sd">			* log_multipoles.</span>
 
-<span class="sd">			Methods</span>
-<span class="sd">			-------</span>
+<span class="sd">	calc_delta_multipoles</span>
+<span class="sd">		Calculate the two delta multipoles - ref multipoles.</span>
 
-<span class="sd">					calc_ref_multipoles						:	Calculate the reference multipoles as time average of first few timesclices of (2) multipole moment data.</span>
+<span class="sd">		Assignes/ Updates:</span>
+<span class="sd">			* delta_multipoles.</span>
 
-<span class="sd">																Assignes/Updates:</span>
+<span class="sd">	calc_amp_phase</span>
+<span class="sd">		Extract the amplitudes and phases of the strain waveforms.</span>
 
-<span class="sd">																	ref_multipoles.</span>
+<span class="sd">		Assignes/Updates:</span>
+<span class="sd">			* strain_amp</span>
+<span class="sd">			* strain_phase.</span>
 
+<span class="sd">	load_data</span>
+<span class="sd">		Load the multipole and distance data of the simulations.</span>
 
-<span class="sd">					calc_log_multipoles						:	Calculate the natural logarithm of the negative of the two sets of multipole moment.</span>
+<span class="sd">		Assignes/Updates:</span>
 
-<span class="sd">																Assignes/ Updates:</span>
-<span class="sd">																	log_multipoles.</span>
+<span class="sd">			* distance.</span>
+<span class="sd">			* dinit.</span>
+<span class="sd">			* mass1.</span>
+<span class="sd">			* mass2.</span>
+<span class="sd">			* merger_index.</span>
+<span class="sd">			* merger_time.</span>
+<span class="sd">			* merger_distance.</span>
+<span class="sd">			* true_merger_distance.</span>
+<span class="sd">			* data_length.</span>
+<span class="sd">			* data_duration.</span>
+<span class="sd">			* multipoles.</span>
+<span class="sd">			* mass_multipoles.</span>
+<span class="sd">			* spin_multipoles.</span>
 
-<span class="sd">					calc_delta_multipoles					:	Calculate the two delta multipoles - ref multipoles.</span>
+<span class="sd">	load_strain</span>
+<span class="sd">		Load the strain data of the simulations from waveform directories.</span>
 
-<span class="sd">																Assignes/ Updates:</span>
-<span class="sd">																	delta_multipoles.</span>
+<span class="sd">		Assignes/Updates:</span>
+<span class="sd">			* strain.</span>
+<span class="sd">			* strain_amp.</span>
+<span class="sd">			* strain_phase.</span>
+<span class="sd">			* strain_shift.</span>
 
-<span class="sd">					calc_amp_phase							:	Extract the amplitudes and phases of the strain waveforms.</span>
+<span class="sd">	load_shears</span>
+<span class="sd">		Load the shear data at a pole of respective horizons of the simulations from waveform directories.</span>
 
-<span class="sd">																Assignes/Updates:</span>
+<span class="sd">		Assignes/Updates:</span>
+<span class="sd">			* shear.</span>
+<span class="sd">			* shear_amp.</span>
+<span class="sd">			* shear_phase.</span>
+<span class="sd">			* shear_shift.</span>
 
-<span class="sd">																	strain_amp</span>
-<span class="sd">																	strain_phase.</span>
+<span class="sd">	ret_horizon_radii</span>
+<span class="sd">		A method to retrieve the areal radii of the horizons.</span>
 
-<span class="sd">					load_data								:	Load the multipole and distance data of the simulations.</span>
+<span class="sd">		Assigns/Updates</span>
+<span class="sd">			* areal_radii</span>
 
-<span class="sd">																Assignes/Updates:</span>
+<span class="sd">	_resize_multipoles</span>
+<span class="sd">		Private method to resize the sim.multipoles after retrieving the length of distance.</span>
 
-<span class="sd">																	distance.</span>
-<span class="sd">																	dinit.</span>
-<span class="sd">																	mass1.</span>
-<span class="sd">																	mass2.</span>
-<span class="sd">																	merger_index.</span>
-<span class="sd">																	merger_time.</span>
-<span class="sd">																	merger_distance.</span>
-<span class="sd">																	true_merger_distance.</span>
-<span class="sd">																	data_length.</span>
-<span class="sd">																	data_duration.</span>
-<span class="sd">																	multipoles.</span>
-<span class="sd">																	mass_multipoles.</span>
-<span class="sd">																	spin_multipoles.</span>
-
-<span class="sd">					load_strain								:	Load the strain data of the simulations from waveform directories.</span>
-
-<span class="sd">																Assignes/Updates:</span>
-<span class="sd">																	strain.</span>
-<span class="sd">																	strain_amp.</span>
-<span class="sd">																	strain_phase.</span>
-<span class="sd">																	strain_shift.</span>
-
-<span class="sd">					load_shears								:	Load the shear data at a pole of respective horizons of the simulations from waveform directories.</span>
-
-<span class="sd">																Assignes/Updates:</span>
-<span class="sd">																	shear.</span>
-<span class="sd">																	shear_amp.</span>
-<span class="sd">																	shear_phase.</span>
-<span class="sd">																	shear_shift.</span>
-
-<span class="sd">					ret_horizon_radii						:	A method to retrieve the areal radii of the horizons.</span>
-
-<span class="sd">																Assigns/Updates:</span>
-
-<span class="sd">																	areal_radii</span>
-
-<span class="sd">					_resize_multipoles						:	Private method to resize the sim.multipoles after retrieving the length of distance.</span>
-<span class="sd">					_ifreversal								:	Private method to reverse the data of BH 1 and 2 if mass2 &gt; mass1.</span>
+<span class="sd">	_ifreversal</span>
+<span class="sd">		Private method to reverse the data of BH 1 and 2 if mass2 &gt; mass1.</span>
 
 
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -390,20 +401,24 @@
 		<span class="sd">&quot;&quot;&quot;Compute and return the data duration of the simulations.&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
+
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">comm_data_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the duration of the common data (multipole and Bhdiag/distance) of the simulations. &quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm_data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+
 
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">pm_data_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the duration of post-merger data present in the simulations.&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_duration</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_time</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
+
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">pm_data_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the post merger data length avaialable for all simulations. &quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_length</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+
 
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">merger_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -420,25 +435,30 @@
 					<span class="n">merger_dist</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">[</span><span class="n">alias</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]})</span>
 		<span class="k">return</span> <span class="n">merger_dist</span>
 
+
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">true_merger_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the true (i.e. non-normalized) distance at merger for the simulations.&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dinit</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_distance</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+
 
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">sampling_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the sampling frequency of the simulations. &quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
+
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">merger_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the cctk_time stamp at the merger for the simulations. &quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
 
+
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">massratio</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the massratio of the simulations. &quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+
 
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">chirpmass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -449,10 +469,12 @@
 			<span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span>
 		<span class="p">}</span>
 
+
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">totalmass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the total mass of the simulations. &quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">alias</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">}</span>
+
 
 <div class="viewcode-block" id="sim.calc_junkend"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_junkend">[docs]</a>	<span class="k">def</span> <span class="nf">calc_junkend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tjn</span><span class="o">=</span><span class="mf">200.0</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute the indices and the starting distances of the system at timestamp t = 200.</span>
@@ -489,6 +511,7 @@
 		<span class="c1"># Return 1</span>
 		<span class="k">return</span> <span class="mi">1</span></div>
 
+
 <div class="viewcode-block" id="sim.calc_ref_multipoles"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_ref_multipoles">[docs]</a>	<span class="k">def</span> <span class="nf">calc_ref_multipoles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and assign the reference (l=2) multuipoles to sim.ref_multipoles of the simulations. &quot;&quot;&quot;</span>
 		<span class="n">refmult</span> <span class="o">=</span> <span class="p">{}</span>
@@ -516,6 +539,7 @@
 			<span class="n">refmult</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">Ml12_ref</span><span class="p">,</span> <span class="n">Ml22_ref</span><span class="p">,</span> <span class="n">Ml32_ref</span><span class="p">]})</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">ref_multipoles</span> <span class="o">=</span> <span class="n">refmult</span></div>
 
+
 <div class="viewcode-block" id="sim.calc_log_multipoles"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_log_multipoles">[docs]</a>	<span class="k">def</span> <span class="nf">calc_log_multipoles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. &quot;&quot;&quot;</span>
 		<span class="n">log_mult</span> <span class="o">=</span> <span class="p">{}</span>
@@ -538,6 +562,7 @@
 				<span class="p">}</span>
 			<span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">log_multipoles</span> <span class="o">=</span> <span class="n">log_mult</span></div>
+
 
 <div class="viewcode-block" id="sim.calc_delta_multipoles"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_delta_multipoles">[docs]</a>	<span class="k">def</span> <span class="nf">calc_delta_multipoles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) &quot;&quot;&quot;</span>
@@ -577,6 +602,7 @@
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">log_deltamultipoles</span> <span class="o">=</span> <span class="n">log_deltmult</span></div>
 
+
 <div class="viewcode-block" id="sim.calc_log_multipoles2"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_log_multipoles2">[docs]</a>	<span class="k">def</span> <span class="nf">calc_log_multipoles2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. &quot;&quot;&quot;</span>
 		<span class="n">log_mult</span> <span class="o">=</span> <span class="p">{}</span>
@@ -599,6 +625,7 @@
 				<span class="p">}</span>
 			<span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">log_multipoles2</span> <span class="o">=</span> <span class="n">log_mult</span></div>
+
 
 <div class="viewcode-block" id="sim.calc_delta_multipoles2"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_delta_multipoles2">[docs]</a>	<span class="k">def</span> <span class="nf">calc_delta_multipoles2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) &quot;&quot;&quot;</span>
@@ -635,6 +662,7 @@
 			<span class="n">log_deltmult</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">dMl12</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="n">dMl22</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">dMl32</span><span class="p">)]})</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">log_deltamultipoles2</span> <span class="o">=</span> <span class="n">log_deltmult</span></div>
+
 
 <div class="viewcode-block" id="sim.load_data"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.load_data">[docs]</a>	<span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Load data of the simulations.</span>
@@ -1119,6 +1147,7 @@
 			<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$d/d_</span><span class="si">{init}</span><span class="s2">$&quot;</span><span class="p">)</span>
 			<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
+
 	<span class="k">def</span> <span class="nf">_resize_multipoles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Private method to resize the (l=2) multipole data. Useful when merger index was updated from BHdiag3.&quot;&quot;&quot;</span>
 		<span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
@@ -1131,6 +1160,7 @@
 			<span class="c1"># self.mass_multipoles[alias] = [item[:self.dist_data_length[alias] for item in self.mass_multipoles[alias]]]</span>
 			<span class="c1"># self.spin_multipoles[alias] = [item[:self.dist_data_length[alias]</span>
 			<span class="c1"># for item in self.spin_multipoles[alias]]]</span>
+
 
 	<span class="k">def</span> <span class="nf">_ifreversal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Private method to reverse the (l=2) multipole data if mass2&gt;mass1.</span>
@@ -1168,6 +1198,7 @@
 			<span class="k">if</span> <span class="ow">not</span> <span class="n">flag</span><span class="p">:</span>
 				<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Data O.K.&quot;</span><span class="p">)</span>
 			<span class="k">return</span> <span class="mf">1.0</span>
+
 
 <div class="viewcode-block" id="sim.load_strain"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.load_strain">[docs]</a>	<span class="k">def</span> <span class="nf">load_strain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Method to load the shear data of simulations. &quot;&quot;&quot;</span>
@@ -1241,6 +1272,7 @@
 
 		<span class="k">return</span> <span class="mi">1</span></div>
 
+
 <div class="viewcode-block" id="sim.calc_amp_phase"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.calc_amp_phase">[docs]</a>	<span class="k">def</span> <span class="nf">calc_amp_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Extract the amplitude and the phase from strain data. &quot;&quot;&quot;</span>
 		<span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
@@ -1256,6 +1288,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">strain_amplitude</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="n">xtract_camp</span><span class="p">(</span><span class="n">hpdat</span><span class="p">,</span> <span class="n">hxdat</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">)})</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">strain_frequency</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strain_phase</span><span class="p">[</span><span class="n">alias</span><span class="p">])</span> <span class="o">/</span> <span class="n">dt</span><span class="p">})</span>
 		<span class="k">return</span> <span class="mi">1</span></div>
+
 
 <div class="viewcode-block" id="sim.ret_horizon_radii"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.ret_horizon_radii">[docs]</a>	<span class="k">def</span> <span class="nf">ret_horizon_radii</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Retrieve the radius of the common horizon at the time of formation. &quot;&quot;&quot;</span>

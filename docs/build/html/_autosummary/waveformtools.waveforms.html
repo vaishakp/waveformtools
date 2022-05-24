@@ -24,6 +24,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -33,9 +34,7 @@
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="waveformtools.waveformtools" href="waveformtools.waveformtools.html" />
-    <link rel="prev" title="waveformtools.transforms" href="waveformtools.transforms.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,19 +83,9 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="waveformtools.html">waveformtools</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.waveforms</a></li>
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">Package API</a></li>
 </ul>
 
             
@@ -142,10 +131,6 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../api.html">Package API</a> &raquo;</li>
-        
-          <li><a href="waveformtools.html">waveformtools</a> &raquo;</li>
-        
       <li>waveformtools.waveforms</li>
     
     
@@ -167,6 +152,7 @@
             
   <div class="section" id="module-waveformtools.waveforms">
 <span id="waveformtools-waveforms"></span><h1>waveformtools.waveforms<a class="headerlink" href="#module-waveformtools.waveforms" title="Permalink to this headline">¶</a></h1>
+<p>A Class for handling the waveform data</p>
 <p class="rubric">Classes</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -174,43 +160,543 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.Psi" title="waveformtools.waveforms.Psi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Psi</span></code></a>([timeaxis, wavedata, base_dir, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform" title="waveformtools.waveforms.waveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveform</span></code></a>([timeaxis, wavedata, base_dir, …])</p></td>
 <td><p>A class for handling waveforms.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py class">
-<dt id="waveformtools.waveforms.Psi">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">waveformtools.waveforms.</span></code><code class="sig-name descname"><span class="pre">Psi</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavedata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#Psi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.Psi" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.waveforms.waveform">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">waveformtools.waveforms.</span></code><code class="sig-name descname"><span class="pre">waveform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavedata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for handling waveforms.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>dt</strong></dt><dd></dd>
-</dl>
-</dd>
-</dl>
 <p class="rubric">Methods</p>
-<table class="docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
-<col style="width: 57%" />
-<col style="width: 43%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>load_data</strong></p></td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.apply_CoM_correction" title="waveformtools.waveforms.waveform.apply_CoM_correction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_CoM_correction</span></code></a>(alpha, beta)</p></td>
+<td><p>Apply the Centre of Mass corrections to the waveform modes, given its mean motion.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.apply_boost" title="waveformtools.waveforms.waveform.apply_boost"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_boost</span></code></a>()</p></td>
+<td><p>Apply the given boost transfoamation <span class="math notranslate nohighlight">\(\beta\)</span> to the waveform.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.apply_supertranslation" title="waveformtools.waveforms.waveform.apply_supertranslation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_supertranslation</span></code></a>(alpha)</p></td>
+<td><p>Apply the given supertranslation transfoamation <span class="math notranslate nohighlight">\(\alpha\)</span> approximately to the waveform.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.decompose_waaveform" title="waveformtools.waveforms.waveform.decompose_waaveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decompose_waaveform</span></code></a>([spin_weight, ell_max])</p></td>
+<td><p>Decompose the given waveform into SWSHs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.extrapolate_to_inf_numeric" title="waveformtools.waveforms.waveform.extrapolate_to_inf_numeric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extrapolate_to_inf_numeric</span></code></a>(ext_radii, …)</p></td>
+<td><p>Extrapolate a given set of waveform modes to null infinity using the numerical</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.extrapolate_to_inf_per" title="waveformtools.waveforms.waveform.extrapolate_to_inf_per"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extrapolate_to_inf_per</span></code></a>([mass, spin])</p></td>
+<td><p>Extrapolate the given set of waveform modes to null infinity using the 2.5 order perturbative method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.get_angular_frequencies" title="waveformtools.waveforms.waveform.get_angular_frequencies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_angular_frequencies</span></code></a>([method])</p></td>
+<td><p>Get the instantaneous angular frequency of the waveform.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.get_frequency_domain_waveform" title="waveformtools.waveforms.waveform.get_frequency_domain_waveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_frequency_domain_waveform</span></code></a>([new_delta_f])</p></td>
+<td><p>Get the frequency domain waveform from the timedomain waveform.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.get_news_from_psi4" title="waveformtools.waveforms.waveform.get_news_from_psi4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_news_from_psi4</span></code></a>([omega0])</p></td>
+<td><p>Get the news modes from <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.get_news_from_strain" title="waveformtools.waveforms.waveform.get_news_from_strain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_news_from_strain</span></code></a>()</p></td>
+<td><p>Get the <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes from the strain by differentiation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.get_psi4_from_news" title="waveformtools.waveforms.waveform.get_psi4_from_news"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_psi4_from_news</span></code></a>([method])</p></td>
+<td><p>Get the <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes from the News function by differentiation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.get_psi4_from_strain" title="waveformtools.waveforms.waveform.get_psi4_from_strain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_psi4_from_strain</span></code></a>([method])</p></td>
+<td><p>Get the <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes from the strain by differentiation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.get_strain_from_news" title="waveformtools.waveforms.waveform.get_strain_from_news"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_strain_from_news</span></code></a>([omega0])</p></td>
+<td><p>Get the strain modes from the News modes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.get_strain_from_psi4" title="waveformtools.waveforms.waveform.get_strain_from_psi4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_strain_from_psi4</span></code></a>([omega0])</p></td>
+<td><p>Get the strain modes from <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.load_modes" title="waveformtools.waveforms.waveform.load_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_modes</span></code></a>(ell_max[, pre_key, mode_numbers])</p></td>
+<td><p>Load the waveform mode data from an hdf file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.reconstr_waveform" title="waveformtools.waveforms.waveform.reconstr_waveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reconstr_waveform</span></code></a>([delta_phi])</p></td>
+<td><p>Reconstruct the waveforms on a sphere given it`s modes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.resample_mode_data" title="waveformtools.waveforms.waveform.resample_mode_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_mode_data</span></code></a>([new_delta_t, new_delta_f])</p></td>
+<td><p>Resample the given timeseries/ frequencyseries waveform mode data. Resamples at available <cite>delta_t</cite> or <cite>delta_f</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.waveform.set_delta_t" title="waveformtools.waveforms.waveform.set_delta_t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_delta_t</span></code></a>([delta_t])</p></td>
+<td><p>Set the time step of the waveform. Sets the value from the timeaxis</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
-<dt id="waveformtools.waveforms.Psi.dt">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dt</span></code><a class="headerlink" href="#waveformtools.waveforms.Psi.dt" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="waveformtools.waveforms.waveform.apply_CoM_correction">
+<code class="sig-name descname"><span class="pre">apply_CoM_correction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.apply_CoM_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.apply_CoM_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the Centre of Mass corrections to the waveform modes, given its mean motion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alpha</strong><span class="classifier">list</span></dt><dd><p>The list containig the mean displacement of the CoM.</p>
+</dd>
+<dt><strong>beta</strong><span class="classifier">list</span></dt><dd><p>The list containig the mean drift oi the CoM.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>com_corrected_modes</strong><span class="classifier">waveforms obj</span></dt><dd><p>A waveforms object containing the CoM corrected waveform modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformttools.</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.waveforms.Psi.load_data">
-<code class="sig-name descname"><span class="pre">load_data</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#Psi.load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.Psi.load_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="waveformtools.waveforms.waveform.apply_boost">
+<code class="sig-name descname"><span class="pre">apply_boost</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.apply_boost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.apply_boost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the given boost transfoamation <span class="math notranslate nohighlight">\(\beta\)</span> to the waveform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>beta</strong><span class="classifier">list</span></dt><dd><p>The list containing the boost three-vector.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>supertranslated_waveform</strong><span class="classifier">waveforms obj</span></dt><dd><p>The boosted waveform modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.apply_supertranslation">
+<code class="sig-name descname"><span class="pre">apply_supertranslation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.apply_supertranslation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.apply_supertranslation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the given supertranslation transfoamation <span class="math notranslate nohighlight">\(\alpha\)</span> approximately to the waveform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alpha</strong><span class="classifier">list</span></dt><dd><p>The list containing the supertranslation three-vector.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>supertranslated_waveform</strong><span class="classifier">waveforms obj</span></dt><dd><p>The supertranslated waveform modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The supertranslation applied is approximate, given….</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.decompose_waaveform">
+<code class="sig-name descname"><span class="pre">decompose_waaveform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spin_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.decompose_waaveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.decompose_waaveform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decompose the given waveform into SWSHs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>spin_weight</strong><span class="classifier">int, optional</span></dt><dd><p>The spin weight of the SWSH basis.</p>
+</dd>
+<dt><strong>ell_max</strong><span class="classifier">int</span></dt><dd><p>The maximum angular mode number in the basis.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>waveform_data</strong><span class="classifier">1d array</span></dt><dd><p>The one dimensional array of SWSH coefficients, one for each
+time/ frequency step.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.extrapolate_to_inf_numeric">
+<code class="sig-name descname"><span class="pre">extrapolate_to_inf_numeric</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext_radii</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_of_waveforms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.extrapolate_to_inf_numeric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.extrapolate_to_inf_numeric" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Extrapolate a given set of waveform modes to null infinity using the numerical</dt><dd><p>method.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ext_radii</strong><span class="classifier">list</span></dt><dd><p>A list containing the values of the extraction radii of the waveforms.</p>
+</dd>
+<dt><strong>set_of_waveforms</strong><span class="classifier">list</span></dt><dd><p>A list of waveforms at the various extraction radii.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>waveform_at_inf</strong><span class="classifier">1d array</span></dt><dd><p>A 1d array of modes of the approximate extrapolated waveform at future null infninity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.extrapolate.extrapolate_to_inf_numeric</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.extrapolate_to_inf_per">
+<code class="sig-name descname"><span class="pre">extrapolate_to_inf_per</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.extrapolate_to_inf_per"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.extrapolate_to_inf_per" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extrapolate the given set of waveform modes to null infinity using the 2.5 order perturbative method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mass</strong><span class="classifier">float, optional</span></dt><dd><p>The total mass of the system.</p>
+</dd>
+<dt><strong>spin</strong><span class="classifier">float, optional</span></dt><dd><p>The total spin of the system.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>extrapolated_waveform_modes</strong><span class="classifier">waveforms object</span></dt><dd><p>A wavwforms object containig the extrapolated waveform.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.extrapolate.extrapolate_to_inf_pert_2p5_order</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.get_angular_frequencies">
+<code class="sig-name descname"><span class="pre">get_angular_frequencies</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CS'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.get_angular_frequencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.get_angular_frequencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the instantaneous angular frequency of the waveform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>method</strong><span class="classifier">str</span></dt><dd><p>The method to use for computing the derivative.
+The available methods are ‘CS’ (Chebyshev series)
+or ‘FD’ (Smoothened finite differences).</p>
+</dd>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>waveforms.omega</strong><span class="classifier">1d array</span></dt><dd><p>The instantaneous frequencies of the waveform.
+Also sets the corresponding variable.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.get_frequency_domain_waveform">
+<code class="sig-name descname"><span class="pre">get_frequency_domain_waveform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_delta_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.get_frequency_domain_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.get_frequency_domain_waveform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the frequency domain waveform from the timedomain waveform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>new_delta_f</strong><span class="classifier">float, optional</span></dt><dd><p>The sampling frequency. If set, then the frequency domain
+data is resampled at the requested sampling frequency.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>frequency_axis</strong><span class="classifier">1d array</span></dt><dd><p>The frequency axis of the FFT. Also sets the
+variable <cite>waveforms.frequency_axis</cite></p>
+</dd>
+<dt><strong>frequency_domain_waveform</strong><span class="classifier">1d array</span></dt><dd><p>The frequency domain waveform. Also sets
+the variable <cite>waveforms.frequency_axis</cite></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.get_news_from_psi4">
+<code class="sig-name descname"><span class="pre">get_news_from_psi4</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.get_news_from_psi4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.get_news_from_psi4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the news modes from <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>omega0</strong><span class="classifier">float, optional</span></dt><dd><p>The cutoff angular frequency for fixed frequency integration.
+Defaults to one-tenth of the initial frequency of the mode if not
+given.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>news_modes</strong><span class="classifier">waveforms obj</span></dt><dd><p>The mode coefficients of the News, obtained by a single time
+integration of <span class="math notranslate nohighlight">\(\Psi_4\)</span>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.get_news_from_strain">
+<code class="sig-name descname"><span class="pre">get_news_from_strain</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.get_news_from_strain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.get_news_from_strain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes from the strain by differentiation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>method</strong><span class="classifier">str</span></dt><dd><p>The method to use for computing the derivative.
+The available methods are ‘CS’ (Chebyshev series)
+or ‘FD’ (Smoothened finite differences).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>News</strong><span class="classifier">waveforms obj</span></dt><dd><p>The modes coefficients of the News waveform, obtained by differentiating the strain
+function once in the time domain.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="waveformtools.differentiate.html#waveformtools.differentiate.Chebyshev_differential" title="waveformtools.differentiate.Chebyshev_differential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.differentiate.Chebyshev_differential</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">wavefotmtools.differentiate.differentiate5</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.get_psi4_from_news">
+<code class="sig-name descname"><span class="pre">get_psi4_from_news</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CS'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.get_psi4_from_news"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.get_psi4_from_news" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes from the News function by differentiation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>method</strong><span class="classifier">str</span></dt><dd><p>The method to use for computing the derivative.
+The available methods are ‘CS’ (Chebyshev series)
+or ‘FD’ (Smoothened finite differences).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>Psi4</strong><span class="classifier">waveforms obj</span></dt><dd><p>The modes coefficients of the <span class="math notranslate nohighlight">\(\Psi_4\)</span> waveform, obtained by differentiating the news
+function once in the time domain.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="waveformtools.differentiate.html#waveformtools.differentiate.Chebyshev_differential" title="waveformtools.differentiate.Chebyshev_differential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.differentiate.Chebyshev_differential</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">wavefotmtools.differentiate.differentiate5</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.get_psi4_from_strain">
+<code class="sig-name descname"><span class="pre">get_psi4_from_strain</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CS'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.get_psi4_from_strain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.get_psi4_from_strain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes from the strain by differentiation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>method</strong><span class="classifier">str</span></dt><dd><p>The method to use for computing the derivative.
+The available methods are ‘CS’ (Chebyshev series)
+or ‘FD’ (Smoothened finite differences).</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>Psi4</strong><span class="classifier">waveforms obj</span></dt><dd><p>The modes coefficients of the <span class="math notranslate nohighlight">\(\Psi_4\)</span> waveform, obtained by differentiating the strain
+function twice in the time domain.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="waveformtools.differentiate.html#waveformtools.differentiate.Chebyshev_differential" title="waveformtools.differentiate.Chebyshev_differential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.differentiate.Chebyshev_differential</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">wavefotmtools.differentiate.differentiate5</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.get_strain_from_news">
+<code class="sig-name descname"><span class="pre">get_strain_from_news</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.get_strain_from_news"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.get_strain_from_news" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the strain modes from the News modes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>omega0</strong><span class="classifier">float, optional</span></dt><dd><p>The cutoff angular frequency for fixed frequency integration.
+Defaults to one-tenth of the initial frequency of the mode if not
+given.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>strain_modes</strong><span class="classifier">waveforms obj</span></dt><dd><p>The mode coefficients of the stain modes obtained by a single time
+integration of the News.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.get_strain_from_psi4">
+<code class="sig-name descname"><span class="pre">get_strain_from_psi4</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.get_strain_from_psi4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.get_strain_from_psi4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the strain modes from <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>omega0</strong><span class="classifier">float, optional</span></dt><dd><p>The cutoff angular frequency for fixed frequency integration.
+Defaults to one-tenth of the initial frequency of the mode if not
+given.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>strain_modes</strong><span class="classifier">waveforms obj</span></dt><dd><p>The mode coefficients of the stain modes obtained by a double time
+integration of <span class="math notranslate nohighlight">\(\Psi_4\)</span>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.load_modes">
+<code class="sig-name descname"><span class="pre">load_modes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ell_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_numbers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.load_modes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.load_modes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the waveform mode data from an hdf file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pre_key</strong><span class="classifier">str, optional</span></dt><dd><p>A string containing the key of the group in
+the HDF file in which the modes` dataset exists.
+It defaults to <cite>None</cite>.</p>
+</dd>
+<dt><strong>mode_numbers</strong><span class="classifier">list</span></dt><dd><p>The mode numbers to load from the file.
+Each item in the list is a list that
+contains two integrer numbers, one for
+the mode index <span class="math notranslate nohighlight">\(\ell\)</span> and the
+other for the mode index <span class="math notranslate nohighlight">\(m\)</span>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>waveform_obj</strong><span class="classifier">3d array</span></dt><dd><p>Sets the three dimensional array <cite>waveform.modes</cite> that contains
+the required <span class="math notranslate nohighlight">\(\ell, m\)</span> modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">waveformtools.waveforms</span> <span class="kn">import</span> <span class="n">waveform</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">waveform</span><span class="o">.</span><span class="n">set_basedir</span><span class="p">(</span><span class="s1">&#39;./&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">waveform</span><span class="o">.</span><span class="n">set_datadir</span><span class="p">(</span><span class="s1">&#39;data/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mode_numbers</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">waveform</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">mode_numbers</span><span class="o">=</span><span class="n">mode_numbers</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.reconstr_waveform">
+<code class="sig-name descname"><span class="pre">reconstr_waveform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta_phi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.reconstr_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.reconstr_waveform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reconstruct the waveforms on a sphere given it`s modes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>delta_theta</strong><span class="classifier">float</span></dt><dd><p>The polar angle step size.</p>
+</dd>
+<dt><strong>delta_phi</strong><span class="classifier">float</span></dt><dd><p>The aximuthal angle step size.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>waveform_data</strong><span class="classifier">func</span></dt><dd><p>The waveform on a sphere.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The waveform is interpolated using <cite>scipy.interpolate.interp1d</cite> using third order
+method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.resample_mode_data">
+<code class="sig-name descname"><span class="pre">resample_mode_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_delta_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.resample_mode_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.resample_mode_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Resample the given timeseries/ frequencyseries waveform mode data. Resamples at available <cite>delta_t</cite> or <cite>delta_f</cite></dt><dd><p>by default. If <cite>new_delta_x</cite> is given, the resampling happens at the supplied new value.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>new_delta_t</strong><span class="classifier">float, optional</span></dt><dd><p>The new time domain sampling width.</p>
+</dd>
+<dt><strong>new_delta_f</strong><span class="classifier">float, optional</span></dt><dd><p>The new frequency domain sampling width.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>waveform_mode_data</strong><span class="classifier">1d array</span></dt><dd><p>The array of resampled waveform modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Resamples the timeseries and frequencyseries modes      if <cite>new_delta_t</cite> and <cite>new_delta_f</cite> are given, respectively.
+If none are given, then it resamples the timedomain modes at the default time stepping <cite>delta_t</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="waveformtools.waveforms.waveform.set_delta_t">
+<code class="sig-name descname"><span class="pre">set_delta_t</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#waveform.set_delta_t"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.waveform.set_delta_t" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Set the time step of the waveform. Sets the value from the timeaxis</dt><dd><p>if the optional argument <cite>delta_t</cite> is not specified.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>delta_t</strong><span class="classifier">float</span></dt><dd><p>The time stepping <cite>delta_t</cite></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Sets the variable <cite>waveform.delta_t</cite>.`</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -221,15 +707,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="waveformtools.waveformtools.html" class="btn btn-neutral float-right" title="waveformtools.waveformtools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="waveformtools.transforms.html" class="btn btn-neutral float-left" title="waveformtools.transforms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

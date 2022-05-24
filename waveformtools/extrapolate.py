@@ -5,7 +5,7 @@
 ##############################################
 import numpy as np
 
-import waveformtools.waveformtools as waveformtools
+import waveformtools
 ###############################################
 # Basic utilities
 ###############################################
@@ -110,8 +110,8 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius
 
 	"""
 
-	from waveformtools.integrate import fixed_frequency_integrator
-	from waveformtools.differentiate import differentiate_cwaveform
+	from integrate import fixed_frequency_integrator
+	from differentiate import differentiate_cwaveform
 	# Timeaxis
 
 	timeaxis = np.arange(0, len(rPsi4_rlm) * delta_t, delta_t)
@@ -200,8 +200,8 @@ def waveextract_to_inf_perturbative_two_order(rPsi4_rlm, delta_t, areal_radius=5
 
 	"""
 
-	from waveformtools.integrate import fixed_frequency_integrator
-	from waveformtools.differentiate import differentiate_cwaveform
+	from integrate import fixed_frequency_integrator
+	from differentiate import differentiate_cwaveform
 
 	# Assigning the terms. Each set of subterms in a pair of paranthesis is a term.
 	term_1 = rPsi4_rlm

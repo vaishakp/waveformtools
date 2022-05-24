@@ -157,7 +157,7 @@
 <span class="c1">##############################################</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">waveformtools.waveformtools</span> <span class="k">as</span> <span class="nn">waveformtools</span>
+<span class="kn">import</span> <span class="nn">waveformtools</span>
 <span class="c1">###############################################</span>
 <span class="c1"># Basic utilities</span>
 <span class="c1">###############################################</span>
@@ -262,8 +262,8 @@
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="kn">from</span> <span class="nn">waveformtools.integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
-	<span class="kn">from</span> <span class="nn">waveformtools.differentiate</span> <span class="kn">import</span> <span class="n">differentiate_cwaveform</span>
+	<span class="kn">from</span> <span class="nn">integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
+	<span class="kn">from</span> <span class="nn">differentiate</span> <span class="kn">import</span> <span class="n">differentiate_cwaveform</span>
 	<span class="c1"># Timeaxis</span>
 
 	<span class="n">timeaxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
@@ -352,8 +352,8 @@
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="kn">from</span> <span class="nn">waveformtools.integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
-	<span class="kn">from</span> <span class="nn">waveformtools.differentiate</span> <span class="kn">import</span> <span class="n">differentiate_cwaveform</span>
+	<span class="kn">from</span> <span class="nn">integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
+	<span class="kn">from</span> <span class="nn">differentiate</span> <span class="kn">import</span> <span class="n">differentiate_cwaveform</span>
 
 	<span class="c1"># Assigning the terms. Each set of subterms in a pair of paranthesis is a term.</span>
 	<span class="n">term_1</span> <span class="o">=</span> <span class="n">rPsi4_rlm</span>

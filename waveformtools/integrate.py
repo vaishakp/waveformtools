@@ -52,8 +52,8 @@ def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None,  omega0=
 	if not utilde_conven:
 		# Compute the FFT of data
 		from numpy.fft import ifft
-		from waveformtools.transforms import find_fft, unset_fft_conven
-		from waveformtools.waveformtools import taper
+		from transforms import find_fft, unset_fft_conven
+		from waveformtools import taper
 
 		#udata_x_re = taper(u_time.real, delta_t=delta_t)
 		#udata_x_im = taper(u_time.imag, delta_t=delta_t)

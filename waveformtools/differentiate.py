@@ -1,4 +1,4 @@
-""" Tools for differentiating a function """
+""" Tools for differentiating data. """
 
 #######################################################
 # Imports
@@ -105,8 +105,8 @@ def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.in
 	if not utilde_conven:
 		# Compute the FFT of data
 		from numpy.fft import ifft
-		from waveformtools.transforms import find_fft, unset_fft_conven
-		from waveformtools.waveformtools import taper
+		from transforms import find_fft, unset_fft_conven
+		from waveformtools import taper
 
 		udata_x = taper(udata_x, delta_t=delta_x)
 		new_x_axis = udata_x.sample_times
@@ -264,7 +264,7 @@ def differentiate2(data, delta_t):
 		der_data.append(np.dot(coeffs, data_subarray) / (divide * delta_t))
 
 	der_data.append(derNm2)
-	der_data.append(derN)
+	der_data.append(derNm1)
 
 	return der_data
 
@@ -322,7 +322,7 @@ def differentiate3(data, delta_t):
 
 	derNm3 = np.dot(stencil, data_vec) / delta_t
 
-	det_data.append(der2)
+	der_data.append(der2)
 
 	for index in range(order, len(data) - order):
 		data_subarray = data[index - order : index + order + 1]
@@ -538,7 +538,7 @@ def differentiate_cwaveform(time_axis, waveform):
 	"""
 
 	# Get the amplitude and phase of the complex 1d waveform.
-	from waveformtools.waveformtools import xtract_camp_phase
+	from waveformtools import xtract_camp_phase
 
 	waveform_amp, waveform_phase = xtract_camp_phase(waveform.real, waveform.imag)
 

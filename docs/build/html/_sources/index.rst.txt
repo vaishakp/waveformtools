@@ -11,6 +11,7 @@ Welcome to waveformtools' documentation!
    :maxdepth: 2
    :caption: Contents:
 
+
    README.md
    basic_features
    api
