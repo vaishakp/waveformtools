@@ -1128,14 +1128,14 @@ def xtract_cphase(tsdata_p, tsdata_x, delta_t=None, to_plot=False):
 	"""
 
 	# Assign the timestep. Real and imaginary parts are assumed to have same timestep.
-	if not delta_t:
-		try:
-			delta_t = tsdata_p.delta_t
-		except AttributeError:
-			try:
-				delta_t = tsdata_x.delta_t
-			except:
-				message("Input is not a TimeSeries. Please supply gridspacing as delta_t", message_verbosity=0)
+	#if not delta_t:
+	#	try:
+	#		delta_t = tsdata_p.delta_t
+	#	except AttributeError:
+	#		try:
+	#			delta_t = tsdata_x.delta_t
+	#		except:
+	#			message("Input is not a TimeSeries. Please supply gridspacing as delta_t", message_verbosity=0)
 
 	# Assign the timestep. Real and imaginary parts are assumed to have same timestep.
 	# Convert the data in numpy arrays
@@ -1395,6 +1395,51 @@ def get_waveform_angular_frequency(waveform, delta_t, timeaxis=None, method="FD"
 		omega_sm = Chebyshev_differential(timeaxis, phase, degree=25)
 
 	return omega_sm
+
+
+
+
+def get_starting_angular_frequency(waveform, delta_t, npoints=10):
+    ''' Get the approximate starting frequency of the
+    input data by averaging over the first `npoints` number of points.
+
+    Parameters
+    ----------
+
+    waveform :      1d array
+                    The 1d complex array of the input
+                    waveform.
+
+    delta_t :    float
+                 The time step.
+
+
+    npoints :    int
+                 The number of points to average over.
+
+    Returns
+    -------
+
+    omega0 :    float
+                The approximate starting angular frequency.
+
+
+    Notes
+    -----
+
+    Please suppy a conditioned input waveform that is neatly clipped,
+    and not tapered.
+    '''
+
+    # Get angular frequencies
+    omegas = get_waveform_angular_frequency(waveform, delta_t)
+
+    # Compute the starting frequency as the mean of first npoints.
+    omega0 = np.mean(omegas[10:10+npoints])
+
+    return omega0
+
+
 
 
 # Simple overlap. #Error. Add frequency domain overlap computation.
