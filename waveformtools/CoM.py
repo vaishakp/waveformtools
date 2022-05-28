@@ -123,6 +123,62 @@ def compute_com_beta(time_i, time_f, Xcom_0, Xcom_1):
     return com_beta
 
 
+def compute_conformal_k(vec_v, spin_phase=0):
+    ''' Compute the conformal factor for the boost transformation
+        :math:`k = \\exp(-2i \\lambda) \\gamma^3 (1 - \\mathbf{v} \\cdot \\mathbf{r})^3
+
+    Inputs
+    ------
+
+    vec_v :     list
+                A list of 2d arrays containing
+                the velocity vector in the form
+                [vec_x, vec_y, vec_z].
+
+    spin_phase :    float, optional
+                    The spin phase :math:`\\lambda'. Defaults to 0.
+
+    info :      class instance
+                An instance of the class `grids.sp_grid`
+                that contains information about the
+                spherical grid being used for the
+                transformations.
+    Returns
+    --------
+
+    conformal_k :   2d array
+                    The conformal factor for the boost transformation
+                    as defined above.
+
+
+    '''
+
+    # unpack the velocity vector
+    vel_x, vel_y, vel_z = vec_v
+
+    # magnitude of velocity
+    mag_v = np.sqrt(vel_x**2 + vel_y**2 + vel_z**2)
+
+    # Compute the 2d co-ordinate axis on the sphere
+    theta = info.theta
+    phi   = info.phi
+
+    # compute the dot product
+    v_dot_r = np.sin(theta)*(vel_x*np.cos(phi) + vel_y * np.sin(phi)) + vel_z * np.cos(theta)
+
+    # Lorentz factor
+    gamma = 1./np.sqrt(1-mag_v**2)
+
+    # spin_phase
+    spin_factor = np.exp(-2*1j*spin_phase)
+
+    # Finally, the conformal factor
+    conformal_factor = spin_factor * np.power(gamma*(1 - v_dot_r), 3)
+
+    return conformal_factor
+
+
+
 def compute_transl_alpha_modes(time_axis, com_alpha, com_beta):
     ''' Compute the translation scalar :math:`\\alpha` in its spherical harmonic components given the mean motion of the centre of mass.
         These are basically the quantities in Eq. (4-5d) in the reference Woodford et al. 2019.
@@ -140,8 +196,8 @@ def compute_transl_alpha_modes(time_axis, com_alpha, com_beta):
         Returns
         -------
 
-        modes :     dict
-                    A dictionary of lists, with each sublist containing the SH decomposition of the 'Alpha' supertranslation variable for a particular ell.
+        alpha_modes :     modes_array
+						  A `waveforms.modes_array` object containing the SH decomposition of the 'Alpha' supertranslation variable.
 
         '''
 
@@ -157,7 +213,74 @@ def compute_transl_alpha_modes(time_axis, com_alpha, com_beta):
     Alpha_10  = -np.sqrt(4*np.pi/3) * delta_z
     Alpha_11  = -2 * np.sqrt(2*np.pi/3) * (- delta_x + 1j* delta_y)
 
-    # Combine into one list
-    modes     = { 'l0' : [Alpha_00], 'l1' : [Alpha_1m1, Alpha_10, Alpha_11]}
+	# COnstruct a mode array
+	from waveforms import modes_array
 
-    return modes
+	# Compute the data length
+	data_len = len(time_axis)
+
+	alpha_modes = modes_array()
+
+	alpha_modes._create_mode_array(emm_max=1, data_len=data_len)
+
+	# l0m0
+	alpha_modes.set_mode_data(ell_value=0, emm_value=0, data=Alpha_00)
+	# l1mm1
+	alpha_modes.set_mode_data(ell_value=1, emm_value=-1, data=Alpha_1m1)
+	# l1m0
+	alpha_modes.set_mode_data(ell_value=1, emm_value=0, data=Alpha_1m0)
+	# l1m1
+	alpha_modes.set_mode_data(ell_value=1, emm_value=1, data=Alpha_11)
+
+
+
+    # Combine into one list
+    #modes     = { 'l0' : [Alpha_00], 'l1' : [Alpha_1m1, Alpha_10, Alpha_11]}
+
+    return alpha_modes
+
+def boost_waveform(unboosted_waveform, conformal_factor):
+    ''' Boost the waveform given the unboosted waveform and the boost conformal factor.
+
+    Parameters
+    ----------
+
+    unboosted_waveform :        spherical_array
+								A class instance of `spherical array`.
+
+    conformal_factor :      2d array
+                            The conformal factor for the Lorentz transformation. It may be a single floating point number or an array on a spherical grid. The array will be of dimensions
+                            [ntheta, nphi]
+
+    gridinfo :      class instance
+                    The class instance that contains the properties of the spherical grid.
+
+
+    Returns
+    -------
+
+    boosted_waveform :    sp_array
+                          The class instance `sp_array` that
+                          contains the boosted waveform.
+    '''
+
+    # Compute the meshgrid for theta and phi.
+    theta = unboosted_waveform.gridinfo.theta
+    phi   = unboosted_waveform.gridinfo.phi
+
+    # A list to store the boosted waveform.
+    boosted_waveform_data = []
+
+    for item in unboosted_waveform.data:
+        # Compute the boosted waveform on the spherical grid on all the elements.
+
+        conformal_k_on_sphere = compute_conformal_k(vec_v, theta, phi)
+        boosted_waveform_item = conformal_k_on_sphere * item
+
+        boosted_waveform_data.append(boosted_waveform_item)
+
+    # Construct a 2d waveform array object
+    boosted_waveform = spherical_array(gridinfo=unboosted_waveform.gridinfo, data=np.array(boosted_waveform_data))
+    boosted_waveform.label='boosted'
+
+    return boosted_waveform
