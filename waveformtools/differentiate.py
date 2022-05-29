@@ -105,13 +105,13 @@ def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.in
 	if not utilde_conven:
 		# Compute the FFT of data
 		from numpy.fft import ifft
-		from transforms import find_fft, unset_fft_conven
+		from transforms import compute_fft, unset_fft_conven
 		from waveformtools import taper
 
 		udata_x = taper(udata_x, delta_t=delta_x)
 		new_x_axis = udata_x.sample_times
 		udata_x = np.array(udata_x)
-		freq_axis, utilde_conven = find_fft(udata_x, delta_x)
+		freq_axis, utilde_conven = compute_fft(udata_x, delta_x)
 
 		# Find the length of the input data.
 		Nlen = len(udata_x)

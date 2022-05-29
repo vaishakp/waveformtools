@@ -24,81 +24,81 @@ class spherical_array:
 
 
 	@property
-    def delta_t(self, value=None):
-        ''' Sets and returns the value of time stepping :math:`dt`.
+	def delta_t(self, value=None):
+		''' Sets and returns the value of time stepping :math:`dt`.
 
-        Parameters
-        ----------
+		Parameters
+		----------
 
-        value : float, optional
-                The value of :math:`dt`
-                to set to the attribute.
+		value : float, optional
+				The value of :math:`dt`
+				to set to the attribute.
 
-        Returns
-        -------
+		Returns
+		-------
 
-        delta_t :   float
-                         Sets the attribute.
+		delta_t :	float
+						 Sets the attribute.
 
-        '''
+		'''
 
-        #if not self.delta_t:
-        if not value:
-            try:
-                    delta_t = self.time_axis[1] - self.time_axis[0]
-            except:
-                    print('Please input the value of `delta_t` or supply the `time_axis` to the waveform.')
-        else:
-            delta_t = value
+		#if not self.delta_t:
+		if not value:
+			try:
+					delta_t = self.time_axis[1] - self.time_axis[0]
+			except:
+					print('Please input the value of `delta_t` or supply the `time_axis` to the waveform.')
+		else:
+			delta_t = value
 
 
-        return delta_t
+		return delta_t
 
 
 
 
 	@property
-    def data_len(self):
-        ''' Returns the length of the time/frequency axis.
+	def data_len(self):
+		''' Returns the length of the time/frequency axis.
 
-        Returns
-        -------
+		Returns
+		-------
 
-        data_len :  int
+		data_len :	int
 					THe length of the time/frequency axis.
 
-        '''
+		'''
 
-        try:
-            data_len = len(self.time_axis)
+		try:
+			data_len = len(self.time_axis)
 
-        except:
-            data_len = len(self.freq_axis)
+		except:
+			data_len = len(self.frequency_axis)
 
-        return data_len
+		return data_len
 
 
-	def to_modes_array(self, spin_weight=-2, ell_max=8, gridinfo):
+	def to_modes_array(self, gridinfo, spin_weight=-2, ell_max=8):
 		''' Decompose a given spherical array function on a sphere
 			into Spin Weighted Spherical Harmonic modes.
 
 		Parameters
 		----------
 
-		spin_weight :    int, optional
+		spin_weight :	 int, optional
 						 The spin weight of the waveform. It defaults to -2 for a gravitational waveform.
 
-		ell_max :   int, optional
+		ell_max :	int, optional
 					The maximum value of the :math:`\\ell' polar quantum number. Defaults to 6=8.
 
-		gridinfo :      class instance
+		gridinfo :		class instance
 						The class instance that contains the properties of the spherical grid.
 
 
 		Returns
 		-------
 
-		waveforms_modes :   modes_array
+		waveforms_modes :	modes_array
 							An instance of the `modes_array` class.
 							Containing the decomposed modes.
 
@@ -115,10 +115,7 @@ class spherical_array:
 		'''
 
 		# Compute the meshgrid for theta and phi.
-		theta = gridinfo.theta
-
-		# Compute the meshgrid for theta and phi.
-		phi = gridinfo.phi
+		theta, phi = gridinfo.meshgrid
 
 		# Create a modes array object
 
@@ -151,14 +148,11 @@ class spherical_array:
 
 		# The area element on the sphere
 		# Compute the meshgrid for theta and phi.
-		theta         = gridinfo.theta(ntheta=ntheta, nphi=nphi)
-
-		# Compute the meshgrid for theta and phi.
-		phi           = gridinfo.phi(ntheta=ntheta, nphi=nphi)
+		theta, phi		   = gridinfo.meshgrid
 
 		sqrt_met_det  = np.sqrt(np.power(np.sin(theta), 2))
 
-		darea         = sqrt_metdet * info.dtheta * info.dphi
+		darea		  = sqrt_metdet * info.dtheta * info.dphi
 
 
 		for index, value in enumerate(axis):
@@ -166,7 +160,7 @@ class spherical_array:
 			# for each time/frequency
 
 			# Convert input to arrays.
-			integrand_data        = self.data[:, :, index]
+			integrand_data		  = self.data[:, :, index]
 
 			for mode in modes_list:
 				ell_value, all_emm_values = mode
@@ -175,10 +169,10 @@ class spherical_array:
 					# m value.
 
 					# Spin weighted spherical harmonic function at (theta, phi)
-					Ybasis_fun      =   Yslm(spin_weight, ell=ell_value, emm=emm_value, theta, phi)
+					Ybasis_fun		=	Yslm(spin_weight, ell=ell_value, emm=emm_value, theta=theta, phi=phi)
 
 					# Using quad
-					multipole_ell_emm   =   integrand * Ybasis_fun * darea
+					multipole_ell_emm	=	integrand * Ybasis_fun * darea
 
 					waveform_modes.set_mode_data(ell_value, emm_value, multipole_ell_emm)
 
@@ -286,8 +280,8 @@ class modes_array:
 				data_dir=None,
 				filename=None,
 				modes_data=None,
-				time_domain=None,
-				freq_domain=None,
+				time_axis=None,
+				freq_axis=None,
 				file_path=None,
 				key_format=None,
 				ell_max=None,
@@ -305,7 +299,7 @@ class modes_array:
 		self.modes_list  = modes_list
 		self.r_ext		 = r_ext
 
-	def modes_array(self, ell, emm):
+	def mode(self, ell, emm):
 		''' The modes array data structure to hold waveform modes.
 
 		Parameters
@@ -353,6 +347,27 @@ class modes_array:
 
 		self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)
 
+
+	@property
+	def data_len(self):
+		''' Returns the length of the time/frequency axis.
+
+		Returns
+		-------
+
+		data_len :	int
+					THe length of the time/frequency axis.
+
+		'''
+
+		try:
+			data_len = len(self.time_axis)
+
+		except:
+			data_len = len(self.frequency_axis)
+
+		return data_len
+
 	@property
 	def delta_t(self, value=None):
 		''' Sets and returns the value of time stepping :math:`dt`.
@@ -383,6 +398,38 @@ class modes_array:
 
 
 		return delta_t
+
+
+	@property
+	def delta_f(self, value=None):
+		''' Sets and returns the value of frequency stepping :math:`df`.
+
+		Parameters
+		----------
+
+		value : float, optional
+				The value of :math:`df`
+				to set to the attribute.
+
+		Returns
+		-------
+
+		delta_f :	 float
+					 Sets the attribute.
+
+		'''
+
+		#if not self.delta_t:
+		if not value:
+			try:
+					delta_f = self.frequency_axis[1] - self.frequency_axis[0]
+			except:
+					print('Please input the value of `delta_f` or supply the `frequency_axis` to the waveform.')
+		else:
+			delta_f = value
+
+
+		return delta_f
 
 	def load_modes(self, r_ext=500, ell_max=None, pre_key = None, modes_list=None, crop=False):
 			''' Load the waveform mode data from an hdf file.
@@ -521,7 +568,11 @@ class modes_array:
 								self.time_axis = time_axis[shift:]
 
 						self.modes_data[ell_value, emm_index] = data_re[shift:] + 1j*data_im[shift:]
+				maxloc = np.argmax(np.absolute(self.mode(2, 2)))
+				maxtime = time_axis[maxloc]
 
+
+				self.time_axis = time_axis - maxtime
 
 	def set_mode_data(self, ell_value, emm_value, data):
 				''' Set the mode array data for the respective :math:`(\\ell, m)` mode.
@@ -551,6 +602,85 @@ class modes_array:
 
 				# Set the mode data.
 				self.modes_data[ell_value, emm_index] = data
+
+
+
+
+	def to_frequency_basis(self):
+		''' Compute the modes in frequency basis.
+
+		Returns
+		-------
+
+		waveform_tilde_modes :	modes_array
+								A modes_array containing the modes
+								in frequency basis.
+
+		'''
+
+		# Create a new modes array
+		waveform_tilde_modes = modes_array(label='frequency_domain')
+		waveform_tilde_modes._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
+
+		from transforms import compute_fft
+
+		for mode in modes_list:
+		# Extrapolate every mode
+
+			# Ge the ell value
+			ell_value, emm_list = mode
+
+			for emm_value in emm_list:
+
+				freq_axis, freq_data = compute_fft(self.mode(ell_value, emm_value), self.delta_t)
+
+				waveform_tilde_modes.set_mode_data(ell_value, emm_value, freq_data)
+
+		waveform_tilde_modes.frequency_axis = freq_axis
+
+
+		return waveform_tilde_modes
+
+
+
+	def to_time_basis(self):
+		''' Compute the modes in time basis.
+
+		Returns
+		-------
+
+		waveform_modes :  modes_array
+						  A modes_array containing the modes
+						  in frequency basis.
+
+		'''
+
+		# Create a new modes array
+		waveform_modes = modes_array(label='time_domain')
+		waveform_modes._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
+
+		from transforms import compute_ifft
+
+		for mode in modes_list:
+		# Extrapolate every mode
+
+			# Ge the ell value
+			ell_value, emm_list = mode
+
+			for emm_value in emm_list:
+
+				time_axis, time_data = compute_ifft(self.mode(ell_value, emm_value), self.delta_f)
+
+				waveform_modes.set_mode_data(ell_value, emm_value, time_data)
+
+		maxloc = np.argmax(np.absolute(waveform_modes.mode(2, 2)))
+		maxtime = time_axis[maxloc]
+
+		waveform_modes.time_axis = time_axis - maxtime
+
+
+		return waveform_tilde_modes
+
 
 
 
@@ -632,7 +762,7 @@ class modes_array:
 				# For every emm value
 					print(f'Processing l{ell_value}, m{emm_value}')
 					# Compute rPsi4_lm
-					mode_data = self.r_ext * self.modes_array(ell_value, emm_value)
+					mode_data = self.r_ext * self.mode(ell_value, emm_value)
 
 					# Extrapolate
 					#import ipdb; ipdb.set_trace()
@@ -683,11 +813,8 @@ class modes_array:
 			# Step 0: Get the grid properties for integrations
 
 			# Compute the meshgrid for theta and phi.
-			theta = gridinfo.theta
+			theta, phi = gridinfo.meshgrid
 			#theta
-			 # Compute the meshgrid for theta and phi.
-			phi   = gridinfo.phi
-
 			# Step 1: get the grid function for supertranslation parameter
 			supertransl_alpha_sphere = BMS.compute_supertransl_alpha(supertransl_alpha_modes, theta, phi)
 
@@ -757,8 +884,7 @@ class modes_array:
 			unboosted_waveform = self.to_spherical_array(info)
 
 			# Compute the meshgrid for theta and phi.
-			theta = unboosted_waveform.gridinfo.theta
-			phi   = unboosted_waveform.gridinfo.phi
+			theta, phi = unboosted_waveform.gridinfo.meshgrid
 
 			# A list to store the boosted waveform.
 			boosted_waveform_data = []

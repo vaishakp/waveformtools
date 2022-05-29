@@ -4,7 +4,7 @@
 import numpy as np
 
 
-def find_fft(udata_x, delta_x):
+def compute_fft(udata_x, delta_x):
 	''' Find the FFT of the samples in time-space, and return with the frequencies.
 
 	Parameters
@@ -50,7 +50,55 @@ def find_fft(udata_x, delta_x):
 	return freq_axis, utilde
 
 
-from numpy.fft import fft, ifft
+def compute_ifft(utilde, delta_f):
+	''' Find the inverse FFT of the samples in frequency-space, and return with the time axis.
+
+	Parameters
+	----------
+
+	utilde  :	1d array
+				The samples in frequency-space.
+
+	delta_f :	float
+				The frequency stepping
+
+	Returns
+	-------
+
+	time_axis :	1d array
+				The time axis.
+
+	udata_time :	1d array
+					The samples in time domain.
+
+	'''
+
+	# import necessary libraries.
+	from numpy.fft import ifft, fftshift
+
+	# FFT
+	utilde_orig = unset_fft_conven(utilde_x)
+
+	# Inverse transform
+	udata_time		= ifft(utilde_orig)
+
+
+	# Get frequency axes.
+	Nlen			= len(udata_time)
+	#print(Nlen)
+	#Naxis			= np.arange(Nlen)
+	#freq_orig		= fftfreq(Nlen)
+	#freq_axis		= fftshift(freq_orig)*Nlen
+	#delta_x		 = xdata[1] - xdata[0]
+
+	#Naxis			 = np.arange(Nlen)
+	delta_t			= 2./(delta_f*N)
+	Dt				= Nlen * delta_f/2
+
+	time_axis		= np.arange(0, delta_t*Nlen, Nlen)
+
+	return time_axis, udata_ttime
+
 
 def set_fft_conven(utilde_orig):
 	''' Make a numppy fft consistent with the chosen conventions.
@@ -104,4 +152,4 @@ def unset_fft_conven(utilde_conven):
 	#print(utilde_original[0])
 
 
-	return utilde_np
+	return utilde_n

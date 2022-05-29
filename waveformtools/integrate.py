@@ -52,7 +52,7 @@ def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None,  omega0=
 	if not utilde_conven:
 		# Compute the FFT of data
 		from numpy.fft import ifft
-		from transforms import find_fft, unset_fft_conven
+		from transforms import compute_fft, unset_fft_conven
 		from waveformtools import taper
 
 		#udata_x_re = taper(u_time.real, delta_t=delta_t)
@@ -60,7 +60,7 @@ def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None,  omega0=
 		#udata_x	   = np.array(udata_x_re) + 1j * np.array(udata_x_im)
 		#x_axis = udata_x_re.sample_times
 		#udata_x = np.array(udata_x)
-		freq_axis, utilde_conven = find_fft(udata_time, delta_t)
+		freq_axis, utilde_conven = compute_fft(udata_time, delta_t)
 
 		# Find the length of the input data.
 		Nlen = len(udata_time)
