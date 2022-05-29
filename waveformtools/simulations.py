@@ -5,8 +5,9 @@
 ##############################################
 
 import numpy as np
+from waveformtools import message, cleandata
 
-from waveformtools.waveformtools import *
+# import waveformtools
 
 
 class sim:
@@ -22,7 +23,7 @@ class sim:
 	WAVDIR :	string
 				Root directory as a string containing the simulation directies containing the wavefom data.
 
-	datadir :	string
+	data_dir :	string
 				The path of the folder containing data relative to the simulation direcory.
 
 	strain_dir :	string
@@ -44,7 +45,7 @@ class sim:
 			The BH3 horizon mass.
 
 	delta_t :	dict of floats
-				The time stepping in simulation units (dt/M).
+				The time stepping in simulation units (delta_t/M).
 
 	timeaxis :	dict of 1d arrays
 				The timeaxis of the simulations.
@@ -80,7 +81,7 @@ class sim:
 						The true merger distance (non-normalized).
 
 	sampling_f :	dict of floats
-					The sampling frequency of simulations (1/dt).
+					The sampling frequency of simulations (1/delta_t).
 
 	merger_time :	dict of floats
 					The cctk_time stamp at merger.
@@ -200,7 +201,7 @@ class sim:
 		ROOTDIR=None,
 		WAVDIR=None,
 		simdir=None,
-		datadir="data/primary/",
+		data_dir="data/primary/",
 		data_length=None,
 		dist_data_length=None,
 		comm_data_length=None,
@@ -212,6 +213,13 @@ class sim:
 		strain_indexshifts=None,
 		indexjn=None,
 		distjn=None,
+		areal_radii={},
+		log_deltamultipoles2=None,
+		log_multipoles2=None,
+		log_deltamultipole=None,
+		log_multipoles=None,
+		ref_multipoles=None,
+		indjn=None,
 	):
 
 		# Load the variables at initialization.
@@ -242,31 +250,34 @@ class sim:
 		self.WAVDIR = WAVDIR
 		self.simdir = simdir
 		self.strain_dir = strain_dir
-		self.datadir = datadir
+		self.data_dir = data_dir
+		self.areal_radii = areal_radii
+		self.log_deltamultipoles2 = log_deltamultipoles2
+		self.log_multipoles2 = log_multipoles2
+		self.log_deltamultipole = log_deltamultipole
+		self.log_multipoles = log_multipoles
+		self.ref_multipoles = ref_multipoles
+		self.indjn = indjn
 
 	@property
 	def data_duration(self):
 		"""Compute and return the data duration of the simulations."""
 		return {alias: self.data_length[alias] * self.delta_t[alias] for alias in self.aliases}
 
-
 	@property
 	def comm_data_duration(self):
 		""" Compute and return the duration of the common data (multipole and Bhdiag/distance) of the simulations. """
 		return {alias: self.comm_data_length[alias] * self.delta_t[alias] for alias in self.aliases}
-
 
 	@property
 	def pm_data_duration(self):
 		""" Compute and return the duration of post-merger data present in the simulations."""
 		return {alias: self.data_duration[alias] - self.merger_time[alias] for alias in self.aliases}
 
-
 	@property
 	def pm_data_length(self):
 		""" Compute and return the post merger data length avaialable for all simulations. """
 		return {alias: self.data_length[alias] - self.merger_ind[alias] for alias in self.aliases}
-
 
 	@property
 	def merger_distance(self):
@@ -283,30 +294,25 @@ class sim:
 					merger_dist.update({alias: self.distance[alias][-1]})
 		return merger_dist
 
-
 	@property
 	def true_merger_distance(self):
 		""" Compute and return the true (i.e. non-normalized) distance at merger for the simulations."""
 		return {alias: self.dinit[alias] * self.merger_distance[alias] for alias in self.aliases}
-
 
 	@property
 	def sampling_f(self):
 		""" Compute and return the sampling frequency of the simulations. """
 		return {alias: 1.0 / self.delta_t[alias] for alias in self.aliases}
 
-
 	@property
 	def merger_time(self):
 		""" Compute and return the cctk_time stamp at the merger for the simulations. """
 		return {alias: self.merger_ind[alias] * self.delta_t[alias] for alias in self.aliases}
 
-
 	@property
 	def massratio(self):
 		""" Compute and return the massratio of the simulations. """
 		return {alias: self.mass2[alias] / self.mass1[alias] for alias in self.aliases}
-
 
 	@property
 	def chirpmass(self):
@@ -317,12 +323,10 @@ class sim:
 			for alias in self.aliases
 		}
 
-
 	@property
 	def totalmass(self):
 		""" Compute and return the total mass of the simulations. """
 		return {alias: self.mass1[alias] + self.mass2[alias] for alias in self.aliases}
-
 
 	def calc_junkend(self, tjn=200.0):
 		""" Compute the indices and the starting distances of the system at timestamp t = 200.
@@ -359,11 +363,10 @@ class sim:
 		# Return 1
 		return 1
 
-
 	def calc_ref_multipoles(self):
 		""" Compute and assign the reference (l=2) multuipoles to sim.ref_multipoles of the simulations. """
 		refmult = {}
-		index = 0
+		# index = 0
 		for alias in self.aliases:
 			message(alias)
 			item = np.transpose(self.multipoles[alias])
@@ -373,7 +376,7 @@ class sim:
 				self.distance[alias] = self.distance[alias][:ml_length]
 			message(item.shape)
 			"""Unpack data as 1d arrays"""
-			time, Ml12, Ml22, Ml32 = (
+			_, Ml12, Ml22, Ml32 = (
 				item[: self.comm_data_length[alias], 0],
 				item[: self.comm_data_length[alias], 1],
 				item[: self.comm_data_length[alias], 2],
@@ -386,7 +389,6 @@ class sim:
 
 			refmult.update({alias: [Ml12_ref, Ml22_ref, Ml32_ref]})
 			self.ref_multipoles = refmult
-
 
 	def calc_log_multipoles(self):
 		""" Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. """
@@ -410,7 +412,6 @@ class sim:
 				}
 			)
 		self.log_multipoles = log_mult
-
 
 	def calc_delta_multipoles(self):
 		""" Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) """
@@ -450,7 +451,6 @@ class sim:
 
 		self.log_deltamultipoles = log_deltmult
 
-
 	def calc_log_multipoles2(self):
 		""" Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations. """
 		log_mult = {}
@@ -473,7 +473,6 @@ class sim:
 				}
 			)
 		self.log_multipoles2 = log_mult
-
 
 	def calc_delta_multipoles2(self):
 		""" Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles) """
@@ -511,7 +510,6 @@ class sim:
 
 		self.log_deltamultipoles2 = log_deltmult
 
-
 	def load_data(self):
 		""" Load data of the simulations.
 
@@ -543,7 +541,7 @@ class sim:
 		M1_one = []
 		M2_one = []
 		M3_one = []
-		dt_one = []
+		delta_t_one = []
 		timeaxis_one = []
 		# Multipole variables
 
@@ -580,12 +578,12 @@ class sim:
 			message("------------------")
 
 			# Load the qlm_multipole moment data.
-			f0 = np.genfromtxt(
+			file0 = np.genfromtxt(
 				self.ROOTDIR + sim1[sim_index] + self.data_dir + "quasilocalmeasures-qlm_multipole_moments..asc"
 			)
 
 			# Assign the timeaxis.
-			cctk_time = f0[:, 8]
+			cctk_time = file0[:, 8]
 
 			# Assign the multipole data lengths to a list.
 			ml_data_length.append(len(cctk_time))
@@ -593,11 +591,11 @@ class sim:
 			# Assign the timeaxis to a list.
 			timeaxis_one.append(cctk_time)
 			# Assign the time stepping to a list.
-			dt_one.append(cctk_time[1] - cctk_time[0])
+			delta_t_one.append(cctk_time[1] - cctk_time[0])
 			# Load the BH horizon masses.
-			M1_one_all = f0[:, 12]
-			M2_one_all = f0[:, 13]
-			M3_one_all = f0[:, 14]
+			M1_one_all = file0[:, 12]
+			M2_one_all = file0[:, 13]
+			M3_one_all = file0[:, 14]
 
 			###################################################################
 			# I.
@@ -620,14 +618,14 @@ class sim:
 
 			for col in range(0, 9):
 				# Extract the mass multipole data.
-				amm1.append(f0[:, 12 + col * 3])
-				amm2.append(f0[:, 13 + col * 3])
-				amm3.append(f0[:, 14 + col * 3])
+				amm1.append(file0[:, 12 + col * 3])
+				amm2.append(file0[:, 13 + col * 3])
+				amm3.append(file0[:, 14 + col * 3])
 
 				# Extract the spin multipole data.
-				asm1.append(f0[:, 39 + col * 3])
-				asm2.append(f0[:, 40 + col * 3])
-				asm3.append(f0[:, 41 + col * 3])
+				asm1.append(file0[:, 39 + col * 3])
+				asm2.append(file0[:, 40 + col * 3])
+				asm3.append(file0[:, 41 + col * 3])
 
 			# check for data continuity
 			# Load a set of data to chek into a list.
@@ -722,7 +720,7 @@ class sim:
 					message("Merger time set from Mass1 jump")
 
 			# Declare merger time.
-			message("Merger time:", dt_one[sim_index] * merger_one)
+			message("Merger time:", delta_t_one[sim_index] * merger_one)
 			message("Merger index:", merger_one)
 
 			# Update the merger index of the simulation.
@@ -735,9 +733,9 @@ class sim:
 			M3_one.append(np.mean(M3_one_all[-100:]))
 
 			# Load the (l=2) multipoles.
-			Ml12_one = f0[:, 18]
-			Ml22_one = f0[:, 19]
-			Ml32_one = f0[:, 20]
+			Ml12_one = file0[:, 18]
+			Ml22_one = file0[:, 19]
+			Ml32_one = file0[:, 20]
 
 			# message('Ml32_one', len(Ml32_one))
 
@@ -771,17 +769,17 @@ class sim:
 			temp0 = np.genfromtxt(self.ROOTDIR + sim1[sim_index] + self.data_dir + "BH_diagnostics.ah1.gp")
 			temp1 = np.genfromtxt(self.ROOTDIR + sim1[sim_index] + self.data_dir + "BH_diagnostics.ah2.gp")
 
-			t0 = temp0[:, 1]
-			x0_locs = temp0[:, 2]
-			y0_locs = temp0[:, 3]
+			t_coord_0 = temp0[:, 1]
+			x_coord_0_locs = temp0[:, 2]
+			y_coord_0_locs = temp0[:, 3]
 
-			message("Coord len", len(t0))
-			t1 = temp1[:, 1]
-			x1_locs = temp1[:, 2]
-			y1_locs = temp1[:, 3]
+			message("Coord len", len(t_coord_0))
+			t_coord_1 = temp1[:, 1]
+			x_coord_1_locs = temp1[:, 2]
+			y_coord_1_locs = temp1[:, 3]
 
-			temp0 = np.transpose(np.array([t0, x0_locs, y0_locs]))
-			temp1 = np.transpose(np.array([t1, x1_locs, y1_locs]))
+			temp0 = np.transpose(np.array([t_coord_0, x_coord_0_locs, y_coord_0_locs]))
+			temp1 = np.transpose(np.array([t_coord_1, x_coord_1_locs, y_coord_1_locs]))
 
 			message("Dist shapes", temp0.shape, temp1.shape)
 			# check for data continuity.
@@ -800,15 +798,15 @@ class sim:
 			shape1 = temp1.shape
 
 			# Retrieve timestepping.
-			dt = np.diff(temp0[:, 0])[0]
+			delta_t = np.diff(temp0[:, 0])[0]
 
-			# message('Time step',dt)
+			# message('Time step',delta_t)
 
 			# Retrieve merger index.
 			mergerind = ind_merger_one[sim_index]
 
 			# Update the merger time list.
-			merger_time_one.append(ind_merger_one[sim_index] * dt_one[sim_index])
+			merger_time_one.append(ind_merger_one[sim_index] * delta_t_one[sim_index])
 
 			# Find the shorter data. BHdiag1,2 or multipole data.
 			act_len = min(shape0[0], shape1[0], ml_data_length[sim_index])
@@ -848,14 +846,14 @@ class sim:
 				# If the merger_ind from masses is greater than the BHdiag3
 				# data length.
 
-				if mergerind * dt >= int(temp2[0, 0]):
+				if mergerind * delta_t >= int(temp2[0, 0]):
 					merger_time_one[sim_index] = temp2[0, 0]
-					mergerind = int(temp2[0, 0] / dt)
+					mergerind = int(temp2[0, 0] / delta_t)
 					ind_merger_one[sim_index] = mergerind
-					message("Merger time acquired from BHdiag3", mergerind * dt)
+					message("Merger time acquired from BHdiag3", mergerind * delta_t)
 					message("Merger index has been updated with info from BHdiag3")
 			except BaseException:
-				message("Merger time acquired from masses", mergerind * dt)
+				message("Merger time acquired from masses", mergerind * delta_t)
 
 			message("Merger index", mergerind)
 
@@ -871,63 +869,63 @@ class sim:
 
 			# Assign the centroid locations to variables.
 
-			t0 = t0  # temp0[:, 0]
-			x0 = x0_locs  # temp0[:, 1]
-			y0 = y0_locs  # temp0[:, 2]
+			# t_coord_0 = t_coord_0  # temp0[:, 0]
+			x_coord_0 = x_coord_0_locs	# temp0[:, 1]
+			y_coord_0 = y_coord_0_locs	# temp0[:, 2]
 
-			t1 = t1  # temp1[:, 0]
-			x1 = x1_locs  # temp1[:, 1]
-			y1 = y1_locs  # temp1[:, 2]
+			# t_coord_1 = t_coord_1  # temp1[:, 0]
+			x_coord_1 = x_coord_1_locs	# temp1[:, 1]
+			y_coord_1 = y_coord_1_locs	# temp1[:, 2]
 
-			# t0		 =	 temp0[:, 0]
-			# x0		 =	 temp0[:, 1]
-			# y0		 =	 temp0[:, 2]
+			# t_coord_0		 =	 temp0[:, 0]
+			# x_coord_0		 =	 temp0[:, 1]
+			# y_coord_0		 =	 temp0[:, 2]
 			#
-			# t1		 =	 temp1[:, 0]
+			# t_coord_1		 =	 temp1[:, 0]
 			# x1		 =	 temp1[:, 1]
 			# y1		 =	 temp1[:, 2]
 
-			# if int((x0-x0_locs)[0])!=0:
+			# if int((x_coord_0-x_coord_0_locs)[0])!=0:
 			#	 message('ERRORRRRRRR!')
 			#	 sys.exit(0)
 			# Compute lengths
 
-			l0 = len(t0)
-			l1 = len(t1)
+			len_0 = len(t_coord_0)
+			len_1 = len(t_coord_1)
 
 			# Find minimum
-			lmin = min(l0, l1)
-			timeaxis_one.append(t0)
+			lmin = min(len_0, len_1)
+			timeaxis_one.append(t_coord_0)
 
 			# Crop data
 
-			if l0 < l1:
-				t1 = t1[:lmin]
-				x1 = x1[:lmin]
-				y1 = y1[:lmin]
+			if len_0 < len_1:
+				t_coord_1 = t_coord_1[:lmin]
+				x_coord_1 = x_coord_1[:lmin]
+				y_coord_1 = y_coord_1[:lmin]
 
-			elif l1 < l0:
-				t0 = t0[:lmin]
-				x0 = x0[:lmin]
-				y0 = y0[:lmin]
+			elif len_1 < len_0:
+				t_coord_0 = t_coord_0[:lmin]
+				x_coord_0 = x_coord_0[:lmin]
+				y_coord_0 = y_coord_0[:lmin]
 
 			# Compute differences
 
-			dx = x0 - x1
-			dy = y0 - y1
+			delta_x = x_coord_0 - x_coord_1
+			delta_y = y_coord_0 - y_coord_1
 
 			# if sim_index==3:
 			# d.append(np.sqrt((temp0[:3014,1]-temp1[:ind_merger[sim_index],1])**2 + (temp0[:3014,2]-temp1[:ind_merger[sim_index],2])**2))
 
 			# Compute the Eucledian distance.
-			d_sim = np.sqrt(np.power(dx, 2) + np.power(dy, 2))
+			d_sim = np.sqrt(np.power(delta_x, 2) + np.power(delta_y, 2))
 			d_sim = np.array(d_sim)
 			d0_sim = d_sim[0]
 			message("Initial true distance", d0_sim)
 			d0_one.append(d0_sim)
 			d_sim = d_sim / d0_sim
 			# d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-temp1[:act_shape_one[sim_index],1])**2 + (temp0[:act_shape_one[sim_index],2]-temp1[:act_shape_one[sim_index],2])**2))
-			d_one.append([t0, d_sim])
+			d_one.append([t_coord_0, d_sim])
 			message(
 				"ml_timeaxis_length: %d, Multipole data length: %d, BHdiag length: %d, Distance length: %d"
 				% (len(timeaxis_one[sim_index]), ml_data_length[sim_index], shape1[0], len(d_one[sim_index]))
@@ -964,7 +962,7 @@ class sim:
 			self.mass1.update({self.aliases[sim_index]: M1_one[sim_index]})
 			self.mass2.update({self.aliases[sim_index]: M2_one[sim_index]})
 			self.mass3.update({self.aliases[sim_index]: M3_one[sim_index]})
-			self.delta_t.update({self.aliases[sim_index]: dt_one[sim_index]})
+			self.delta_t.update({self.aliases[sim_index]: delta_t_one[sim_index]})
 			self.distance.update({self.aliases[sim_index]: d_one[sim_index]})
 			self.merger_ind.update({self.aliases[sim_index]: ind_merger_one[sim_index]})
 			self.actmerger_time.update({self.aliases[sim_index]: merger_time_one[sim_index]})
@@ -979,22 +977,23 @@ class sim:
 		# Reverse the BH1 and BH2 data if BH mass2>mass1.
 		self._ifreversal()
 
+		import matplotlib.pyplot as plt
+
 		# Plot the distances.
 		for alias in self.aliases:
-			x = self.distance[alias][0]
-			y = self.distance[alias][1]
-			length = min(len(x), len(y))
-			x = x[:length]
-			y = y[:length]
+			x_coord = self.distance[alias][0]
+			y_coord = self.distance[alias][1]
+			length = min(len(x_coord), len(y_coord))
+			x_coord = x_coord[:length]
+			y_coord = y_coord[:length]
 			# message(x,y)
 
-			plt.plot(x, y)
+			plt.plot(x_coord, y_coord)
 			plt.title("Distance vs t/M " + alias)
 			plt.grid(which="both", axis="both")
 			plt.xlabel("t")
 			plt.ylabel(r"$d/d_{init}$")
 			plt.show()
-
 
 	def _resize_multipoles(self):
 		""" Private method to resize the (l=2) multipole data. Useful when merger index was updated from BHdiag3."""
@@ -1008,7 +1007,6 @@ class sim:
 			# self.mass_multipoles[alias] = [item[:self.dist_data_length[alias] for item in self.mass_multipoles[alias]]]
 			# self.spin_multipoles[alias] = [item[:self.dist_data_length[alias]
 			# for item in self.spin_multipoles[alias]]]
-
 
 	def _ifreversal(self):
 		""" Private method to reverse the (l=2) multipole data if mass2>mass1.
@@ -1047,7 +1045,6 @@ class sim:
 				message("Data O.K.")
 			return 1.0
 
-
 	def load_strain(self, start_index=0):
 		""" Method to load the shear data of simulations. """
 
@@ -1055,7 +1052,7 @@ class sim:
 			# Loop over simulations.
 			alias = self.aliases[sim_index]
 			# Set the starting index for data.
-			m = 0  # start_index = 0#int(190/deltat[j])
+			start_index = 0  # start_index = 0#int(190/deltat[j])
 			# Load the strain data.
 			sim_strain_data = np.genfromtxt(
 				self.WAVDIR
@@ -1068,9 +1065,9 @@ class sim:
 			)
 
 			# Load the timeaxis, plus and cross polarized data.
-			htdat = sim_strain_data[m:, 0]
-			hpdat = sim_strain_data[m:, 1]
-			hxdat = sim_strain_data[m:, 2]
+			htdat = sim_strain_data[start_index:, 0]
+			hpdat = sim_strain_data[start_index:, 1]
+			hxdat = sim_strain_data[start_index:, 2]
 
 			message("The strain file is")
 			message(
@@ -1098,17 +1095,20 @@ class sim:
 			self.strain_indexshifts.update({alias: shift})
 
 			# Load the time stepping.
-			dt = self.delta_t[alias]
+			# delta_t = self.delta_t[alias]
 
 			# Shift the timeaxis and clip the beginning of data.
-			htdat = htdat[m:-shift]
-			hpdat = hpdat[m + shift :]
-			hxdat = hxdat[m + shift :]
+			htdat = htdat[start_index:-shift]
+			hpdat = hpdat[start_index + shift :]
+			hxdat = hxdat[start_index + shift :]
 
 			# Update the sim.strain
 			self.strain.update({alias: [htdat, hpdat, hxdat]})
 
 			if config.print_verbosity > 1:
+
+				import matplotlib.pyplot as plt
+
 				# Plot the strains.
 				plt.plot(htdat, hpdat, label="data " + alias)
 				plt.ylabel("Strain")
@@ -1120,9 +1120,10 @@ class sim:
 
 		return 1
 
-
 	def calc_amp_phase(self):
 		""" Extract the amplitude and the phase from strain data. """
+		from waveformtools import xtract_cphase, xtract_camp
+
 		for alias in self.aliases:
 			# Loop over simulations.
 
@@ -1130,13 +1131,12 @@ class sim:
 			hpdat = self.strain[alias][1]
 			hxdat = self.strain[alias][2]
 			# Load the time stepping.
-			dt = self.delta_t[alias]
+			delta_t = self.delta_t[alias]
 			# Extract and update the amplitude and phases.
-			self.strain_phase.update({alias: (xtract_cphase(hpdat, hxdat, dt=dt, plot="yes"))})
-			self.strain_amplitude.update({alias: xtract_camp(hpdat, hxdat, dt=dt)})
-			self.strain_frequency.update({alias: np.diff(self.strain_phase[alias]) / dt})
+			self.strain_phase.update({alias: (xtract_cphase(hpdat, hxdat, delta_t=delta_t, plot="yes"))})
+			self.strain_amplitude.update({alias: xtract_camp(hpdat, hxdat, delta_t=delta_t)})
+			self.strain_frequency.update({alias: np.diff(self.strain_phase[alias]) / delta_t})
 		return 1
-
 
 	def ret_horizon_radii(self):
 		""" Retrieve the radius of the common horizon at the time of formation. """

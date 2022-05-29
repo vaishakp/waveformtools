@@ -484,6 +484,8 @@ def differentiate5(data, delta_t):
 
 	derNm4 = np.dot(stencil, data_vec) / delta_t
 
+	der_data.append(der3)
+
 	# For n=4, N-5
 	stencil = np.array([3, -32, 168, -672, 0, 672, -168, 32, 3]) / 840
 

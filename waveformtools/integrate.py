@@ -7,12 +7,13 @@
 
 
 import numpy as np
+
 ##################################################
 # Fixed frequency integration
 ##################################################
 
 
-def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None,  omega0=0, order=1, zero_mode=0):
+def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None, omega0=0, order=1, zero_mode=0):
 	""" Fixed frequency integrator as presented in Reisswig
 
 
@@ -53,13 +54,14 @@ def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None,  omega0=
 		# Compute the FFT of data
 		from numpy.fft import ifft
 		from transforms import compute_fft, unset_fft_conven
-		from waveformtools import taper
 
-		#udata_x_re = taper(u_time.real, delta_t=delta_t)
-		#udata_x_im = taper(u_time.imag, delta_t=delta_t)
-		#udata_x	   = np.array(udata_x_re) + 1j * np.array(udata_x_im)
-		#x_axis = udata_x_re.sample_times
-		#udata_x = np.array(udata_x)
+		# from waveformtools import taper
+
+		# udata_x_re = taper(u_time.real, delta_t=delta_t)
+		# udata_x_im = taper(u_time.imag, delta_t=delta_t)
+		# udata_x	   = np.array(udata_x_re) + 1j * np.array(udata_x_im)
+		# x_axis = udata_x_re.sample_times
+		# udata_x = np.array(udata_x)
 		freq_axis, utilde_conven = compute_fft(udata_time, delta_t)
 
 		# Find the length of the input data.

@@ -11,7 +11,7 @@ import waveformtools
 ###############################################
 
 
-def r_to_ra_conversion(coord_radius, Mass=1, spin=0):
+def r_to_ra_conversion(coord_radius, mass=1, spin=0):
 	""" Convert the isotropic co-ordinate radius parameter `r` in the ETK simulations
 		into the approximate areal radius.
 
@@ -21,7 +21,7 @@ def r_to_ra_conversion(coord_radius, Mass=1, spin=0):
 	coord_radius :	float
 					The coordinate radius in the Einstein toolkit
 
-	Mass :	float, optional
+	mass :	float, optional
 			The sum of the quasi-local horizon (Christodolou) masses of the black holes.
 			Defaults to 1.
 
@@ -51,7 +51,7 @@ def r_to_ra_conversion(coord_radius, Mass=1, spin=0):
 	Nakano et al., (2015),	Phys. Rev. D 91, 104022, in-text below Eq.[30].
 	"""
 
-	areal_radius = coord_radius * (1 + (Mass + spin) / (2 * coord_radius)) * (1 + (Mass - spin) / (2 * coord_radius))
+	areal_radius = coord_radius * (1 + (mass + spin) / (2 * coord_radius)) * (1 + (mass - spin) / (2 * coord_radius))
 
 	return areal_radius
 
@@ -61,7 +61,7 @@ def r_to_ra_conversion(coord_radius, Mass=1, spin=0):
 ############################################################################
 
 
-def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius=500, Mass=1, spin=0, ell=2, emm=2):
+def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius=500, mass=1, spin=0, ell=2, emm=2):
 	""" Extract a numerical waveform to null infinity using perturbative techniques. This is :
 		* accurate to second order in :math:`1/r`.
 		* accurate to first order in Kerr mass and spin.
@@ -83,7 +83,7 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius
 					The areal radius of the extraction sphere.
 
 
-	Mass :	float
+	mass :	float
 			The total horizon mass of the system.
 
 	spin :	float, optional
@@ -116,7 +116,7 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius
 
 	timeaxis = np.arange(0, len(rPsi4_rlm) * delta_t, delta_t)
 	# Assigning the terms. Each set of subterms in a pair of paranthesis is a term.
-	term_1_prefac = 1 - 2 * Mass / areal_radius
+	term_1_prefac = 1 - 2 * mass / areal_radius
 	subterm_1_1 = rPsi4_rlm
 	subterm_1_2_prefac = (ell - 1) * (ell + 2) / (2 * areal_radius)
 	subterm_1_2, _ = fixed_frequency_integrator(
@@ -152,7 +152,7 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius
 	return rPsi4_inflm
 
 
-def waveextract_to_inf_perturbative_two_order(rPsi4_rlm, delta_t, areal_radius=500, Mass=1, spin=0, ell=2, emm=2):
+def waveextract_to_inf_perturbative_two_order(rPsi4_rlm, delta_t, areal_radius=500, mass=1, ell=2):
 	""" Extract a numerical waveform to null infinity using perturbative techniques. This is :
 		* accurate to second order in :math:`1/r`.
 		* accurate to first order in Kerr mass and spin.
@@ -173,7 +173,7 @@ def waveextract_to_inf_perturbative_two_order(rPsi4_rlm, delta_t, areal_radius=5
 					The areal radius of the extraction sphere.
 
 
-	Mass :	float
+	mass :	float
 			The total horizon mass of the system.
 
 	spin :	float, optional
@@ -201,7 +201,6 @@ def waveextract_to_inf_perturbative_two_order(rPsi4_rlm, delta_t, areal_radius=5
 	"""
 
 	from integrate import fixed_frequency_integrator
-	from differentiate import differentiate_cwaveform
 
 	# Assigning the terms. Each set of subterms in a pair of paranthesis is a term.
 	term_1 = rPsi4_rlm
@@ -218,15 +217,16 @@ def waveextract_to_inf_perturbative_two_order(rPsi4_rlm, delta_t, areal_radius=5
 	)  # Double_Integral_rPsi4_rlm
 	term_3 = term_3_prefac * subterm_3_1
 
-	term_4_prefac = -3 * Mass / (2 * areal_radius ** 2)
+	term_4_prefac = -3 * mass / (2 * areal_radius ** 2)
 	subterm_4_1 = subterm_2_1
+	term_4 = term_4_prefac * subterm_4_1
 
-	rPsi4_inflm = term_1 + term_2 + term_3
+	rPsi4_inflm = term_1 + term_2 + term_3 + term_4
 
 	return rPsi4_inflm
 
 
-def waveextract_to_inf_perturbative_one_order(u_ret, rPsi4_rlm, areal_radius=500, Mass=1, ell=2, emm=2):
+def waveextract_to_inf_perturbative_one_order(u_ret, rPsi4_rlm, areal_radius=500, ell=2):
 	""" Extract a numerical waveform to null infinity using perturbative techniques. This is :
 		* accurate to second order in :math:`1/r`.
 		* accurate to first order in Kerr mass and spin.
@@ -247,7 +247,7 @@ def waveextract_to_inf_perturbative_one_order(u_ret, rPsi4_rlm, areal_radius=500
 					The areal radius of the extraction sphere.
 
 
-	Mass :	float
+	mass :	float
 			The total horizon mass of the system.
 
 	ell :	int
@@ -273,7 +273,7 @@ def waveextract_to_inf_perturbative_one_order(u_ret, rPsi4_rlm, areal_radius=500
 
 
 	# Get the amplitude and phase
-	A_lm, Phi_lm = waveformtools.xtract_camp_phase(rPsi4_rlm.real, rPsi4_rlm.imag)
+	A_lm, _ = waveformtools.xtract_camp_phase(rPsi4_rlm.real, rPsi4_rlm.imag)
 
 	# Get the time stepping
 	delta_t = u_ret[1] - u_ret[0]
