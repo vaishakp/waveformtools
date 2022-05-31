@@ -33,10 +33,14 @@
    :toctree:
    :recursive:
 
+   waveformtools.BMS
+   waveformtools.CoM
    waveformtools.differentiate
    waveformtools.extrapolate
+   waveformtools.grids
    waveformtools.integrate
    waveformtools.simulations
+   waveformtools.spherical
    waveformtools.transforms
    waveformtools.waveforms
    waveformtools.waveformtools

@@ -10,18 +10,18 @@ def compute_fft(udata_x, delta_x):
 	Parameters
 	----------
 
-	udata_x :	1d array
+	udata_x:	1d array
 				The samples in time-space.
 
-	delta_x :	float
+	delta_x:	float
 				The stepping delta_x
 
 	Returns
 	-------
 
-	freqs :	1d array
+	freqs:	1d array
 			The frequency axis, shifted approriately.
-	utilde :	1d array
+	utilde:	1d array
 				The samples in frequency space, with conventions applied.
 
 	"""
@@ -58,16 +58,16 @@ def compute_ifft(utilde, delta_f):
 	utilde	:	1d array
 				The samples in frequency-space.
 
-	delta_f :	float
+	delta_f:	float
 				The frequency stepping
 
 	Returns
 	-------
 
-	time_axis :	1d array
+	time_axis:	1d array
 				The time axis.
 
-	udata_time :	1d array
+	udata_time:	1d array
 					The samples in time domain.
 
 	"""
@@ -106,13 +106,13 @@ def set_fft_conven(utilde_orig):
 	Parameters
 	----------
 
-	utilde_orig :	1d array
+	utilde_orig:	1d array
 					The result of a numpy fft.
 
 	Returns
 	-------
 
-	utilde_conven :	1d array
+	utilde_conven:	1d array
 					The fft with set conventions.
  """
 
@@ -134,7 +134,7 @@ def unset_fft_conven(utilde_conven):
 	Parameters
 	----------
 
-	utilde_conven :	1d array
+	utilde_conven:	1d array
 					The conventional fft data vector.
 
 	Returns

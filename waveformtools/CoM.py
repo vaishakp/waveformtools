@@ -14,18 +14,18 @@ def X_com_moments(time_axis, Xcom, order):
 	Parameters
 	----------
 
-	time_axis :		1d array
+	time_axis:		1d array
 					The time axis.
-	Xcom :		list
+	Xcom:		list
 				A list of three 1d arrays, each a 1d array containing the
 				time series of the x, y and z co-ordinates in that order.
-	order :		int
+	order:		int
 				The order of the moment.
 
 	Returns
 	-------
 
-	moments :	list
+	moments:	list
 				A list containing three real numbers, one each for the moment
 				of x, y and z locations.
 
@@ -69,19 +69,19 @@ def compute_com_alpha(time_i, time_f, Xcom_0, Xcom_1):
 	Parameters
 	----------
 
-	time_i :	float
+	time_i:	float
 				initial time
-	time_f :	float
+	time_f:	float
 				final time
-	Xcom_0 :	list
+	Xcom_0:	list
 				A list containing the zeroth order moments of the COM.
-	Xcom_1 :	list
+	Xcom_1:	list
 				A list containing the first order moments of the COM.
 
 	Returns
 	-------
 
-	com_alpha :		list
+	com_alpha:		list
 					The list containig the alpha parameter vector
 
 	"""
@@ -99,19 +99,19 @@ def compute_com_beta(time_i, time_f, Xcom_0, Xcom_1):
 	Parameters
 	----------
 
-	time_i :	 float
+	time_i:	 float
 				 initial time
-	time_f :	float
+	time_f:	float
 				final time
-	Xcom_0 :	list
+	Xcom_0:	list
 				A list containing the zeroth order moments of the COM.
-	Xcom_1 :	list
+	Xcom_1:	list
 				A list containing the first order moments of the COM.
 
 	Returns
 	-------
 
-	com_beta :		list
+	com_beta:		list
 				The list containig the alpha parameter vector
 
 	"""
@@ -128,15 +128,15 @@ def compute_conformal_k(vec_v, info, spin_phase=0):
 	Inputs
 	------
 
-	vec_v :		list
+	vec_v:		list
 				A list of 2d arrays containing
 				the velocity vector in the form
 				[vec_x, vec_y, vec_z].
 
-	spin_phase :	float, optional
+	spin_phase:	float, optional
 					The spin phase :math:`\\lambda'. Defaults to 0.
 
-	info :		class instance
+	info:		class instance
 				An instance of the class `grids.sp_grid`
 				that contains information about the
 				spherical grid being used for the
@@ -144,7 +144,7 @@ def compute_conformal_k(vec_v, info, spin_phase=0):
 	Returns
 	--------
 
-	conformal_k :	2d array
+	conformal_k:	2d array
 					The conformal factor for the boost transformation
 					as defined above.
 
@@ -182,17 +182,17 @@ def compute_transl_alpha_modes(time_axis, com_alpha, com_beta):
 		Parameters
 		----------
 
-		time_axis :		1d array
+		time_axis:		1d array
 						The 1D array containing the time axis of the simulation.
-		alpha :		1d array
+		alpha:		1d array
 					The 1D array containing the mean co-ordinate displacement of the COM of the system.
-		beta :		1d array
+		beta:		1d array
 					The 1D array containing the mean co-ordinate velocity of the COM.
 
 		Returns
 		-------
 
-		alpha_modes :	  modes_array
+		alpha_modes:	  modes_array
 						  A `waveforms.modes_array` object containing the SH decomposition of the 'Alpha' supertranslation variable.
 
 		"""
@@ -239,21 +239,21 @@ def boost_waveform(unboosted_waveform, conformal_factor):
 	Parameters
 	----------
 
-	unboosted_waveform :		spherical_array
+	unboosted_waveform:		spherical_array
 								A class instance of `spherical array`.
 
-	conformal_factor :		2d array
+	conformal_factor:		2d array
 							The conformal factor for the Lorentz transformation. It may be a single floating point number or an array on a spherical grid. The array will be of dimensions
 							[ntheta, nphi]
 
-	gridinfo :		class instance
+	gridinfo:		class instance
 					The class instance that contains the properties of the spherical grid.
 
 
 	Returns
 	-------
 
-	boosted_waveform :	  sp_array
+	boosted_waveform:	  sp_array
 						  The class instance `sp_array` that
 						  contains the boosted waveform.
 	"""

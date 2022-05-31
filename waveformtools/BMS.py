@@ -14,21 +14,21 @@ def compute_conformal_k(vec_v, theta, phi, spin_phase=0):
 
 	Parameters
 	----------
+	vec_v: list
+			The velocity vector.
 
-	vec_v :		list
-				The velocity vector.
-	theta :		float
-				The polar angle :math:`\\theta' in radians.
-	phi :		float
+	theta: float
+			The polar angle :math:`\\theta' in radians.
+
+	phi: float
 				The azimuthal angle :math:`\\phi' in radians.
-	spin_phase :	float, optional
-					The spin phase :math:`\\lambda'. Defaults to 0.
 
+	spin_phase: float, optional
+				 The spin phase :math:`\\lambda'. Defaults to 0.
 
 	Returns
-	--------
-
-	conformal_k :	float
+	-------
+	conformal_k:	float
 					The conformal factor for the boost transformation as defined above.
 	"""
 
@@ -60,17 +60,17 @@ def compute_supertransl_alpha(supertransl_alpha_modes, theta, phi):
 	Parameters
 	----------
 
-	supertransl_alpha_modes :	dict
+	supertransl_alpha_modes:	dict
 								A dictionary of lists, each sublist containing the set of super-translation modes corresponding to a particular :math:`\\ell'.
-	theta :		float
+	theta:		float
 				The polar angle :math:`\\theta'.
-	phi :	float
+	phi:	float
 			The azimuthal angle :math:`\\phi'.
 
 	Returns
 	--------
 
-	supertransl_alpha_sphere :		func
+	supertransl_alpha_sphere:		func
 									A function on the sphere (arguments :math:`\\theta', math:`\\phi').
 
 
@@ -112,18 +112,18 @@ def boost_waveform(unboosted_waveform, conformal_factor):
 	Parameters
 	----------
 
-	non_boosted_waveform :		list
+	non_boosted_waveform:		list
 								A list with a single floating point number or a numpy array of the unboosted waveform. The waveform can have angular as well as time dimentions.
 								The nesting order should be that, given the list `non_boosted_waveform', each item in the list refers to an array defined on the sphere at a particular
 								time or frequency. The subitem will have dimensions [ntheta, nphi].
 
 
 
-	conformal_factor :		float/array
+	conformal_factor:		float/array
 							The conformal factor for the Lorentz transformation. It may be a single floating point number or an array on a spherical grid. The array will be of dimensions
 							[ntheta, nphi]
 
-	gridinfo :		class instance
+	gridinfo:		class instance
 					The class instance that contains the properties of the spherical grid.
 
 	"""

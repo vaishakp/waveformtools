@@ -19,22 +19,22 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=5):
 	----------
 
 
-	x_data :	1d array
+	x_data:	1d array
 				The x data.
-	y_data :	1d array
+	y_data:	1d array
 			The y data.
 
-	order :	int
+	order:	int
 			The number of times to differentiate.
 
-	degree :	int
+	degree:	int
 				The number of basis functions to use.
 
 
 	Returns
 	-------
 
-	dydx_data :	1d array
+	dydx_data:	1d array
 				The differentiated data.
 
 	"""
@@ -65,32 +65,32 @@ def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.in
 
 	Parameters
 	----------
-	xaxis :	1d array
+	xaxis:	1d array
 			The co-ordinate space axis.
-	udata_x :	1d array
+	udata_x:	1d array
 				The data to be differentiated, expressed in coordinate space.
-	omega0 :	float, optional
+	omega0:	float, optional
 				The cutoff angular frequency in the integration. Must be lower than the starting angular frequency of the input waveform.
-	order :	int, optional
+	order:	int, optional
 			The number of times to differentiate the integrand in time.
-	zero_mode :	float, optional
+	zero_mode:	float, optional
 				The zero mode amplitude of the FFT required.
-	taper :	bool
+	taper:	bool
 			Whether or not to taper the real co-ordinate space data.
 
 	Returns
 	-------
-	udata_differentiated :	1d array
+	udata_differentiated:	1d array
 							The input waveform in time-space, integrated in frequency space using FFI.
 
-	utilde_differentiated :	1d array
+	utilde_differentiated:	1d array
 							The FFT of the frixed frequency differentiated array in good conventions.
 
 
-	new_x_axis :	1d array
+	new_x_axis:	1d array
 					The new x-axis, assuming the data may have been changed in length
 
-	freq_axis :	1d array
+	freq_axis:	1d array
 				The frequency axis of the FFT of data.
 
 	Notes
@@ -181,15 +181,15 @@ def differentiate(data, delta_t):
 	Parameters
 	----------
 
-	data :	1d array
+	data:	1d array
 			The 1d data.
-	delta_t :	float
+	delta_t:	float
 				The time step in units of t/M.
 
 	Returns
 	-------
 
-	dAdt :	1d array
+	dAdt:	1d array
 			The derivative.
 
 	 """
@@ -221,15 +221,15 @@ def differentiate2(data, delta_t):
 	Parameters
 	----------
 
-	data :	1d array
+	data:	1d array
 			The 1d data.
-	delta_t :	float
+	delta_t:	float
 				The time step in t/M.
 
 	Returns
 	-------
 
-	dAdt :	1d array
+	dAdt:	1d array
 			The derivative.
 
 	"""
@@ -276,15 +276,15 @@ def differentiate3(data, delta_t):
 	Parameters
 	----------
 
-	data :	1d array
+	data:	1d array
 			The 1d data.
-	delta_t :	float
+	delta_t:	float
 				The time step in t/M.
 
 	Returns
 	-------
 
-	dAdt :	1d array
+	dAdt:	1d array
 			The derivative.
 
 	"""
@@ -342,15 +342,15 @@ def differentiate4(data, delta_t):
 	Parameters
 	----------
 
-	data :	1d array
+	data:	1d array
 			The 1d data.
-	delta_t :	float
+	delta_t:	float
 				The time step in t/M.
 
 	Returns
 	-------
 
-	dAdt :	1d array
+	dAdt:	1d array
 			The derivative.
 
 	"""
@@ -424,15 +424,15 @@ def differentiate5(data, delta_t):
 	Parameters
 	----------
 
-	data :	1d array
+	data:	1d array
 			The 1d data.
-	delta_t :	float
+	delta_t:	float
 				The time step in t/M.
 
 	Returns
 	-------
 
-	dAdt :	1d array
+	dAdt:	1d array
 			The derivative of the data.
 
 	"""
@@ -524,17 +524,17 @@ def differentiate_cwaveform(time_axis, waveform):
 	Parameters
 	----------
 
-	time_axis :	1d array
+	time_axis:	1d array
 				The time axis of the waveform.
 
-	waveform :	1d array
+	waveform:	1d array
 				The complex 1d array of the waveform timeseries.
 
 
 	Returns
 	-------
 
-	differentiated_waveform :	1d array
+	differentiated_waveform:	1d array
 								The waveform differentiated in time.
 
 	"""

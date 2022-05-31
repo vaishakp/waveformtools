@@ -1,4 +1,4 @@
-﻿waveformtools.integrate
+waveformtools.integrate
 =======================
 
 .. automodule:: waveformtools.integrate

@@ -18,14 +18,14 @@ def r_to_ra_conversion(coord_radius, mass=1, spin=0):
 	Parameters
 	----------
 
-	coord_radius :	float
+	coord_radius:	float
 					The coordinate radius in the Einstein toolkit
 
-	mass :	float, optional
+	mass:	float, optional
 			The sum of the quasi-local horizon (Christodolou) masses of the black holes.
 			Defaults to 1.
 
-	spin :	float, optional
+	spin:	float, optional
 			The magnitude of the spin of the system, as approximated by a single Kerr black hole
 			far away from the system. Defaults to 0.
 
@@ -33,7 +33,7 @@ def r_to_ra_conversion(coord_radius, mass=1, spin=0):
 	Returns
 	-------
 
-	areal_radius :	float
+	areal_radius:	float
 					The appriximate areal radius of the sphere.
 
 
@@ -72,33 +72,33 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius
 	Parameters
 	----------
 
-	rPsi4_rlm :	1d array
+	rPsi4_rlm:	1d array
 				The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array
 
-	delta_t :	float
+	delta_t:	float
 				The time stepping.
 
 
-	areal_radius :	1d array
+	areal_radius:	1d array
 					The areal radius of the extraction sphere.
 
 
-	mass :	float
+	mass:	float
 			The total horizon mass of the system.
 
-	spin :	float, optional
+	spin:	float, optional
 			The effective spin of the spacetime. Defaults to 0.
 
-	ell :	int
+	ell:	int
 			The polar quantum number :math:`\\ell`.
 
-	emm :	int
+	emm:	int
 			The azimuthal quantum number :math:`m`.
 
 	Returns
 	-------
 
-	rPsi4_inflm :	1d array
+	rPsi4_inflm:	1d array
 				The waveform extracted to null infninity :math:`\\mathcal{I}^+`
 
 
@@ -163,32 +163,32 @@ def waveextract_to_inf_perturbative_two_order(rPsi4_rlm, delta_t, areal_radius=5
 	Parameters
 	----------
 
-	rPsi4_rlm :	1d array
+	rPsi4_rlm:	1d array
 				The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array.
 
-	delta_t :	float
+	delta_t:	float
 				The time stepping.
 
-	areal_radius :	1d array
+	areal_radius:	1d array
 					The areal radius of the extraction sphere.
 
 
-	mass :	float
+	mass:	float
 			The total horizon mass of the system.
 
-	spin :	float, optional
+	spin:	float, optional
 			The effective spin of the spacetime. Defaults to 0.
 
-	ell :	int
+	ell:	int
 			The polar quantum number :math:`\\ell`.
 
-	emm :	int
+	emm:	int
 			The azimuthal quantum number :math:`m`.
 
 	Returns
 	-------
 
-	rPsi4_inflm :	1d array
+	rPsi4_inflm:	1d array
 				The waveform extracted to null infninity :math:`\\mathcal{I}^+`
 
 
@@ -237,29 +237,29 @@ def waveextract_to_inf_perturbative_one_order(u_ret, rPsi4_rlm, areal_radius=500
 	Parameters
 	----------
 
-	u_ret :	1d array
+	u_ret:	1d array
 			The retarted time array at the location r = areal_radius.
 
-	rPsi4_rlm :	1d array
+	rPsi4_rlm:	1d array
 				The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array
 
-	areal_radius :	1d array
+	areal_radius:	1d array
 					The areal radius of the extraction sphere.
 
 
-	mass :	float
+	mass:	float
 			The total horizon mass of the system.
 
-	ell :	int
+	ell:	int
 			The polar quantum number :math:`\\ell`.
 
-	emm :	int
+	emm:	int
 			The azimuthal quantum number :math:`m`.
 
 	Returns
 	-------
 
-	rPsi4_inflm :	1d array
+	rPsi4_inflm:	1d array
 				The waveform extracted to null infninity :math:`\\mathcal{I}^+`
 
 

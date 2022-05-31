@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>waveformtools.integrate &mdash; waveformtools 2022-05-03 documentation</title>
@@ -21,6 +22,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -32,10 +34,12 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="waveformtools.simulations" href="waveformtools.simulations.html" />
-    <link rel="prev" title="waveformtools.extrapolate" href="waveformtools.extrapolate.html" /> 
+    <link rel="prev" title="waveformtools.grids" href="waveformtools.grids.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,20 +87,27 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="waveformtools.html">waveformtools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.html#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.CoM.html">waveformtools.CoM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.grids.html">waveformtools.grids</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.integrate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
 </ul>
 
             
@@ -165,7 +176,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-waveformtools.integrate">
+  <section id="module-waveformtools.integrate">
 <span id="waveformtools-integrate"></span><h1>waveformtools.integrate<a class="headerlink" href="#module-waveformtools.integrate" title="Permalink to this headline">¶</a></h1>
 <p>Methods to integrate functions</p>
 <p class="rubric">Functions</p>
@@ -181,42 +192,42 @@
 </tbody>
 </table>
 <dl class="py function">
-<dt id="waveformtools.integrate.fixed_frequency_integrator">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.integrate.</span></code><code class="sig-name descname"><span class="pre">fixed_frequency_integrator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">udata_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utilde_conven</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/integrate.html#fixed_frequency_integrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.integrate.fixed_frequency_integrator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.integrate.fixed_frequency_integrator">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.integrate.</span></span><span class="sig-name descname"><span class="pre">fixed_frequency_integrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">udata_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utilde_conven</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/integrate.html#fixed_frequency_integrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.integrate.fixed_frequency_integrator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fixed frequency integrator as presented in Reisswig</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>udata_time</strong><span class="classifier">1d array</span></dt><dd><p>The input data in time.</p>
+<dt><strong>udata_time:     1d array</strong></dt><dd><p>The input data in time.</p>
 </dd>
-<dt><strong>delta_t</strong><span class="classifier">float</span></dt><dd><p>The time stepping.</p>
+<dt><strong>delta_t:        float</strong></dt><dd><p>The time stepping.</p>
 </dd>
-<dt><strong>utilde_conven</strong><span class="classifier">1d array, optional</span></dt><dd><p>The conventional FFT of the samples udata_time.</p>
+<dt><strong>utilde_conven:          1d array, optional</strong></dt><dd><p>The conventional FFT of the samples udata_time.</p>
 </dd>
-<dt><strong>omega0</strong><span class="classifier">float, optional</span></dt><dd><p>The cutoff angular frequency in the integration. Must be lower than the starting angular frequency of the input waveform.
+<dt><strong>omega0: float, optional</strong></dt><dd><p>The cutoff angular frequency in the integration. Must be lower than the starting angular frequency of the input waveform.
 All frequencies below this will be neglected.
 The default value is 0.</p>
 </dd>
-<dt><strong>order</strong><span class="classifier">int, optional</span></dt><dd><p>The number of times to integrate the integrand in time.
+<dt><strong>order:          int, optional</strong></dt><dd><p>The number of times to integrate the integrand in time.
 Defaults to 1.</p>
 </dd>
-<dt><strong>zero_mode</strong><span class="classifier">float, optional</span></dt><dd><p>The zero mode amplitude of the FFT required.
+<dt><strong>zero_mode:      float, optional</strong></dt><dd><p>The zero mode amplitude of the FFT required.
 Defaults to 0 i.e. the zero mode is removed.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>u_integ_n_time</strong><span class="classifier">1d array</span></dt><dd><p>The input waveform in time-space, integrated in frequency space using FFI.</p>
+<dt>u_integ_n_time: 1d array</dt><dd><p>The input waveform in time-space, integrated in frequency space using FFI.</p>
 </dd>
-<dt><strong>u_integ_integ_n</strong><span class="classifier">1d array</span></dt><dd><p>The integrated u samples in Fourier space.</p>
+<dt>u_integ_integ_n:        1d array</dt><dd><p>The integrated u samples in Fourier space.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
@@ -229,7 +240,7 @@ Defaults to 0 i.e. the zero mode is removed.</p>
         <a href="waveformtools.simulations.html" class="btn btn-neutral float-right" title="waveformtools.simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="waveformtools.extrapolate.html" class="btn btn-neutral float-left" title="waveformtools.extrapolate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="waveformtools.grids.html" class="btn btn-neutral float-left" title="waveformtools.grids" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -44,12 +44,16 @@ extensions = [
     "sphinx.ext.autosummary",
     "numpydoc",
     "sphinx.ext.doctest",
+#    "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
     "sphinx.ext.mathjax",
     "sphinx.ext.ifconfig",
     "sphinx.ext.viewcode",
-    "recommonmark",
+#    "sphinx.ext.imgmath",
+#    "myst_parser"
+	"recommonmark"
 ]
+
 
 autosummary_generate = True
 
@@ -58,6 +62,30 @@ if sphinx.version_info < (1, 8):
     autodoc_default_flags = ["members", "undoc-members"]
 else:
     autodoc_default_options = {"members": None, "undoc-members": None, "special-members": "__call__"}
+
+# -- Try to auto-generate numba-decorated signatures -----------------
+
+import numba
+import inspect
+
+
+def process_numba_docstring(app, what, name, obj, options, signature, return_annotation):
+    if type(obj) is not numba.core.registry.CPUDispatcher:
+        return (signature, return_annotation)
+    else:
+        original = obj.py_func
+        orig_sig = inspect.signature(original)
+
+        if (orig_sig.return_annotation) is inspect._empty:
+            ret_ann = None
+        else:
+            ret_ann = orig_sig.return_annotation.__name__
+
+        return (str(orig_sig), ret_ann)
+
+
+def setup(app):
+    app.connect("autodoc-process-signature", process_numba_docstring)
 
 
 # --------------------------------------------------------------------
@@ -101,7 +129,6 @@ html_theme_options = {
     #'style_external_links': False,
     #'vcs_pageview_mode': '',
     "style_nav_header_background": "green",
-	"bgcolor" : "black",
     # Toc options
     #'collapse_navigation': True,
     #'sticky_navigation': True,

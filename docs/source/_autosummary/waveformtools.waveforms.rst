@@ -1,4 +1,4 @@
-﻿waveformtools.waveforms
+waveformtools.waveforms
 =======================
 
 .. automodule:: waveformtools.waveforms
@@ -9,6 +9,12 @@
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      construct_mode_list
+   
    
 
    
@@ -17,7 +23,8 @@
 
    .. autosummary::
    
-      waveform
+      modes_array
+      spherical_array
    
    
 

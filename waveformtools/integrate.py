@@ -19,33 +19,33 @@ def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None, omega0=0
 
 	Parameters
 	----------
-	udata_time :	1d array
+	udata_time:	1d array
 				The input data in time.
-	delta_t :	float
+	delta_t:	float
 				The time stepping.
 
-	utilde_conven :		1d array, optional
+	utilde_conven:		1d array, optional
 						The conventional FFT of the samples udata_time.
-	omega0 :	float, optional
+	omega0:	float, optional
 				The cutoff angular frequency in the integration. Must be lower than the starting angular frequency of the input waveform.
 				All frequencies below this will be neglected.
 				The default value is 0.
 
-	order :		int, optional
+	order:		int, optional
 				The number of times to integrate the integrand in time.
 				Defaults to 1.
 
-	zero_mode :	float, optional
+	zero_mode:	float, optional
 				The zero mode amplitude of the FFT required.
 				Defaults to 0 i.e. the zero mode is removed.
 
 	Returns
 	-------
 
-	u_integ_n_time :	1d array
+	u_integ_n_time:	1d array
 						The input waveform in time-space, integrated in frequency space using FFI.
 
-	u_integ_integ_n :	1d array
+	u_integ_integ_n:	1d array
 						The integrated u samples in Fourier space.
 
 	"""

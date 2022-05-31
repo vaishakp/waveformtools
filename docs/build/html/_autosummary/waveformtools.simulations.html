@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>waveformtools.simulations &mdash; waveformtools 2022-05-03 documentation</title>
@@ -21,6 +22,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -32,9 +34,11 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="waveformtools.transforms" href="waveformtools.transforms.html" />
+    <link rel="next" title="waveformtools.spherical" href="waveformtools.spherical.html" />
     <link rel="prev" title="waveformtools.integrate" href="waveformtools.integrate.html" /> 
 </head>
 
@@ -83,20 +87,27 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="waveformtools.html">waveformtools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.html#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.CoM.html">waveformtools.CoM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.grids.html">waveformtools.grids</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.integrate.html">waveformtools.integrate</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
 </ul>
 
             
@@ -165,7 +176,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-waveformtools.simulations">
+  <section id="module-waveformtools.simulations">
 <span id="waveformtools-simulations"></span><h1>waveformtools.simulations<a class="headerlink" href="#module-waveformtools.simulations" title="Permalink to this headline">¶</a></h1>
 <p>Data container for Numerical Relativity data</p>
 <p class="rubric">Classes</p>
@@ -175,14 +186,14 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.simulations.sim" title="waveformtools.simulations.sim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sim</span></code></a>([aliases, multipoles, mass_multipoles, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.simulations.sim" title="waveformtools.simulations.sim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sim</span></code></a>([aliases, multipoles, mass_multipoles, ...])</p></td>
 <td><p>A data container for simulation data.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py class">
-<dt id="waveformtools.simulations.sim">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">waveformtools.simulations.</span></code><code class="sig-name descname"><span class="pre">sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aliases</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multipoles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_multipoles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_multipoles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merger_ind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actmerger_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dinit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ROOTDIR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WAVDIR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data/primary/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_data_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comm_data_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'output/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_amplitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_indexshifts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexjn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distjn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">waveformtools.simulations.</span></span><span class="sig-name descname"><span class="pre">sim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aliases</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multipoles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_multipoles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_multipoles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merger_ind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actmerger_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dinit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ROOTDIR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">WAVDIR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data/primary/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_data_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comm_data_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'output/'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_amplitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strain_indexshifts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexjn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distjn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">areal_radii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_deltamultipoles2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_multipoles2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_deltamultipoles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_multipoles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_multipoles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indjn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>A data container for simulation data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
@@ -260,31 +271,31 @@
 </tbody>
 </table>
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.calc_amp_phase">
-<code class="sig-name descname"><span class="pre">calc_amp_phase</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_amp_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_amp_phase" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.calc_amp_phase">
+<span class="sig-name descname"><span class="pre">calc_amp_phase</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_amp_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_amp_phase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract the amplitude and the phase from strain data.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.calc_delta_multipoles">
-<code class="sig-name descname"><span class="pre">calc_delta_multipoles</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_delta_multipoles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_delta_multipoles" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.calc_delta_multipoles">
+<span class="sig-name descname"><span class="pre">calc_delta_multipoles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_delta_multipoles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_delta_multipoles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles)</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.calc_delta_multipoles2">
-<code class="sig-name descname"><span class="pre">calc_delta_multipoles2</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_delta_multipoles2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_delta_multipoles2" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.calc_delta_multipoles2">
+<span class="sig-name descname"><span class="pre">calc_delta_multipoles2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_delta_multipoles2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_delta_multipoles2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the delta multipoles (w.r.t. reference (l=2) multipoles)</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.calc_junkend">
-<code class="sig-name descname"><span class="pre">calc_junkend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tjn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_junkend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_junkend" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.calc_junkend">
+<span class="sig-name descname"><span class="pre">calc_junkend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tjn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_junkend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_junkend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the indices and the starting distances of the system at timestamp t = 200.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>tjn</strong><span class="classifier">float</span></dt><dd><p>The definition of time end of junk radiation. Default is 200.</p>
+<dt><strong>tjn:    float</strong></dt><dd><p>The definition of time end of junk radiation. Default is 200.</p>
 </dd>
 </dl>
 </dd>
@@ -292,136 +303,136 @@
 <p class="rubric">Notes</p>
 <p>Computes:</p>
 <dl class="simple">
-<dt>self.indjn<span class="classifier">dict</span></dt><dd><p>A dictionary containing the index location corresponding to timestamp tjn.</p>
+<dt>self.indjn:     dict</dt><dd><p>A dictionary containing the index location corresponding to timestamp tjn.</p>
 </dd>
-<dt>self.distjn<span class="classifier">dict</span></dt><dd><p>A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.</p>
+<dt>self.distjn:    dict</dt><dd><p>A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.calc_log_multipoles">
-<code class="sig-name descname"><span class="pre">calc_log_multipoles</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_log_multipoles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_log_multipoles" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.calc_log_multipoles">
+<span class="sig-name descname"><span class="pre">calc_log_multipoles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_log_multipoles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_log_multipoles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.calc_log_multipoles2">
-<code class="sig-name descname"><span class="pre">calc_log_multipoles2</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_log_multipoles2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_log_multipoles2" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.calc_log_multipoles2">
+<span class="sig-name descname"><span class="pre">calc_log_multipoles2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_log_multipoles2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_log_multipoles2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.calc_ref_multipoles">
-<code class="sig-name descname"><span class="pre">calc_ref_multipoles</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_ref_multipoles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_ref_multipoles" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.calc_ref_multipoles">
+<span class="sig-name descname"><span class="pre">calc_ref_multipoles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.calc_ref_multipoles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.calc_ref_multipoles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and assign the reference (l=2) multuipoles to sim.ref_multipoles of the simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.chirpmass">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">chirpmass</span></code><a class="headerlink" href="#waveformtools.simulations.sim.chirpmass" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.chirpmass">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chirpmass</span></span><a class="headerlink" href="#waveformtools.simulations.sim.chirpmass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the chirp mass of the simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.comm_data_duration">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">comm_data_duration</span></code><a class="headerlink" href="#waveformtools.simulations.sim.comm_data_duration" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.comm_data_duration">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">comm_data_duration</span></span><a class="headerlink" href="#waveformtools.simulations.sim.comm_data_duration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the duration of the common data (multipole and Bhdiag/distance) of the simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.data_duration">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">data_duration</span></code><a class="headerlink" href="#waveformtools.simulations.sim.data_duration" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.data_duration">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_duration</span></span><a class="headerlink" href="#waveformtools.simulations.sim.data_duration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the data duration of the simulations.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.load_data">
-<code class="sig-name descname"><span class="pre">load_data</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.load_data" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.load_data">
+<span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.load_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load data of the simulations.</p>
 <p class="rubric">Notes</p>
 <p>Data is assigned to</p>
 <blockquote>
-<div><p>multipoles :    list
-mass_multipoles :       list
-spin_multipoles :       list
-timeaxis :      list
-mass1 : float
-mass2 : float
-mass3 : float
-delta_t :       float
-distance :      list
-merger_ind :    int
-actmerger_time :        float
-dinit : float
-data_length :   int
-dist_data_length :      int</p>
+<div><p>multipoles:     list
+mass_multipoles:        list
+spin_multipoles:        list
+timeaxis:       list
+mass1:  float
+mass2:  float
+mass3:  float
+delta_t:        float
+distance:       list
+merger_ind:     int
+actmerger_time: float
+dinit:  float
+data_length:    int
+dist_data_length:       int</p>
 </div></blockquote>
 </dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.load_strain">
-<code class="sig-name descname"><span class="pre">load_strain</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.load_strain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.load_strain" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.load_strain">
+<span class="sig-name descname"><span class="pre">load_strain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.load_strain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.load_strain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to load the shear data of simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.massratio">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">massratio</span></code><a class="headerlink" href="#waveformtools.simulations.sim.massratio" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.massratio">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">massratio</span></span><a class="headerlink" href="#waveformtools.simulations.sim.massratio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the massratio of the simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.merger_distance">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">merger_distance</span></code><a class="headerlink" href="#waveformtools.simulations.sim.merger_distance" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.merger_distance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merger_distance</span></span><a class="headerlink" href="#waveformtools.simulations.sim.merger_distance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the distance at the merger index of the simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.merger_time">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">merger_time</span></code><a class="headerlink" href="#waveformtools.simulations.sim.merger_time" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.merger_time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merger_time</span></span><a class="headerlink" href="#waveformtools.simulations.sim.merger_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the cctk_time stamp at the merger for the simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.pm_data_duration">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">pm_data_duration</span></code><a class="headerlink" href="#waveformtools.simulations.sim.pm_data_duration" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.pm_data_duration">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pm_data_duration</span></span><a class="headerlink" href="#waveformtools.simulations.sim.pm_data_duration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the duration of post-merger data present in the simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.pm_data_length">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">pm_data_length</span></code><a class="headerlink" href="#waveformtools.simulations.sim.pm_data_length" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.pm_data_length">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pm_data_length</span></span><a class="headerlink" href="#waveformtools.simulations.sim.pm_data_length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the post merger data length avaialable for all simulations.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="waveformtools.simulations.sim.ret_horizon_radii">
-<code class="sig-name descname"><span class="pre">ret_horizon_radii</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.ret_horizon_radii"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.ret_horizon_radii" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.ret_horizon_radii">
+<span class="sig-name descname"><span class="pre">ret_horizon_radii</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.ret_horizon_radii"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.ret_horizon_radii" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve the radius of the common horizon at the time of formation.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.sampling_f">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">sampling_f</span></code><a class="headerlink" href="#waveformtools.simulations.sim.sampling_f" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.sampling_f">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampling_f</span></span><a class="headerlink" href="#waveformtools.simulations.sim.sampling_f" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the sampling frequency of the simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.totalmass">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">totalmass</span></code><a class="headerlink" href="#waveformtools.simulations.sim.totalmass" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.totalmass">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">totalmass</span></span><a class="headerlink" href="#waveformtools.simulations.sim.totalmass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the total mass of the simulations.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="waveformtools.simulations.sim.true_merger_distance">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">true_merger_distance</span></code><a class="headerlink" href="#waveformtools.simulations.sim.true_merger_distance" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.true_merger_distance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">true_merger_distance</span></span><a class="headerlink" href="#waveformtools.simulations.sim.true_merger_distance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute and return the true (i.e. non-normalized) distance at merger for the simulations.</p>
 </dd></dl>
 
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
@@ -431,7 +442,7 @@ dist_data_length :      int</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="waveformtools.transforms.html" class="btn btn-neutral float-right" title="waveformtools.transforms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="waveformtools.spherical.html" class="btn btn-neutral float-right" title="waveformtools.spherical" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="waveformtools.integrate.html" class="btn btn-neutral float-left" title="waveformtools.integrate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

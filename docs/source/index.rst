@@ -15,6 +15,7 @@ Welcome to waveformtools' documentation!
    README.md
    basic_features
    api
+   simulations
 
 Indices and tables
 ==================

@@ -1,4 +1,4 @@
-﻿waveformtools.extrapolate
+waveformtools.extrapolate
 =========================
 
 .. automodule:: waveformtools.extrapolate

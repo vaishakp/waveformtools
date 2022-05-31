@@ -14,24 +14,24 @@ def decompose_in_SWSHs(waveform, gridinfo, spin_weight=-2, ell_max=8, emm="all")
 	Parameters
 	----------
 
-	waveform :		list
+	waveform:		list
 					A list that contains as its items the waveform defined on the sphere as an array of shape [ntheta, nphi]. Each item in the list may donote
 					an instant of time or frequency.
 
-	spin_weight :	 int, optional
+	spin_weight:	 int, optional
 					 The spin weight of the waveform. It defaults to -2 for a gravitational waveform.
 
-	ell_max :	int, optional
+	ell_max:	int, optional
 				The maximum value of the :math:`\\ell' polar quantum number. Defaults to 6=8.
 
-	gridinfo :		class instance
+	gridinfo:		class instance
 					The class instance that contains the properties of the spherical grid.
 
 
 	Returns
 	-------
 
-	SWSH_coeffs :	list
+	SWSH_coeffs:	list
 					The SWSH coefficients of the waveform. It may be a list composed of a single floating point number or a 1d array (denoting time or frequency dimension).
 					The waveform can have angular as well as time dimentions. The nesting order will be that, given the list `non_boosted_waveform', each
 					item refers to a one dimensional array in time/ frequency of SWSH coefficients.
@@ -131,13 +131,13 @@ def quad_on_sphere(integrand, gridinfo, kind="third"):
 	Parameters
 	----------
 
-	integrand :		2d array
+	integrand:		2d array
 					The two dimensional integrand array defined on the sphere.
 
-	info :		class instance
+	info:		class instance
 				The class instance that contains the properties of the spherical grid.
 
-	kind :		str
+	kind:		str
 				The interpolation order to use in integration.
 	Returns
 	-------
@@ -145,7 +145,7 @@ def quad_on_sphere(integrand, gridinfo, kind="third"):
 	final_integral : float
 				  The given integrand integrated over the sphere.
 
-	final_errs :	float
+	final_errs:	float
 					The accumulated errors.
 
 	Notes

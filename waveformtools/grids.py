@@ -7,41 +7,41 @@ class spherical_grid:
 	Attributes
 	----------
 
-	ntheta :	int
+	ntheta:	int
 				The number of angular points in the :math:`\\theta`
 				direction, including ghost zones.
 
 
-	nphi :	int
+	nphi:	int
 			The number of angular points in the :math:`\\phi`
 			direction, including ghost zones.
 
-	nghosts :	int
+	nghosts:	int
 				The number of ghost zones at the end of
 				each direction.
 
-	meshgrid :	tuple of 2d array
+	meshgrid:	tuple of 2d array
 				The 2d array containing the meshgrid of
 				(:math:`\\theta, \\phi`) angular points.
 
 
-	theta_1d :	1d array
+	theta_1d:	1d array
 				The 1d array of angular points
 				along the :math:`\\theta` axis.
 
-	phi_1d :	1d array
+	phi_1d:	1d array
 				The 1d array of angular points
 				along the :math:`\\phi` axis.
 
-	dtheta :	float
+	dtheta:	float
 				The angular step size in the :math:`\\theta`
 				direction.
 
-	dphi :	float
+	dphi:	float
 			The angular step size inthe :math:`\\phi`
 			direction.
 
-	npix_act :	int
+	npix_act:	int
 				The total number of gridpoints on the sphere,
 				excluding the ghost points.
 
@@ -113,13 +113,13 @@ class spherical_grid:
 		Parameters
 		-----------
 
-		theta_index :	int/ 1d array
+		theta_index:	int/ 1d array
 						The theta coordinate index or axis.
 
 		Returns
 		-------
 
-		theta_1d :	float
+		theta_1d:	float
 					The coordinate(s) :math:`\\theta` on the sphere.
 
 		'''
@@ -136,13 +136,13 @@ class spherical_grid:
 		Parameters
 		-----------
 
-		phi_1d :	int / 1d array
+		phi_1d:	int / 1d array
 					The phi coordinate index or axis.
 
 		Returns
 		-------
 
-		phi_1d :	float or 1d array
+		phi_1d:	float or 1d array
 					The coordinate(s) :math:`\\phi` on the sphere.
 
 		'''
@@ -163,10 +163,10 @@ class spherical_grid:
 		Returns
 		-------
 
-		theta :	2d array
+		theta:	2d array
 				The :math:`\\theta` coordinate matrix for vectorization.
 
-		phi :	2d array
+		phi:	2d array
 				The :math:`\\phi` coordinate matrix for vectorization.
 
 		'''

@@ -13,7 +13,8 @@ waveformtools.transforms
 
    .. autosummary::
    
-      find_fft
+      compute_fft
+      compute_ifft
       set_fft_conven
       unset_fft_conven
    

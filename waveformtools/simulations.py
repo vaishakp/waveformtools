@@ -5,7 +5,7 @@
 ##############################################
 
 import numpy as np
-from waveformtools import message, cleandata
+from waveformtools.waveformtools import message, cleandata
 
 # import waveformtools
 
@@ -17,88 +17,88 @@ class sim:
 	Arrtibutes
 	----------
 
-	ROOTDIR :	string
+	ROOTDIR:	string
 				Root directory as a string containing the simulation folders.
 
-	WAVDIR :	string
+	WAVDIR:	string
 				Root directory as a string containing the simulation directies containing the wavefom data.
 
-	data_dir :	string
+	data_dir:	string
 				The path of the folder containing data relative to the simulation direcory.
 
-	strain_dir :	string
+	strain_dir:	string
 					The path of the folder containing the waveform data relative to the strain directory.
 
-	aliases :	a list of strings
+	aliases:	a list of strings
 				The names/aliases for the simulations.
 
-	multipoles :	dict of lists
+	multipoles:	dict of lists
 					The multipole moments of the simulation as a dictionary. Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.
 
-	mass1 :	dict of floats
+	mass1:	dict of floats
 			The BH1 horizon mass.
 
-	mass2 :	dict of floats)
+	mass2:	dict of floats)
 			The BH2 horizon mass.
 
-	mass3 :	dict of floats
+	mass3:	dict of floats
 			The BH3 horizon mass.
 
-	delta_t :	dict of floats
+	delta_t:	dict of floats
 				The time stepping in simulation units (delta_t/M).
 
-	timeaxis :	dict of 1d arrays
+	timeaxis:	dict of 1d arrays
 				The timeaxis of the simulations.
 
-	distance :	dict of 1d arrays
+	distance:	dict of 1d arrays
 				The distances of simulations.
 
-	merger_ind :	dict of ints
+	merger_ind:	dict of ints
 					The merger index/ common horizon formation index of simulations.
 
-	dinit :	dict of floats
+	dinit:	dict of floats
 			The initial distances.
 
-	multipoles :	dict of lists
+	multipoles:	dict of lists
 					The two sets of  mass multipoles of the three horizons. Axis 0 is usuall the time array.
 
-	mass_multipoles :	dict of lists
+	mass_multipoles:	dict of lists
 						The mass multipoles upto (ell=8).
 
-	spin_multipoles :	dict of lists
+	spin_multipoles:	dict of lists
 						The spin multipoles upto (l=8).
 
-	data_length :	dict of float
+	data_length:	dict of float
 					The data length of the multipole simulation data loaded.
 
-	dist_data_length :	dict of ints
+	dist_data_length:	dict of ints
 						The data length of distances of simulations.
 
-	merger_distance :	dict of floats
+	merger_distance:	dict of floats
 						The distance between the blackholes at the merger index.
 
-	true_merger_dist :	dict of floats
+	true_merger_dist:	dict of floats
 						The true merger distance (non-normalized).
 
-	sampling_f :	dict of floats
+	sampling_f:	dict of floats
 					The sampling frequency of simulations (1/delta_t).
 
-	merger_time :	dict of floats
+	merger_time:	dict of floats
 					The cctk_time stamp at merger.
 
-	massratio :	dict of floats
+	massratio:	dict of floats
 				The massratio of the simulations.
 
-	chirpmass :	dict of floats
+	chirpmass:	dict of floats
 				The chirpmass of the simulations.
 
-	totalmass :	dict of floats
+	totalmass:	dict of floats
 				The total mass of the simulations.
 
-	log_multipoles :	dict of lists
+	log_multipoles:	dict of lists
 						The natural logarithm of the negative of the multipole moments as list [time, multipole1, multipole2, multipole3(if exists)].
 
-	data_duration :	dict of floats
+	data_duration:	dict of floats
 					The total cctk_time units of simulations present.
 
 	Methods
@@ -334,16 +334,16 @@ class sim:
 		Parameters
 		----------
 
-		tjn :	float
+		tjn:	float
 				The definition of time end of junk radiation. Default is 200.
 
 		Notes
 		-----
 		Computes:
 
-		self.indjn :	dict
+		self.indjn:	dict
 						A dictionary containing the index location corresponding to timestamp tjn.
-		self.distjn :	dict
+		self.distjn:	dict
 						A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.
 
 		"""
@@ -518,20 +518,20 @@ class sim:
 
 				Data is assigned to
 
-						multipoles :	list
-						mass_multipoles :	list
-						spin_multipoles :	list
-						timeaxis :	list
-						mass1 :	float
-						mass2 :	float
-						mass3 :	float
-						delta_t :	float
-						distance :	list
-						merger_ind :	int
-						actmerger_time :	float
-						dinit :	float
-						data_length :	int
-						dist_data_length :	int
+						multipoles:	list
+						mass_multipoles:	list
+						spin_multipoles:	list
+						timeaxis:	list
+						mass1:	float
+						mass2:	float
+						mass3:	float
+						delta_t:	float
+						distance:	list
+						merger_ind:	int
+						actmerger_time:	float
+						dinit:	float
+						data_length:	int
+						dist_data_length:	int
 
 		"""
 		""" Common variables """

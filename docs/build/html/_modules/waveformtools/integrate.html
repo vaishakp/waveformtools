@@ -21,6 +21,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
@@ -32,6 +33,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -43,7 +46,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: green" >
+        <div class="wy-side-nav-search" >
           
 
           
@@ -81,10 +84,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
 </ul>
 
             
@@ -159,44 +163,45 @@
 
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="c1">##################################################</span>
 <span class="c1"># Fixed frequency integration</span>
 <span class="c1">##################################################</span>
 
 
-<div class="viewcode-block" id="fixed_frequency_integrator"><a class="viewcode-back" href="../../_autosummary/waveformtools.integrate.html#waveformtools.integrate.fixed_frequency_integrator">[docs]</a><span class="k">def</span> <span class="nf">fixed_frequency_integrator</span><span class="p">(</span><span class="n">udata_time</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">utilde_conven</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">omega0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zero_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="fixed_frequency_integrator"><a class="viewcode-back" href="../../_autosummary/waveformtools.integrate.html#waveformtools.integrate.fixed_frequency_integrator">[docs]</a><span class="k">def</span> <span class="nf">fixed_frequency_integrator</span><span class="p">(</span><span class="n">udata_time</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">utilde_conven</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zero_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Fixed frequency integrator as presented in Reisswig</span>
 
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
-<span class="sd">	udata_time :	1d array</span>
+<span class="sd">	udata_time:	1d array</span>
 <span class="sd">				The input data in time.</span>
-<span class="sd">	delta_t :	float</span>
+<span class="sd">	delta_t:	float</span>
 <span class="sd">				The time stepping.</span>
 
-<span class="sd">	utilde_conven :		1d array, optional</span>
+<span class="sd">	utilde_conven:		1d array, optional</span>
 <span class="sd">						The conventional FFT of the samples udata_time.</span>
-<span class="sd">	omega0 :	float, optional</span>
+<span class="sd">	omega0:	float, optional</span>
 <span class="sd">				The cutoff angular frequency in the integration. Must be lower than the starting angular frequency of the input waveform.</span>
 <span class="sd">				All frequencies below this will be neglected.</span>
 <span class="sd">				The default value is 0.</span>
 
-<span class="sd">	order :		int, optional</span>
+<span class="sd">	order:		int, optional</span>
 <span class="sd">				The number of times to integrate the integrand in time.</span>
 <span class="sd">				Defaults to 1.</span>
 
-<span class="sd">	zero_mode :	float, optional</span>
+<span class="sd">	zero_mode:	float, optional</span>
 <span class="sd">				The zero mode amplitude of the FFT required.</span>
 <span class="sd">				Defaults to 0 i.e. the zero mode is removed.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	u_integ_n_time :	1d array</span>
+<span class="sd">	u_integ_n_time:	1d array</span>
 <span class="sd">						The input waveform in time-space, integrated in frequency space using FFI.</span>
 
-<span class="sd">	u_integ_integ_n :	1d array</span>
+<span class="sd">	u_integ_integ_n:	1d array</span>
 <span class="sd">						The integrated u samples in Fourier space.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -204,15 +209,16 @@
 	<span class="k">if</span> <span class="ow">not</span> <span class="n">utilde_conven</span><span class="p">:</span>
 		<span class="c1"># Compute the FFT of data</span>
 		<span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="n">ifft</span>
-		<span class="kn">from</span> <span class="nn">transforms</span> <span class="kn">import</span> <span class="n">find_fft</span><span class="p">,</span> <span class="n">unset_fft_conven</span>
-		<span class="kn">from</span> <span class="nn">waveformtools</span> <span class="kn">import</span> <span class="n">taper</span>
+		<span class="kn">from</span> <span class="nn">transforms</span> <span class="kn">import</span> <span class="n">compute_fft</span><span class="p">,</span> <span class="n">unset_fft_conven</span>
 
-		<span class="c1">#udata_x_re = taper(u_time.real, delta_t=delta_t)</span>
-		<span class="c1">#udata_x_im = taper(u_time.imag, delta_t=delta_t)</span>
-		<span class="c1">#udata_x	   = np.array(udata_x_re) + 1j * np.array(udata_x_im)</span>
-		<span class="c1">#x_axis = udata_x_re.sample_times</span>
-		<span class="c1">#udata_x = np.array(udata_x)</span>
-		<span class="n">freq_axis</span><span class="p">,</span> <span class="n">utilde_conven</span> <span class="o">=</span> <span class="n">find_fft</span><span class="p">(</span><span class="n">udata_time</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+		<span class="c1"># from waveformtools import taper</span>
+
+		<span class="c1"># udata_x_re = taper(u_time.real, delta_t=delta_t)</span>
+		<span class="c1"># udata_x_im = taper(u_time.imag, delta_t=delta_t)</span>
+		<span class="c1"># udata_x	   = np.array(udata_x_re) + 1j * np.array(udata_x_im)</span>
+		<span class="c1"># x_axis = udata_x_re.sample_times</span>
+		<span class="c1"># udata_x = np.array(udata_x)</span>
+		<span class="n">freq_axis</span><span class="p">,</span> <span class="n">utilde_conven</span> <span class="o">=</span> <span class="n">compute_fft</span><span class="p">(</span><span class="n">udata_time</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
 
 		<span class="c1"># Find the length of the input data.</span>
 		<span class="n">Nlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">udata_time</span><span class="p">)</span>
@@ -301,18 +307,6 @@
 
   
   
-    
-    <!-- Theme Analytics -->
-    <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'G-XXXXXXXXXX', 'auto');
-    ga('send', 'pageview');
-    </script>
-
     
    
 

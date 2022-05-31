@@ -1,4 +1,4 @@
-﻿waveformtools.waveformtools
+waveformtools.waveformtools
 ===========================
 
 .. automodule:: waveformtools.waveformtools
@@ -26,6 +26,7 @@
       differentiate
       flatten
       get_centered_taxis
+      get_starting_angular_frequency
       get_waveform_angular_frequency
       integrate_first_order
       interpolate_resample_wfs
@@ -56,7 +57,6 @@
       taper
       taperlengtheq
       totalmass
-      wavextractinf
       xtract_camp
       xtract_camp_phase
       xtract_cphase

@@ -21,6 +21,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
@@ -32,6 +33,8 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -43,7 +46,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: green" >
+        <div class="wy-side-nav-search" >
           
 
           
@@ -81,10 +84,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
 </ul>
 
             
@@ -183,12 +187,12 @@
 <div class="viewcode-block" id="message"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.message">[docs]</a><span class="k">def</span> <span class="nf">message</span><span class="p">(</span>
 	<span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">message_verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">print_verbosity</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">print_verbosity</span><span class="p">,</span> <span class="n">log_verbosity</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">log_verbosity</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; The print function with verbosity levels and logging facility.</span>
+	<span class="sd">&quot;&quot;&quot;The print function with verbosity levels and logging facility.</span>
 
-<span class="sd">			Notes</span>
-<span class="sd">			-----</span>
+<span class="sd">	Notes</span>
+<span class="sd">	-----</span>
 
-<span class="sd">			Verbosity choices:</span>
+<span class="sd">	Verbosity choices:</span>
 
 <span class="sd">					message_verbosity	:	Each message carries with it a verbosity level. More the verbosity more the priority. Default value is 2</span>
 
@@ -196,7 +200,7 @@
 
 <span class="sd">					log_verbosity		:	logs all messages above this level of verbosity.</span>
 
-<span class="sd">			Verbosity  levels:</span>
+<span class="sd">	Verbosity  levels:</span>
 
 <span class="sd">					0: Errors</span>
 
@@ -204,11 +208,11 @@
 
 <span class="sd">					2: Information</span>
 
-<span class="sd">			Parameters</span>
-<span class="sd">			----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
 
 <span class="sd">					``*args`			:	non-keyword arguments</span>
-<span class="sd">																	same arguments as to that of the print functions,</span>
+<span class="sd">																													same arguments as to that of the print functions,</span>
 
 <span class="sd">					message_verbosity	:	int</span>
 
@@ -217,13 +221,13 @@
 <span class="sd">					log_verbosity		:	int</span>
 
 <span class="sd">					``**kwargs``		:	keyword arguments</span>
-<span class="sd">																	Same as that of the print function.</span>
+<span class="sd">																													Same as that of the print function.</span>
 
-<span class="sd">			Returns</span>
-<span class="sd">			-------</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
 
 <span class="sd">					1					:	int</span>
-<span class="sd">																	messages to stdout and logging of messages, while the function returns 1.&quot;&quot;&quot;</span>
+<span class="sd">																													messages to stdout and logging of messages, while the function returns 1.&quot;&quot;&quot;</span>
 
 	<span class="c1"># If message verbosity matches the global verbosity level, then print</span>
 	<span class="k">if</span> <span class="n">message_verbosity</span> <span class="o">&lt;=</span> <span class="n">print_verbosity</span><span class="p">:</span>
@@ -264,19 +268,19 @@
 
 
 <div class="viewcode-block" id="save_obj"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.save_obj">[docs]</a><span class="k">def</span> <span class="nf">save_obj</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj_dir</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; A function to save python objects to disk using pickle.</span>
+	<span class="sd">&quot;&quot;&quot;A function to save python objects to disk using pickle.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
 <span class="sd">	obj						:	object</span>
-<span class="sd">								The python object to be saved.</span>
+<span class="sd">															The python object to be saved.</span>
 <span class="sd">	name					:	string</span>
-<span class="sd">								The filename.</span>
+<span class="sd">															The filename.</span>
 <span class="sd">	obj_dir					:	string</span>
-<span class="sd">								The path to directory to be saved in. Defaults to PWD</span>
+<span class="sd">															The path to directory to be saved in. Defaults to PWD</span>
 <span class="sd">	protocol				:	int</span>
-<span class="sd">								The protocol to be used to save. Default is binary.</span>
+<span class="sd">															The protocol to be used to save. Default is binary.</span>
 
 <span class="sd">	Notes</span>
 <span class="sd">	-----</span>
@@ -304,21 +308,21 @@
 
 
 <div class="viewcode-block" id="load_obj"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.load_obj">[docs]</a><span class="k">def</span> <span class="nf">load_obj</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj_dir</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; A function to load python objects from the disk using pickle.</span>
+	<span class="sd">&quot;&quot;&quot;A function to load python objects from the disk using pickle.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	name :	string</span>
-<span class="sd">					The filename.</span>
+<span class="sd">	name:	string</span>
+<span class="sd">									The filename.</span>
 <span class="sd">	obj_dir	:	string</span>
-<span class="sd">							The path to directory in which file exists. Defaults to PWD.</span>
+<span class="sd">													The path to directory in which file exists. Defaults to PWD.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	obj :	object</span>
-<span class="sd">					A python object with the contents of the file.</span>
+<span class="sd">	obj:	object</span>
+<span class="sd">									A python object with the contents of the file.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># Load the pickled data</span>
@@ -333,22 +337,22 @@
 
 
 <div class="viewcode-block" id="removeNans"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.removeNans">[docs]</a><span class="k">def</span> <span class="nf">removeNans</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Remove Nans from (xdata,ydata) data pair. Removes Nans in xdata and ydata and the corresponding y and x entries.</span>
+	<span class="sd">&quot;&quot;&quot;Remove Nans from (xdata,ydata) data pair. Removes Nans in xdata and ydata and the corresponding y and x entries.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	xdata :	1d array</span>
-<span class="sd">			The x axis of the data.</span>
+<span class="sd">	xdata:	1d array</span>
+<span class="sd">					The x axis of the data.</span>
 <span class="sd">	ydata : 1d array</span>
-<span class="sd">			The y axis of the data.</span>
+<span class="sd">					The y axis of the data.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	x_no_nan :	1d array</span>
-<span class="sd">	y_no_nan :	1d,array</span>
-<span class="sd">			The data pair x,y with Nans removed.</span>
+<span class="sd">	x_no_nan:	1d array</span>
+<span class="sd">	y_no_nan:	1d,array</span>
+<span class="sd">					The data pair x,y with Nans removed.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -378,19 +382,19 @@
 
 
 <div class="viewcode-block" id="differentiate"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate">[docs]</a><span class="k">def</span> <span class="nf">differentiate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Differentiate a timeseries in time domain using the Simple Euler method</span>
+	<span class="sd">&quot;&quot;&quot;Differentiate a timeseries in time domain using the Simple Euler method</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
-<span class="sd">	data :	1d array \\ a pycbc TimeSeries object</span>
-<span class="sd">					The time series to be differentiated.</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">					The grid spacing delta_t. Supplying delta_t overrides the delta_t attribute of TimeSeries.</span>
+<span class="sd">	data:	1d array \\ a pycbc TimeSeries object</span>
+<span class="sd">									The time series to be differentiated.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">									The grid spacing delta_t. Supplying delta_t overrides the delta_t attribute of TimeSeries.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
-<span class="sd">	ddt_data :	pycbc TimeSeries object</span>
-<span class="sd">							The differentiated 1d data as pycbc TimeSeries&quot;&quot;&quot;</span>
+<span class="sd">	ddt_data:	pycbc TimeSeries object</span>
+<span class="sd">													The differentiated 1d data as pycbc TimeSeries&quot;&quot;&quot;</span>
 
 	<span class="k">if</span> <span class="ow">not</span> <span class="n">delta_t</span><span class="p">:</span>
 		<span class="k">try</span><span class="p">:</span>
@@ -404,7 +408,7 @@
 
 
 <div class="viewcode-block" id="integrate_first_order"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.integrate_first_order">[docs]</a><span class="k">def</span> <span class="nf">integrate_first_order</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">t_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">to_taper</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Integrate a timeseries using first order method.</span>
+	<span class="sd">&quot;&quot;&quot;Integrate a timeseries using first order method.</span>
 
 <span class="sd">	Notes</span>
 <span class="sd">	-----</span>
@@ -415,18 +419,18 @@
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	data :	1d array or a pycbc TimeSeries object</span>
-<span class="sd">					The input function to be integrated.</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">					The grid spacing delta_t,</span>
-<span class="sd">	to_taper :	bool</span>
-<span class="sd">							True or False. Whether or not to taper the input series.</span>
+<span class="sd">	data:	1d array or a pycbc TimeSeries object</span>
+<span class="sd">									The input function to be integrated.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">									The grid spacing delta_t,</span>
+<span class="sd">	to_taper:	bool</span>
+<span class="sd">													True or False. Whether or not to taper the input series.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	int_data :	a pycbc TimeSeries object</span>
-<span class="sd">							TimeSeries of the time integrated data&quot;&quot;&quot;</span>
+<span class="sd">	int_data:	a pycbc TimeSeries object</span>
+<span class="sd">													TimeSeries of the time integrated data&quot;&quot;&quot;</span>
 
 	<span class="c1"># Check if object is pycbc timeseries. Recover delta_t, t_start, t_end if yes.</span>
 	<span class="k">if</span> <span class="ow">not</span> <span class="n">delta_t</span><span class="p">:</span>
@@ -487,68 +491,68 @@
 
 
 <div class="viewcode-block" id="compute_frequencies"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.compute_frequencies">[docs]</a><span class="k">def</span> <span class="nf">compute_frequencies</span><span class="p">(</span><span class="n">t_coal</span><span class="p">,</span> <span class="n">t_val</span><span class="p">,</span> <span class="n">chirp_mass</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Compute the Newtonian instantaneous frequency of strain waveform from coalescence time and chirp mass, from the Finn Chernoff model.</span>
+	<span class="sd">&quot;&quot;&quot;Compute the Newtonian instantaneous frequency of strain waveform from coalescence time and chirp mass, from the Finn Chernoff model.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	t_coal :	float</span>
-<span class="sd">				The coalescence time,</span>
-<span class="sd">	t_val :	1d array</span>
-<span class="sd">			The time,</span>
-<span class="sd">	chirp_mass :	float</span>
-<span class="sd">					The chirpmass.</span>
+<span class="sd">	t_coal:	float</span>
+<span class="sd">							The coalescence time,</span>
+<span class="sd">	t_val:	1d array</span>
+<span class="sd">					The time,</span>
+<span class="sd">	chirp_mass:	float</span>
+<span class="sd">									The chirpmass.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	freqs :	float</span>
-<span class="sd">			The instantaneous frequency of the strain waveform. &quot;&quot;&quot;</span>
+<span class="sd">	freqs:	float</span>
+<span class="sd">					The instantaneous frequency of the strain waveform.&quot;&quot;&quot;</span>
 	<span class="n">freqs</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">chirp_mass</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">/</span> <span class="mi">256</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">chirp_mass</span> <span class="o">/</span> <span class="p">(</span><span class="n">t_coal</span> <span class="o">-</span> <span class="n">t_val</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="n">freqs</span></div>
 
 
 <div class="viewcode-block" id="totalmass"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.totalmass">[docs]</a><span class="k">def</span> <span class="nf">totalmass</span><span class="p">(</span><span class="n">mass_ratio</span><span class="p">,</span> <span class="n">chirp_mass</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Find total mass from mass ratio and chirpmass.</span>
+	<span class="sd">&quot;&quot;&quot;Find total mass from mass ratio and chirpmass.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	mass_ratio :	float</span>
-<span class="sd">					The mass ratio of the system.</span>
-<span class="sd">	mchirp :	float</span>
-<span class="sd">				The chirp mass of the system.</span>
+<span class="sd">	mass_ratio:	float</span>
+<span class="sd">									The mass ratio of the system.</span>
+<span class="sd">	mchirp:	float</span>
+<span class="sd">							The chirp mass of the system.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	total_mass :	float</span>
-<span class="sd">					The total mass of the system.&quot;&quot;&quot;</span>
+<span class="sd">	total_mass:	float</span>
+<span class="sd">									The total mass of the system.&quot;&quot;&quot;</span>
 
 	<span class="k">return</span> <span class="p">(</span><span class="n">chirp_mass</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">mass_ratio</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">/</span> <span class="mi">5</span><span class="p">))</span> <span class="o">/</span> <span class="n">mass_ratio</span> <span class="o">**</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="massratio"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.massratio">[docs]</a><span class="k">def</span> <span class="nf">massratio</span><span class="p">(</span><span class="n">chirp_mass</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Compute the mass ratio from chirpmass. Assumes total mass to be 1.</span>
+	<span class="sd">&quot;&quot;&quot;Compute the mass ratio from chirpmass. Assumes total mass to be 1.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	mchirp :	float</span>
-<span class="sd">				The chirp mass of the system.</span>
+<span class="sd">	mchirp:	float</span>
+<span class="sd">							The chirp mass of the system.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	mass_ratio :	float</span>
-<span class="sd">					The Mass ratio of the system</span>
+<span class="sd">	mass_ratio:	float</span>
+<span class="sd">									The Mass ratio of the system</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">mass_ratio</span> <span class="o">=</span> <span class="p">(</span>
 		<span class="n">chirp_mass</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
-		<span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">chirp_mass</span> <span class="o">**</span> <span class="mf">2.0</span>
+		<span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">chirp_mass</span><span class="o">**</span><span class="mf">2.0</span>
 		<span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">chirp_mass</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">chirp_mass</span> <span class="o">**</span> <span class="p">(</span><span class="mf">7.0</span> <span class="o">/</span> <span class="mi">3</span><span class="p">))</span>
-	<span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">chirp_mass</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span>
+	<span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">chirp_mass</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="n">mass_ratio</span></div>
 
@@ -557,19 +561,19 @@
 
 
 <div class="viewcode-block" id="compute_chirp_mass"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.compute_chirp_mass">[docs]</a><span class="k">def</span> <span class="nf">compute_chirp_mass</span><span class="p">(</span><span class="n">a2_param</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Compute the chirpmass from a2, the coefficient of time of the Finn-Chernoff waform model.</span>
+	<span class="sd">&quot;&quot;&quot;Compute the chirpmass from a2, the coefficient of time of the Finn-Chernoff waform model.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	a2_param :	1d array \\ float</span>
-<span class="sd">				The a2 parameter in the Finn Chernoff model.</span>
+<span class="sd">	a2_param:	1d array \\ float</span>
+<span class="sd">							The a2 parameter in the Finn Chernoff model.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	chirp_mass :	float</span>
-<span class="sd">					The chirp mass</span>
+<span class="sd">	chirp_mass:	float</span>
+<span class="sd">									The chirp mass</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">chirp_mass</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a2_param</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">/</span> <span class="mi">5</span><span class="p">))</span>
 	<span class="k">return</span> <span class="n">chirp_mass</span></div>
@@ -582,7 +586,7 @@
 
 
 <div class="viewcode-block" id="lengtheq"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.lengtheq">[docs]</a><span class="k">def</span> <span class="nf">lengtheq</span><span class="p">(</span><span class="n">data_a</span><span class="p">,</span> <span class="n">data_b</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_ts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Equalize the length of two timeseries/array by appending zeros at the end of the array. No tapering.</span>
+	<span class="sd">&quot;&quot;&quot;Equalize the length of two timeseries/array by appending zeros at the end of the array. No tapering.</span>
 
 <span class="sd">	Procedure</span>
 <span class="sd">	---------</span>
@@ -594,19 +598,19 @@
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
-<span class="sd">	data_a :	list</span>
-<span class="sd">				The input waveform A</span>
-<span class="sd">	data_b :	list</span>
-<span class="sd">				The input waveform B.</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">				The time steping. Defaults to `None`.</span>
-<span class="sd">	is_ts :	bool</span>
-<span class="sd">			True or False. To determine whether the given data is a pycbc TimeSeries.</span>
+<span class="sd">	data_a:	list</span>
+<span class="sd">							The input waveform A</span>
+<span class="sd">	data_b:	list</span>
+<span class="sd">							The input waveform B.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">							The time steping. Defaults to `None`.</span>
+<span class="sd">	is_ts:	bool</span>
+<span class="sd">					True or False. To determine whether the given data is a pycbc TimeSeries.</span>
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
 <span class="sd">	equalized_signals : list</span>
-<span class="sd">						The Tapered, length equalized waveforms data_a and data_b, and a flag denoting which waveform was changed, `a` or `b`.</span>
+<span class="sd">											The Tapered, length equalized waveforms data_a and data_b, and a flag denoting which waveform was changed, `a` or `b`.</span>
 
 <span class="sd">	Notes</span>
 <span class="sd">	-----</span>
@@ -675,23 +679,23 @@
 
 
 <div class="viewcode-block" id="taperlengtheq"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.taperlengtheq">[docs]</a><span class="k">def</span> <span class="nf">taperlengtheq</span><span class="p">(</span><span class="n">data_a</span><span class="p">,</span> <span class="n">data_b</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Taper and equalize the lengths of two arrays.</span>
+	<span class="sd">&quot;&quot;&quot;Taper and equalize the lengths of two arrays.</span>
 
-<span class="sd">			Parameters</span>
-<span class="sd">			----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
 
-<span class="sd">			data_a :	list</span>
-<span class="sd">									The input waveform A.</span>
-<span class="sd">			data_b :	list</span>
-<span class="sd">									The input waveform B.</span>
-<span class="sd">			delta_t :	float</span>
-<span class="sd">							The time steping.</span>
+<span class="sd">	data_a:	list</span>
+<span class="sd">													The input waveform A.</span>
+<span class="sd">	data_b:	list</span>
+<span class="sd">													The input waveform B.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">									The time steping.</span>
 
-<span class="sd">			Returns</span>
-<span class="sd">			-------</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
 
-<span class="sd">			equalized_signals :	list</span>
-<span class="sd">													The Tapered, length equalized waveforms data_a and data_b, and a flag denoting which waveform was changed, `a` or `b`.</span>
+<span class="sd">	equalized_signals:	list</span>
+<span class="sd">																					The Tapered, length equalized waveforms data_a and data_b, and a flag denoting which waveform was changed, `a` or `b`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># Check if input data is pycbc TimeSeries. If yes, then ectract delta_t.</span>
@@ -725,7 +729,7 @@
 
 
 <div class="viewcode-block" id="iscontinuous_old"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.iscontinuous_old">[docs]</a><span class="k">def</span> <span class="nf">iscontinuous_old</span><span class="p">(</span><span class="n">timeaxis</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Check if the data has discontinuities. This checks for repetitive time rows and jumps.</span>
+	<span class="sd">&quot;&quot;&quot;Check if the data has discontinuities. This checks for repetitive time rows and jumps.</span>
 
 <span class="sd">	Notes</span>
 <span class="sd">	-----</span>
@@ -738,18 +742,18 @@
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	timeaxis :	list</span>
-<span class="sd">					Input as a single 1d time axis or a list of 1d arrays [time, data1, data2, ...]. All the data share the common time axis `time`</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">					The time stepping.</span>
+<span class="sd">	timeaxis:	list</span>
+<span class="sd">									Input as a single 1d time axis or a list of 1d arrays [time, data1, data2, ...]. All the data share the common time axis `time`</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">									The time stepping.</span>
 <span class="sd">	toldt : float</span>
-<span class="sd">					The tolerance for error in checking. defaluts to toldt=1e-3.</span>
+<span class="sd">									The tolerance for error in checking. defaluts to toldt=1e-3.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
 <span class="sd">	discontinuity_details : a list.</span>
-<span class="sd">													It contains: [ the actual location of discontinuity along the time axis, value of time location of original array,	the type of discontinuity].</span>
+<span class="sd">																									It contains: [ the actual location of discontinuity along the time axis, value of time location of original array,	the type of discontinuity].</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -802,7 +806,7 @@
 
 
 <div class="viewcode-block" id="iscontinuous"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.iscontinuous">[docs]</a><span class="k">def</span> <span class="nf">iscontinuous</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">toldt</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Check if the data has discontinuities. This checks for repetitive time rows and jumps.</span>
+	<span class="sd">&quot;&quot;&quot;Check if the data has discontinuities. This checks for repetitive time rows and jumps.</span>
 
 <span class="sd">	Notes</span>
 <span class="sd">	-----</span>
@@ -815,20 +819,20 @@
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	data :	list</span>
-<span class="sd">					Input as a list of 1d arrays [time, data1, data2, ...]. All the data share the common time axis `time`</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">					The time stepping.</span>
+<span class="sd">	data:	list</span>
+<span class="sd">									Input as a list of 1d arrays [time, data1, data2, ...]. All the data share the common time axis `time`</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">									The time stepping.</span>
 <span class="sd">	toldt : float</span>
-<span class="sd">					The tolerance for error in checking. defaluts to toldt=1e-3.</span>
+<span class="sd">									The tolerance for error in checking. defaluts to toldt=1e-3.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	discontinuity_details :	a list.</span>
-<span class="sd">													It contains:</span>
-<span class="sd">																	1. A list. details of discontinuity:  index location of original array, the corresponding discinbtinuity type.</span>
-<span class="sd">																	2. A float. the global discontinuity type. &quot;&quot;&quot;</span>
+<span class="sd">	discontinuity_details:	a list.</span>
+<span class="sd">																									It contains:</span>
+<span class="sd">																																	1. A list. details of discontinuity:  index location of original array, the corresponding discinbtinuity type.</span>
+<span class="sd">																																	2. A float. the global discontinuity type.&quot;&quot;&quot;</span>
 
 	<span class="c1"># Check the data (time,datar,datai) for locations of repetition and</span>
 	<span class="c1"># discontinuities.</span>
@@ -966,21 +970,21 @@
 
 
 <div class="viewcode-block" id="cleandata_old"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.cleandata_old">[docs]</a><span class="k">def</span> <span class="nf">cleandata_old</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Old version. Check the data (time,datar,datai) for repetetive rows and remove them.</span>
+	<span class="sd">&quot;&quot;&quot;Old version. Check the data (time,datar,datai) for repetetive rows and remove them.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	data :	list</span>
-<span class="sd">					Input as a list of 1d arrays [time, data1, data2, ...]. All the data share the common time axis `time`</span>
+<span class="sd">	data:	list</span>
+<span class="sd">									Input as a list of 1d arrays [time, data1, data2, ...]. All the data share the common time axis `time`</span>
 <span class="sd">	verbose : bool</span>
-<span class="sd">					A verbosity flag.</span>
+<span class="sd">									A verbosity flag.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	cleaned_data :	nd array</span>
-<span class="sd">									The cleaned data array with repetitive rows and gaps (if bridge=True) removed</span>
+<span class="sd">	cleaned_data:	nd array</span>
+<span class="sd">																	The cleaned data array with repetitive rows and gaps (if bridge=True) removed</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># Ensure data as numpy array</span>
@@ -1070,23 +1074,23 @@
 
 
 <div class="viewcode-block" id="cleandata"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.cleandata">[docs]</a><span class="k">def</span> <span class="nf">cleandata</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">toldt</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">bridge</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Check the data (time,datar,datai) for repetetive rows and remove them.</span>
+	<span class="sd">&quot;&quot;&quot;Check the data (time,datar,datai) for repetetive rows and remove them.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	data :	list</span>
-<span class="sd">					Input as a list of 1d arrays [time, data1, data2, ...]. All the data share the common time axis `time`</span>
+<span class="sd">	data:	list</span>
+<span class="sd">									Input as a list of 1d arrays [time, data1, data2, ...]. All the data share the common time axis `time`</span>
 <span class="sd">	toldt : float</span>
-<span class="sd">					The tolerance for error in checking. defaluts to toldt=1e-3.</span>
+<span class="sd">									The tolerance for error in checking. defaluts to toldt=1e-3.</span>
 <span class="sd">	bridge : bool</span>
-<span class="sd">					A bridge flag to decide whether or not to interpolate and resample to fill in jump discontinuities.</span>
+<span class="sd">									A bridge flag to decide whether or not to interpolate and resample to fill in jump discontinuities.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	cleaned_data :	list</span>
-<span class="sd">									The cleaned data array with repetitive rows and gaps (if bridge=True) removed.</span>
+<span class="sd">	cleaned_data:	list</span>
+<span class="sd">																	The cleaned data array with repetitive rows and gaps (if bridge=True) removed.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -1162,7 +1166,7 @@
 	<span class="k">if</span> <span class="n">bridge</span> <span class="ow">and</span> <span class="n">iscontinuous</span><span class="p">(</span><span class="n">cleaned_data</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
 		<span class="n">message</span><span class="p">(</span><span class="s2">&quot;The data will be interpolated to bridge the gaps&quot;</span><span class="p">,</span> <span class="n">message_verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-		<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+		<span class="c1"># from scipy import interpolate</span>
 
 		<span class="c1"># Interpolate the data to fill in the discontinuities</span>
 		<span class="n">t_final</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -1200,24 +1204,24 @@
 
 
 <div class="viewcode-block" id="shiftmatched"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.shiftmatched">[docs]</a><span class="k">def</span> <span class="nf">shiftmatched</span><span class="p">(</span><span class="n">hdat</span><span class="p">,</span> <span class="n">ind</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Timeshift an array. IMP: After timeshifting, the original length of the array is retained by clipping last(first) when ind &gt; 0(ind &lt;0) `ind` number of points!!.</span>
+	<span class="sd">&quot;&quot;&quot;Timeshift an array. IMP: After timeshifting, the original length of the array is retained by clipping last(first) when ind &gt; 0(ind &lt;0) `ind` number of points!!.</span>
 <span class="sd">	Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) initially at the end.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	hdat :	1d array or a pycbc TimeSeries object</span>
-<span class="sd">					The input waveform to be shifted in time.</span>
-<span class="sd">	ind :	int</span>
-<span class="sd">					The numper of places to shift the input waveform.</span>
-<span class="sd">	delta_t :	int</span>
-<span class="sd">					the grid spacing in time.</span>
+<span class="sd">	hdat:	1d array or a pycbc TimeSeries object</span>
+<span class="sd">									The input waveform to be shifted in time.</span>
+<span class="sd">	ind:	int</span>
+<span class="sd">									The numper of places to shift the input waveform.</span>
+<span class="sd">	delta_t:	int</span>
+<span class="sd">									the grid spacing in time.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	shifted_wf :	a pycbc TimeSeries object</span>
-<span class="sd">									The waveform array of same length timeshifted by `ind` units by prepending zeros. &quot;&quot;&quot;</span>
+<span class="sd">	shifted_wf:	a pycbc TimeSeries object</span>
+<span class="sd">																	The waveform array of same length timeshifted by `ind` units by prepending zeros.&quot;&quot;&quot;</span>
 
 	<span class="k">if</span> <span class="ow">not</span> <span class="n">delta_t</span><span class="p">:</span>
 		<span class="k">try</span><span class="p">:</span>
@@ -1260,34 +1264,34 @@
 
 <span class="c1"># Complex Phase-Amplitude representation of data</span>
 <div class="viewcode-block" id="xtract_cphase"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.xtract_cphase">[docs]</a><span class="k">def</span> <span class="nf">xtract_cphase</span><span class="p">(</span><span class="n">tsdata_p</span><span class="p">,</span> <span class="n">tsdata_x</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">to_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Given real and imaginary parts of a complex timeseries, extract the phase of the waveform :arctan_(Img(data)/Re(data))</span>
+	<span class="sd">&quot;&quot;&quot;Given real and imaginary parts of a complex timeseries, extract the phase of the waveform :arctan_(Img(data)/Re(data))</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
-<span class="sd">	tsdata_p :	1d array / a pycbc TimeSeries</span>
-<span class="sd">	tsdata_x :	1d array / a pycbc TimeSeries</span>
-<span class="sd">				The plus and cross polarized components of the waveforms.</span>
-<span class="sd">	delta_t :	float, optional</span>
-<span class="sd">				The time step. Overrides the timestep from pycbc TS object if given.</span>
-<span class="sd">	to_plot :	bool, optional</span>
-<span class="sd">							True or False. Whether to plot the data or not</span>
+<span class="sd">	tsdata_p:	1d array / a pycbc TimeSeries</span>
+<span class="sd">	tsdata_x:	1d array / a pycbc TimeSeries</span>
+<span class="sd">							The plus and cross polarized components of the waveforms.</span>
+<span class="sd">	delta_t:	float, optional</span>
+<span class="sd">							The time step. Overrides the timestep from pycbc TS object if given.</span>
+<span class="sd">	to_plot:	bool, optional</span>
+<span class="sd">													True or False. Whether to plot the data or not</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	phic :	1d array</span>
-<span class="sd">					The 1d array of the phase of the waveform.</span>
+<span class="sd">	phic:	1d array</span>
+<span class="sd">									The 1d array of the phase of the waveform.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># Assign the timestep. Real and imaginary parts are assumed to have same timestep.</span>
-	<span class="k">if</span> <span class="ow">not</span> <span class="n">delta_t</span><span class="p">:</span>
-		<span class="k">try</span><span class="p">:</span>
-			<span class="n">delta_t</span> <span class="o">=</span> <span class="n">tsdata_p</span><span class="o">.</span><span class="n">delta_t</span>
-		<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-			<span class="k">try</span><span class="p">:</span>
-				<span class="n">delta_t</span> <span class="o">=</span> <span class="n">tsdata_x</span><span class="o">.</span><span class="n">delta_t</span>
-			<span class="k">except</span><span class="p">:</span>
-				<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Input is not a TimeSeries. Please supply gridspacing as delta_t&quot;</span><span class="p">,</span> <span class="n">message_verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="c1"># if not delta_t:</span>
+	<span class="c1">#	try:</span>
+	<span class="c1">#		delta_t = tsdata_p.delta_t</span>
+	<span class="c1">#	except AttributeError:</span>
+	<span class="c1">#		try:</span>
+	<span class="c1">#			delta_t = tsdata_x.delta_t</span>
+	<span class="c1">#		except:</span>
+	<span class="c1">#			message(&quot;Input is not a TimeSeries. Please supply gridspacing as delta_t&quot;, message_verbosity=0)</span>
 
 	<span class="c1"># Assign the timestep. Real and imaginary parts are assumed to have same timestep.</span>
 	<span class="c1"># Convert the data in numpy arrays</span>
@@ -1368,21 +1372,21 @@
 
 
 <div class="viewcode-block" id="xtract_camp"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.xtract_camp">[docs]</a><span class="k">def</span> <span class="nf">xtract_camp</span><span class="p">(</span><span class="n">tsdata_p</span><span class="p">,</span> <span class="n">tsdata_x</span><span class="p">,</span> <span class="n">to_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Given real and imaginary parts of a complex timeseries, extract the amplitude of the complex data vector : (tsdata_p + i * tsdata_x)</span>
+	<span class="sd">&quot;&quot;&quot;Given real and imaginary parts of a complex timeseries, extract the amplitude of the complex data vector : (tsdata_p + i * tsdata_x)</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
-<span class="sd">	tsdata_p :	1d array / a pycbc TimeSeries</span>
-<span class="sd">	tsdata_x :	1d array / a pycbc TimeSeries</span>
-<span class="sd">							The plus and cross polarized components of the waveforms.</span>
-<span class="sd">	to_plot :	bool</span>
-<span class="sd">							True or False. Whether to plot the data or not</span>
+<span class="sd">	tsdata_p:	1d array / a pycbc TimeSeries</span>
+<span class="sd">	tsdata_x:	1d array / a pycbc TimeSeries</span>
+<span class="sd">													The plus and cross polarized components of the waveforms.</span>
+<span class="sd">	to_plot:	bool</span>
+<span class="sd">													True or False. Whether to plot the data or not</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	camp :	1d array</span>
-<span class="sd">					The 1d array of extracted amplitudes of the waveform. &quot;&quot;&quot;</span>
+<span class="sd">	camp:	1d array</span>
+<span class="sd">									The 1d array of extracted amplitudes of the waveform.&quot;&quot;&quot;</span>
 
 	<span class="c1"># Assign the timestep. Real and imaginary parts are assumed to have same timestep.</span>
 	<span class="c1"># Complex modulous of the data</span>
@@ -1401,121 +1405,81 @@
 	<span class="k">return</span> <span class="n">camp</span></div>
 
 
-<span class="c1">############################################################################################################################################################</span>
-<span class="c1"># def xtract_camp(tsdata_p,tsdata_x,delta_t=None):</span>
-<span class="c1">#		&#39;&#39;&#39; Given real and imaginary parts of a complex timeseries, extract the amplitude of the complex data vector : (tsdata_p + i * tsdata_x)</span>
-<span class="c1">#</span>
-<span class="c1">#		-----------</span>
-<span class="c1">#		Parameters</span>
-<span class="c1">#			tsdata_p, tsdata_x : plus and cross polarized components of the waveforms tsdata_p and tsdata_x as pycbc TimeSeries or 1d arrays and</span>
-<span class="c1">#			delta_t				   : gridspacing delta_t.</span>
-<span class="c1">#</span>
-<span class="c1">#		-------------</span>
-<span class="c1">#		Returns</span>
-<span class="c1">#			nd array of extracted amplitude. &#39;&#39;&#39;</span>
-<span class="c1">#</span>
-<span class="c1">#		# Assign the timestep. Real and imaginary parts are assumed to have same timestep.</span>
-<span class="c1">#		if not delta_t:</span>
-<span class="c1">#			try:</span>
-<span class="c1">#				delta_t=tsdata_p.delta_t</span>
-<span class="c1">#			except AttributeError:</span>
-<span class="c1">#				try:</span>
-<span class="c1">#					delta_t=tsdata_x.delta_t</span>
-<span class="c1">#				except:</span>
-<span class="c1">#					message(&#39;Input is not a TimeSeries. Please supply gridspacing as delta_t&#39;,message_verbosity=0)</span>
-<span class="c1">#</span>
-<span class="c1">#		# Complex modulous of the data</span>
-<span class="c1">#		camp = np.sqrt(np.array(tsdata_p)**2 + np.array(tsdata_x)**2)</span>
-<span class="c1">#</span>
-<span class="c1">#		if plot==&#39;yes&#39;:</span>
-<span class="c1">#			# Plot amplitude vs time</span>
-<span class="c1">#			plt.scatter(tsdata_p.sample_times,camp,s=1)</span>
-<span class="c1">#			plt.title(&quot;Amplitude vs time&quot;)</span>
-<span class="c1">#			plt.xlabel(&quot;cctk_time&quot;)</span>
-<span class="c1">#			plt.ylabel(&quot;Amplitude&quot;)</span>
-<span class="c1">#			plt.grid()</span>
-<span class="c1">#			#plt.savefig(&#39;../graphs/waveform_phase_complete_{}_q1a0.pdf&#39;.format(name))</span>
-<span class="c1">#			plt.show()</span>
-<span class="c1">#		#Returns the 1d numpy array amplitude</span>
-<span class="c1">#		return camp</span>
-<span class="c1">###############################################################################################################################################################</span>
-
-
 <div class="viewcode-block" id="xtract_camp_phase"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.xtract_camp_phase">[docs]</a><span class="k">def</span> <span class="nf">xtract_camp_phase</span><span class="p">(</span><span class="n">tsdata_1</span><span class="p">,</span> <span class="n">tsdata_2</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Wrapper for extracting the amplitude and the phase of the complex vector.</span>
+	<span class="sd">&quot;&quot;&quot;Wrapper for extracting the amplitude and the phase of the complex vector.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	tsdata_1 :	1d array or pycbc TimeSeries object</span>
-<span class="sd">	tsdata_2 :	1d array or pycbc TimeSeries object</span>
-<span class="sd">							The two input waveforms as timeseries vectors, the plus and cross polarized components.</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">					The timestepping delta_t.</span>
+<span class="sd">	tsdata_1:	1d array or pycbc TimeSeries object</span>
+<span class="sd">	tsdata_2:	1d array or pycbc TimeSeries object</span>
+<span class="sd">													The two input waveforms as timeseries vectors, the plus and cross polarized components.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">									The timestepping delta_t.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	amplitude :	1d array</span>
-<span class="sd">							A list containing complex amplitude (list) and phase (list).</span>
+<span class="sd">	amplitude:	1d array</span>
+<span class="sd">													A list containing complex amplitude (list) and phase (list).</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">return</span> <span class="n">xtract_camp</span><span class="p">(</span><span class="n">tsdata_1</span><span class="p">,</span> <span class="n">tsdata_2</span><span class="p">),</span> <span class="n">xtract_cphase</span><span class="p">(</span><span class="n">tsdata_1</span><span class="p">,</span> <span class="n">tsdata_2</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_waveform_angular_frequency"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.get_waveform_angular_frequency">[docs]</a><span class="k">def</span> <span class="nf">get_waveform_angular_frequency</span><span class="p">(</span><span class="n">waveform</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">timeaxis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;FD&quot;</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Get the angular frequency of the waveform given</span>
-<span class="sd">		the complex waveform time step. The phase is</span>
-<span class="sd">		extracted and is differentiated using one of</span>
-<span class="sd">		the available methods to compute the angular</span>
-<span class="sd">		frequency.</span>
+	<span class="sd">&quot;&quot;&quot;Get the angular frequency of the waveform given</span>
+<span class="sd">	the complex waveform time step. The phase is</span>
+<span class="sd">	extracted and is differentiated using one of</span>
+<span class="sd">	the available methods to compute the angular</span>
+<span class="sd">	frequency.</span>
 
 
 
 
-<span class="sd">		Parameters</span>
-<span class="sd">		----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
 
-<span class="sd">		waveform :		1d array</span>
-<span class="sd">						The 1d complex array of the input</span>
-<span class="sd">						waveform.</span>
+<span class="sd">	waveform:		1d array</span>
+<span class="sd">									The 1d complex array of the input</span>
+<span class="sd">									waveform.</span>
 
-<span class="sd">		delta_t :	 float</span>
-<span class="sd">					 The time step.</span>
+<span class="sd">	delta_t:	 float</span>
+<span class="sd">							 The time step.</span>
 
-<span class="sd">		timeaxis :	 1d array, optional</span>
-<span class="sd">					 The time axis of the waveform.</span>
-<span class="sd">					 Recommended especially when the sampling</span>
-<span class="sd">					 is non-uniform and Chebyshev method</span>
-<span class="sd">					 is chosen.</span>
-<span class="sd">		method :	str</span>
-<span class="sd">					The method for computing the derivative.</span>
-<span class="sd">					Can be `FD` or `CS`. See below for more</span>
-<span class="sd">					information.</span>
+<span class="sd">	timeaxis:	 1d array, optional</span>
+<span class="sd">							 The time axis of the waveform.</span>
+<span class="sd">							 Recommended especially when the sampling</span>
+<span class="sd">							 is non-uniform and Chebyshev method</span>
+<span class="sd">							 is chosen.</span>
+<span class="sd">	method:	str</span>
+<span class="sd">							The method for computing the derivative.</span>
+<span class="sd">							Can be `FD` or `CS`. See below for more</span>
+<span class="sd">							information.</span>
 
-<span class="sd">		Returns</span>
-<span class="sd">		-------</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
 
-<span class="sd">		omega :		1d array</span>
-<span class="sd">					The real instantaneous frequency of the waveform.</span>
-
-
-
-<span class="sd">		Notes</span>
-<span class="sd">		-----</span>
-
-<span class="sd">		Available methods</span>
-
-<span class="sd">		Chebyshev series (`CS`) :	The phase is expanded in</span>
-<span class="sd">									a Chebyshev series and</span>
-<span class="sd">									then the differentiated.</span>
-<span class="sd">		Finite Differencing (`FD`) : A 11 point finite difference</span>
-<span class="sd">									 scheme is used to differentiate</span>
-<span class="sd">									 the phase, and is then smoothened</span>
-<span class="sd">									 using the Savgol filter.</span>
+<span class="sd">	omega:		1d array</span>
+<span class="sd">							The real instantaneous frequency of the waveform.</span>
 
 
-<span class="sd">		&quot;&quot;&quot;</span>
+
+<span class="sd">	Notes</span>
+<span class="sd">	-----</span>
+
+<span class="sd">	Available methods</span>
+
+<span class="sd">	Chebyshev series (`CS`):	The phase is expanded in</span>
+<span class="sd">															a Chebyshev series and</span>
+<span class="sd">															then the differentiated.</span>
+<span class="sd">	Finite Differencing (`FD`) : A 11 point finite difference</span>
+<span class="sd">															 scheme is used to differentiate</span>
+<span class="sd">															 the phase, and is then smoothened</span>
+<span class="sd">															 using the Savgol filter.</span>
+
+
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># Get the real and imaginary parts.</span>
 	<span class="n">waveform_p</span> <span class="o">=</span> <span class="n">waveform</span><span class="o">.</span><span class="n">real</span>
 	<span class="n">waveform_x</span> <span class="o">=</span> <span class="n">waveform</span><span class="o">.</span><span class="n">imag</span>
@@ -1524,9 +1488,9 @@
 	<span class="c1"># Compute the derivative</span>
 	<span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;FD&quot;</span><span class="p">:</span>
 		<span class="c1"># Finite differencing method</span>
-		<span class="kn">import</span> <span class="nn">scipy</span>
 		<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">savgol_filter</span>
 		<span class="kn">from</span> <span class="nn">waveformtools.differentiate</span> <span class="kn">import</span> <span class="n">differentiate5</span>
+
 		<span class="c1"># Compute the derivative</span>
 		<span class="n">omega_rough</span> <span class="o">=</span> <span class="n">differentiate5</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
 		<span class="c1"># Smoothen the derivative</span>
@@ -1540,6 +1504,7 @@
 	<span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;CS&quot;</span><span class="p">:</span>
 		<span class="c1"># Chebyshev spectral method</span>
 		<span class="kn">from</span> <span class="nn">waveformtools.differentiate</span> <span class="kn">import</span> <span class="n">Chebyshev_differential</span>
+
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">timeaxis</span><span class="p">:</span>
 			<span class="c1"># Construct the time axis</span>
 			<span class="n">timeaxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">waveform</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
@@ -1549,24 +1514,65 @@
 	<span class="k">return</span> <span class="n">omega_sm</span></div>
 
 
-<span class="c1"># Simple overlap. #Error. Add frequency domain overlap computation.</span>
-<div class="viewcode-block" id="olap"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.olap">[docs]</a><span class="k">def</span> <span class="nf">olap</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">,</span> <span class="n">psd</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;  Calcuate the overlap between two data vectors weighted by the given psd.</span>
+<div class="viewcode-block" id="get_starting_angular_frequency"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.get_starting_angular_frequency">[docs]</a><span class="k">def</span> <span class="nf">get_starting_angular_frequency</span><span class="p">(</span><span class="n">waveform</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Get the approximate starting frequency of the</span>
+<span class="sd">	input data by averaging over the first `npoints` number of points.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	data1 :	1d array or a pycbc TimeSeries object</span>
-<span class="sd">	data2 : 1d array or a pycbc RimeSeries object</span>
-<span class="sd">					The input waveforms</span>
-<span class="sd">	psd :	1d array</span>
-<span class="sd">					The power spectral density to weight.</span>
+<span class="sd">	waveform:		1d array</span>
+<span class="sd">									The 1d complex array of the input</span>
+<span class="sd">									waveform.</span>
+
+<span class="sd">	delta_t:	 float</span>
+<span class="sd">							 The time step.</span>
+
+
+<span class="sd">	npoints:	 int</span>
+<span class="sd">							 The number of points to average over.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	overlap :	float</span>
-<span class="sd">							The overlap divided by the psd.</span>
+<span class="sd">	omega0:	float</span>
+<span class="sd">							The approximate starting angular frequency.</span>
+
+
+<span class="sd">	Notes</span>
+<span class="sd">	-----</span>
+
+<span class="sd">	Please suppy a conditioned input waveform that is neatly clipped,</span>
+<span class="sd">	and not tapered.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># Get angular frequencies</span>
+	<span class="n">omegas</span> <span class="o">=</span> <span class="n">get_waveform_angular_frequency</span><span class="p">(</span><span class="n">waveform</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+
+	<span class="c1"># Compute the starting frequency as the mean of first npoints.</span>
+	<span class="n">omega0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">omegas</span><span class="p">[</span><span class="mi">10</span> <span class="p">:</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">npoints</span><span class="p">])</span>
+
+	<span class="k">return</span> <span class="n">omega0</span></div>
+
+
+<span class="c1"># Simple overlap. #Error. Add frequency domain overlap computation.</span>
+<div class="viewcode-block" id="olap"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.olap">[docs]</a><span class="k">def</span> <span class="nf">olap</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">,</span> <span class="n">psd</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Calcuate the overlap between two data vectors weighted by the given psd.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	data1:	1d array or a pycbc TimeSeries object</span>
+<span class="sd">	data2 : 1d array or a pycbc RimeSeries object</span>
+<span class="sd">									The input waveforms</span>
+<span class="sd">	psd:	1d array</span>
+<span class="sd">									The power spectral density to weight.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	overlap:	float</span>
+<span class="sd">													The overlap divided by the psd.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -1576,29 +1582,28 @@
 		<span class="n">overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data1</span> <span class="o">*</span> <span class="n">data2</span><span class="p">)</span> <span class="o">/</span> <span class="n">psd</span>
 
 	<span class="k">else</span><span class="p">:</span>
-		<span class="c1"># Add frequency domain overlap computation</span>
 		<span class="mi">1</span>
 		<span class="c1"># Returns the overlap weighted by the psd if any</span>
 	<span class="k">return</span> <span class="n">overlap</span></div>
 
 
 <div class="viewcode-block" id="norm"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.norm">[docs]</a><span class="k">def</span> <span class="nf">norm</span><span class="p">(</span><span class="n">hdat</span><span class="p">,</span> <span class="n">psd</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Calculate the norm of a vector.</span>
+	<span class="sd">&quot;&quot;&quot;Calculate the norm of a vector.</span>
 
-<span class="sd">			Parameters</span>
-<span class="sd">			----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
 
-<span class="sd">			hdat :	1d array or a pycbc TimeSeries object.</span>
-<span class="sd">							The input waveform.</span>
-<span class="sd">			psa :	1d array</span>
-<span class="sd">							The noise power spectral density of the inner product.</span>
+<span class="sd">	hdat:	1d array or a pycbc TimeSeries object.</span>
+<span class="sd">									The input waveform.</span>
+<span class="sd">	psa:	1d array</span>
+<span class="sd">									The noise power spectral density of the inner product.</span>
 
-<span class="sd">			Returns</span>
-<span class="sd">			-------</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
 
-<span class="sd">			norm_f :	float</span>
-<span class="sd">							The norm with weighting by the psd.</span>
-<span class="sd">			&quot;&quot;&quot;</span>
+<span class="sd">	norm_f:	float</span>
+<span class="sd">									The norm with weighting by the psd.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">hdat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hdat</span><span class="p">)</span>
 
@@ -1609,20 +1614,20 @@
 
 
 <div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">nflist</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Flatten a list of list of lists. i.e. a three tier list [[[],[]], [[],[]] ---&gt; []. This is useful e.g. when combining the</span>
-<span class="sd">			data from the list output of multiple MPI ranks.</span>
+	<span class="sd">&quot;&quot;&quot;Flatten a list of list of lists. i.e. a three tier list [[[],[]], [[],[]] ---&gt; []. This is useful e.g. when combining the</span>
+<span class="sd">					data from the list output of multiple MPI ranks.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	nflist :	a third tier list</span>
-<span class="sd">							A list of list of lists (a list of depth three).</span>
+<span class="sd">	nflist:	a third tier list</span>
+<span class="sd">													A list of list of lists (a list of depth three).</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	flattened_list :	a list</span>
-<span class="sd">											The flattened list i.e. a tier one list.</span>
+<span class="sd">	flattened_list:	a list</span>
+<span class="sd">																					The flattened list i.e. a tier one list.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">flattened_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1643,7 +1648,7 @@
 
 
 <div class="viewcode-block" id="startend"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.startend">[docs]</a><span class="k">def</span> <span class="nf">startend</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Identify the start and endpoints of the data.</span>
+	<span class="sd">&quot;&quot;&quot;Identify the start and endpoints of the data.</span>
 
 <span class="sd">	Procedure</span>
 <span class="sd">	---------</span>
@@ -1654,14 +1659,14 @@
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	data :	1d array or a pycbc TimeSeries object</span>
-<span class="sd">					The input waveform.</span>
+<span class="sd">	data:	1d array or a pycbc TimeSeries object</span>
+<span class="sd">									The input waveform.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	start_index, end_index :	int (2)</span>
-<span class="sd">															The pair of indices denoting the start and end points of an array</span>
+<span class="sd">	start_index, end_index:	int (2)</span>
+<span class="sd">																													The pair of indices denoting the start and end points of an array</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -1680,7 +1685,7 @@
 
 
 <div class="viewcode-block" id="apxstartend"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.apxstartend">[docs]</a><span class="k">def</span> <span class="nf">apxstartend</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Identify the Approximate start and endpoints of the data.</span>
+	<span class="sd">&quot;&quot;&quot;Identify the Approximate start and endpoints of the data.</span>
 
 <span class="sd">	Procedure</span>
 <span class="sd">	---------</span>
@@ -1691,16 +1696,16 @@
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	data :	1d array or a pycbc TimeSeries object</span>
-<span class="sd">					The input waveform whose start and end points need to be identified based on a given tolerance value.</span>
-<span class="sd">	tol :	float</span>
-<span class="sd">					The tolerance value below which the signal is assumed to be absent.</span>
+<span class="sd">	data:	1d array or a pycbc TimeSeries object</span>
+<span class="sd">									The input waveform whose start and end points need to be identified based on a given tolerance value.</span>
+<span class="sd">	tol:	float</span>
+<span class="sd">									The tolerance value below which the signal is assumed to be absent.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	--------</span>
 
-<span class="sd">	loc_pair :	int (2)</span>
-<span class="sd">							The pair of indices denoting the start and end points of an array</span>
+<span class="sd">	loc_pair:	int (2)</span>
+<span class="sd">													The pair of indices denoting the start and end points of an array</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -1721,18 +1726,18 @@
 	<span class="sd">&quot;&quot;&quot; Append zeros to an array without tapering.</span>
 
 <span class="sd">	Parameters</span>
-<span class="sd">	-----------</span>
-<span class="sd">	data :	1d array or a pycbc TimeSeries</span>
-<span class="sd">					The waveform data as list or numpy array or pycbc timeseries.</span>
-<span class="sd">	zeros :	int</span>
-<span class="sd">			The number of zeros to be added.</span>
+<span class="sd">	----------</span>
 
+<span class="sd">	data	:	1d array or a pycbc TimeSeries</span>
+<span class="sd">			The waveform data as list or numpy array or pycbc timeseries.</span>
+
+<span class="sd">	zeros	:	int</span>
+<span class="sd">		    The number of zeros to be added.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-
-<span class="sd">	data with `zeros` number of zeros concatenated at the end as numpy 1d array</span>
+<span class="sd">	data with `zeros` number of zeros concatenated at the end as numpy 1d array	:	trial</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">zeros</span><span class="p">])))))</span></div>
@@ -1744,21 +1749,21 @@
 
 
 <div class="viewcode-block" id="removezeros"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.removezeros">[docs]</a><span class="k">def</span> <span class="nf">removezeros</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Remove zeros from the input waveform from either sides. Similar to startend but return the truncated array.</span>
+	<span class="sd">&quot;&quot;&quot;Remove zeros from the input waveform from either sides. Similar to startend but return the truncated array.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	data :	1d array or a pycbc TimeSeries</span>
-<span class="sd">					The input waveform.</span>
-<span class="sd">	delta_t :	float, optional</span>
-<span class="sd">					The time stepping.</span>
+<span class="sd">	data:	1d array or a pycbc TimeSeries</span>
+<span class="sd">									The input waveform.</span>
+<span class="sd">	delta_t:	float, optional</span>
+<span class="sd">									The time stepping.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	short_ts :	a list</span>
-<span class="sd">							A list containing  waveforms with zeros removed on either sides, the start and end indices in the format [short_ts, [start_index, end_index]]</span>
+<span class="sd">	short_ts:	a list</span>
+<span class="sd">													A list containing  waveforms with zeros removed on either sides, the start and end indices in the format [short_ts, [start_index, end_index]]</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -1779,27 +1784,27 @@
 
 
 <div class="viewcode-block" id="shorten"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.shorten">[docs]</a><span class="k">def</span> <span class="nf">shorten</span><span class="p">(</span><span class="n">tsdata</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Shorten an array given the start and end points.</span>
+	<span class="sd">&quot;&quot;&quot;Shorten an array given the start and end points.</span>
 
-<span class="sd">			Parameters</span>
-<span class="sd">			----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
 
-<span class="sd">			tsdata :	1d array or a pycbc TimeSeries object</span>
-<span class="sd">									The waveform data.</span>
-<span class="sd">			start :	int</span>
-<span class="sd">							The start index of the data.</span>
+<span class="sd">	tsdata:	1d array or a pycbc TimeSeries object</span>
+<span class="sd">													The waveform data.</span>
+<span class="sd">	start:	int</span>
+<span class="sd">									The start index of the data.</span>
 
-<span class="sd">			end :	int</span>
-<span class="sd">							The end index of the data.</span>
-<span class="sd">			delta_t :	float, optional</span>
+<span class="sd">	end:	int</span>
+<span class="sd">									The end index of the data.</span>
+<span class="sd">	delta_t:	float, optional</span>
 <span class="sd">					The time stepping.</span>
 
 
-<span class="sd">			Returns</span>
-<span class="sd">			-------</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
 
-<span class="sd">			short_ts :	a pycbc TimeSeries object</span>
-<span class="sd">									The shortened data, clipped before start and after end.</span>
+<span class="sd">	short_ts:	a pycbc TimeSeries object</span>
+<span class="sd">													The shortened data, clipped before start and after end.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># Assign the timestep. Real and imaginary parts are assumed to have same</span>
 	<span class="c1"># timestep.</span>
@@ -1815,41 +1820,39 @@
 
 
 <div class="viewcode-block" id="taper"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.taper">[docs]</a><span class="k">def</span> <span class="nf">taper</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">zeros</span><span class="o">=</span><span class="mi">150</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; A method to taper and append additional zeros at either ends, using the `taper` function of the pycbc TimeSeries object.</span>
+	<span class="sd">&quot;&quot;&quot;A method to taper and append additional zeros at either ends, using the `taper` function of the pycbc TimeSeries object.</span>
 
-<span class="sd">			Parameters</span>
-<span class="sd">			----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
 
 
-<span class="sd">			data :	1d array or a pycbc TimeSeries</span>
+<span class="sd">	data:	1d array or a pycbc TimeSeries</span>
 <span class="sd">					The waveform data as list or numpy array or pycbc timeseries.</span>
-<span class="sd">			delta_t :	float</span>
-<span class="sd">						The timestepping.</span>
-<span class="sd">			zeros :	int</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">							The timestepping.</span>
+<span class="sd">	zeros:	int</span>
 <span class="sd">					The number of zeros to be added.</span>
 
-<span class="sd">			Returns</span>
-<span class="sd">			-------</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
 
-<span class="sd">			tapered_data :	1d array or a pycbc TimeSeries object</span>
-<span class="sd">							The waveform data tapered and zero padded. Returns a pycbc TimeSeries object.</span>
+<span class="sd">	tapered_data:	1d array or a pycbc TimeSeries object</span>
+<span class="sd">									The waveform data tapered and zero padded. Returns a pycbc TimeSeries object.</span>
 
 
-<span class="sd">			Notes</span>
-<span class="sd">			-----</span>
-<span class="sd">			See `taper_timeseries` from pycbc.waveform.utils for more details.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Notes</span>
+<span class="sd">	-----</span>
+<span class="sd">	See `taper_timeseries` from pycbc.waveform.utils for more details.&quot;&quot;&quot;</span>
 
 	<span class="c1"># Check if data is pycbc timeseries:</span>
 	<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">):</span>
-		<span class="n">flag</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="c1"># flag = 1</span>
 		<span class="c1"># Convert to numpy array</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 		<span class="c1"># First taper both sides of the data i.e. the start and end of the data.</span>
 		<span class="c1"># Convert to pycbc TimeSeries</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
 		<span class="n">delta_t</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">delta_t</span>
 
 	<span class="c1"># Taper the timeseries</span>
@@ -1875,36 +1878,36 @@
 
 
 <div class="viewcode-block" id="center"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.center">[docs]</a><span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="n">wvp</span><span class="p">,</span> <span class="n">wvc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Center a waveform (wvp, wvc) at the peak of the complex modulous sqrt(wvp**2 + wvc**2).</span>
+	<span class="sd">&quot;&quot;&quot;Center a waveform (wvp, wvc) at the peak of the complex modulous sqrt(wvp**2 + wvc**2).</span>
 
 
 
-<span class="sd">			Parameters</span>
-<span class="sd">			----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
 
 
-<span class="sd">			wvp :	1d array or a pycbc TimeSeries object</span>
-<span class="sd">			wvc :	1d array or a pycbc TimeSeries object</span>
+<span class="sd">	wvp:	1d array or a pycbc TimeSeries object</span>
+<span class="sd">	wvc:	1d array or a pycbc TimeSeries object</span>
 <span class="sd">					The one/two components of the waveforms as 1d list or numpy arrays or pycbc timeseries.</span>
-<span class="sd">			delta_t :	float</span>
-<span class="sd">						The timestepping delta_t.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">							The timestepping delta_t.</span>
 
-<span class="sd">			Returns</span>
-<span class="sd">			-------</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
 
-<span class="sd">			centered_wf :	a pycbc TimeSeries objet</span>
-<span class="sd">							The two 1d centered waveform(s) as individual pycbc timeseries.</span>
+<span class="sd">	centered_wf:	a pycbc TimeSeries objet</span>
+<span class="sd">									The two 1d centered waveform(s) as individual pycbc timeseries.</span>
 
 
-<span class="sd">			Procedure</span>
-<span class="sd">			---------</span>
+<span class="sd">	Procedure</span>
+<span class="sd">	---------</span>
 
-<span class="sd">			1. Findout if both polarizations are supplied. If not assume cross pol is plus.</span>
-<span class="sd">			2. Find the absolute magnitde location in the array.</span>
-<span class="sd">			3. Construct the time limits using this information.</span>
-<span class="sd">			3. Construct timeseries with epoch as first index of the array.</span>
+<span class="sd">	1. Findout if both polarizations are supplied. If not assume cross pol is plus.</span>
+<span class="sd">	2. Find the absolute magnitde location in the array.</span>
+<span class="sd">	3. Construct the time limits using this information.</span>
+<span class="sd">	3. Construct timeseries with epoch as first index of the array.</span>
 
-<span class="sd">			&quot;&quot;&quot;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="c1"># Flag to find out if both polarizations are supplied or not.</span>
 	<span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="c1"># If only one waveform is provided, assume cross pol = plus pol.</span>
@@ -1946,23 +1949,23 @@
 
 
 <div class="viewcode-block" id="get_centered_taxis"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.get_centered_taxis">[docs]</a><span class="k">def</span> <span class="nf">get_centered_taxis</span><span class="p">(</span><span class="n">time_ax</span><span class="p">,</span> <span class="n">amps</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Get the time axis of the waveform centered at its maximum absolute amplitude.</span>
+	<span class="sd">&quot;&quot;&quot;Get the time axis of the waveform centered at its maximum absolute amplitude.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	time_ax :	1d array</span>
-<span class="sd">				The 1d array containg the original (uncentered)time axis of the wveform.</span>
+<span class="sd">	time_ax:	1d array</span>
+<span class="sd">							The 1d array containg the original (uncentered)time axis of the wveform.</span>
 
 
 <span class="sd">	amps	:	1d array</span>
-<span class="sd">				The amplitude of the waveform.</span>
+<span class="sd">							The amplitude of the waveform.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	time_centered :	1d array</span>
-<span class="sd">					The centered time axis of the waveform. The maximum amplitude timestap will be at :math:`t=0`.</span>
+<span class="sd">	time_centered:	1d array</span>
+<span class="sd">									The centered time axis of the waveform. The maximum amplitude timestap will be at :math:`t=0`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># Get the maximum amplitude</span>
@@ -1976,24 +1979,24 @@
 
 
 <div class="viewcode-block" id="plot"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.plot">[docs]</a><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">func_x</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; A Basic plotting function.</span>
+	<span class="sd">&quot;&quot;&quot;A Basic plotting function.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	xdata :	1d array</span>
-<span class="sd">			The x axis of the function,</span>
-<span class="sd">	func_x :	1d array</span>
-<span class="sd">					The y axis of the function f(x),</span>
-<span class="sd">	save :	bool.</span>
-<span class="sd">					True or False. Whether the plot should be saved or not.</span>
+<span class="sd">	xdata:	1d array</span>
+<span class="sd">					The x axis of the function,</span>
+<span class="sd">	func_x:	1d array</span>
+<span class="sd">									The y axis of the function f(x),</span>
+<span class="sd">	save:	bool.</span>
+<span class="sd">									True or False. Whether the plot should be saved or not.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	1 :	(int)</span>
-<span class="sd">	plots :	figures to stdout and disk</span>
-<span class="sd">			Displays the plot, and Saves with the filename provided.</span>
+<span class="sd">	1:	(int)</span>
+<span class="sd">	plots:	figures to stdout and disk</span>
+<span class="sd">					Displays the plot, and Saves with the filename provided.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xdata</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">func_x</span><span class="p">))</span>
@@ -2011,24 +2014,24 @@
 
 
 <div class="viewcode-block" id="coalignwfs"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.coalignwfs">[docs]</a><span class="k">def</span> <span class="nf">coalignwfs</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">,</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Coalign two timeseries. Wrapper and modification around pycbc functions.</span>
+	<span class="sd">&quot;&quot;&quot;Coalign two timeseries. Wrapper and modification around pycbc functions.</span>
 
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	tsdata1 :	list, 1d array or a pycbc TimeSeries</span>
-<span class="sd">	tsdata2 :	list, 1d array or a pycbc TimeSeries</span>
-<span class="sd">				The two data vectors as 1d lists or numpy arrays or pycbc TimeSeries</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">				The time stepping.</span>
+<span class="sd">	tsdata1:	list, 1d array or a pycbc TimeSeries</span>
+<span class="sd">	tsdata2:	list, 1d array or a pycbc TimeSeries</span>
+<span class="sd">							The two data vectors as 1d lists or numpy arrays or pycbc TimeSeries</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">							The time stepping.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	ctsdata1 :	a pycbc TimeSeries</span>
-<span class="sd">	tsdata2 :	a pycbc TimeSeries</span>
-<span class="sd">				A pair of pycbc TimeSeries objects; the aligned first waveform and the second.</span>
+<span class="sd">	ctsdata1:	a pycbc TimeSeries</span>
+<span class="sd">	tsdata2:	a pycbc TimeSeries</span>
+<span class="sd">							A pair of pycbc TimeSeries objects; the aligned first waveform and the second.</span>
 
 <span class="sd">	Procedure</span>
 <span class="sd">	---------</span>
@@ -2114,21 +2117,21 @@
 
 
 <div class="viewcode-block" id="coalignwfs2"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.coalignwfs2">[docs]</a><span class="k">def</span> <span class="nf">coalignwfs2</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">,</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Coalign two waveforms function 2.</span>
+	<span class="sd">&quot;&quot;&quot;Coalign two waveforms function 2.</span>
 
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	tsdata1 :	1d array or a pycbc TimeSeries</span>
-<span class="sd">	tsdata2 :	1d array or a pycbc TimeSeries</span>
-<span class="sd">							two data vectors as 1d lists or numpy arrays or pycbc timeseries.</span>
+<span class="sd">	tsdata1:	1d array or a pycbc TimeSeries</span>
+<span class="sd">	tsdata2:	1d array or a pycbc TimeSeries</span>
+<span class="sd">													two data vectors as 1d lists or numpy arrays or pycbc timeseries.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	--------</span>
 
-<span class="sd">	aligned_waveforms :	 list</span>
-<span class="sd">											Tthe aligned waveforms in the format [aligned_wf1, aligned_wf2, [norm1, norm2, location of maximum]].</span>
+<span class="sd">	aligned_waveforms:	 list</span>
+<span class="sd">																					Tthe aligned waveforms in the format [aligned_wf1, aligned_wf2, [norm1, norm2, location of maximum]].</span>
 
 
 <span class="sd">	Procedure</span>
@@ -2233,30 +2236,30 @@
 
 
 <div class="viewcode-block" id="simplematch_wfs"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.simplematch_wfs">[docs]</a><span class="k">def</span> <span class="nf">simplematch_wfs</span><span class="p">(</span><span class="n">waveforms</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Simple match the given waveforms. Does not clip the waveforms at either ends.</span>
+	<span class="sd">&quot;&quot;&quot;Simple match the given waveforms. Does not clip the waveforms at either ends.</span>
 
 <span class="sd">	Procedure</span>
 <span class="sd">	---------</span>
 
 <span class="sd">	1. For each pair of waveforms as a list:</span>
-<span class="sd">									a. Findout if delt has been specified.</span>
-<span class="sd">									b. Findout if the object has attribute delta_t to discern whether it is a pycbc timeseries ( not exactly. ). If not then exit.</span>
-<span class="sd">									c. Equalize the lengths.</span>
-<span class="sd">									d. Compute the match score and shift using the pycbc shift function.</span>
-<span class="sd">									e. Findout the start and the end of the waveform using handles.startend.</span>
-<span class="sd">									f. Reconstruct normalized and clipped pycbc.timeseries of the waveforms.</span>
-<span class="sd">									g. Confirm the equalization of the lengths of the waveoforms.</span>
-<span class="sd">									h. Append the match details to an array [ waveform list, [ match score, shift, start_index, end_index]]</span>
+<span class="sd">																	a. Findout if delt has been specified.</span>
+<span class="sd">																	b. Findout if the object has attribute delta_t to discern whether it is a pycbc timeseries ( not exactly. ). If not then exit.</span>
+<span class="sd">																	c. Equalize the lengths.</span>
+<span class="sd">																	d. Compute the match score and shift using the pycbc shift function.</span>
+<span class="sd">																	e. Findout the start and the end of the waveform using handles.startend.</span>
+<span class="sd">																	f. Reconstruct normalized and clipped pycbc.timeseries of the waveforms.</span>
+<span class="sd">																	g. Confirm the equalization of the lengths of the waveoforms.</span>
+<span class="sd">																	h. Append the match details to an array [ waveform list, [ match score, shift, start_index, end_index]]</span>
 <span class="sd">	2. Retun the match details for all the waveforms.</span>
 
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	waveforms :	list</span>
-<span class="sd">				A list of pairs [waveform A, waveform B] of waveforms.</span>
-<span class="sd">	delta_t :	float, optional</span>
-<span class="sd">				The time stepping.</span>
+<span class="sd">	waveforms:	list</span>
+<span class="sd">							A list of pairs [waveform A, waveform B] of waveforms.</span>
+<span class="sd">	delta_t:	float, optional</span>
+<span class="sd">							The time stepping.</span>
 
 <span class="sd">	Notes</span>
 <span class="sd">	-----</span>
@@ -2266,8 +2269,8 @@
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	match :	list</span>
-<span class="sd">			A list of dicts [{ Aligned waveforms} , {match score (float), shift (number)}] containing the match information for all the input waveform pairs.</span>
+<span class="sd">	match:	list</span>
+<span class="sd">					A list of dicts [{ Aligned waveforms} , {match score (float), shift (number)}] containing the match information for all the input waveform pairs.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2307,7 +2310,7 @@
 			<span class="n">match_score</span> <span class="o">=</span> <span class="kc">None</span>
 			<span class="n">shift</span> <span class="o">=</span> <span class="kc">None</span>
 
-		<span class="n">match</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;Waveforms&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">waveform1</span><span class="p">,</span> <span class="n">waveform2</span><span class="p">],</span> <span class="s2">&quot;Match score&quot;</span><span class="p">:</span> <span class="n">match_score</span><span class="p">,</span> <span class="s2">&quot;Shift&quot;</span><span class="p">:</span> <span class="n">shift</span><span class="p">})</span>
+		<span class="k">match</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;Waveforms&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">waveform1</span><span class="p">,</span> <span class="n">waveform2</span><span class="p">],</span> <span class="s2">&quot;Match score&quot;</span><span class="p">:</span> <span class="n">match_score</span><span class="p">,</span> <span class="s2">&quot;Shift&quot;</span><span class="p">:</span> <span class="n">shift</span><span class="p">})</span>
 	<span class="k">return</span> <span class="n">match</span></div>
 
 
@@ -2328,18 +2331,18 @@
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	waveforms :	a list of pairs</span>
-<span class="sd">				The pairs of waveforms to match in the format [[wf1_pair1, wf2_pair2], [wf1_pair_2, wf2_pair2], ...].</span>
-<span class="sd">	offset :	int</span>
-<span class="sd">				Number of indices to shift the data.</span>
-<span class="sd">	crop :	string</span>
-<span class="sd">			A string to decide how to crop the waveforms. The available Options are 1. `signal` 2. `template` 3. `both`.</span>
+<span class="sd">	waveforms:	a list of pairs</span>
+<span class="sd">							The pairs of waveforms to match in the format [[wf1_pair1, wf2_pair2], [wf1_pair_2, wf2_pair2], ...].</span>
+<span class="sd">	offset:	int</span>
+<span class="sd">							Number of indices to shift the data.</span>
+<span class="sd">	crop:	string</span>
+<span class="sd">					A string to decide how to crop the waveforms. The available Options are 1. `signal` 2. `template` 3. `both`.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	matchdet :	a list of dicts</span>
-<span class="sd">				A list of dictionaries. Each contains 1. the waveform pair, 2. the match score, 3. the shift index. to maximize the match.</span>
+<span class="sd">	matchdet:	a list of dicts</span>
+<span class="sd">							A list of dictionaries. Each contains 1. the waveform pair, 2. the match score, 3. the shift index. to maximize the match.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">matchdet</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2401,28 +2404,28 @@
 
 
 <div class="viewcode-block" id="match_wfs"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.match_wfs">[docs]</a><span class="k">def</span> <span class="nf">match_wfs</span><span class="p">(</span><span class="n">waveforms</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Match given waveforms. Find the overlap.</span>
+	<span class="sd">&quot;&quot;&quot;Match given waveforms. Find the overlap.</span>
 
 <span class="sd">	Procedure</span>
 <span class="sd">	---------</span>
 
 <span class="sd">	1. For each pair of waveforms as a list:</span>
-<span class="sd">									a. Findout if delt has been specified.</span>
-<span class="sd">									b. Findout if the object has attribute delta_t to discern whether it is a pycbc timeseries ( not exactly. ). If not then exit.</span>
-<span class="sd">									c. Equalize the lengths.</span>
-<span class="sd">									d. Compute the match score and shift using the pycbc shift function.</span>
-<span class="sd">									e. Findout the start and the end of the waveform using handles.startend.</span>
-<span class="sd">									f. Reconstruct normalized and clipped pycbc.timeseries of the waveforms.</span>
-<span class="sd">									g. Confirm the equalization of the lengths of the waveoforms.</span>
-<span class="sd">									h. Append the match details to an array [ waveform list, [ match score, shift, start_index, end_index]]</span>
+<span class="sd">																	a. Findout if delt has been specified.</span>
+<span class="sd">																	b. Findout if the object has attribute delta_t to discern whether it is a pycbc timeseries ( not exactly. ). If not then exit.</span>
+<span class="sd">																	c. Equalize the lengths.</span>
+<span class="sd">																	d. Compute the match score and shift using the pycbc shift function.</span>
+<span class="sd">																	e. Findout the start and the end of the waveform using handles.startend.</span>
+<span class="sd">																	f. Reconstruct normalized and clipped pycbc.timeseries of the waveforms.</span>
+<span class="sd">																	g. Confirm the equalization of the lengths of the waveoforms.</span>
+<span class="sd">																	h. Append the match details to an array [ waveform list, [ match score, shift, start_index, end_index]]</span>
 <span class="sd">	2. Retun the match details for all the waveforms.</span>
 
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	waveforms :	list</span>
-<span class="sd">							A List of pairs [waveform A, waveform B].</span>
+<span class="sd">	waveforms:	list</span>
+<span class="sd">													A List of pairs [waveform A, waveform B].</span>
 
 
 <span class="sd">	Notes</span>
@@ -2434,8 +2437,8 @@
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	match :	a list of dicts</span>
-<span class="sd">					A list of dictionaries in the format {match score (float), shift (number), start_index, end_index}</span>
+<span class="sd">	match:	a list of dicts</span>
+<span class="sd">									A list of dictionaries in the format {match score (float), shift (number), start_index, end_index}</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="c1"># Iterate over (signal,template) pairs in waveforms</span>
@@ -2496,26 +2499,26 @@
 			<span class="n">match_score</span> <span class="o">=</span> <span class="kc">None</span>
 			<span class="n">shift</span> <span class="o">=</span> <span class="kc">None</span>
 
-		<span class="n">match</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;Match score&quot;</span><span class="p">:</span> <span class="n">match_score</span><span class="p">,</span> <span class="s2">&quot;Shift&quot;</span><span class="p">:</span> <span class="n">shift</span><span class="p">,</span> <span class="s2">&quot;Start index&quot;</span><span class="p">:</span> <span class="n">starti</span><span class="p">,</span> <span class="s2">&quot;End index&quot;</span><span class="p">:</span> <span class="n">endi</span><span class="p">})</span>
+		<span class="k">match</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;Match score&quot;</span><span class="p">:</span> <span class="n">match_score</span><span class="p">,</span> <span class="s2">&quot;Shift&quot;</span><span class="p">:</span> <span class="n">shift</span><span class="p">,</span> <span class="s2">&quot;Start index&quot;</span><span class="p">:</span> <span class="n">starti</span><span class="p">,</span> <span class="s2">&quot;End index&quot;</span><span class="p">:</span> <span class="n">endi</span><span class="p">})</span>
 	<span class="k">return</span> <span class="n">match</span></div>
 
 
 <div class="viewcode-block" id="roll"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.roll">[docs]</a><span class="k">def</span> <span class="nf">roll</span><span class="p">(</span><span class="n">tsdata</span><span class="p">,</span> <span class="n">i_roll</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Roll the data circularly. Circular counterpart of shiftmatched function.</span>
+	<span class="sd">&quot;&quot;&quot;Roll the data circularly. Circular counterpart of shiftmatched function.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	tsdata :	1d array or pycbc TimeSeries</span>
-<span class="sd">				1D data vector in the form of a list/ numpy array or timeseries.</span>
-<span class="sd">	i_roll :	int</span>
-<span class="sd">				The number of indices to roll the array.</span>
+<span class="sd">	tsdata:	1d array or pycbc TimeSeries</span>
+<span class="sd">							1D data vector in the form of a list/ numpy array or timeseries.</span>
+<span class="sd">	i_roll:	int</span>
+<span class="sd">							The number of indices to roll the array.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	rolled_waveform :	1d array or(pycbc TimeSeries object</span>
-<span class="sd">						The rolled wavefrom.</span>
+<span class="sd">	rolled_waveform:	1d array or(pycbc TimeSeries object</span>
+<span class="sd">											The rolled wavefrom.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">try</span><span class="p">:</span>
@@ -2551,27 +2554,27 @@
 
 
 <div class="viewcode-block" id="smoothen"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.smoothen">[docs]</a><span class="k">def</span> <span class="nf">smoothen</span><span class="p">(</span><span class="n">func_x</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">xdata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">to_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Use the Savitzky-Golay Filter to smoothen the data. Show the plots if plot=`yes`.</span>
+	<span class="sd">&quot;&quot;&quot;Use the Savitzky-Golay Filter to smoothen the data. Show the plots if plot=`yes`.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	func_x :	1d array</span>
-<span class="sd">				The y axis.</span>
-<span class="sd">	win :	int</span>
-<span class="sd">					Window for smoothening. Must be odd.</span>
-<span class="sd">	order :	int</span>
-<span class="sd">					The order of the polynomial used for interpolation.</span>
-<span class="sd">	x :	1d array, optional.</span>
-<span class="sd">			The 1D list or numpy array, to plot the smoothened function. Only required if to_plot=True.</span>
-<span class="sd">	to_plot :	bool</span>
-<span class="sd">							True or False. Whether or not to display the plot.</span>
+<span class="sd">	func_x:	1d array</span>
+<span class="sd">							The y axis.</span>
+<span class="sd">	win:	int</span>
+<span class="sd">									Window for smoothening. Must be odd.</span>
+<span class="sd">	order:	int</span>
+<span class="sd">									The order of the polynomial used for interpolation.</span>
+<span class="sd">	x:	1d array, optional.</span>
+<span class="sd">					The 1D list or numpy array, to plot the smoothened function. Only required if to_plot=True.</span>
+<span class="sd">	to_plot:	bool</span>
+<span class="sd">													True or False. Whether or not to display the plot.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	ydata :	1d array</span>
-<span class="sd">			The Savgol filtered list.</span>
+<span class="sd">	ydata:	1d array</span>
+<span class="sd">					The Savgol filtered list.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -2590,27 +2593,27 @@
 
 
 <div class="viewcode-block" id="bintp"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.bintp">[docs]</a><span class="k">def</span> <span class="nf">bintp</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">func_x</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">to_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Function to bin the data and interpolate it at specified width and order.</span>
+	<span class="sd">&quot;&quot;&quot;Function to bin the data and interpolate it at specified width and order.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	xdata :	1d array</span>
-<span class="sd">			1D list or numpy array.</span>
-<span class="sd">	func_x :	1d array</span>
-<span class="sd">					The y axis.</span>
-<span class="sd">	width :	int</span>
-<span class="sd">					Window size for smoothening,</span>
-<span class="sd">	order :	int</span>
-<span class="sd">					Order of the polynomial used for interpolation.</span>
-<span class="sd">	to_plot :	bool</span>
-<span class="sd">							True or False. To plot or not plot the results.</span>
+<span class="sd">	xdata:	1d array</span>
+<span class="sd">					1D list or numpy array.</span>
+<span class="sd">	func_x:	1d array</span>
+<span class="sd">									The y axis.</span>
+<span class="sd">	width:	int</span>
+<span class="sd">									Window size for smoothening,</span>
+<span class="sd">	order:	int</span>
+<span class="sd">									Order of the polynomial used for interpolation.</span>
+<span class="sd">	to_plot:	bool</span>
+<span class="sd">													True or False. To plot or not plot the results.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	hist :	a list</span>
-<span class="sd">					[binloc, yvals], The location of the bins and the y values associated with the bins.</span>
+<span class="sd">	hist:	a list</span>
+<span class="sd">									[binloc, yvals], The location of the bins and the y values associated with the bins.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -2651,21 +2654,21 @@
 
 
 <div class="viewcode-block" id="mavg"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.mavg">[docs]</a><span class="k">def</span> <span class="nf">mavg</span><span class="p">(</span><span class="n">func_x</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Function to smoothen data. Moving average over the window width.</span>
+	<span class="sd">&quot;&quot;&quot;Function to smoothen data. Moving average over the window width.</span>
 
-<span class="sd">			Parameters</span>
-<span class="sd">			----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
 
-<span class="sd">			func_x :	1d array</span>
-<span class="sd">						A list or numpy array of y axis.</span>
-<span class="sd">			Width :	int</span>
+<span class="sd">	func_x:	1d array</span>
+<span class="sd">							A list or numpy array of y axis.</span>
+<span class="sd">	Width:	int</span>
 <span class="sd">					The width of the moving average window.</span>
 
-<span class="sd">			Returns</span>
-<span class="sd">			-------</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
 
-<span class="sd">			func_x_avgd :	1d array</span>
-<span class="sd">							1D array of moving averaged y axis.</span>
+<span class="sd">	func_x_avgd:	1d array</span>
+<span class="sd">									1D array of moving averaged y axis.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -2686,25 +2689,25 @@
 
 
 <div class="viewcode-block" id="interpolate_wfs"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.interpolate_wfs">[docs]</a><span class="k">def</span> <span class="nf">interpolate_wfs</span><span class="p">(</span><span class="n">ts_data</span><span class="p">,</span> <span class="n">interp_func</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Function to interpolate a list of timeseries data using the user specified interp_func function and the keyword arguments.</span>
+	<span class="sd">&quot;&quot;&quot;Function to interpolate a list of timeseries data using the user specified interp_func function and the keyword arguments.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	ts_data :	list</span>
-<span class="sd">							The 1d data. A list of waveforms as list or numpy array or pycbc TimeSeries.</span>
-<span class="sd">	interp_fun :	function</span>
-<span class="sd">									An interpolating function.</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">					Timestep.</span>
-<span class="sd">	``**kwargs`` :	keyword arguments</span>
-<span class="sd">									additional arguments to the user specified interp_func.</span>
+<span class="sd">	ts_data:	list</span>
+<span class="sd">													The 1d data. A list of waveforms as list or numpy array or pycbc TimeSeries.</span>
+<span class="sd">	interp_fun:	function</span>
+<span class="sd">																	An interpolating function.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">									Timestep.</span>
+<span class="sd">	``**kwargs``:	keyword arguments</span>
+<span class="sd">																	additional arguments to the user specified interp_func.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	interp_data :	list</span>
-<span class="sd">									A list containing interpolated data.</span>
+<span class="sd">	interp_data:	list</span>
+<span class="sd">																	A list containing interpolated data.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -2731,25 +2734,25 @@
 
 
 <div class="viewcode-block" id="resample"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.resample">[docs]</a><span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="n">interp_data</span><span class="p">,</span> <span class="n">new_delta_t</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">old_delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Function to generate timeseries out of the given interpolated data function, epoch,sampling frequency, length(duration).</span>
+	<span class="sd">&quot;&quot;&quot;Function to generate timeseries out of the given interpolated data function, epoch,sampling frequency, length(duration).</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	interp_data :	1d array</span>
-<span class="sd">									The yaxis to be interpolated.</span>
-<span class="sd">	epoch :	float</span>
-<span class="sd">					The starting point in time.</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">					New grid spacing to be sampled at.</span>
-<span class="sd">	length :	int</span>
-<span class="sd">							The duration of x axis.</span>
+<span class="sd">	interp_data:	1d array</span>
+<span class="sd">																	The yaxis to be interpolated.</span>
+<span class="sd">	epoch:	float</span>
+<span class="sd">									The starting point in time.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">									New grid spacing to be sampled at.</span>
+<span class="sd">	length:	int</span>
+<span class="sd">													The duration of x axis.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	data :	list</span>
-<span class="sd">					A list containing resampled data as pycbc TimeSeries.</span>
+<span class="sd">	data:	list</span>
+<span class="sd">									A list containing resampled data as pycbc TimeSeries.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2774,25 +2777,25 @@
 
 
 <div class="viewcode-block" id="interpolate_resample_wfs"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.interpolate_resample_wfs">[docs]</a><span class="k">def</span> <span class="nf">interpolate_resample_wfs</span><span class="p">(</span><span class="n">ts_data</span><span class="p">,</span> <span class="n">interp_func</span><span class="p">,</span> <span class="n">new_delta_t</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">old_delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Wrapper function for interpolation and resampling.</span>
+	<span class="sd">&quot;&quot;&quot;Wrapper function for interpolation and resampling.</span>
 
-<span class="sd">			Parameters</span>
-<span class="sd">			----------</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
 
-<span class="sd">			interp_data :	1d array</span>
-<span class="sd">											The yaxis to be interpolated,</span>
-<span class="sd">			epoch :	float</span>
-<span class="sd">							The starting point in time.</span>
+<span class="sd">	interp_data:	1d array</span>
+<span class="sd">																	The yaxis to be interpolated,</span>
+<span class="sd">	epoch:	float</span>
+<span class="sd">									The starting point in time.</span>
 
-<span class="sd">			old_delta_t :	float</span>
-<span class="sd">			new_delta_t :	float</span>
-<span class="sd">									Old and New grid spacing to be sampled at. length(int). The duration of x axis.</span>
+<span class="sd">	old_delta_t:	float</span>
+<span class="sd">	new_delta_t:	float</span>
+<span class="sd">													Old and New grid spacing to be sampled at. length(int). The duration of x axis.</span>
 
-<span class="sd">			Returns</span>
-<span class="sd">			-------</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
 
-<span class="sd">			resampled_wf :	1d array</span>
-<span class="sd">											Interpolated and resampled data.</span>
+<span class="sd">	resampled_wf:	1d array</span>
+<span class="sd">																	Interpolated and resampled data.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># Interpolate</span>
@@ -2804,121 +2807,23 @@
 	<span class="k">return</span> <span class="n">resampled_wf</span></div>
 
 
-<div class="viewcode-block" id="wavextractinf"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.wavextractinf">[docs]</a><span class="k">def</span> <span class="nf">wavextractinf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">areal_radius</span><span class="p">,</span> <span class="n">t_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Extracts a given waveform at a particular co-ordinate radius to infinity. This uses the methods detailed in</span>
-
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
-<span class="sd">	Assumes:</span>
-
-<span class="sd">	That the background is a Schwarzschild spacetime.</span>
-
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
-
-<span class="sd">	data :	1d array</span>
-<span class="sd">			The 1d waveform data.</span>
-<span class="sd">	areal_radius :	float</span>
-<span class="sd">					The (current) extraction radius of the data.</span>
-<span class="sd">	t_start :	float</span>
-<span class="sd">				The start time of the data in t/M.</span>
-<span class="sd">	t_end :	float</span>
-<span class="sd">			The end time of the data in t/M.</span>
-<span class="sd">	delta_t :	float</span>
-<span class="sd">				The time step in t/M.</span>
-<span class="sd">	Mass :	float</span>
-<span class="sd">		The total ADM mass of the spacetime.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-
-<span class="sd">	ext_data :	1d array</span>
-<span class="sd">				The extracted waveform (1d).</span>
-
-<span class="sd">	&quot;&quot;&quot;</span>
-
-	<span class="c1"># Check if object is pycbc timeseries. Recover delta_t, t_start, t_end if yes.</span>
-	<span class="k">if</span> <span class="ow">not</span> <span class="n">delta_t</span><span class="p">:</span>
-		<span class="k">try</span><span class="p">:</span>
-			<span class="c1"># Find sampling time_step</span>
-			<span class="n">delta_t</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">delta_t</span>
-			<span class="n">data_time</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sample_times</span>
-			<span class="n">t_start_dat</span><span class="p">,</span> <span class="n">t_end_dat</span> <span class="o">=</span> <span class="n">data_time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-		<span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
-			<span class="n">message</span><span class="p">(</span>
-				<span class="s2">&quot;Input is not a TimeSeries. Please input a pycbc TimeSeries or supply gridspacing as delta_t&quot;</span><span class="p">,</span>
-				<span class="n">message_verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-			<span class="p">)</span>
-	<span class="k">else</span><span class="p">:</span>
-		<span class="n">t_start_dat</span> <span class="o">=</span> <span class="mi">0</span>
-		<span class="n">t_end_dat</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span>
-
-	<span class="k">if</span> <span class="ow">not</span> <span class="n">t_start</span><span class="p">:</span>
-		<span class="n">t_start</span> <span class="o">=</span> <span class="n">t_start_dat</span>
-
-	<span class="k">if</span> <span class="ow">not</span> <span class="n">t_end</span><span class="p">:</span>
-		<span class="n">t_end</span> <span class="o">=</span> <span class="n">t_end_dat</span>
-
-	<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-	<span class="c1"># Revert t_start and t_end to t_start_dat and t_end_dat i.e. to the</span>
-	<span class="c1"># starting time and  duration of the data respectively if user specified</span>
-	<span class="c1"># t_start is shorter and t_end is longer than t_start + the duration of</span>
-	<span class="c1"># the data.</span>
-	<span class="n">t_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">t_start</span><span class="p">,</span> <span class="n">t_start_dat</span><span class="p">)</span>
-	<span class="n">t_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">t_end</span><span class="p">,</span> <span class="n">t_end_dat</span><span class="p">)</span>
-
-	<span class="n">start_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">t_start</span> <span class="o">-</span> <span class="n">t_start_dat</span><span class="p">)</span> <span class="o">/</span> <span class="n">delta_t</span><span class="p">)</span>
-	<span class="n">end_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">t_end</span> <span class="o">-</span> <span class="n">t_start_dat</span><span class="p">)</span> <span class="o">/</span> <span class="n">delta_t</span><span class="p">)</span>
-
-	<span class="c1"># Extract the data</span>
-	<span class="n">ext_data</span> <span class="o">=</span> <span class="p">(</span>
-		<span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">areal_radius</span><span class="p">)</span>
-		<span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">/</span> <span class="n">areal_radius</span><span class="p">)</span>
-		<span class="o">*</span> <span class="p">(</span><span class="n">areal_radius</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">start_index</span><span class="p">:</span><span class="n">end_index</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">integrate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">t_start</span><span class="p">,</span> <span class="n">t_end</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">))</span>
-	<span class="p">)</span>
-
-	<span class="k">return</span> <span class="n">ext_data</span></div>
-
-
-<span class="c1">##########################################################################</span>
-<span class="c1"># def progress():</span>
-<span class="c1">#	 &#39;&#39;&#39; Function to track the progress of an MPI code execution. Incomplete.</span>
-<span class="c1">#</span>
-<span class="c1">#	 -----------</span>
-<span class="c1">#	 Parameters</span>
-<span class="c1">#</span>
-<span class="c1">#			 Nothing.</span>
-<span class="c1">#</span>
-<span class="c1">#	 ------------</span>
-<span class="c1">#	 Returns</span>
-<span class="c1">#</span>
-<span class="c1">#			 1&#39;&#39;&#39;</span>
-<span class="c1">#</span>
-<span class="c1">#	 count = count + 1</span>
-<span class="c1">#	 message(&quot;%f&quot; % (count * 100. / n))</span>
-<span class="c1">#	 return 1</span>
-<span class="c1">##########################################################################</span>
-
-
 <div class="viewcode-block" id="progressbar"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.progressbar">[docs]</a><span class="k">def</span> <span class="nf">progressbar</span><span class="p">(</span><span class="n">present_count</span><span class="p">,</span> <span class="n">total_counts</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Display the progress bar to std out from present_count and total_count.</span>
+	<span class="sd">&quot;&quot;&quot;Display the progress bar to std out from present_count and total_count.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
 
-<span class="sd">	present_count :	int</span>
-<span class="sd">									The present count state.</span>
-<span class="sd">	total_counts :	int</span>
-<span class="sd">									The final state.</span>
+<span class="sd">	present_count:	int</span>
+<span class="sd">																	The present count state.</span>
+<span class="sd">	total_counts:	int</span>
+<span class="sd">																	The final state.</span>
 
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
 
 <span class="sd">	1 : int</span>
-<span class="sd">			The progress bar is messageed to stdout.</span>
+<span class="sd">					The progress bar is messageed to stdout.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -2956,14 +2861,6 @@
 	<span class="p">)</span>
 	<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 	<span class="k">return</span> <span class="mi">1</span></div>
-
-
-<span class="c1">##########################################################################</span>
-<span class="c1"># def progress():</span>
-<span class="c1">#		count = count + 1</span>
-<span class="c1">#		message(&quot;%f&quot;%(count*100./n))</span>
-<span class="c1">#		return 1</span>
-<span class="c1">#######################################END################################</span>
 </pre></div>
 
            </div>
@@ -3001,18 +2898,6 @@
 
   
   
-    
-    <!-- Theme Analytics -->
-    <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'G-XXXXXXXXXX', 'auto');
-    ga('send', 'pageview');
-    </script>
-
     
    
 
