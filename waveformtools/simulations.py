@@ -216,7 +216,7 @@ class sim:
 		areal_radii={},
 		log_deltamultipoles2=None,
 		log_multipoles2=None,
-		log_deltamultipole=None,
+		log_deltamultipoles=None,
 		log_multipoles=None,
 		ref_multipoles=None,
 		indjn=None,
@@ -254,7 +254,7 @@ class sim:
 		self.areal_radii = areal_radii
 		self.log_deltamultipoles2 = log_deltamultipoles2
 		self.log_multipoles2 = log_multipoles2
-		self.log_deltamultipole = log_deltamultipole
+		self.log_deltamultipoles = log_deltamultipoles
 		self.log_multipoles = log_multipoles
 		self.ref_multipoles = ref_multipoles
 		self.indjn = indjn

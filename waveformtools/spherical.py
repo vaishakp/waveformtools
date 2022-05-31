@@ -1,7 +1,4 @@
-''' Methods to handle functions on a sphere. '''
-
-
-
+""" Methods to handle functions on a sphere. """
 
 
 ##################################
@@ -11,10 +8,8 @@
 import numpy as np
 
 
-
-
-def decompose_in_SWSHs(waveform, spin_weight=-2, ell_max=8, emm='all'):
-	''' Decompose a given function on a sphere in Spin Weighted Spherical Harmonics
+def decompose_in_SWSHs(waveform, gridinfo, spin_weight=-2, ell_max=8, emm="all"):
+	""" Decompose a given function on a sphere in Spin Weighted Spherical Harmonics
 
 	Parameters
 	----------
@@ -49,12 +44,10 @@ def decompose_in_SWSHs(waveform, spin_weight=-2, ell_max=8, emm='all'):
 	that the coordinate system is spherical polar and the poper area is the
 	same as its co-ordinate area.
 
-	'''
-
+	"""
 
 	# Find out if the unboosted waveform is a single number or defined on a spherical grid.
 	onepoint = isinstance(waveform[0], float)
-
 
 	if not onepoint:
 		# Get the spherical grid shape.
@@ -63,67 +56,58 @@ def decompose_in_SWSHs(waveform, spin_weight=-2, ell_max=8, emm='all'):
 	# Compute the meshgrid for theta and phi.
 	theta = gridinfo.theta(ntheta=ntheta, nphi=nphi)
 
-	 # Compute the meshgrid for theta and phi.
+	# Compute the meshgrid for theta and phi.
 	phi = gridinfo.phi(ntheta=ntheta, nphi=nphi)
 
-	decomposed_waveforms = {}
+	# decomposed_waveforms = {}
 
+	multipoles_all = {}
 	for item in waveform:
 		# Integrate on the sphere for decomposition into SWSHs
 
+		""" This should be fixed with summation over ell """
+
 		# define m values.
-		if m=='all':
-			m = np.arange(-l,l+1)
+		if emm_all == "all":
+			emm_all = np.arange(-ell, ell + 1)
 
 		# Convert input to arrays.
 
-		integrand_data		  = np.array(item)
-
+		integrand_data = np.array(item)
 
 		# Step 1: Compute the surface integral.
 
 		# Assign data vectors.
-		lpole  = {}
+		# lpole  = {}
 
 		# Check if data includes ghost zones or not.
-		s1, s2 = integrand_data.shape
-
-		if s1*s2 < info.npixmax:
-
-			start			= 0
-			end_dtheta		= 2*info.nghosts
-			end_dphi		= 2*info.nghosts
-		else:
-
-			start			= info.nghosts
-			end_dtheta		= info.nghosts
-			end_dphi		= info.nghosts
 
 		# Compute the meshgrid for theta and phi.
-		theta		  = gridinfo.theta(ntheta=ntheta, nphi=nphi)
+		theta = gridinfo.theta(ntheta=ntheta, nphi=nphi)
 
 		# Compute the meshgrid for theta and phi.
-		phi			  = gridinfo.phi(ntheta=ntheta, nphi=nphi)
+		phi = gridinfo.phi(ntheta=ntheta, nphi=nphi)
 
-		sqrt_met_det  = np.sqrt(np.power(np.sin(theta), 2))
+		sqrt_met_det = np.sqrt(np.power(np.sin(theta), 2))
 
+		integrand_ij = integrand_data
 
-		integrand_ij  = integrand_data
+		darea = sqrt_met_det * gridinfo.dtheta * gridinfo.dphi
 
-		darea		  = sqrt_metdet * info.dtheta * info.dphi
+		from qlmtools import Yslm_vec
 
 		for ell_index in range(ell_max):
 
-			multipoles_all = {}
-			for m_index in range(len(m)):
+			multipoles_ell = {}
+			for emm_index in range(len(emm)):
 
 				# Decompose into seperate m modes.
 
 				# m value.
-				emm_val			=	int(emm_all[m_index])
+				emm_val = int(emm_all[emm_index])
 
 				# Spin weighted spherical harmonic function at (theta, phi)
-				Ybasis_fun		=	Yslm(spin_weight, ell, m_val, theta, phi)
+				Ybasis_fun = Yslm_vec(spin_weight, ell_index, emm_val, theta, phi)
 
 				# Integrate to obtain the multipole of order l.
 
@@ -131,18 +115,18 @@ def decompose_in_SWSHs(waveform, spin_weight=-2, ell_max=8, emm='all'):
 				# Integrate the function
 
 				# Using quad
-				multipole_emm	=	quad_on_sphere(integrand_ij * Ybasis_fun * darea, info)
-				#multipole_emm	 =	 np.sum(integrand_ij * Ybasis_fun * darea)
+				multipole_emm = quad_on_sphere(integrand_ij * Ybasis_fun * darea, gridinfo)
+				# multipole_emm	 =	 np.sum(integrand_ij * Ybasis_fun * darea)
 
-				multipole_ell.update({ emm_val : multipole_emm })
-			multipoles_all.update({ ell_index : multipole_ell })
+				multipoles_ell.update({emm_val: multipole_emm})
+			multipoles_all.update({ell_index: multipoles_ell})
 
 		# Return the computed multipole.
 		return multipoles_all
 
 
-def quad_on_sphere(integrand, info, kind='third'):
-	''' Integrate on a sphere using the scipy.quad method
+def quad_on_sphere(integrand, gridinfo, kind="third"):
+	""" Integrate on a sphere using the scipy.quad method
 
 	Parameters
 	----------
@@ -170,25 +154,24 @@ def quad_on_sphere(integrand, info, kind='third'):
 	Assumes that the sphere is a unit round sphere.
 
 
-	'''
+	"""
 
 	# Step 0: Get the grid properties
 
 	# Compute the meshgrid for theta and phi.
-	theta_1d = info.theta_1d(ntheta=ntheta, nphi=nphi)
-	#theta
-	 # Compute the meshgrid for theta and phi.
-	phi_1d	 = info.phi_1d(ntheta=ntheta, nphi=nphi)
-
+	theta_1d = gridinfo.theta_1d
+	# theta
+	# Compute the meshgrid for theta and phi.
+	phi_1d = gridinfo.phi_1d
 
 	# imports
 	from scipy.interpolate import interp1d
 	from scipy.integrate import quad
 
-	theta_first_integral_val  = []
+	theta_first_integral_vals = []
 	theta_first_integral_errs = []
 	# Step 1: integrate along the theta direction
-	for phi_index in range(info.nphi):
+	for phi_index in range(gridinfo.nphi):
 		# Interpolate the integrand.
 
 		integrand_phi = integrand[:, phi_index]
@@ -196,7 +179,7 @@ def quad_on_sphere(integrand, info, kind='third'):
 		integrand_phi_interp_func = interp1d(theta_1d, integrand_phi, kind=kind)
 
 		# Integrate on the phi plane
-		integral_phi_val, integral_phi_errs  = quad(integrand_phi_interp_func, 0, np.pi)
+		integral_phi_vals, integral_phi_errs = quad(integrand_phi_interp_func, 0, np.pi)
 
 		theta_first_integral_vals.append(integral_phi_vals)
 		theta_first_integral_errs.append(integral_phi_errs)
@@ -205,12 +188,12 @@ def quad_on_sphere(integrand, info, kind='third'):
 
 	# Interpolate the integrand.
 
-	integrand_theta = theta_first_integral
+	integrand_theta = theta_first_integral_vals
 
 	integrand_theta_interp_func = interp1d(phi_1d, integrand_theta, kind=kind)
 
 	# Integrate on the theta plane
-	final_integral, semi_final_errs = quad(integrand_theta_interp_func, 0, 2*np.pi)
+	final_integral, semi_final_errs = quad(integrand_theta_interp_func, 0, 2 * np.pi)
 
 	# Get final errors
 	final_errs = semi_final_errs + np.sum(np.array(theta_first_integral_errs))

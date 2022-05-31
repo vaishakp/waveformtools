@@ -1010,7 +1010,7 @@ def cleandata(data, toldt=1e-3, bridge="no"):
 	if bridge and iscontinuous(cleaned_data)[-1] >= 2:
 		message("The data will be interpolated to bridge the gaps", message_verbosity=2)
 
-		from scipy import interpolate
+		# from scipy import interpolate
 
 		# Interpolate the data to fill in the discontinuities
 		t_final = time[-1]
@@ -1128,7 +1128,7 @@ def xtract_cphase(tsdata_p, tsdata_x, delta_t=None, to_plot=False):
 	"""
 
 	# Assign the timestep. Real and imaginary parts are assumed to have same timestep.
-	#if not delta_t:
+	# if not delta_t:
 	#	try:
 	#		delta_t = tsdata_p.delta_t
 	#	except AttributeError:
@@ -1249,46 +1249,6 @@ def xtract_camp(tsdata_p, tsdata_x, to_plot=False):
 	return camp
 
 
-############################################################################################################################################################
-# def xtract_camp(tsdata_p,tsdata_x,delta_t=None):
-#		''' Given real and imaginary parts of a complex timeseries, extract the amplitude of the complex data vector : (tsdata_p + i * tsdata_x)
-#
-#		-----------
-#		Parameters
-#			tsdata_p, tsdata_x : plus and cross polarized components of the waveforms tsdata_p and tsdata_x as pycbc TimeSeries or 1d arrays and
-#			delta_t				   : gridspacing delta_t.
-#
-#		-------------
-#		Returns
-#			nd array of extracted amplitude. '''
-#
-#		# Assign the timestep. Real and imaginary parts are assumed to have same timestep.
-#		if not delta_t:
-#			try:
-#				delta_t=tsdata_p.delta_t
-#			except AttributeError:
-#				try:
-#					delta_t=tsdata_x.delta_t
-#				except:
-#					message('Input is not a TimeSeries. Please supply gridspacing as delta_t',message_verbosity=0)
-#
-#		# Complex modulous of the data
-#		camp = np.sqrt(np.array(tsdata_p)**2 + np.array(tsdata_x)**2)
-#
-#		if plot=='yes':
-#			# Plot amplitude vs time
-#			plt.scatter(tsdata_p.sample_times,camp,s=1)
-#			plt.title("Amplitude vs time")
-#			plt.xlabel("cctk_time")
-#			plt.ylabel("Amplitude")
-#			plt.grid()
-#			#plt.savefig('../graphs/waveform_phase_complete_{}_q1a0.pdf'.format(name))
-#			plt.show()
-#		#Returns the 1d numpy array amplitude
-#		return camp
-###############################################################################################################################################################
-
-
 def xtract_camp_phase(tsdata_1, tsdata_2):
 	""" Wrapper for extracting the amplitude and the phase of the complex vector.
 
@@ -1372,9 +1332,9 @@ def get_waveform_angular_frequency(waveform, delta_t, timeaxis=None, method="FD"
 	# Compute the derivative
 	if method == "FD":
 		# Finite differencing method
-		import scipy
 		from scipy.signal import savgol_filter
 		from waveformtools.differentiate import differentiate5
+
 		# Compute the derivative
 		omega_rough = differentiate5(phase, delta_t)
 		# Smoothen the derivative
@@ -1388,6 +1348,7 @@ def get_waveform_angular_frequency(waveform, delta_t, timeaxis=None, method="FD"
 	if method == "CS":
 		# Chebyshev spectral method
 		from waveformtools.differentiate import Chebyshev_differential
+
 		if not timeaxis:
 			# Construct the time axis
 			timeaxis = np.arange(0, len(waveform) * delta_t, delta_t)
@@ -1397,49 +1358,45 @@ def get_waveform_angular_frequency(waveform, delta_t, timeaxis=None, method="FD"
 	return omega_sm
 
 
-
-
 def get_starting_angular_frequency(waveform, delta_t, npoints=10):
-    ''' Get the approximate starting frequency of the
-    input data by averaging over the first `npoints` number of points.
+	""" Get the approximate starting frequency of the
+	input data by averaging over the first `npoints` number of points.
 
-    Parameters
-    ----------
+	Parameters
+	----------
 
-    waveform :      1d array
-                    The 1d complex array of the input
-                    waveform.
+	waveform :		1d array
+					The 1d complex array of the input
+					waveform.
 
-    delta_t :    float
-                 The time step.
-
-
-    npoints :    int
-                 The number of points to average over.
-
-    Returns
-    -------
-
-    omega0 :    float
-                The approximate starting angular frequency.
+	delta_t :	 float
+				 The time step.
 
 
-    Notes
-    -----
+	npoints :	 int
+				 The number of points to average over.
 
-    Please suppy a conditioned input waveform that is neatly clipped,
-    and not tapered.
-    '''
+	Returns
+	-------
 
-    # Get angular frequencies
-    omegas = get_waveform_angular_frequency(waveform, delta_t)
-
-    # Compute the starting frequency as the mean of first npoints.
-    omega0 = np.mean(omegas[10:10+npoints])
-
-    return omega0
+	omega0 :	float
+				The approximate starting angular frequency.
 
 
+	Notes
+	-----
+
+	Please suppy a conditioned input waveform that is neatly clipped,
+	and not tapered.
+	"""
+
+	# Get angular frequencies
+	omegas = get_waveform_angular_frequency(waveform, delta_t)
+
+	# Compute the starting frequency as the mean of first npoints.
+	omega0 = np.mean(omegas[10 : 10 + npoints])
+
+	return omega0
 
 
 # Simple overlap. #Error. Add frequency domain overlap computation.
@@ -1735,7 +1692,7 @@ def taper(data, delta_t=1, zeros=150):
 
 	# Check if data is pycbc timeseries:
 	if not isinstance(data, pycbc.types.timeseries.TimeSeries):
-		flag = 1
+		# flag = 1
 		# Convert to numpy array
 		data = np.array(data)
 		# First taper both sides of the data i.e. the start and end of the data.
@@ -2697,104 +2654,6 @@ def interpolate_resample_wfs(ts_data, interp_func, new_delta_t, epoch, length, o
 	return resampled_wf
 
 
-def wavextractinf(data, areal_radius, t_start=None, t_end=None, delta_t=None, mass=1.0):
-	""" Extracts a given waveform at a particular co-ordinate radius to infinity. This uses the methods detailed in
-
-	Notes
-	-----
-	Assumes:
-
-	That the background is a Schwarzschild spacetime.
-
-	Parameters
-	----------
-
-	data :	1d array
-			The 1d waveform data.
-	areal_radius :	float
-					The (current) extraction radius of the data.
-	t_start :	float
-				The start time of the data in t/M.
-	t_end :	float
-			The end time of the data in t/M.
-	delta_t :	float
-				The time step in t/M.
-	Mass :	float
-		The total ADM mass of the spacetime.
-
-	Returns
-	-------
-
-	ext_data :	1d array
-				The extracted waveform (1d).
-
-	"""
-
-	# Check if object is pycbc timeseries. Recover delta_t, t_start, t_end if yes.
-	if not delta_t:
-		try:
-			# Find sampling time_step
-			delta_t = data.delta_t
-			data_time = data.sample_times
-			t_start_dat, t_end_dat = data_time[0], data_time[-1]
-
-		except BaseException:
-			message(
-				"Input is not a TimeSeries. Please input a pycbc TimeSeries or supply gridspacing as delta_t",
-				message_verbosity=0,
-			)
-	else:
-		t_start_dat = 0
-		t_end_dat = len(data) * delta_t
-
-	if not t_start:
-		t_start = t_start_dat
-
-	if not t_end:
-		t_end = t_end_dat
-
-	data = np.array(data)
-
-	# Revert t_start and t_end to t_start_dat and t_end_dat i.e. to the
-	# starting time and  duration of the data respectively if user specified
-	# t_start is shorter and t_end is longer than t_start + the duration of
-	# the data.
-	t_start = max(t_start, t_start_dat)
-	t_end = min(t_end, t_end_dat)
-
-	start_index = int((t_start - t_start_dat) / delta_t)
-	end_index = int((t_end - t_start_dat) / delta_t)
-
-	# Extract the data
-	ext_data = (
-		(1.0 / areal_radius)
-		* (1.0 - 2.0 * mass / areal_radius)
-		* (areal_radius * data[start_index:end_index] - (2.0) * integrate(data, t_start, t_end, delta_t))
-	)
-
-	return ext_data
-
-
-##########################################################################
-# def progress():
-#	 ''' Function to track the progress of an MPI code execution. Incomplete.
-#
-#	 -----------
-#	 Parameters
-#
-#			 Nothing.
-#
-#	 ------------
-#	 Returns
-#
-#			 1'''
-#
-#	 count = count + 1
-#	 message("%f" % (count * 100. / n))
-#	 return 1
-##########################################################################
-
-
 def progressbar(present_count, total_counts, normalize="yes"):
 	""" Display the progress bar to std out from present_count and total_count.
 
@@ -2849,11 +2708,3 @@ def progressbar(present_count, total_counts, normalize="yes"):
 	)
 	sys.stdout.flush()
 	return 1
-
-
-##########################################################################
-# def progress():
-#		count = count + 1
-#		message("%f"%(count*100./n))
-#		return 1
-#######################################END################################

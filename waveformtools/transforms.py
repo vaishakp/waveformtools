@@ -1,11 +1,11 @@
-''' Methods to transform the waveform '''
+""" Methods to transform the waveform """
 
 
 import numpy as np
 
 
 def compute_fft(udata_x, delta_x):
-	''' Find the FFT of the samples in time-space, and return with the frequencies.
+	""" Find the FFT of the samples in time-space, and return with the frequencies.
 
 	Parameters
 	----------
@@ -24,39 +24,38 @@ def compute_fft(udata_x, delta_x):
 	utilde :	1d array
 				The samples in frequency space, with conventions applied.
 
-	'''
+	"""
 
 	# import necessary libraries.
-	from numpy.fft import fft, ifft, fftfreq, fftshift
+	from numpy.fft import fft
 
 	# FFT
 	utilde_orig = fft(udata_x)
 
 	# Apply conventions.
-	utilde		= set_fft_conven(utilde_orig)
-
+	utilde = set_fft_conven(utilde_orig)
 
 	# Get frequency axes.
-	Nlen			= len(utilde)
-	#print(Nlen)
-	#Naxis			= np.arange(Nlen)
-	#freq_orig		= fftfreq(Nlen)
-	#freq_axis		= fftshift(freq_orig)*Nlen
-	#delta_x		 = xdata[1] - xdata[0]
+	Nlen = len(utilde)
+	# print(Nlen)
+	# Naxis			= np.arange(Nlen)
+	# freq_orig		= fftfreq(Nlen)
+	# freq_axis		= fftshift(freq_orig)*Nlen
+	# delta_x		 = xdata[1] - xdata[0]
 
-	#Naxis			 = np.arange(Nlen)
-	freq_axis		= np.linspace(-0.5/delta_x, 0.5/delta_x, Nlen)
+	# Naxis			 = np.arange(Nlen)
+	freq_axis = np.linspace(-0.5 / delta_x, 0.5 / delta_x, Nlen)
 
 	return freq_axis, utilde
 
 
 def compute_ifft(utilde, delta_f):
-	''' Find the inverse FFT of the samples in frequency-space, and return with the time axis.
+	""" Find the inverse FFT of the samples in frequency-space, and return with the time axis.
 
 	Parameters
 	----------
 
-	utilde  :	1d array
+	utilde	:	1d array
 				The samples in frequency-space.
 
 	delta_f :	float
@@ -71,37 +70,36 @@ def compute_ifft(utilde, delta_f):
 	udata_time :	1d array
 					The samples in time domain.
 
-	'''
+	"""
 
 	# import necessary libraries.
-	from numpy.fft import ifft, fftshift
+	from numpy.fft import ifft
 
 	# FFT
-	utilde_orig = unset_fft_conven(utilde_x)
+	utilde_orig = unset_fft_conven(utilde)
 
 	# Inverse transform
-	udata_time		= ifft(utilde_orig)
-
+	udata_time = ifft(utilde_orig)
 
 	# Get frequency axes.
-	Nlen			= len(udata_time)
-	#print(Nlen)
-	#Naxis			= np.arange(Nlen)
-	#freq_orig		= fftfreq(Nlen)
-	#freq_axis		= fftshift(freq_orig)*Nlen
-	#delta_x		 = xdata[1] - xdata[0]
+	Nlen = len(udata_time)
+	# print(Nlen)
+	# Naxis			= np.arange(Nlen)
+	# freq_orig		= fftfreq(Nlen)
+	# freq_axis		= fftshift(freq_orig)*Nlen
+	# delta_x		 = xdata[1] - xdata[0]
 
-	#Naxis			 = np.arange(Nlen)
-	delta_t			= 2./(delta_f*N)
-	Dt				= Nlen * delta_f/2
+	# Naxis			 = np.arange(Nlen)
+	delta_t = 2.0 / (delta_f * Nlen)
+	# Dt				= Nlen * delta_f/2
 
-	time_axis		= np.arange(0, delta_t*Nlen, Nlen)
+	time_axis = np.arange(0, delta_t * Nlen, Nlen)
 
-	return time_axis, udata_ttime
+	return time_axis, udata_time
 
 
 def set_fft_conven(utilde_orig):
-	''' Make a numppy fft consistent with the chosen conventions.
+	""" Make a numppy fft consistent with the chosen conventions.
 		This takes care of the zero mode factor and array position.
 		Also, it shifts the negative frequencies using numpy's fftshift.
 
@@ -116,19 +114,20 @@ def set_fft_conven(utilde_orig):
 
 	utilde_conven :	1d array
 					The fft with set conventions.
- '''
+ """
 
 	# Multiply by 2, take conjugate.
-	utilde_conven = 2*np.conj(utilde_orig)/len(utilde_orig)
+	utilde_conven = 2 * np.conj(utilde_orig) / len(utilde_orig)
 	# Restore the zero mode.
-	utilde_conven[0] = utilde_conven[0]/2
+	utilde_conven[0] = utilde_conven[0] / 2
 	# Shift the frequency axis.
 	utilde_conven = np.fft.fftshift(utilde_conven)
 
 	return utilde_conven
 
+
 def unset_fft_conven(utilde_conven):
-	''' Make an actual conventional fft consistent with numpy's conventions.
+	""" Make an actual conventional fft consistent with numpy's conventions.
 		The inverse of set_conv.
 
 
@@ -142,14 +141,13 @@ def unset_fft_conven(utilde_conven):
 	-------
 
 	utilde_np
-	 '''
+	 """
 
 	utilde_np = np.fft.ifftshift(utilde_conven)
 
-	utilde_np = len(utilde_np)*np.conj(utilde_np)/2
-	#print(utilde_original[0])
-	utilde_np[0]*=2
-	#print(utilde_original[0])
+	utilde_np = len(utilde_np) * np.conj(utilde_np) / 2
+	# print(utilde_original[0])
+	utilde_np[0] *= 2
+	# print(utilde_original[0])
 
-
-	return utilde_n
+	return utilde_np
