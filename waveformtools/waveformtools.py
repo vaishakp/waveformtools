@@ -1705,23 +1705,23 @@ def taper_tanh(waveform, time_axis=None, delta_t=None, duration=10, sides='both'
 	# Try to construct using `delta_t`
 		try:
 			time_axis = np.arange(0, data_len*delta_t, delta_t)
-			print('time axis', time_axis)
+			#print('time axis', time_axis)
 		except:
 			message('Please suppy the time axis or delta_t!')
 
 	nearest_lower_power = int(np.log(data_len)/np.log(2))
 
-	print('nearest lower power', nearest_lower_power)
+	#print('nearest lower power', nearest_lower_power)
 	# Change in length of the data.
-	data_delta_len = np.power(2, nearest_lower_power+1) - data_len
-	print('data delta len', data_delta_len)
+	data_delta_len = np.power(2, nearest_lower_power+2) - data_len
+	#print('data delta len', data_delta_len)
 	#nend_points = int((duration/2)/delta_t) + int(data_delta_len/2)
 	nend_points =  int(data_delta_len/2)
 	nstart_points = data_delta_len-nend_points
 
-	print('N startend points', nend_points, nstart_points)
+	#print('N startend points', nend_points, nstart_points)
 	new_time_axis = np.arange(time_axis[0] - nstart_points*delta_t, time_axis[-1] + nend_points*delta_t, delta_t)
-	print('New time axis', new_time_axis)
+	#print('New time axis', new_time_axis)
 	tfinal = data_len*delta_t
 
 	#start_axis = np.linspace(-1, 1, nstart_points)

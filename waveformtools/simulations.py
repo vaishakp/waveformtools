@@ -101,40 +101,34 @@ class sim:
 	data_duration:	dict of floats
 					The total cctk_time units of simulations present.
 
+
 	Methods
 	-------
-
 	calc_ref_multipoles
 		Calculate the reference multipoles as time average of first few timesclices of (2) multipole moment data.
 
 		Assignes/Updates:
 			* ref_multipoles.
 
-
 	calc_log_multipoles
 		Calculate the natural logarithm of the negative of the two sets of multipole moment.
-
 		Assignes/ Updates:
 			* log_multipoles.
 
 	calc_delta_multipoles
 		Calculate the two delta multipoles - ref multipoles.
-
 		Assignes/ Updates:
 			* delta_multipoles.
 
 	calc_amp_phase
 		Extract the amplitudes and phases of the strain waveforms.
-
 		Assignes/Updates:
 			* strain_amp
 			* strain_phase.
 
 	load_data
 		Load the multipole and distance data of the simulations.
-
 		Assignes/Updates:
-
 			* distance.
 			* dinit.
 			* mass1.
@@ -151,7 +145,6 @@ class sim:
 
 	load_strain
 		Load the strain data of the simulations from waveform directories.
-
 		Assignes/Updates:
 			* strain.
 			* strain_amp.
@@ -160,7 +153,6 @@ class sim:
 
 	load_shears
 		Load the shear data at a pole of respective horizons of the simulations from waveform directories.
-
 		Assignes/Updates:
 			* shear.
 			* shear_amp.
@@ -169,7 +161,6 @@ class sim:
 
 	ret_horizon_radii
 		A method to retrieve the areal radii of the horizons.
-
 		Assigns/Updates
 			* areal_radii
 
@@ -178,7 +169,6 @@ class sim:
 
 	_ifreversal
 		Private method to reverse the data of BH 1 and 2 if mass2 > mass1.
-
 
 	"""
 

@@ -581,7 +581,7 @@ class modes_array:
 							# construct the list of modes using
 							# the list of modes h5 file keys.
 							modes_list = _get_modes_list_from_keys(modes_keys_list, r_ext)
-							# print(modes_list)
+							#print(modes_list)
 							# Get the ell max
 							ell_max = max([item[0] for item in modes_list])
 							self.ell_max = ell_max
@@ -1115,7 +1115,7 @@ class modes_array:
 		from qlmtools import Yslm_vec
 
 		# Reconstruct the modes
-		for ell_value in range(ell_max):
+		for ell_value in range(ell_max+1):
 			for emm_value in range(-ell_value, ell_value + 1):
 				# Multiply with the SWSH basis.
 				supertransl_spherical_grid += supertransl_spherical_factor * Yslm_vec(
@@ -1318,7 +1318,7 @@ class modes_array:
 			nearest_power = int(np.log(data_len)/np.log(2))
 			req_len = np.power(2, nearest_power+1)
 			zeros = req_len - data_len
-			print('num_zeros', zeros)
+			#print('num_zeros', zeros)
 
 		# New modes array.
 
@@ -1461,6 +1461,8 @@ def _get_modes_list_from_keys(keys_list, r_ext):
 
 		# Update it with the new emm mode.
 		emm_modes_for_ell.append(emm_value)
+
+	modes_list.append([ell_value, emm_modes_for_ell])
 
 	return modes_list
 ###########################################################################################################
