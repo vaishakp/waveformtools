@@ -1,4 +1,13 @@
-""" Classes for handling the waveform modes or data defined on spheres. """
+''' Classes for handling the waveform modes or data defined on spheres.
+
+
+Classes
+-------
+spherical_array:	A 2D data-type.
+					Stores and manages two-dimensional data on surfaces of spherical topology.
+modes_array: A data-type.
+			 Handle and work with mode coefficients.
+'''
 
 
 import numpy as np
@@ -7,7 +16,30 @@ from waveformtools.waveformtools import message
 
 
 class spherical_array:
-	"""A class for handling waveforms on a sphere."""
+	"""A class for handling waveforms on a sphere.
+
+
+	Attributes
+	----------
+
+	label:	str
+			The label of the waveform data.
+	time_axis:	1d array
+				The time axis of the data.
+	frequency_axis:	1d array
+					The frequency axis if the data
+					is represented in frequency domain.
+	gridinfo:	spherical_grid
+				An instance of the `spherical_grid` class.
+
+	Methods
+	-------
+
+	delta_t:	Fetch the time stepping `delta_t`.
+	to_modes_array:	Find the waveform expressed in the
+					SWSH basis.
+
+	"""
 
 	def __init__(
 		self,
@@ -74,27 +106,26 @@ class spherical_array:
 
 	def to_modes_array(self, gridinfo, spin_weight=-2, ell_max=8):
 		"""Decompose a given spherical array function on a sphere
-				into Spin Weighted Spherical Harmonic modes.
+		into Spin Weighted Spherical Harmonic modes.
 
 		Parameters
 		----------
-		spin_weight:	 int, optional
-										 The spin weight of the waveform. It defaults to -2 for a gravitational waveform.
+		spin_weight:	int, optional
+						The spin weight of the waveform. It defaults to -2 for a gravitational waveform.
 		ell_max:	int, optional
-								The maximum value of the :math:`\\ell' polar quantum number. Defaults to 6=8.
-		gridinfo:		class instance
-										The class instance that contains the properties of the spherical grid.
+					The maximum value of the :math:`\\ell` polar quantum number. Defaults to 8.
+		gridinfo:	class instance
+					The class instance that contains the properties of the spherical grid.
 
 		Returns
 		-------
 		waveforms_modes:	modes_array
-												An instance of the `modes_array` class.
-												Containing the decomposed modes.
+							An instance of the `modes_array` class containing the decomposed modes.
 
 		Notes
 		-----
 		1. Assumes that the sphere on which this decomposition is carried out is so far out
-		   that the coordinate system is spherical polar
+		   that the coordinate system is spherical polar on a round sphere.
 		2. Assumes that the poper area is the same as its co-ordinate area.
 		3. Ensure that the label of the input spherical array indicates whether
 		   it is a time domain data or frequency domain data.
@@ -218,17 +249,17 @@ class modes_array:
 
 	Attributes
 	----------
-	label : str
+	label: str
 					The label of the modes array.
-	r_ext : float
+	r_ext: float
 					The extraction radius.
-	modes_list : list
+	modes_list: list
 							 The list of available modes
 							 in the format [l1, [m values], [l2, [m values], ...]]
 	ell_max:	int
 							The maximum :math:`\\ell`
 							mode available.
-	modes_data : 3d array
+	modes_data: 3d array
 							 The three dimensional array
 							 containing modes in time/frequency
 							 space. The axis of the array is
@@ -239,8 +270,28 @@ class modes_array:
 	data_dir:	str
 							The subdirectory in which to look
 							for the data.
-	filename : str
+	filename: str
 							The filename containg the modes data.
+
+
+	Methods
+	-------
+	get_metadata:	Get the metadata associated with the modes_array.
+	mode:	Get the data for the given :math:`\\ell, m` mode.
+	_create_modes_array:	A private method to create an empty
+							modes_array of given shape.
+	delta_t:	Set the attribute `delta_t` and/ or return its value.
+	load_modes:	Load the waveform modes from a specified h5 file.
+	save_modes: Save the waveform modes to a specified h5 file.
+	set_mode_data:	Set the `mode` data of specified modes.
+	to_frequency_basis:	Get the `modes_array` in frequency basis
+						from its time basis representation.
+	to_time_basis: Get the `modes_array` in temporal basis
+					from its frequency basis representation.
+	extrap_to_inf:	Extrapolate the modes to infinity.
+	supertranslate: Supertranslate the waveform modes.
+	boost:	Boost the waveform modes.
+
 	"""
 
 	def __init__(
@@ -259,6 +310,7 @@ class modes_array:
 		maxtime=None,
 		date=None,
 		time=None,
+		key_ex=None
 	):
 
 		self.label = label
@@ -275,6 +327,7 @@ class modes_array:
 		self.maxtime = maxtime
 		self.date = date
 		self.time = time
+		self.key_ex = key_ex
 
 	def get_metadata(self):
 		"""Get the metadata associated with the instance.
@@ -423,7 +476,7 @@ class modes_array:
 
 		return delta_f
 
-	def load_modes(self, r_ext=500, ell_max=None, pre_key=None, modes_list=None, crop=False, center=True):
+	def load_modes(self, r_ext=500, ell_max=None, pre_key=None, modes_list=None, crop=False, center=True, key_ex=None):
 		"""Load the waveform mode data from an hdf file.
 
 		Parameters
@@ -487,7 +540,25 @@ class modes_array:
 			# data = np.array(wfile['l0_m0_r500.00'])
 			# print(data)
 			# Get the list of keys.
-			modes_keys_list = sorted(list(wfile.keys()))
+			modes_keys_list = list(wfile.keys())
+
+
+			if key_ex is None:
+				# Check attribute.
+				key_ex = self.key_ex
+
+			if key_ex is not None:
+				# Filter the keys according to key_ex if specified.
+				print(key_ex)
+				self.key_ex=key_ex
+				modes_keys_list=[item for item in modes_keys_list if key_ex in item]
+				#print(modes_keys_list)
+
+			else:
+				print('key_ex is not given')
+			modes_keys_list = sorted(modes_keys_list)
+
+			#print('Modes keys', modes_keys_list)
 			# self.mode_keys_list = modes_keys_list
 			# Construct the list of modes if it doesnt exist.
 
@@ -740,6 +811,83 @@ class modes_array:
 		# Set the mode data.
 		self.modes_data[ell_value, emm_index] = data
 
+
+
+	def to_spherical_array(self, gridinfo):
+		''' Obtain the spherical array from the modes array.
+
+		Parameters
+		----------
+
+		gridinfo:	cls instance
+					An instance of the "spherical_grid" class
+					to hold the grid info.
+
+		Returns
+		-------
+
+		waveform_sp:	spherical_array
+						A member of the "spherical_array" class
+						constructed from the given "modes_rray".
+
+		'''
+
+		from qlmtools import Yslm_vec
+
+		# Create a spherical array.
+		waveform_sp = spherical_array(gridinfo=gridinfo)
+
+		# Set the time-axis
+		try:
+			waveform_sp.time_axis = self.time_axis
+		except:
+			waveform_sp.frequency_axis = self.frequency_axis
+
+		# Get the coordinate meshgrid
+		theta, phi = gridinfo.meshgrid
+
+		for item in self.modes_list:
+			# Get modes.
+			ell, emm_list = item
+
+			for emm in emm_list:
+				# For every l, m
+				sp_data += np.multiply.outer(Yslm_vec(spin_weight, ell=ell_value, emm=emm_value, theta=theta, phi=phi), self.mode(ell, emm))
+
+		# Set the data of the spherical array.
+		waveform_sp.data = sp_data
+
+		return waveform_sp
+
+	def trim(self, trim_upto_time=None):
+		""" Trim the modes_array at the beginning.
+
+		Parameters
+		----------
+		time:	float
+				The time unit upto which to discard.
+
+		Returns
+		-------
+		Re-sets the `time_axis` and `modes_array` data.
+
+		"""
+		if trim_upto_time is None:
+			trim_upto_time = self.r_ext
+
+		# Compute the start index
+		start = int(trim_upto_time/self.delta_t())
+
+		# Trim the time axis
+		self.time_axis = self.time_axis[start:]
+
+		# Trim the data
+		self.modes_data = self.modes_data[:, :, start:]
+
+		# Recenter the time axis
+		max_ind = np.argmax(np.absolute(self.mode(2, 2)))
+		self.time_axis = self.time_axis - self.time_axis[max_ind]
+
 	def to_frequency_basis(self):
 		"""Compute the modes in frequency basis.
 
@@ -754,7 +902,7 @@ class modes_array:
 		waveform_tilde_modes = modes_array(label="frequency_domain")
 		waveform_tilde_modes._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
 
-		from transforms import compute_fft
+		from waveformtools.transforms import compute_fft
 
 		for mode in self.modes_list:
 			# Extrapolate every mode
@@ -764,7 +912,7 @@ class modes_array:
 
 			for emm_value in emm_list:
 
-				freq_axis, freq_data = compute_fft(self.mode(ell_value, emm_value), self.delta_t)
+				freq_axis, freq_data = compute_fft(self.mode(ell_value, emm_value), self.delta_t())
 
 				waveform_tilde_modes.set_mode_data(ell_value, emm_value, freq_data)
 
@@ -786,7 +934,7 @@ class modes_array:
 		waveform_modes = modes_array(label="time_domain")
 		waveform_modes._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
 
-		from transforms import compute_ifft
+		from waveformtools.transforms import compute_ifft
 
 		for mode in self.modes_list:
 			# Extrapolate every mode
@@ -822,14 +970,15 @@ class modes_array:
 					to `all` if not specified.
 		method:	str
 					The method to use for extrapolation. The available methods are:
-		+-----------+---------------------------------------+
+
+		+------------+--------------------------------------+
 		| Method str | Name									|
-		+-----------+---------------------------------------+
+		+------------+--------------------------------------+
 		|'FO'		 | First order							|
 		|'SO'		 | Second order							|
 		|'SIO'		 | Second improved order				|
 		|'NM'		 | Numerical method (not ready yet)		|
-		+-----------+---------------------------------------+
+		+------------+--------------------------------------+
 
 		Returns
 		-------
@@ -847,9 +996,9 @@ class modes_array:
 
 			extrap_method = partial(
 				waveextract_to_inf_perturbative_twop5_order,
-				delta_t=self.delta_t,
+				delta_t=self.delta_t(),
 				areal_radius=self.r_ext,
-				Mass=mass,
+				mass=mass,
 				spin=spin,
 			)
 
@@ -859,9 +1008,9 @@ class modes_array:
 
 			extrap_method = partial(
 				waveextract_to_inf_perturbative_two_order,
-				delta_t=self.delta_t,
+				delta_t=self.delta_t(),
 				areal_radius=self.r_ext,
-				Mass=mass,
+				mass=mass,
 				spin=spin,
 			)
 
@@ -870,7 +1019,7 @@ class modes_array:
 			from waveformtools.extrapolate import waveextract_to_inf_perturbative_one_order
 
 			extrap_method = partial(
-				waveextract_to_inf_perturbative_one_order, u_ret=self.time_axis, areal_radius=self.r_ext, Mass=mass
+				waveextract_to_inf_perturbative_one_order, u_ret=self.time_axis, areal_radius=self.r_ext, mass=mass
 			)
 
 		if method == "NM":
@@ -881,7 +1030,7 @@ class modes_array:
 			modes_list = construct_mode_list(self.ell_max)
 
 		# Create a mode array for the extrapolated waveform.
-		extrap_wf = modes_array(label="rPsi4_inf")
+		extrap_wf = modes_array(label="rPsi4_inf",  modes_list=self.modes_list, ell_max=self.ell_max)
 
 		extrap_wf._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
 
@@ -1033,6 +1182,226 @@ class modes_array:
 		return boosted_waveform_modes
 
 
+	def get_strain_from_psi4(self, omega0='auto'):
+		''' Get the strain `modes_array` from :math:`\\Psi_4` by
+		fixed frequency integration.
+
+		Parameters
+		----------
+		omega0:	float, optional
+				The lower cutoff angular frequency for FFI.
+				By default, it computes this from the mode
+				data.
+
+		Returns
+		-------
+
+		strain_waveform:	modes_array
+							The computed strain modes.
+
+		'''
+
+		# Initialize a mode array for strain.
+		strain_waveform = modes_array(label=f'{self.label} strain from Psi4', r_ext=500, ell_max=8, modes_list=self.modes_list)
+
+		strain_waveform.time_axis = self.time_axis
+		strain_waveform.ell_max = self.ell_max
+
+		data_len = self.data_len
+
+		strain_waveform._create_modes_array(ell_max=self.ell_max, data_len=data_len)
+
+		# Integrate,
+		from waveformtools.integrate import fixed_frequency_integrator
+		from waveformtools.waveformtools import get_starting_angular_frequency as sang_f
+
+		omega_st = omega0
+		for item in self.modes_list[2:]:
+			ell, emm_list = item
+			for emm in emm_list:
+				mode_data = self.mode(ell, emm)
+				if omega0=='auto':
+					omega_st = abs(sang_f(mode_data, delta_t=self.delta_t()))/10
+				strain_mode_data, _ = fixed_frequency_integrator(udata_time=mode_data, delta_t=self.delta_t(), omega0=omega_st, order=2)
+				strain_waveform.set_mode_data(ell, emm, data=strain_mode_data)
+
+		return strain_waveform
+
+
+	def taper(self, zeros='auto'):
+		''' Taper a waveform at both ends and insert zeros if needed
+
+		Parameters
+		----------
+
+		zeros:	int
+				The number of zeros to add at rach end
+
+		Returns
+		-------
+
+		tapered_modes:	modes_array
+						Modes array with tapered mode data.
+		'''
+
+
+		from waveformtools.waveformtools import taper
+
+		if zeros=='auto':
+			# Decide the number of zeros
+			data_len = self.data_len
+
+			nearest_power = int(np.log(data_len)/np.log(2))
+			req_len = np.power(2, nearest_power+1)
+			zeros = req_len - data_len
+			print('num_zeros', zeros)
+
+		# New modes array.
+
+		tapered_modes= None
+
+		for item in self.modes_list[:]:
+			ell, emm_list = item
+			for emm in emm_list:
+				input_data_re = self.mode(ell, emm).real
+				input_data_im = self.mode(ell, emm).imag
+
+				tapered_data_re = taper(input_data_re, zeros=zeros)
+				tapered_data_im = taper(input_data_im, zeros=zeros)
+
+				#tapered_data_re = taper_tanh(input_data_re, delta_t=self.delta_t())
+				#tapered_data_im = taper_tanh(input_data_im, delta_t=self.delta_t())
+
+				new_data_len  = len(tapered_data_re)
+
+				if tapered_modes is None:
+					tapered_modes = modes_array(label = f'tapered {self.label}', r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+					tapered_modes._create_modes_array(ell_max=self.ell_max, data_len=new_data_len)
+				tapered_data = tapered_data_re + 1j*tapered_data_im
+
+				#print(len(tapered_data_re))
+				tapered_modes.set_mode_data(ell, emm, data=tapered_data)
+
+		# Set the time axis
+		new_time_axis = np.arange(0, new_data_len*self.delta_t(), self.delta_t())
+
+		tapered_modes.time_axis = new_time_axis
+
+		# Recenter the modes.
+		tapered_modes.trim(trim_upto_time=0)
+
+		return tapered_modes
+
+	def taper_tanh(self, time_axis=None, zeros='auto', duration=10, sides='both'):
+		''' Taper a waveform at both ends and insert zeros if needed
+
+		Parameters
+		----------
+
+		zeros:	int
+				The number of zeros to add at rach end
+
+		Returns
+		-------
+
+		tapered_modes:	modes_array
+						Modes array with tapered mode data.
+		'''
+
+
+		from waveformtools.waveformtools import taper_tanh
+
+		if zeros=='auto':
+			# Decide the number of zeros
+			data_len = self.data_len
+
+			nearest_power = int(np.log(data_len)/np.log(2))
+			req_len = np.power(2, nearest_power+1)
+			zeros = req_len - data_len
+			print('num_zeros', zeros)
+
+		# New modes array.
+
+		tapered_modes= None
+
+		for item in self.modes_list[:]:
+			ell, emm_list = item
+			for emm in emm_list:
+				input_data_re = self.mode(ell, emm).real
+				input_data_im = self.mode(ell, emm).imag
+
+				#tapered_data_re = taper(input_data_re, zeros=zeros)
+				#tapered_data_im = taper(input_data_im, zeros=zeros)
+
+				_, tapered_data_re = taper_tanh(input_data_re, delta_t=self.delta_t(), duration=duration, sides=sides)
+				_, tapered_data_im = taper_tanh(input_data_im, delta_t=self.delta_t(), duration=duration, sides=sides)
+
+				new_data_len  = len(tapered_data_re)
+
+				if tapered_modes is None:
+					tapered_modes = modes_array(label = f'tapered {self.label}', r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+					tapered_modes._create_modes_array(ell_max=self.ell_max, data_len=new_data_len)
+				tapered_data = tapered_data_re + 1j*tapered_data_im
+
+				#print(len(tapered_data_re))
+				tapered_modes.set_mode_data(ell, emm, data=tapered_data)
+
+		# Set the time axis
+		new_time_axis = np.arange(0, new_data_len*self.delta_t(), self.delta_t())
+
+		tapered_modes.time_axis = new_time_axis
+
+		# Recenter the modes.
+		tapered_modes.trim(trim_upto_time=0)
+
+		return tapered_modes
+
+
+	def low_cut(self, omega0=0.03, order=2):
+		''' Apply the low cut filter from waveformtools.low_cut_filter
+
+		Parameters
+		----------
+		order:	   int, optional
+					The order of the butterworth filter.
+		omega0:		float, optional
+					The cutoff frequency of the butterworth filter.
+
+		Returns:
+		--------
+		filtered_modes:	modes_array
+						A modes array object containing filtered modes.
+
+		'''
+
+		# modes_array for filtered data.
+		filtered_modes=None
+
+		# Import the filter
+		from waveformtools.waveformtools import low_cut_filter
+
+		for item in self.modes_list:
+			# Iterate over available modes.
+			ell, emm_list = item
+			for emm in emm_list:
+
+				if filtered_modes is None:
+					# Create filtered_modes
+					filtered_modes = modes_array(label = f'lc filtered {self.label}', r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+					filtered_modes._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
+
+				# Get filtered mode data.
+				filtered_data = low_cut_filter(self.mode(ell, emm), self.frequency_axis, omega0=omega0, order=order)
+
+				# Set the mode data.
+				filtered_modes.set_mode_data(ell, emm, data=filtered_data)
+
+		# Set the f axis.
+		filtered_modes.frequency_axis = self.frequency_axis
+
+		return filtered_modes
+
+
 def _get_modes_list_from_keys(keys_list, r_ext):
 	"""Get the modes list from the keys list
 	of an hdf file.
@@ -1052,10 +1421,17 @@ def _get_modes_list_from_keys(keys_list, r_ext):
 
 	# Sort the keys to ensure a nice
 	# modes list structure.
-	keys_list = sorted(keys_list)
-	keys_list = [item for item in keys_list if f"r{r_ext}" in item]
+	keys_list_orig = sorted(keys_list)
 
-	# print('List of keys received', keys_list)
+	if r_ext!=-1:
+		keys_list = [item for item in keys_list_orig if f"r{r_ext}" in item]
+
+
+		if keys_list==[]:
+			print('Got an empty list. Searching for r_ext value in key string')
+			keys_list = [item for item in keys_list_orig if f"{r_ext}" in item]
+
+	#print('List of keys received', keys_list)
 	# The list of modes.
 	modes_list = []
 
@@ -1087,8 +1463,7 @@ def _get_modes_list_from_keys(keys_list, r_ext):
 		emm_modes_for_ell.append(emm_value)
 
 	return modes_list
-
-
+###########################################################################################################
 def _get_ell_emm_from_key(key):
 	"""Get the :math:`\\ell` and :math:`m` values
 	from a given key string of an hdf file.
@@ -1154,7 +1529,7 @@ def construct_mode_list(ell_max, spin_weight=-2):
 	# The modes list.
 	modes_list = []
 
-	for ell_index in range(abs(spin_weight), ell_max):
+	for ell_index in range(abs(spin_weight), ell_max+1):
 		# Append all emm modes for each ell mode.
 		modes_list.append([ell_index, list(range(-ell_index, ell_index + 1))])
 

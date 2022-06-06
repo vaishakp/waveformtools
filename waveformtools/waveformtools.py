@@ -1026,6 +1026,7 @@ def cleandata(data, toldt=1e-3, bridge="no"):
 		interp_data = []
 		interp_data.append(proper_timeaxis)
 		if axis > 0:
+			from scipy import interpolate
 			for index in range(1, min(shapes[0], shapes[1])):
 				interp_datai = scipy.interpolate.interp1d(time, data[index, :])
 				interp_data.append(interp_datai(proper_timeaxis))
@@ -1358,7 +1359,7 @@ def get_waveform_angular_frequency(waveform, delta_t, timeaxis=None, method="FD"
 	return omega_sm
 
 
-def get_starting_angular_frequency(waveform, delta_t, npoints=10):
+def get_starting_angular_frequency(waveform, delta_t, npoints=400):
 	"""Get the approximate starting frequency of the
 	input data by averaging over the first `npoints` number of points.
 
@@ -1394,7 +1395,7 @@ def get_starting_angular_frequency(waveform, delta_t, npoints=10):
 	omegas = get_waveform_angular_frequency(waveform, delta_t)
 
 	# Compute the starting frequency as the mean of first npoints.
-	omega0 = np.mean(omegas[10 : 10 + npoints])
+	omega0 = np.mean(omegas[100 : 100 + npoints])
 
 	return omega0
 
@@ -1576,7 +1577,7 @@ def addzeros(data, zeros):
 			The waveform data as list or numpy array or pycbc timeseries.
 
 	zeros	:	int
-		    The number of zeros to be added.
+			The number of zeros to be added.
 
 	Returns
 	-------
@@ -1663,6 +1664,99 @@ def shorten(tsdata, start, end, delta_t=None):
 	return short_ts
 
 
+def taper_tanh(waveform, time_axis=None, delta_t=None, duration=10, sides='both'):
+	'''
+	Taper a waveform with a :math:`tanh` function
+	at either ends
+
+	Parameters
+	----------
+	waveform:	 1d array
+				 A 1d array of waveform data.
+	delta_t:	 float, optional
+				 The time stepping `delta_t`.
+				 Optional if `time_axis` is given.
+	percent:	 int, optional
+				 The percent of data to taper. This
+				 is equally distributed on either
+				 sides of the array. Defaults to 10.
+	sides:		 str
+				 A string indicating which sides to taper.
+				 `beg` tapers the beginning, `end` tapers the end
+				and `both` tapers both the ends.
+	Returns
+	-------
+	time_axis, waveform:	1d array
+							The timeaxis and the waveform data
+							of the tapered waveform.
+	'''
+
+	data_len = len(waveform)
+
+	if delta_t is None:
+		try:
+			delta_t = time_axis[1] - time_axis[0]
+		except:
+			delta_t = 1
+			#message('Please supply delta_t or the time_axis')
+
+	#	 delta_t = 1
+	if time_axis is None:
+	# Try to construct using `delta_t`
+		try:
+			time_axis = np.arange(0, data_len*delta_t, delta_t)
+			print('time axis', time_axis)
+		except:
+			message('Please suppy the time axis or delta_t!')
+
+	nearest_lower_power = int(np.log(data_len)/np.log(2))
+
+	print('nearest lower power', nearest_lower_power)
+	# Change in length of the data.
+	data_delta_len = np.power(2, nearest_lower_power+1) - data_len
+	print('data delta len', data_delta_len)
+	#nend_points = int((duration/2)/delta_t) + int(data_delta_len/2)
+	nend_points =  int(data_delta_len/2)
+	nstart_points = data_delta_len-nend_points
+
+	print('N startend points', nend_points, nstart_points)
+	new_time_axis = np.arange(time_axis[0] - nstart_points*delta_t, time_axis[-1] + nend_points*delta_t, delta_t)
+	print('New time axis', new_time_axis)
+	tfinal = data_len*delta_t
+
+	#start_axis = np.linspace(-1, 1, nstart_points)
+	#end_axis	= np.linspace(1, -1, nend_points)
+
+
+	#norm_time_axis = time_axis/max(time_axis)
+
+	#n_delta_t = delta_t/data_len
+
+	start_win = (np.tanh(3*(new_time_axis - duration/2)/(duration/2))+1)/2
+	end_win   = (np.tanh(3*(-new_time_axis + (tfinal- duration/2))/(duration/2)) + 1)/2
+
+	#from scipy.interpolate import interpolate
+	waveform_widened = np.concatenate((np.zeros([nstart_points]), waveform, np.zeros([nend_points-1])))
+
+	#plt.scatter(new_time_axis, waveform_widened, s=1)
+	#plt.show()
+
+	if sides=='both':
+		tapered_waveform = start_win * end_win * waveform_widened
+	elif sides=='beg':
+		tapered_waveform = start_win * waveform_widened
+	elif sides=='end':
+		tapered_waveform = end_win * waveform_widened
+	else:
+		message('Please specify valid sides argument. Sides can be beg, end or both.')
+
+
+	#plt.scatter(new_time_axis, tapered_waveform, s=1)
+	#plt.show()
+
+	return new_time_axis, tapered_waveform
+
+
 def taper(data, delta_t=1, zeros=150):
 	"""A method to taper and append additional zeros at either ends, using the `taper` function of the pycbc TimeSeries object.
 
@@ -1719,6 +1813,51 @@ def taper(data, delta_t=1, zeros=150):
 
 	# Return the timeseries
 	return tapered_data
+
+def low_cut_filter(utilde, freqs, order=2, omega0=0.03):
+    ''' Apply low frequency cut filter using a butterworth filter.
+
+    Parameters
+    ----------
+    utilde:    1d array
+               The frequency domain data.
+    freqs:     1d array
+               The frequencies.
+    order:     int
+               The order of the butterworth filter.
+    omega0:    float
+               The cutoff frequency of the butterworth filter.
+
+    Returns
+    -------
+    utilde_lc:    1d array
+                  The filtered data.
+    '''
+
+    from scipy import signal
+    from scipy.interpolate import interp1d
+
+    #import matplotlib.pyplot as plt
+
+    b, a = signal.butter(order, omega0, 'high', analog=True)
+
+    w, h = signal.freqs(b, a)
+
+    # Make negative axis and data.
+    filter_freqs = np.concatenate((-w[::-1], w))
+    filter_coeffs = np.concatenate((np.conjugate(h[::-1]), h))
+
+    # Resample the filter at data freqs.
+    filter_int = interp1d(filter_freqs, filter_coeffs)
+    filter_resam = filter_int(freqs)
+
+    #signal_int = interp1d(wf1_strain_tap2_tilde.frequency_axis, wf1_strain_tap2_tilde.mode(2,2))
+
+    #signal_resam = signal_int(w)
+
+    filtered_signal = utilde*filter_resam
+
+    return filtered_signal
 
 
 def center(wvp, wvc=None, delta_t=None):

@@ -7,7 +7,7 @@
 
 
 import numpy as np
-
+import waveformtools
 ##################################################
 # Fixed frequency integration
 ##################################################
@@ -53,7 +53,7 @@ def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None, omega0=0
 	if not utilde_conven:
 		# Compute the FFT of data
 		from numpy.fft import ifft
-		from transforms import compute_fft, unset_fft_conven
+		from waveformtools.transforms import compute_fft, unset_fft_conven
 
 		# from waveformtools import taper
 
@@ -79,7 +79,7 @@ def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None, omega0=0
 	# Construct the angular frequency axis.
 	omega_axis = 2 * np.pi * freq_axis
 
-	print("The chosen cutoff angular frequency is", omega0)
+	#print("The chosen cutoff angular frequency is", omega0)
 
 	if omega0 > 0:
 		for index, element in enumerate(omega_axis):

@@ -1,11 +1,17 @@
 # Copyright (c) 2020, Vaishak Prasad
-# See LICENSE file for details: <https://gitlab.com/vaishakp/waveformtools/-/blob/main/LICENSE>
-"""Module for the analysis and handling of numerical relativity and gravitational waveform data.
+# See [LICENSE](https://gitlab.com/vaishakp/waveformtools/-/blob/main/LICENSE) file for details.
+
+"""
+Module for the analysis and handling of numerical relativity and gravitational waveform data.
 
 Classes
 -------
-sim : Base class for NR data
-    This is needed to retrieve and handle Numerical Relativity data.
+sim: Base class for NR simulations data.
+				This is needed to retrieve and handle Numerical Relativity data.
+spherical_array:	A 2D data-type.
+					Stores and manages two-dimensional data on surfaces of spherical topology.
+modes_array: A data-type.
+			 Handle and work with mode coefficients.
 
 """
 

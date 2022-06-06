@@ -1,5 +1,7 @@
-""" Tools for differentiating data. """
+"""
+Tools for differentiating data.
 
+"""
 #######################################################
 # Imports
 #######################################################
@@ -540,7 +542,7 @@ def differentiate_cwaveform(time_axis, waveform):
 	"""
 
 	# Get the amplitude and phase of the complex 1d waveform.
-	from waveformtools import xtract_camp_phase
+	from waveformtools.waveformtools import xtract_camp_phase
 
 	waveform_amp, waveform_phase = xtract_camp_phase(waveform.real, waveform.imag)
 
