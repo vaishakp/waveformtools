@@ -9,7 +9,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>waveformtools.integrate &mdash; waveformtools 2022-05-03 documentation</title>
+  <title>waveformtools.compare &mdash; waveformtools 2022-05-03 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="waveformtools.simulations" href="waveformtools.simulations.html" />
-    <link rel="prev" title="waveformtools.grids" href="waveformtools.grids.html" /> 
+    <link rel="next" title="waveformtools.extrapolate" href="waveformtools.extrapolate.html" />
+    <link rel="prev" title="waveformtools.CoM" href="waveformtools.CoM.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -95,10 +95,10 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.html#classes">Classes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.CoM.html">waveformtools.CoM</a></li>
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.compare.html">waveformtools.compare</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.compare</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.grids.html">waveformtools.grids</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.integrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.integrate.html">waveformtools.integrate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
@@ -158,13 +158,13 @@
         
           <li><a href="waveformtools.html">waveformtools</a> &raquo;</li>
         
-      <li>waveformtools.integrate</li>
+      <li>waveformtools.compare</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/_autosummary/waveformtools.integrate.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/_autosummary/waveformtools.compare.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -177,9 +177,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="module-waveformtools.integrate">
-<span id="waveformtools-integrate"></span><h1>waveformtools.integrate<a class="headerlink" href="#module-waveformtools.integrate" title="Permalink to this headline">¶</a></h1>
-<p>Methods to integrate functions</p>
+  <section id="module-waveformtools.compare">
+<span id="waveformtools-compare"></span><h1>waveformtools.compare<a class="headerlink" href="#module-waveformtools.compare" title="Permalink to this headline">¶</a></h1>
+<p>Compare the waveforms and modes</p>
 <p class="rubric">Functions</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -187,42 +187,59 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.integrate.fixed_frequency_integrator" title="waveformtools.integrate.fixed_frequency_integrator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fixed_frequency_integrator</span></code></a>(udata_time, delta_t)</p></td>
-<td><p>Fixed frequency integrator as presented in Reisswig</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.compare.plot_mode_differences" title="waveformtools.compare.plot_mode_differences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_mode_differences</span></code></a>(waveforms[, nmodes, ...])</p></td>
+<td><p>Plot the fractional difference of the first <cite>nmodes</cite> dominant modes of the input waveforms.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.compare.plot_modes" title="waveformtools.compare.plot_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_modes</span></code></a>(wf1[, nmodes, save_fig, xlim])</p></td>
+<td><p>Plot the first <cite>nmodes</cite> dominant modes of the input waveforms</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.integrate.fixed_frequency_integrator">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.integrate.</span></span><span class="sig-name descname"><span class="pre">fixed_frequency_integrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">udata_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utilde_conven</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/integrate.html#fixed_frequency_integrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.integrate.fixed_frequency_integrator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fixed frequency integrator as presented in Reisswig</p>
+<dt class="sig sig-object py" id="waveformtools.compare.plot_mode_differences">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.compare.</span></span><span class="sig-name descname"><span class="pre">plot_mode_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'t/M'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\\Psi_{4}^{(\\ell</span> <span class="pre">m)}'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-</span> <span class="pre">1000,</span> <span class="pre">100]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/compare.html#plot_mode_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.compare.plot_mode_differences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the fractional difference of the first <cite>nmodes</cite>
+dominant modes of the input waveforms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>udata_time:     1d array</strong></dt><dd><p>The input data in time.</p>
+<dt><strong>waveforms:        modes_array</strong></dt><dd><p>The list of <cite>modes_array</cite> waveforms
+to plot.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The time stepping.</p>
+<dt><strong>nmodes:         int</strong></dt><dd><p>The number of modes to plot.</p>
 </dd>
-<dt><strong>utilde_conven:          1d array, optional</strong></dt><dd><p>The conventional FFT of the samples udata_time.</p>
-</dd>
-<dt><strong>omega0: float, optional</strong></dt><dd><p>The cutoff angular frequency in the integration. Must be lower than the starting angular frequency of the input waveform.
-All frequencies below this will be neglected.
-The default value is 0.</p>
-</dd>
-<dt><strong>order:          int, optional</strong></dt><dd><p>The number of times to integrate the integrand in time.
-Defaults to 1.</p>
-</dd>
-<dt><strong>zero_mode:      float, optional</strong></dt><dd><p>The zero mode amplitude of the FFT required.
-Defaults to 0 i.e. the zero mode is removed.</p>
+<dt><strong>tol:    float</strong></dt><dd><p>The tolerance to detect the modes.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt>u_integ_n_time: 1d array</dt><dd><p>The input waveform in time-space, integrated in frequency space using FFI.</p>
+<dt>Plots.</dt><dd></dd>
+</dl>
 </dd>
-<dt>u_integ_integ_n:        1d array</dt><dd><p>The integrated u samples in Fourier space.</p>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.compare.plot_modes">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.compare.</span></span><span class="sig-name descname"><span class="pre">plot_modes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wf1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-</span> <span class="pre">1200,</span> <span class="pre">100]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/compare.html#plot_modes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.compare.plot_modes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the first <cite>nmodes</cite> dominant modes of
+the input waveforms</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>wf:                       modes_array</strong></dt><dd><p>The list of <cite>modes_array</cite> waveforms
+to plot.</p>
 </dd>
+<dt><strong>nmodes:         int</strong></dt><dd><p>The number of modes to plot.</p>
+</dd>
+<dt><strong>tol:    float</strong></dt><dd><p>The tolerance to detect the modes.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Plots.</dt><dd></dd>
 </dl>
 </dd>
 </dl>
@@ -238,10 +255,10 @@ Defaults to 0 i.e. the zero mode is removed.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="waveformtools.simulations.html" class="btn btn-neutral float-right" title="waveformtools.simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="waveformtools.extrapolate.html" class="btn btn-neutral float-right" title="waveformtools.extrapolate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="waveformtools.grids.html" class="btn btn-neutral float-left" title="waveformtools.grids" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="waveformtools.CoM.html" class="btn btn-neutral float-left" title="waveformtools.CoM" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -46,7 +46,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+        <div class="wy-side-nav-search"  style="background: green" >
           
 
           
@@ -266,8 +266,8 @@
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="kn">from</span> <span class="nn">integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
-	<span class="kn">from</span> <span class="nn">differentiate</span> <span class="kn">import</span> <span class="n">differentiate_cwaveform</span>
+	<span class="kn">from</span> <span class="nn">waveformtools.integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
+	<span class="kn">from</span> <span class="nn">waveformtools.differentiate</span> <span class="kn">import</span> <span class="n">differentiate_cwaveform</span>
 	<span class="c1"># Timeaxis</span>
 
 	<span class="n">timeaxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
@@ -492,6 +492,18 @@
 
   
   
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'G-XXXXXXXXXX', 'auto');
+    ga('send', 'pageview');
+    </script>
+
     
    
 

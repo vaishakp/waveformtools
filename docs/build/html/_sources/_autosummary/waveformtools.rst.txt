@@ -35,6 +35,7 @@
 
    waveformtools.BMS
    waveformtools.CoM
+   waveformtools.compare
    waveformtools.differentiate
    waveformtools.extrapolate
    waveformtools.grids

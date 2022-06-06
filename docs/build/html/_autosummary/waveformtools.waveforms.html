@@ -96,13 +96,17 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.html#classes">Classes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.CoM.html">waveformtools.CoM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.compare.html">waveformtools.compare</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.grids.html">waveformtools.grids</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.integrate.html">waveformtools.integrate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.waveforms</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.waveforms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
@@ -180,6 +184,14 @@
   <section id="module-waveformtools.waveforms">
 <span id="waveformtools-waveforms"></span><h1>waveformtools.waveforms<a class="headerlink" href="#module-waveformtools.waveforms" title="Permalink to this headline">¶</a></h1>
 <p>Classes for handling the waveform modes or data defined on spheres.</p>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>spherical_array:        A 2D data-type.</dt><dd><p>Stores and manages two-dimensional data on surfaces of spherical topology.</p>
+</dd>
+<dt>modes_array: A data-type.</dt><dd><p>Handle and work with mode coefficients.</p>
+</dd>
+</dl>
 <p class="rubric">Functions</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -234,22 +246,22 @@ given the <span class="math notranslate nohighlight">\(\ell_{max}.\)</span></p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="waveformtools.waveforms.modes_array">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">waveformtools.waveforms.</span></span><span class="sig-name descname"><span class="pre">modes_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">waveformtools.waveforms.</span></span><span class="sig-name descname"><span class="pre">modes_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_ex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class that holds mode array of waveforms</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>label</strong><span class="classifier">str</span></dt><dd><p>The label of the modes array.</p>
+<dt><strong>label: str</strong></dt><dd><p>The label of the modes array.</p>
 </dd>
-<dt><strong>r_ext</strong><span class="classifier">float</span></dt><dd><p>The extraction radius.</p>
+<dt><strong>r_ext: float</strong></dt><dd><p>The extraction radius.</p>
 </dd>
-<dt><strong>modes_list</strong><span class="classifier">list</span></dt><dd><p>The list of available modes
+<dt><strong>modes_list: list</strong></dt><dd><p>The list of available modes
 in the format [l1, [m values], [l2, [m values], …]]</p>
 </dd>
 <dt><strong>ell_max:        int</strong></dt><dd><p>The maximum <span class="math notranslate nohighlight">\(\ell\)</span>
 mode available.</p>
 </dd>
-<dt><strong>modes_data</strong><span class="classifier">3d array</span></dt><dd><p>The three dimensional array
+<dt><strong>modes_data: 3d array</strong></dt><dd><p>The three dimensional array
 containing modes in time/frequency
 space. The axis of the array is
 (<span class="math notranslate nohighlight">\(\ell\)</span>, <span class="math notranslate nohighlight">\(m\)</span>, time/freq).</p>
@@ -260,50 +272,53 @@ modes data.</p>
 <dt><strong>data_dir:       str</strong></dt><dd><p>The subdirectory in which to look
 for the data.</p>
 </dd>
-<dt><strong>filename</strong><span class="classifier">str</span></dt><dd><p>The filename containg the modes data.</p>
+<dt><strong>filename: str</strong></dt><dd><p>The filename containg the modes data.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col style="width: 65%" />
+<col style="width: 35%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.boost" title="waveformtools.waveforms.modes_array.boost"><code class="xref py py-obj docutils literal notranslate"><span class="pre">boost</span></code></a>(conformal_factor)</p></td>
-<td><p>Boost the waveform given the unboosted waveform and the boost conformal factor.</p></td>
+<tr class="row-odd"><td><p><strong>get_metadata:   Get the metadata associated with the modes_array.</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.delta_t" title="waveformtools.waveforms.modes_array.delta_t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta_t</span></code></a>([value])</p></td>
-<td><p>Sets and returns the value of time stepping <span class="math notranslate nohighlight">\(dt\)</span>.</p></td>
+<tr class="row-even"><td><p><strong>mode:   Get the data for the given</strong></p></td>
+<td><p>(math:<cite>ell, m</cite> mode.)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.extrap_to_inf" title="waveformtools.waveforms.modes_array.extrap_to_inf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extrap_to_inf</span></code></a>([mass, spin, modes_list, method])</p></td>
-<td><p>Extrapolate the <span class="math notranslate nohighlight">\(\Psi_4\)</span> modes to infinity using the perturbative improved second order method.</p></td>
+<tr class="row-odd"><td><p><strong>_create_modes_array:    A private method to create an empty</strong></p></td>
+<td><p>modes_array of given shape.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.get_metadata" title="waveformtools.waveforms.modes_array.get_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata</span></code></a>()</p></td>
-<td><p>Get the metadata associated with the instance.</p></td>
+<tr class="row-even"><td><p><strong>delta_t:        Set the attribute `delta_t` and/ or return its value.</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.load_modes" title="waveformtools.waveforms.modes_array.load_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_modes</span></code></a>([r_ext, ell_max, pre_key, ...])</p></td>
-<td><p>Load the waveform mode data from an hdf file.</p></td>
+<tr class="row-odd"><td><p><strong>load_modes:     Load the waveform modes from a specified h5 file.</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.mode" title="waveformtools.waveforms.modes_array.mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code></a>(ell, emm)</p></td>
-<td><p>The modes array data structure to hold waveform modes.</p></td>
+<tr class="row-even"><td><p><strong>save_modes: Save the waveform modes to a specified h5 file.</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.save_modes" title="waveformtools.waveforms.modes_array.save_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_modes</span></code></a>([r_ext, ell_max, pre_key, ...])</p></td>
-<td><p>Save the waveform mode data to an hdf file.</p></td>
+<tr class="row-odd"><td><p><strong>set_mode_data:  Set the `mode` data of specified modes.</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.set_mode_data" title="waveformtools.waveforms.modes_array.set_mode_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_mode_data</span></code></a>(ell_value, emm_value, data)</p></td>
-<td><p>Set the mode array data for the respective <span class="math notranslate nohighlight">\((\ell, m)\)</span> mode.</p></td>
+<tr class="row-even"><td><p><strong>to_frequency_basis:     Get the `modes_array` in frequency basis</strong></p></td>
+<td><p>from its time basis representation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.supertranslate" title="waveformtools.waveforms.modes_array.supertranslate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">supertranslate</span></code></a>(supertransl_alpha_modes, gridinfo)</p></td>
-<td><p>Supertranslate the <span class="math notranslate nohighlight">\(\Psi_{4\ell m}\)</span> waveform modes, give the, the supertranslation parameter and the order.</p></td>
+<tr class="row-odd"><td><p><strong>to_time_basis: Get the `modes_array` in temporal basis</strong></p></td>
+<td><p>from its frequency basis representation.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.to_frequency_basis" title="waveformtools.waveforms.modes_array.to_frequency_basis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_frequency_basis</span></code></a>()</p></td>
-<td><p>Compute the modes in frequency basis.</p></td>
+<tr class="row-even"><td><p><strong>extrap_to_inf:  Extrapolate the modes to infinity.</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.modes_array.to_time_basis" title="waveformtools.waveforms.modes_array.to_time_basis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_time_basis</span></code></a>()</p></td>
-<td><p>Compute the modes in time basis.</p></td>
+<tr class="row-odd"><td><p><strong>supertranslate: Supertranslate the waveform modes.</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>boost:  Boost the waveform modes.</strong></p></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -402,14 +417,14 @@ to <cite>all</cite> if not specified.</p>
 </dd>
 <dt><strong>method: str</strong></dt><dd><p>The method to use for extrapolation. The available methods are:</p>
 </dd>
-<dt><strong>+———–+—————————————+</strong></dt><dd></dd>
+<dt><strong>+————+————————————–+</strong></dt><dd></dd>
 <dt><strong>| Method str | Name                                                                     |</strong></dt><dd></dd>
-<dt><strong>+———–+—————————————+</strong></dt><dd></dd>
+<dt><strong>+————+————————————–+</strong></dt><dd></dd>
 <dt><strong>|’FO’            | First order                                                  |</strong></dt><dd></dd>
 <dt><strong>|’SO’            | Second order                                                 |</strong></dt><dd></dd>
 <dt><strong>|’SIO’           | Second improved order                                |</strong></dt><dd></dd>
 <dt><strong>|’NM’            | Numerical method (not ready yet)             |</strong></dt><dd></dd>
-<dt><strong>+———–+—————————————+</strong></dt><dd></dd>
+<dt><strong>+————+————————————–+</strong></dt><dd></dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -437,8 +452,31 @@ the extrapolated modes.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="waveformtools.waveforms.modes_array.get_strain_from_psi4">
+<span class="sig-name descname"><span class="pre">get_strain_from_psi4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array.get_strain_from_psi4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array.get_strain_from_psi4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the strain <cite>modes_array</cite> from <span class="math notranslate nohighlight">\(\Psi_4\)</span> by
+fixed frequency integration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>omega0: float, optional</strong></dt><dd><p>The lower cutoff angular frequency for FFI.
+By default, it computes this from the mode
+data.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>strain_waveform:        modes_array</dt><dd><p>The computed strain modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="waveformtools.waveforms.modes_array.load_modes">
-<span class="sig-name descname"><span class="pre">load_modes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array.load_modes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array.load_modes" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load_modes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_ex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array.load_modes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array.load_modes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the waveform mode data from an hdf file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -475,6 +513,22 @@ the required <span class="math notranslate nohighlight">\(\ell, m\)</span> modes
 <span class="gp">&gt;&gt;&gt; </span><span class="n">waveform</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">mode_numbers</span><span class="o">=</span><span class="n">mode_numbers</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="waveformtools.waveforms.modes_array.low_cut">
+<span class="sig-name descname"><span class="pre">low_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.03</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array.low_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array.low_cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the low cut filter from waveformtools.low_cut_filter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>order:     int, optional</strong></dt><dd><p>The order of the butterworth filter.</p>
+</dd>
+<dt><strong>omega0:         float, optional</strong></dt><dd><p>The cutoff frequency of the butterworth filter.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -593,6 +647,46 @@ waveform <span class="math notranslate nohighlight">\(\Psi_4\)</span>.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="waveformtools.waveforms.modes_array.taper">
+<span class="sig-name descname"><span class="pre">taper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array.taper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array.taper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Taper a waveform at both ends and insert zeros if needed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>zeros:  int</strong></dt><dd><p>The number of zeros to add at rach end</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>tapered_modes:  modes_array</dt><dd><p>Modes array with tapered mode data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="waveformtools.waveforms.modes_array.taper_tanh">
+<span class="sig-name descname"><span class="pre">taper_tanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array.taper_tanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array.taper_tanh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Taper a waveform at both ends and insert zeros if needed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>zeros:  int</strong></dt><dd><p>The number of zeros to add at rach end</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>tapered_modes:  modes_array</dt><dd><p>Modes array with tapered mode data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="waveformtools.waveforms.modes_array.to_frequency_basis">
 <span class="sig-name descname"><span class="pre">to_frequency_basis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array.to_frequency_basis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array.to_frequency_basis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the modes in frequency basis.</p>
@@ -601,6 +695,28 @@ waveform <span class="math notranslate nohighlight">\(\Psi_4\)</span>.</p>
 <dd class="field-odd"><dl class="simple">
 <dt>waveform_tilde_modes:   modes_array</dt><dd><p>A modes_array containing the modes
 in frequency basis.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="waveformtools.waveforms.modes_array.to_spherical_array">
+<span class="sig-name descname"><span class="pre">to_spherical_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gridinfo</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array.to_spherical_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array.to_spherical_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain the spherical array from the modes array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>gridinfo:       cls instance</strong></dt><dd><p>An instance of the “spherical_grid” class
+to hold the grid info.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>waveform_sp:    spherical_array</dt><dd><p>A member of the “spherical_array” class
+constructed from the given “modes_rray”.</p>
 </dd>
 </dl>
 </dd>
@@ -622,6 +738,25 @@ in frequency basis.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="waveformtools.waveforms.modes_array.trim">
+<span class="sig-name descname"><span class="pre">trim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trim_upto_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#modes_array.trim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.modes_array.trim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trim the modes_array at the beginning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time:   float</strong></dt><dd><p>The time unit upto which to discard.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Re-sets the <cite>time_axis</cite> and <cite>modes_array</cite> data.</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -631,23 +766,30 @@ in frequency basis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><a class="reference internal" href="#waveformtools.waveforms.spherical_array.data_len" title="waveformtools.waveforms.spherical_array.data_len"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_len</span></code></a></dt><dd><p>Returns the length of the time/frequency axis.</p>
+<dt><strong>label:  str</strong></dt><dd><p>The label of the waveform data.</p>
+</dd>
+<dt><strong>time_axis:      1d array</strong></dt><dd><p>The time axis of the data.</p>
+</dd>
+<dt><strong>frequency_axis: 1d array</strong></dt><dd><p>The frequency axis if the data
+is represented in frequency domain.</p>
+</dd>
+<dt><strong>gridinfo:       spherical_grid</strong></dt><dd><p>An instance of the <cite>spherical_grid</cite> class.</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col style="width: 83%" />
+<col style="width: 17%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveforms.spherical_array.delta_t" title="waveformtools.waveforms.spherical_array.delta_t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta_t</span></code></a>([value])</p></td>
-<td><p>Sets and returns the value of time stepping <span class="math notranslate nohighlight">\(dt\)</span>.</p></td>
+<tr class="row-odd"><td><p><strong>delta_t:        Fetch the time stepping `delta_t`.</strong></p></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveforms.spherical_array.to_modes_array" title="waveformtools.waveforms.spherical_array.to_modes_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_modes_array</span></code></a>(gridinfo[, spin_weight, ell_max])</p></td>
-<td><p>Decompose a given spherical array function on a sphere</p></td>
+<tr class="row-even"><td><p><strong>to_modes_array: Find the waveform expressed in the</strong></p></td>
+<td><p>SWSH basis.</p></td>
 </tr>
 </tbody>
 </table>
@@ -689,25 +831,22 @@ to set to the attribute.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="waveformtools.waveforms.spherical_array.to_modes_array">
 <span class="sig-name descname"><span class="pre">to_modes_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gridinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveforms.html#spherical_array.to_modes_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveforms.spherical_array.to_modes_array" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Decompose a given spherical array function on a sphere</dt><dd><p>into Spin Weighted Spherical Harmonic modes.</p>
-</dd>
-</dl>
+<dd><p>Decompose a given spherical array function on a sphere
+into Spin Weighted Spherical Harmonic modes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>spin_weight:     int, optional</strong></dt><dd><p>The spin weight of the waveform. It defaults to -2 for a gravitational waveform.</p>
+<dt><strong>spin_weight:    int, optional</strong></dt><dd><p>The spin weight of the waveform. It defaults to -2 for a gravitational waveform.</p>
 </dd>
-<dt><strong>ell_max:        int, optional</strong></dt><dd><p>The maximum value of the :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>ell’ polar quantum number. Defaults to 6=8.</p>
+<dt><strong>ell_max:        int, optional</strong></dt><dd><p>The maximum value of the <span class="math notranslate nohighlight">\(\ell\)</span> polar quantum number. Defaults to 8.</p>
 </dd>
-<dt><strong>gridinfo:               class instance</strong></dt><dd><p>The class instance that contains the properties of the spherical grid.</p>
+<dt><strong>gridinfo:       class instance</strong></dt><dd><p>The class instance that contains the properties of the spherical grid.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt>waveforms_modes:        modes_array</dt><dd><p>An instance of the <cite>modes_array</cite> class.
-Containing the decomposed modes.</p>
+<dt>waveforms_modes:        modes_array</dt><dd><p>An instance of the <cite>modes_array</cite> class containing the decomposed modes.</p>
 </dd>
 </dl>
 </dd>
@@ -715,7 +854,7 @@ Containing the decomposed modes.</p>
 <p class="rubric">Notes</p>
 <ol class="arabic simple">
 <li><p>Assumes that the sphere on which this decomposition is carried out is so far out
-that the coordinate system is spherical polar</p></li>
+that the coordinate system is spherical polar on a round sphere.</p></li>
 <li><p>Assumes that the poper area is the same as its co-ordinate area.</p></li>
 <li><p>Ensure that the label of the input spherical array indicates whether
 it is a time domain data or frequency domain data.</p></li>
@@ -724,6 +863,7 @@ it is a time domain data or frequency domain data.</p></li>
 
 </dd></dl>
 
+</section>
 </section>
 
 

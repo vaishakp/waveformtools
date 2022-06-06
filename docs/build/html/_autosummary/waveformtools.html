@@ -95,6 +95,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.CoM.html">waveformtools.CoM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.compare.html">waveformtools.compare</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.grids.html">waveformtools.grids</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.integrate.html">waveformtools.integrate</a></li>
@@ -180,7 +181,11 @@
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
-<dt>sim<span class="classifier">Base class for NR data</span></dt><dd><p>This is needed to retrieve and handle Numerical Relativity data.</p>
+<dt>sim: Base class for NR simulations data.</dt><dd><p>This is needed to retrieve and handle Numerical Relativity data.</p>
+</dd>
+<dt>spherical_array:        A 2D data-type.</dt><dd><p>Stores and manages two-dimensional data on surfaces of spherical topology.</p>
+</dd>
+<dt>modes_array: A data-type.</dt><dd><p>Handle and work with mode coefficients.</p>
 </dd>
 </dl>
 <p class="rubric">Functions</p>
@@ -215,31 +220,34 @@
 <tr class="row-even"><td><p><a class="reference internal" href="waveformtools.CoM.html#module-waveformtools.CoM" title="waveformtools.CoM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.CoM</span></code></a></p></td>
 <td><p>Centre of mass correction for the waveforms.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate" title="waveformtools.waveformtools.differentiate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.differentiate</span></code></a>(data[, delta_t])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.compare.html#module-waveformtools.compare" title="waveformtools.compare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.compare</span></code></a></p></td>
+<td><p>Compare the waveforms and modes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate" title="waveformtools.waveformtools.differentiate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.differentiate</span></code></a>(data[, delta_t])</p></td>
 <td><p>Differentiate a timeseries in time domain using the Simple Euler method</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.extrapolate.html#module-waveformtools.extrapolate" title="waveformtools.extrapolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.extrapolate</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.extrapolate.html#module-waveformtools.extrapolate" title="waveformtools.extrapolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.extrapolate</span></code></a></p></td>
 <td><p>Methods for waveform extrapolation.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.grids.html#module-waveformtools.grids" title="waveformtools.grids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.grids</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.grids.html#module-waveformtools.grids" title="waveformtools.grids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.grids</span></code></a></p></td>
 <td><p>Classes to hold grid information</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.integrate.html#module-waveformtools.integrate" title="waveformtools.integrate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.integrate</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.integrate.html#module-waveformtools.integrate" title="waveformtools.integrate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.integrate</span></code></a></p></td>
 <td><p>Methods to integrate functions</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.simulations.html#module-waveformtools.simulations" title="waveformtools.simulations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.simulations</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.simulations.html#module-waveformtools.simulations" title="waveformtools.simulations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.simulations</span></code></a></p></td>
 <td><p>Data container for Numerical Relativity data</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.spherical.html#module-waveformtools.spherical" title="waveformtools.spherical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.spherical</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.spherical.html#module-waveformtools.spherical" title="waveformtools.spherical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.spherical</span></code></a></p></td>
 <td><p>Methods to handle functions on a sphere.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.transforms.html#module-waveformtools.transforms" title="waveformtools.transforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.transforms</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.transforms.html#module-waveformtools.transforms" title="waveformtools.transforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.transforms</span></code></a></p></td>
 <td><p>Methods to transform the waveform</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.waveforms.html#module-waveformtools.waveforms" title="waveformtools.waveforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveforms</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.waveforms.html#module-waveformtools.waveforms" title="waveformtools.waveforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveforms</span></code></a></p></td>
 <td><p>Classes for handling the waveform modes or data defined on spheres.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#module-waveformtools.waveformtools" title="waveformtools.waveformtools"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveformtools</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#module-waveformtools.waveformtools" title="waveformtools.waveformtools"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveformtools</span></code></a></p></td>
 <td><p>This module contains a set of tools to handle data from numerical relativity simulations and gravitational waves.</p></td>
 </tr>
 </tbody>

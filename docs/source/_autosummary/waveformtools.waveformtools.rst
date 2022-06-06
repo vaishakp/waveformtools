@@ -35,6 +35,7 @@ waveformtools.waveformtools
       iscontinuous_old
       lengtheq
       load_obj
+      low_cut_filter
       massratio
       match_wfs
       mavg
@@ -55,6 +56,7 @@ waveformtools.waveformtools
       smoothen
       startend
       taper
+      taper_tanh
       taperlengtheq
       totalmass
       xtract_camp
