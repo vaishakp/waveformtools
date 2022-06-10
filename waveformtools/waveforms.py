@@ -13,7 +13,8 @@ modes_array: A data-type.
 import numpy as np
 import h5py
 from waveformtools.waveformtools import message
-
+from qlmtools import Yslm_new
+from numba import jit, njit
 
 class spherical_array:
 	"""A class for handling waveforms on a sphere.
@@ -29,7 +30,7 @@ class spherical_array:
 	frequency_axis:	1d array
 					The frequency axis if the data
 					is represented in frequency domain.
-	gridinfo:	spherical_grid
+	grid_info:	spherical_grid
 				An instance of the `spherical_grid` class.
 
 	Methods
@@ -49,7 +50,8 @@ class spherical_array:
 		data=None,
 		base_dir=None,
 		file_name=None,
-		gridinfo=None,
+		grid_info=None,
+		spin_weight = 2
 	):
 
 		self.label = label
@@ -58,7 +60,8 @@ class spherical_array:
 		self.file_name = file_name
 		self.time_axis = time_axis
 		self.frequency_axis = frequency_axis
-		self.gridinfo = gridinfo
+		self.grid_info = grid_info
+		self.spin_weight = spin_weight
 
 	def delta_t(self, value=None):
 		"""Sets and returns the value of time stepping :math:`dt`.
@@ -104,7 +107,7 @@ class spherical_array:
 
 		return data_len
 
-	def to_modes_array(self, gridinfo, spin_weight=-2, ell_max=8):
+	def to_modes_array(self, grid_info=None, spin_weight=None, ell_max=8):
 		"""Decompose a given spherical array function on a sphere
 		into Spin Weighted Spherical Harmonic modes.
 
@@ -114,7 +117,7 @@ class spherical_array:
 						The spin weight of the waveform. It defaults to -2 for a gravitational waveform.
 		ell_max:	int, optional
 					The maximum value of the :math:`\\ell` polar quantum number. Defaults to 8.
-		gridinfo:	class instance
+		grid_info:	class instance
 					The class instance that contains the properties of the spherical grid.
 
 		Returns
@@ -131,13 +134,30 @@ class spherical_array:
 		   it is a time domain data or frequency domain data.
 		"""
 
+		if grid_info is None:
+			if self.grid_info is None:
+				message('Please specify the grid specs. Assuming defaults.')
+				grid_info = waveformtools.grids.spherical_array()
+				self.grid_info = grid_info
+			else:
+				grid_info = self.grid_info
+
+		if spin_weight is None:
+			if self.spin_weight is None:
+				message('Please specify spin weight. Assuming 2')
+				spin_weight = 2
+				self.spin_weight = spin_weight
+
+			else:
+				spin_weight = self.spin_weight
+
 		# Compute the meshgrid for theta and phi.
-		theta, phi = gridinfo.meshgrid
+		theta, phi = grid_info.meshgrid
 
 		# Create a modes array object
 
 		# Create a modes list.
-		modes_list = construct_mode_list(ell_max)
+		modes_list = construct_mode_list(ell_max, spin_weight=spin_weight)
 
 		if not self.label:
 			label = "decomposed_time_domain"
@@ -160,36 +180,89 @@ class spherical_array:
 
 		# The area element on the sphere
 		# Compute the meshgrid for theta and phi.
-		theta, phi = gridinfo.meshgrid
+		theta, phi = grid_info.meshgrid
 
+		#sqrt_met_det = np.sin(theta)
 		sqrt_met_det = np.sqrt(np.power(np.sin(theta), 2))
 
-		darea = sqrt_met_det * gridinfo.dtheta * gridinfo.dphi
+		darea = sqrt_met_det * grid_info.dtheta * grid_info.dphi
 
-		from qlmtools import Yslm_vec
+		from qlmtools import Yslm_new
 
-		for index, _ in enumerate(axis):
-			# Integrate on the sphere for
-			# for each time/frequency
+		for mode in modes_list:
+			ell_value, all_emm_values = mode
 
-			# Convert input to arrays.
-			integrand_data = self.data[:, :, index]
+			for emm_value in all_emm_values:
+				# m value.
 
-			for mode in modes_list:
-				ell_value, all_emm_values = mode
+				# Spin weighted spherical harmonic function at (theta, phi)
 
-				for emm_value in all_emm_values:
-					# m value.
+				Ybasis_fun = np.conj(Yslm_new(spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta, phi_grid=phi))
 
-					# Spin weighted spherical harmonic function at (theta, phi)
-					Ybasis_fun = Yslm_vec(spin_weight, ell=ell_value, emm=emm_value, theta=theta, phi=phi)
+				Ydarea = Ybasis_fun * darea
 
-					# Using quad
-					multipole_ell_emm = integrand_data * Ybasis_fun * darea
+				#print(full_integrand)
+				# Using quad
+				multipole_ell_emm = np.tensordot(self.data, Ydarea, axes=((0, 1), (0, 1)))
 
-					waveform_modes.set_mode_data(ell_value, emm_value, multipole_ell_emm)
+				#print(f'l{ell_value}m{emm_value}', multipole_ell_emm)
 
-			return waveform_modes
+				waveform_modes.set_mode_data(ell_value, emm_value, multipole_ell_emm)
+
+		return waveform_modes
+
+
+
+	def boost(self, conformal_factor):
+		""" Boost the waveform given the unboosted waveform and the boost conformal factor.
+
+		Parameters
+		----------
+
+		self:     spherical_array
+								A class instance of `spherical array`.
+
+		conformal_factor:       2d array
+								The conformal factor for the Lorentz transformation. It may be a single floating point number or an array on a spherical grid. The array will be of dimensions
+								[ntheta, nphi]
+
+		grid_info:       class instance
+						The class instance that contains the properties of the spherical grid.
+
+
+		Returns
+		-------
+
+		boosted_waveform:     sp_array
+							  The class instance `sp_array` that
+							  contains the boosted waveform.
+		"""
+
+		from waveformtools.waveforms import spherical_array
+
+		# Compute the meshgrid for theta and phi.
+		# theta, phi = self.grid_info.meshgrid
+		#   = self.grid_info.phi
+
+		# A list to store the boosted waveform.
+		#boosted_waveform_data = []
+
+
+		# Compute the boosted waveform on the spherical grid on all the elements.
+
+		# conformal_k_on_sphere = compute_conformal_k(vec_v, theta, phi)
+	   # boosted_waveform_item = conformal_factor * item
+		boosted_waveform_data = np.transpose(self.data, (2, 0, 1)) * conformal_factor
+		#boosted_waveform_item = np.multiply(self.data, conformal_factor[:, :, None])
+		#boosted_waveform_data = boosted_waveform_item
+		#boosted_waveform_data = np.array([np.transpose(item)*conformal_factor for item in np.transpose(self.data)])
+		# Construct a 2d waveform array object
+		boosted_waveform = spherical_array(grid_info=self.grid_info, data=np.transpose(np.array(boosted_waveform_data), (1, 2, 0)))
+		boosted_waveform.label = "boosted"
+
+		boosted_waveform.time_axis = time_axis
+
+		return boosted_waveform
 
 
 #	def reconstr_waveform():
@@ -476,7 +549,7 @@ class modes_array:
 
 		return delta_f
 
-	def load_modes(self, r_ext=500, ell_max=None, pre_key=None, modes_list=None, crop=False, center=True, key_ex=None):
+	def load_modes(self, r_ext=500, ell_max=None, pre_key=None, modes_list=None, crop=False, center=True, key_ex=None, r_ext_factor=1):
 		"""Load the waveform mode data from an hdf file.
 
 		Parameters
@@ -519,6 +592,11 @@ class modes_array:
 		full_path = self.data_dir + self.file_name
 
 		cflag = 0
+
+		# Ext radius
+		if r_ext is None:
+			r_ext = self.r_ext
+
 
 		# Open the modes file.
 		with h5py.File(full_path, "r") as wfile:
@@ -675,7 +753,7 @@ class modes_array:
 							# set the time axis.
 							# self.time_axis = time_axis[shift:]
 
-					self.modes_data[ell_value, emm_index] = data_re[shift:] + 1j * data_im[shift:]
+					self.modes_data[ell_value, emm_index] = r_ext_factor*(data_re[shift:] + 1j * data_im[shift:])
 
 			##############################
 			# Recenter axis
@@ -812,14 +890,14 @@ class modes_array:
 		self.modes_data[ell_value, emm_index] = data
 
 
-
-	def to_spherical_array(self, gridinfo):
+	#@njit(parallel=True)
+	def to_spherical_array(self, grid_info, spin_weight=2):
 		''' Obtain the spherical array from the modes array.
 
 		Parameters
 		----------
 
-		gridinfo:	cls instance
+		grid_info:	cls instance
 					An instance of the "spherical_grid" class
 					to hold the grid info.
 
@@ -832,11 +910,14 @@ class modes_array:
 
 		'''
 
-		from qlmtools import Yslm_vec
+		#from qlmtools import Yslm_new
+
 
 		# Create a spherical array.
-		waveform_sp = spherical_array(gridinfo=gridinfo)
+		waveform_sp = spherical_array(grid_info=grid_info)
 
+		spin_weight = abs(spin_weight)
+		wavefotm_sp.spin_weight = spin_weight
 		# Set the time-axis
 		try:
 			waveform_sp.time_axis = self.time_axis
@@ -844,19 +925,26 @@ class modes_array:
 			waveform_sp.frequency_axis = self.frequency_axis
 
 		# Get the coordinate meshgrid
-		theta, phi = gridinfo.meshgrid
+		theta, phi = grid_info.meshgrid
 
-		for item in self.modes_list:
+		s1, s2 = theta.shape
+		s3 = self.data_len
+		sp_data = np.zeros((s1, s2, s3), dtype='complex128')
+
+		for item in self.modes_list[spin_weight:]:
 			# Get modes.
 			ell, emm_list = item
 
 			for emm in emm_list:
 				# For every l, m
-				sp_data += np.multiply.outer(Yslm_vec(spin_weight, ell=ell_value, emm=emm_value, theta=theta, phi=phi), self.mode(ell, emm))
-
+				sp_data += np.multiply.outer(Yslm_new(spin_weight, ell=ell, emm=emm, theta_grid=theta, phi_grid=phi), self.mode(ell, emm))
+				print(sp_data)
 		# Set the data of the spherical array.
 		waveform_sp.data = sp_data
-
+		try:
+			waveform_sp.time_axis = self.time_axis
+		except:
+			wavefotm_sp.frequency_axis = self.frequency_axis
 		return waveform_sp
 
 	def trim(self, trim_upto_time=None):
@@ -955,7 +1043,7 @@ class modes_array:
 
 		return waveform_modes
 
-	def extrap_to_inf(self, mass=1, spin=None, modes_list="all", method="SIO"):
+	def extrap_to_inf(self, mass=1, spin=None, modes_list="all", method="SIO", factor=1):
 		"""Extrapolate the :math:`\\Psi_4` modes to infinity
 		using the perturbative improved second order method.
 
@@ -1046,19 +1134,19 @@ class modes_array:
 				# For every emm value
 				print(f"Processing l{ell_value}, m{emm_value}")
 				# Compute rPsi4_lm
-				mode_data = self.r_ext * self.mode(ell_value, emm_value)
+				mode_data = factor * self.mode(ell_value, emm_value)
 
 				# Extrapolate
 				# import ipdb; ipdb.set_trace()
 				extrap_mode_data = extrap_method(rPsi4_rlm=mode_data)
 
 				# Assign data to new modes array
-				extrap_wf.set_mode_data(ell_value, emm_value, extrap_mode_data / self.r_ext)
+				extrap_wf.set_mode_data(ell_value, emm_value, extrap_mode_data)
 
 		print("Done!")
 		return extrap_wf
 
-	def supertranslate(self, supertransl_alpha_modes, gridinfo, order=4):
+	def supertranslate(self, supertransl_alpha_modes, grid_info, order=4):
 
 		"""Supertranslate the :math:`\\Psi_{4\\ell m}` waveform modes, give the,
 		the supertranslation parameter and the order.
@@ -1068,7 +1156,7 @@ class modes_array:
 		supertransl_alpha_modes :  modes_array
 														   The modes_array containing the
 														   supertranslation mode coefficients.
-		gridinfo:		class instance
+		grid_info:		class instance
 										The class instance that contains
 										the properties of the spherical grid
 										using which the computations are
@@ -1091,7 +1179,7 @@ class modes_array:
 		# Step 0: Get the grid properties for integrations
 
 		# Compute the meshgrid for theta and phi.
-		theta, phi = gridinfo.meshgrid
+		theta, phi = grid_info.meshgrid
 		# theta
 		# Step 1: get the grid function for supertranslation parameter
 		supertransl_alpha_sphere = BMS.compute_supertransl_alpha(supertransl_alpha_modes, theta, phi)
@@ -1112,20 +1200,20 @@ class modes_array:
 		# Multiply with the fourier modes.
 		supertransl_spherical_factor = Psi4_tilde_modes.multiply(supertransl_factor)
 
-		from qlmtools import Yslm_vec
+		from qlmtools import Yslm_new
 
 		# Reconstruct the modes
 		for ell_value in range(ell_max+1):
 			for emm_value in range(-ell_value, ell_value + 1):
 				# Multiply with the SWSH basis.
-				supertransl_spherical_grid += supertransl_spherical_factor * Yslm_vec(
+				supertransl_spherical_grid += supertransl_spherical_factor * Yslm_new(
 					spin_weight=-2, ell=ell_value, emm=emm_value, theta=theta, phi=phi
 				)
 
 				# Step 3: Reconstruct the function on the sphere
 
 		# Create a spherical_array to hold the supertranslated waveform
-		supertransl_spherical_waveform = spherical_array(gridinfo=gridinfo)
+		supertransl_spherical_waveform = spherical_array(grid_info=grid_info)
 
 		# Set the data.
 		supertransl_spherical_waveform.data = supertransl_spherical_grid
@@ -1161,19 +1249,10 @@ class modes_array:
 		# Get spherical array from modes.
 		unboosted_waveform = self.to_spherical_array(info)
 
-		# A list to store the boosted waveform.
-		boosted_waveform_data = []
-
-		for item in unboosted_waveform.data:
-			# Compute the boosted waveform on the spherical grid on all the elements.
-
-			# conformal_k_on_sphere = compute_conformal_k(vec_v, theta, phi)
-			boosted_waveform_item = conformal_factor * item
-
-			boosted_waveform_data.append(boosted_waveform_item)
+		boosted_waveform_data = unboosted_waveform.boost(conformal_factor)
 
 		# Construct a 2d waveform array object
-		boosted_waveform = spherical_array(gridinfo=unboosted_waveform.gridinfo, data=np.array(boosted_waveform_data))
+		boosted_waveform = spherical_array(grid_info=unboosted_waveform.grid_info, data=np.array(boosted_waveform_data))
 		boosted_waveform.label = "boosted"
 
 		# Get modes from spherical data.
@@ -1227,6 +1306,51 @@ class modes_array:
 
 		return strain_waveform
 
+
+
+	def get_news_from_psi4(self, omega0='auto'):
+		''' Get the News `modes_array` from :math:`\\Psi_4` by
+		fixed frequency integration.
+
+		Parameters
+		----------
+		omega0:	float, optional
+				The lower cutoff angular frequency for FFI.
+				By default, it computes this as one tenth of
+				the starting frequency of the mode data.
+
+		Returns
+		-------
+		news_waveform:	modes_array
+						The computed strain modes.
+
+		'''
+
+		# Initialize a mode array for strain.
+		news_waveform = modes_array(label=f'{self.label} news from Psi4', r_ext=500, ell_max=8, modes_list=self.modes_list)
+
+		news_waveform.time_axis = self.time_axis
+		news_waveform.ell_max = self.ell_max
+
+		data_len = self.data_len
+
+		news_waveform._create_modes_array(ell_max=self.ell_max, data_len=data_len)
+
+		# Integrate,
+		from waveformtools.integrate import fixed_frequency_integrator
+		from waveformtools.waveformtools import get_starting_angular_frequency as sang_f
+
+		omega_st = omega0
+		for item in self.modes_list[2:]:
+			ell, emm_list = item
+			for emm in emm_list:
+				mode_data = self.mode(ell, emm)
+				if omega0=='auto':
+					omega_st = abs(sang_f(mode_data, delta_t=self.delta_t()))/10
+				news_mode_data, _ = fixed_frequency_integrator(udata_time=mode_data, delta_t=self.delta_t(), omega0=omega_st, order=1)
+				news_waveform.set_mode_data(ell, emm, data=news_mode_data)
+
+		return news_waveform
 
 	def taper(self, zeros='auto'):
 		''' Taper a waveform at both ends and insert zeros if needed

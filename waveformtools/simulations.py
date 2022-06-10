@@ -6,7 +6,7 @@
 
 import numpy as np
 from waveformtools.waveformtools import message, cleandata
-
+import config
 # import waveformtools
 
 
@@ -100,7 +100,10 @@ class sim:
 
 	data_duration:	dict of floats
 					The total cctk_time units of simulations present.
-
+	BH_locations:	dict of lists.
+					A dictionary of values containing BH locations of every simulation. Each simulation has three lists, one for each black hole.
+	CoM_locations:	dict of lists
+					A dictionary of lists containing the X, Y and Z locations of the CoM of the simulations.
 
 	Methods
 	-------
@@ -1149,3 +1152,255 @@ class sim:
 			self.areal_radii.update({alias: [ar_rad0, ar_rad1, ar_rad2]})
 
 		return 1
+
+	def get_BH_locations(self, alias=None):
+		''' Get the co-ordinate locations of the BHs.
+
+		Parameters
+		----------
+
+		alias  :    str, optional.
+					The simulation label. If not specified, then
+					all available simulationswill be processed.
+
+		Returns
+		-------
+
+
+		'''
+
+		# A dictionary to store BH location data
+		self.BH_locations = {}
+
+		if not alias:
+			list_of_aliases = self.aliases
+
+		else:
+			list_of_aliases = [alias]
+
+
+		for alias in list_of_aliases:
+
+			# Load the data
+			#alias = 'q1a0_a'
+			#sim_index = 0
+
+			# Masses of the horizons
+			m1 = self.mass1[alias]
+			m2 = self.mass2[alias]
+			M = m1+m2
+
+			flag = 1
+			bh1 = np.genfromtxt(self._get_file_path_from_str(string='*.ah1.gp', alias=alias))
+			bh2 = np.genfromtxt(self._get_file_path_from_str(string='*.ah2.gp', alias=alias))
+			try:
+				bh3 = np.genfromtxt(self._get_file_path_from_str(string='*.ah3.gp', alias=alias))
+			except:
+				message('BH3 file not found!')
+				flag=-1
+
+
+			# Read co-ordinates.
+
+			bhd1_time = bh1[:, 1]
+			bhd1_x    = bh1[:, 2]
+			bhd1_y    = bh1[:, 3]
+			bhd1_z    = bh1[:, 4]
+
+			bhd2_time = bh2[:, 1]
+			bhd2_x    = bh2[:, 2]
+			bhd2_y    = bh2[:, 3]
+			bhd2_z    = bh2[:, 4]
+
+			if flag!=-1:
+				bhd3_time = bh3[:, 1]
+				bhd3_x    = bh3[:, 2]
+				bhd3_y    = bh3[:, 3]
+				bhd3_z    = bh3[:, 4]
+			else:
+				bhd3_time = None
+				bhd3_x = None
+				bhd3_y = None
+				bhd3_z = None
+
+			bh1_loc = [bhd1_time, bhd1_x, bhd1_y, bhd1_z]
+			bh2_loc = [bhd2_time, bhd2_x, bhd2_y, bhd2_z]
+			bh3_loc = [bhd3_time, bhd3_x, bhd3_y, bhd3_z]
+
+
+			self.BH_locations.update({alias : [bh1_loc, bh2_loc, bh3_loc]})
+
+
+	def get_CoM_locations(self, alias=None):
+		''' Get the CoM location of the given simulation.
+
+		Parameters
+		----------
+
+		alias  :    str, optional.
+					The simulation label. If not specified, then
+					all available simulationswill be processed.
+
+		Returns
+		-------
+
+		self.CoM_locations :    dict
+								A dictionary of lists containing
+								CoM locations of the simulations.
+
+		Notes
+		-----
+
+		This fetches the location of the BHs from data files.
+		'''
+
+		# Storage for CoM locations
+		self.CoM_locations = {}
+
+		# Aliases to run over.
+		if not alias:
+			list_of_aliases = self.aliases
+
+		else:
+			list_of_aliases = [alias]
+
+		for alias in list_of_aliases:
+
+			try:
+				BH_locs_sim = self.BH_locations[alias]
+			except:
+				self.get_BH_locations(alias)
+				BH_locs_sim = self.BH_locations[alias]
+
+			# Unpack the location data.
+			BH1_loc, BH2_loc, _ = BH_locs_sim
+
+			bh1_time, bh1_x, bh1_y, bh1_z = BH1_loc
+			bh2_time, bh2_x, bh2_y, bh2_z = BH2_loc
+			#bh3_time, bh3_x, bh3_y, bh3_z = BH3_loc
+
+			# The masses.
+			mass1 = self.mass1[alias]
+			mass2 = self.mass2[alias]
+			total_mass = mass1+mass2
+
+			# End time
+			max_len = min(self.merger_ind[alias], len(bh1_time), len(bh2_time))
+
+			# CoM location
+			T_com   = bh1_time[:max_len]
+			X_com   = (mass1*bh1_x[:max_len] + mass2*bh2_x[:max_len])/(total_mass)
+			Y_com   = (mass1*bh1_y[:max_len] + mass2*bh2_y[:max_len])/(total_mass)
+			Z_com   = (mass1*bh1_z[:max_len] + mass2*bh2_z[:max_len])/(total_mass)
+
+
+			self.CoM_locations.update({alias : [T_com, X_com, Y_com, Z_com]})
+
+
+
+	def get_CoM_mean_motion(self, alias=None):
+		''' Get the mean motion of the CoM.
+
+		Parameters
+		----------
+
+		alias  :    str, optional.
+					The simulation label. If not specified, then
+					all available simulationswill be processed.
+
+		Returns
+		-------
+
+		alpha :     dict
+					A dictionary containing the
+					mean CoM displacement array.
+
+		beta :     dict
+				   A dictionary containing the
+				   mean CoM velocity array.
+
+		'''
+		CoM_motion_params = {}
+		# Aliases to run over.
+
+		from waveformtools.CoM import X_com_moments, compute_com_alpha, compute_com_beta
+		if not alias:
+			list_of_aliases = self.aliases
+
+		else:
+			list_of_aliases = [alias]
+
+		for alias in list_of_aliases:
+
+			try:
+				taxis, X_com, Y_com, Z_com = self.CoM_locations[alias]
+			except:
+				self.get_CoM_locations(alias)
+				taxis, X_com, Y_com, Z_com = self.CoM_locations[alias]
+
+			all_coords = [X_com, Y_com, Z_com]
+
+			zeroth_moments = X_com_moments(taxis, all_coords, 0)
+			first_moments  = X_com_moments(taxis, all_coords, 1)
+
+			Xcom_0 = np.array([zeroth_moments[label][0] for label in zeroth_moments.keys()])
+			Xcom_1 = np.array([first_moments[label][0] for label in zeroth_moments.keys()])
+
+
+			ti = taxis[0]
+			tf = taxis[-1]
+
+			alpha = compute_com_alpha(ti, tf, Xcom_0, Xcom_1)
+			beta  = compute_com_beta(ti, tf, Xcom_0, Xcom_1)
+
+			CoM_motion_params.update({alias : [alpha, beta]})
+		return CoM_motion_params
+
+
+
+	def _get_file_path_from_str(self, alias, string=None):
+		''' Get the path of a file that contains
+		the given string in its name.
+
+		Parameters
+		----------
+
+		alias  :    str, optional.
+					The simulation label. If not specified, then
+					all available simulationswill be processed.
+
+		string :    str
+					The string of a part of a file name.
+
+		Returns
+		-------
+
+		file_path : str
+					The full path of the file
+
+		Notes
+		-----
+
+		The first occuring instance of the file is returned
+		if there are multiple files found.
+		'''
+
+		from pathlib import Path
+
+		# The directory to look into.
+		path = self.ROOTDIR + alias
+
+		dir = Path(path)
+		# The path of the file.
+		#print(list(dir.rglob(string)))
+		try:
+			file_path = list(dir.rglob(string))[0]
+		except:
+			message('File not found!')
+
+
+
+		return file_path
+
+
+

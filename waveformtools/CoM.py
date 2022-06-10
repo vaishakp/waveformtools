@@ -175,7 +175,7 @@ def compute_conformal_k(vec_v, info, spin_phase=0):
 	return conformal_factor
 
 
-def compute_transl_alpha_modes(time_axis, com_alpha, com_beta):
+def compute_translation_alpha_modes(time_axis, com_alpha, com_beta):
 	""" Compute the translation scalar :math:`\\alpha` in its spherical harmonic components given the mean motion of the centre of mass.
 		These are basically the quantities in Eq. (4-5d) in the reference Woodford et al. 2019.
 
@@ -208,13 +208,13 @@ def compute_transl_alpha_modes(time_axis, com_alpha, com_beta):
 	Alpha_10 = -np.sqrt(4 * np.pi / 3) * delta_z
 	Alpha_11 = -2 * np.sqrt(2 * np.pi / 3) * (-delta_x + 1j * delta_y)
 
-	# COnstruct a mode array
+	# Construct a mode array
 	from waveforms import modes_array
 
 	# Compute the data length
 	data_len = len(time_axis)
 
-	alpha_modes = modes_array()
+	alpha_modes = modes_array(label='CoM alpha modes')
 
 	alpha_modes._create_modes_array(ell_max=1, data_len=data_len)
 

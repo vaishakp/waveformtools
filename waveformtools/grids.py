@@ -1,6 +1,10 @@
 ''' Classes to hold grid information '''
 
 import numpy as np
+#from numba import jit, njit, jitclass
+#from numba.experimental import jitclass
+
+#@jitclass
 class spherical_grid:
 	''' A class to store the coordinate grid on a sphere.
 
@@ -125,7 +129,7 @@ class spherical_grid:
 		'''
 
 		if not theta_index:
-			theta_index = np.linspace(self.nghosts, self.ntheta-self.nghosts)
+			theta_index = np.arange(self.nghosts, self.ntheta-self.nghosts)
 
 		return (theta_index - self.nghosts + 0.5) * np.pi / (self.ntheta-2*self.nghosts)
 
@@ -148,7 +152,7 @@ class spherical_grid:
 		'''
 
 		if not phi_index:
-			phi_index = np.linspace(self.nghosts, self.nphi-self.nghosts)
+			phi_index = np.arange(self.nghosts, self.nphi-self.nghosts)
 
 		return (phi_index - self.nghosts) * 2*np.pi / (self.nphi-2*self.nghosts)
 
@@ -171,6 +175,6 @@ class spherical_grid:
 
 		'''
 
-		theta, phi	  =   np.meshgrid(self.theta_1d, self.phi_1d)
+		theta, phi	  =   np.meshgrid(self.theta_1d(), self.phi_1d())
 
-		return theta, phi
+		return np.transpose(theta), np.transpose(phi)
