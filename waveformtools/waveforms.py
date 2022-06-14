@@ -151,6 +151,8 @@ class spherical_array:
 			else:
 				spin_weight = self.spin_weight
 
+
+
 		# Compute the meshgrid for theta and phi.
 		theta, phi = grid_info.meshgrid
 
@@ -165,7 +167,7 @@ class spherical_array:
 			label = self.label
 
 		# Create a mode array for the decomposed_waveform
-		waveform_modes = modes_array(label=label)
+		waveform_modes = modes_array(label=label, ell_max=ell_max, spin_weight=spin_weight)
 
 		# Inherit the time or frequency axis.
 		if "time" in label:
@@ -211,8 +213,6 @@ class spherical_array:
 
 		return waveform_modes
 
-
-
 	def boost(self, conformal_factor):
 		""" Boost the waveform given the unboosted waveform and the boost conformal factor.
 
@@ -240,26 +240,18 @@ class spherical_array:
 
 		from waveformtools.waveforms import spherical_array
 
-		# Compute the meshgrid for theta and phi.
-		# theta, phi = self.grid_info.meshgrid
-		#   = self.grid_info.phi
-
-		# A list to store the boosted waveform.
-		#boosted_waveform_data = []
-
-
 		# Compute the boosted waveform on the spherical grid on all the elements.
 
-		# conformal_k_on_sphere = compute_conformal_k(vec_v, theta, phi)
-	   # boosted_waveform_item = conformal_factor * item
 		boosted_waveform_data = np.transpose(self.data, (2, 0, 1)) * conformal_factor
-		#boosted_waveform_item = np.multiply(self.data, conformal_factor[:, :, None])
+		#boosted_waveform_data = np.multiply(self.data, conformal_factor[:, :, None])
 		#boosted_waveform_data = boosted_waveform_item
 		#boosted_waveform_data = np.array([np.transpose(item)*conformal_factor for item in np.transpose(self.data)])
+
 		# Construct a 2d waveform array object
 		boosted_waveform = spherical_array(grid_info=self.grid_info, data=np.transpose(np.array(boosted_waveform_data), (1, 2, 0)))
-		boosted_waveform.label = "boosted"
 
+		# Assign other attributes.
+		boosted_waveform.label = "boosted " + self.label
 		boosted_waveform.time_axis = time_axis
 
 		return boosted_waveform
@@ -917,7 +909,7 @@ class modes_array:
 		waveform_sp = spherical_array(grid_info=grid_info)
 
 		spin_weight = abs(spin_weight)
-		wavefotm_sp.spin_weight = spin_weight
+		waveform_sp.spin_weight = spin_weight
 		# Set the time-axis
 		try:
 			waveform_sp.time_axis = self.time_axis
@@ -938,13 +930,13 @@ class modes_array:
 			for emm in emm_list:
 				# For every l, m
 				sp_data += np.multiply.outer(Yslm_new(spin_weight, ell=ell, emm=emm, theta_grid=theta, phi_grid=phi), self.mode(ell, emm))
-				print(sp_data)
+				#print(sp_data)
 		# Set the data of the spherical array.
 		waveform_sp.data = sp_data
 		try:
 			waveform_sp.time_axis = self.time_axis
 		except:
-			wavefotm_sp.frequency_axis = self.frequency_axis
+			waveform_sp.frequency_axis = self.frequency_axis
 		return waveform_sp
 
 	def trim(self, trim_upto_time=None):

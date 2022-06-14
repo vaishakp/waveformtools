@@ -314,10 +314,10 @@ def plot_mode_differences(
 	ax2.set_ylabel(rf"$ \vert \delta \Phi ({ylabel}) \vert$")
 
 	ax2.set_xlim(
-		xlim[0],
+		*xlim
 	)
 	ax1.set_xlim(
-		xlim[0],
+		*xlim
 	)
 	# fig1.savefig('figures/waveform_extrapolation/amp_evol_modes_q1a0.pdf')
 	# fig2.savefig('figures/waveform_extrapolation/phase_evol_modes_q1a0.pdf')

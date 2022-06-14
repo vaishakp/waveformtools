@@ -209,7 +209,7 @@ def compute_translation_alpha_modes(time_axis, com_alpha, com_beta):
 	Alpha_11 = -2 * np.sqrt(2 * np.pi / 3) * (-delta_x + 1j * delta_y)
 
 	# Construct a mode array
-	from waveforms import modes_array
+	from waveformtools.waveforms import modes_array
 
 	# Compute the data length
 	data_len = len(time_axis)
@@ -229,6 +229,9 @@ def compute_translation_alpha_modes(time_axis, com_alpha, com_beta):
 
 	# Combine into one list
 	# modes	   = { 'l0' : [Alpha_00], 'l1' : [Alpha_1m1, Alpha_10, Alpha_11]}
+	modes_list = [[0, [0]], [1, [-1, 0, 1]]]
+	alpha_modes.modes_list = modes_list
+	alpha_modes.time_axis = time_axis
 
 	return alpha_modes
 
