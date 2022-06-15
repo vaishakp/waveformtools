@@ -3,8 +3,19 @@
 import numpy as np
 #from numba import jit, njit, jitclass
 #from numba.experimental import jitclass
+from numba import jit, njit
+#from numba import jitclass          # import the decorator
+import numba as nb
+from numba.experimental import jitclass
 
-#@jitclass
+spec_sp = { 'ntheta' : nb.int32,
+            'nphi' : nb.int32,
+            'nghosts' : nb.int32,
+            'nthetamax' : nb.int32,
+            'nphimax' : nb.int32,
+}
+
+@jitclass(spec_sp)
 class spherical_grid:
 	''' A class to store the coordinate grid on a sphere.
 

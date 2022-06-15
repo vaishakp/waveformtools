@@ -14,8 +14,23 @@ import numpy as np
 import h5py
 from waveformtools.waveformtools import message
 from qlmtools import Yslm_new
-from numba import jit, njit
 
+from numba import jit, njit
+#from numba import jitclass          # import the decorator
+from numba import int32, float64    # import the types
+import numba as nb
+from numba.experimental import jitclass
+
+spec_sp = { 'label' : nb.types.string,
+			'time_axis' : nb.double[:],
+			'frequency_axis' : nb.double[:],
+			'data' : nb.complex128[:, :, :],
+			'base_dir' : nb.types.string,
+			'file_name' : nb.types.string,
+			'spin_weight' : nb.int32
+
+}
+#@jitclass(spec_sp)
 class spherical_array:
 	"""A class for handling waveforms on a sphere.
 
@@ -252,9 +267,70 @@ class spherical_array:
 
 		# Assign other attributes.
 		boosted_waveform.label = "boosted " + self.label
-		boosted_waveform.time_axis = time_axis
+		boosted_waveform.time_axis = self.time_axis
 
 		return boosted_waveform
+
+
+	def supertranslate(selfa, supertransl_alpha_sp, order=1):
+
+		"""Supertranslate the :math:`\\Psi_{4\\ell m}` waveform modes, give the,
+		the supertranslation parameter and the order.
+
+		Parameters
+		----------
+		supertransl_alpha_modes :  modes_array
+														   The modes_array containing the
+														   supertranslation mode coefficients.
+		grid_info:      class instance
+										The class instance that contains
+										the properties of the spherical grid
+										using which the computations are
+										carried out.
+		order:      int
+								The number of terms to use to
+								approximate the supertranslation.
+
+		Returns
+		-------
+		Psi4_supertransl:     modes_array
+												  A class instance containg the
+												  modes of the supertranslated
+												  waveform :math:`\\Psi_4`.
+		"""
+
+		# Create a spherical_array to hold the supertranslated waveform
+		Psi4_supertransl_sp = spherical_array(grid_info=grid_info, label='supertranslated frequency space modes')
+
+		delta_t = float(selfa.delta_t())
+
+
+		# Set the data.
+		data = 0
+		#data = selfa.data
+		#Psi4_supertransl_sp.data = selfa.data
+		delta = 0
+		count = 0
+		for index in range(order):
+			print(f'{index} loop')
+			dPsidu = selfa.data
+			for dorder in range(index+1):
+				print(f'differentiating {dorder+1} times')
+				dPsidu = differentiate5_vec_numba(dPsidu, delta_t)
+
+			print('Incrementing...')
+			#delta = np.power(supertransl_alpha_sp.data, index+1) * dPsidu / np.math.factorial(index+1)
+			#print(delta/selfa.data)
+
+			data += np.power(supertransl_alpha_sp.data, index+1) * dPsidu / np.math.factorial(index+1) #delta
+
+		data+=selfa.data
+		print((data == selfa.data).all())
+
+		Psi4_supertransl_sp.data = data
+
+		print('Done.')
+		return Psi4_supertransl_sp
 
 
 #	def reconstr_waveform():
@@ -375,7 +451,8 @@ class modes_array:
 		maxtime=None,
 		date=None,
 		time=None,
-		key_ex=None
+		key_ex=None,
+		spin_weight=None
 	):
 
 		self.label = label
@@ -393,7 +470,7 @@ class modes_array:
 		self.date = date
 		self.time = time
 		self.key_ex = key_ex
-
+		self.spin_weight = spin_weight
 	def get_metadata(self):
 		"""Get the metadata associated with the instance.
 
@@ -883,7 +960,7 @@ class modes_array:
 
 
 	#@njit(parallel=True)
-	def to_spherical_array(self, grid_info, spin_weight=2):
+	def to_spherical_array(self, grid_info, spin_weight=None):
 		''' Obtain the spherical array from the modes array.
 
 		Parameters
@@ -906,7 +983,14 @@ class modes_array:
 
 
 		# Create a spherical array.
-		waveform_sp = spherical_array(grid_info=grid_info)
+		waveform_sp = spherical_array(label=self.label, grid_info=grid_info)
+
+		if spin_weight is None:
+			if self.spin_weight is not None:
+				spin_weight = self.spin_weight
+			else:
+				spin_weight = -2
+				self.spin_weight = spin_weight
 
 		spin_weight = abs(spin_weight)
 		waveform_sp.spin_weight = spin_weight
@@ -979,7 +1063,7 @@ class modes_array:
 		"""
 
 		# Create a new modes array
-		waveform_tilde_modes = modes_array(label="frequency_domain")
+		waveform_tilde_modes = modes_array(label=f"{self.label} -> frequency_domain")
 		waveform_tilde_modes._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
 
 		from waveformtools.transforms import compute_fft
@@ -997,7 +1081,8 @@ class modes_array:
 				waveform_tilde_modes.set_mode_data(ell_value, emm_value, freq_data)
 
 		waveform_tilde_modes.frequency_axis = freq_axis
-
+		waveform_tilde_modes.ell_max = self.ell_max
+		waveform_tilde_modes.modes_list = self.modes_list
 		return waveform_tilde_modes
 
 	def to_time_basis(self):
@@ -1011,7 +1096,7 @@ class modes_array:
 		"""
 
 		# Create a new modes array
-		waveform_modes = modes_array(label="time_domain")
+		waveform_modes = modes_array(label=f"{self.label} -> time_domain")
 		waveform_modes._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
 
 		from waveformtools.transforms import compute_ifft
@@ -1028,7 +1113,11 @@ class modes_array:
 
 				waveform_modes.set_mode_data(ell_value, emm_value, time_data)
 
-		maxloc = np.argmax(np.absolute(waveform_modes.mode(2, 2)))
+		try:
+			maxloc = np.argmax(np.absolute(waveform_modes.mode(2, 2)))
+		except:
+			maxloc = 0
+
 		maxtime = time_axis[maxloc]
 
 		waveform_modes.time_axis = time_axis - maxtime
@@ -1110,7 +1199,7 @@ class modes_array:
 			modes_list = construct_mode_list(self.ell_max)
 
 		# Create a mode array for the extrapolated waveform.
-		extrap_wf = modes_array(label="rPsi4_inf",  modes_list=self.modes_list, ell_max=self.ell_max)
+		extrap_wf = modes_array(label=f"{self.label} -> rPsi4_inf",  modes_list=self.modes_list, ell_max=self.ell_max)
 
 		extrap_wf._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
 
@@ -1215,7 +1304,7 @@ class modes_array:
 
 		return Psi4_supertransl_modes
 
-	def boost(self, conformal_factor):
+	def boost(self, conformal_factor, grid_info=None):
 		"""Boost the waveform given the unboosted waveform and the boost conformal factor.
 
 		Parameters
@@ -1233,13 +1322,14 @@ class modes_array:
 							  that contains the boosted waveform.
 		"""
 
-		from grids import spherical_grid
+		from waveformtools.grids import spherical_grid
 
 		# Construct a spherical grid.
-		info = spherical_grid()
+		if grid_info is None:
+			grid_info = spherical_grid()
 
 		# Get spherical array from modes.
-		unboosted_waveform = self.to_spherical_array(info)
+		unboosted_waveform = self.to_spherical_array(grid_info)
 
 		boosted_waveform_data = unboosted_waveform.boost(conformal_factor)
 
@@ -1248,10 +1338,10 @@ class modes_array:
 		boosted_waveform.label = "boosted"
 
 		# Get modes from spherical data.
-		boosted_waveform_modes = boosted_waveform.to_modes_array()
+		#boosted_waveform_modes = boosted_waveform.to_modes_array()
 
-		return boosted_waveform_modes
-
+		#return boosted_waveform_modes
+		return boosted_waveform
 
 	def get_strain_from_psi4(self, omega0='auto'):
 		''' Get the strain `modes_array` from :math:`\\Psi_4` by

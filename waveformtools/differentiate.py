@@ -7,7 +7,7 @@ Tools for differentiating data.
 #######################################################
 
 import numpy as np
-
+from numba import jit, njit
 ########################################################
 # Chebyshev differentiation
 ########################################################
@@ -514,6 +514,268 @@ def differentiate5(data, delta_t):
 
 	return der_data
 
+def differentiate5_vec_nonumba(data, delta_t):
+	""" Eleven point difference derivative calculator. Not accurate near the boundaries.
+
+
+	Parameters
+	----------
+
+	data:	1d array
+			The 1d data.
+	delta_t:	float
+				The time step in t/M.
+
+	Returns
+	-------
+
+	dAdt:	1d array
+			The derivative of the data.
+
+	"""
+
+	#import pdb
+	#pdb.set_trace()
+
+	data = np.transpose(data, (2, 0, 1))
+	der_data = np.zeros(data.shape, dtype=np.complex128)
+
+	aax = 0
+	# The number of points on one side.
+	order = 5
+	# The stencil.
+	coeffs = np.array([-2, 25, -150, 600, -2100, 0, 2100, -600, 150, -25, 2])
+	# The divison factor.
+	divide = 2520
+
+	# A list to hold the derivatives.
+	#der_data = np.array([])
+
+	# Near the boundaries
+
+	# n=0, N-1
+	der0 = (data[1] - data[0]) / delta_t
+	derNm1 = (data[-1] - data[-2]) / delta_t
+
+	#der_data = np.append(der_data, [der0], axis=aax)
+
+	der_data[0] = der0
+	# for n=1, N-2
+	der1 = (data[2] - data[0]) / (2 * delta_t)
+	derNm2 = (data[-1] - data[-3]) / (2 * delta_t)
+
+	#der_data = np.append(der_data, [der1], axis=aax)
+	der_data[1] = der1
+
+	# For n=2, N-3
+	stencil = np.array([1, -8, 0, 8, -1]) / 12
+	data_vec = data[:5]
+
+	der2 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+
+	data_vec = data[-5:]
+
+	derNm3 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+
+
+	#der_data = np.append(der_data, [der2], axis=aax)
+
+	der_data[2] = der2
+	# For n=3, N-4
+	stencil = np.array([-1, 9, -45, 0, 45, -9, 1]) / 60
+
+	data_vec = data[:7]
+
+	der3 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+
+
+	data_vec = data[-7:]
+
+	derNm4 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+
+
+	#der_data = np.append(der_data, [der3], axis=aax)
+	der_data[3] = der3
+	# For n=4, N-5
+	stencil = np.array([3, -32, 168, -672, 0, 672, -168, 32, 3]) / 840
+
+	data_vec = data[:9]
+
+	der4 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+
+
+	data_vec = data[-9:]
+
+	derNm5 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+
+
+	#der_data = np.append(der_data, [der4], axis=aax)
+	der_data[4] = der4
+	for index in range(order, len(data) - order):
+		# For the interior points.
+		data_subarray = data[index - order : index + order + 1]
+		#der_data = np.append(der_data, [np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)], axis=aax)
+		der_data[index] = np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)
+
+
+	#der_data = np.append(der_data, [derNm5], axis=aax)
+	der_data[-5] = derNm5
+	#der_data = np.append(der_data, [derNm4], axis=aax)
+	der_data[-4] = derNm4
+	#der_data = np.append(der_data, [derNm3], axis=aax)
+	der_data[-3] = derNm3
+	#der_data = np.append(der_data, [derNm2], axis=aax)
+	der_data[-2] = derNm2
+	#der_data = np.append(der_data, [derNm1], axis=aax)
+	der_data[-1] = derNm1
+
+	print(der_data.shape)
+	return np.transpose(der_data, (1, 2, 0))
+
+@njit(parallel=True)
+def differentiate5_vec_numba(data, delta_t):
+	""" Eleven point difference derivative calculator. Not accurate near the boundaries.
+
+
+	Parameters
+	----------
+
+	data:	1d array
+			The 1d data.
+	delta_t:	float
+				The time step in t/M.
+
+	Returns
+	-------
+
+	dAdt:	1d array
+			The derivative of the data.
+
+	"""
+
+	#import pdb
+	#pdb.set_trace()
+
+	s1, s2, s3 = data.shape
+	data = np.transpose(data, (2, 0, 1))
+	der_data = np.zeros(data.shape, dtype=np.complex128)
+
+	aax = 0
+	# The number of points on one side.
+	order = 5
+	# The stencil.
+	coeffs = np.array([-2, 25, -150, 600, -2100, 0, 2100, -600, 150, -25, 2])
+	# The divison factor.
+	divide = 2520
+
+	# A list to hold the derivatives.
+	#der_data = np.array([])
+
+	# Near the boundaries
+
+	# n=0, N-1
+	der_data[0] = (data[1] - data[0]) / delta_t
+	der_data[-1] = (data[-1] - data[-2]) / delta_t
+
+	#der_data = np.append(der_data, [der0], axis=aax)
+
+	#der_data[0] = der0
+	# for n=1, N-2
+	der_data[1] = (data[2] - data[0]) / (2 * delta_t)
+	der_data[-2] = (data[-1] - data[-3]) / (2 * delta_t)
+
+	#der_data = np.append(der_data, [der1], axis=aax)
+	#der_data[1] = der1
+
+	# For n=2, N-3
+	stencil = np.array([1, -8, 0, 8, -1]) / 12
+	data_vec = data[:5]
+
+	#der2 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+
+	for index, val in enumerate(stencil):
+		der_data[2] += val*data_vec[index]/delta_t
+
+	data_vec = data[-5:]
+
+	#derNm3 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+
+	for index, val in enumerate(stencil):
+		der_data[-3] += val*data_vec[index]/delta_t
+
+
+
+	#der_data = np.append(der_data, [der2], axis=aax)
+
+	#der_data[2] = der2
+	# For n=3, N-4
+	stencil = np.array([-1, 9, -45, 0, 45, -9, 1]) / 60
+
+	data_vec = data[:7]
+
+	#der3 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+	for index, val in enumerate(stencil):
+		der_data[3] += val*data_vec[index]/delta_t
+
+
+
+	data_vec = data[-7:]
+
+	#derNm4 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+	for index, val in enumerate(stencil):
+		der_data[-4] += val*data_vec[index]/delta_t
+
+
+
+	#der_data = np.append(der_data, [der3], axis=aax)
+	#der_data[3] = der3
+	# For n=4, N-5
+	stencil = np.array([3, -32, 168, -672, 0, 672, -168, 32, 3]) / 840
+
+	data_vec = data[:9]
+
+	#der4 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+	for index, val in enumerate(stencil):
+		der_data[4] += val*data_vec[index]/delta_t
+
+
+
+	data_vec = data[-9:]
+
+	#derNm5 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
+
+
+	for index, val in enumerate(stencil):
+		der_data[-5] += val*data_vec[index]/delta_t
+
+
+	#der_data = np.append(der_data, [der4], axis=aax)
+	#der_data[4] = der4
+
+
+	for index in range(order, len(data) - order):
+		# For the interior points.
+		data_subarray = data[index - order : index + order + 1]
+		#der_data = np.append(der_data, [np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)], axis=aax)
+		#der_data[index] = np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)
+		for inner_index, val in enumerate(coeffs):
+			der_data[index] += val*data_subarray[inner_index]/(divide*delta_t)
+
+
+
+	#der_data = np.append(der_data, [derNm5], axis=aax)
+	#der_data[-5] = derNm5
+	#der_data = np.append(der_data, [derNm4], axis=aax)
+	#der_data[-4] = derNm4
+	#der_data = np.append(der_data, [derNm3], axis=aax)
+	#der_data[-3] = derNm3
+	#der_data = np.append(der_data, [derNm2], axis=aax)
+	#der_data[-2] = derNm2
+	#der_data = np.append(der_data, [derNm1], axis=aax)
+	#der_data[-1] = derNm1
+
+	print(der_data.shape)
+	return np.transpose(der_data, (1, 2, 0))
 
 ######################################################################################
 # Complex Amplitude-Phase differentiation

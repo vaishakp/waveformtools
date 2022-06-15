@@ -232,7 +232,8 @@ def compute_translation_alpha_modes(time_axis, com_alpha, com_beta):
 	modes_list = [[0, [0]], [1, [-1, 0, 1]]]
 	alpha_modes.modes_list = modes_list
 	alpha_modes.time_axis = time_axis
-
+	alpha_modes.ell_max=1
+	alpha_modes.spin_weight = -1
 	return alpha_modes
 
 
