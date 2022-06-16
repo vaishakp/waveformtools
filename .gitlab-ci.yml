@@ -180,7 +180,7 @@ pages:
     - cd docs
     - make html
     #- sphinx-build -b html source ../build/html
-    - cp build/html/* ../public/
+    - cp -r build/html/* ../public/
     
   artifacts:
     paths:
