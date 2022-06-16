@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>waveformtools.spherical &mdash; waveformtools 2022-05-03 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: green" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> waveformtools
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022-05-03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">waveformtools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../waveformtools.html">waveformtools</a> &raquo;</li>
+        
+      <li>waveformtools.spherical</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for waveformtools.spherical</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Methods to handle functions on a sphere. &quot;&quot;&quot;</span>
+
+
+<span class="c1">##################################</span>
+<span class="c1"># Imports</span>
+<span class="c1">#################################</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="decompose_in_SWSHs"><a class="viewcode-back" href="../../_autosummary/waveformtools.spherical.html#waveformtools.spherical.decompose_in_SWSHs">[docs]</a><span class="k">def</span> <span class="nf">decompose_in_SWSHs</span><span class="p">(</span><span class="n">waveform</span><span class="p">,</span> <span class="n">gridinfo</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">emm</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Decompose a given function on a sphere in Spin Weighted Spherical Harmonics</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	waveform:		list</span>
+<span class="sd">					A list that contains as its items the waveform defined on the sphere as an array of shape [ntheta, nphi]. Each item in the list may donote</span>
+<span class="sd">					an instant of time or frequency.</span>
+
+<span class="sd">	spin_weight:	 int, optional</span>
+<span class="sd">					 The spin weight of the waveform. It defaults to -2 for a gravitational waveform.</span>
+
+<span class="sd">	ell_max:	int, optional</span>
+<span class="sd">				The maximum value of the :math:`\\ell&#39; polar quantum number. Defaults to 6=8.</span>
+
+<span class="sd">	gridinfo:		class instance</span>
+<span class="sd">					The class instance that contains the properties of the spherical grid.</span>
+
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	SWSH_coeffs:	list</span>
+<span class="sd">					The SWSH coefficients of the waveform. It may be a list composed of a single floating point number or a 1d array (denoting time or frequency dimension).</span>
+<span class="sd">					The waveform can have angular as well as time dimentions. The nesting order will be that, given the list `non_boosted_waveform&#39;, each</span>
+<span class="sd">					item refers to a one dimensional array in time/ frequency of SWSH coefficients.</span>
+
+
+<span class="sd">	Notes</span>
+<span class="sd">	-----</span>
+
+<span class="sd">	Assumes that the sphere on which this decomposition is carried out is so far out</span>
+<span class="sd">	that the coordinate system is spherical polar and the poper area is the</span>
+<span class="sd">	same as its co-ordinate area.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># Find out if the unboosted waveform is a single number or defined on a spherical grid.</span>
+	<span class="n">onepoint</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">waveform</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">onepoint</span><span class="p">:</span>
+		<span class="c1"># Get the spherical grid shape.</span>
+		<span class="n">ntheta</span><span class="p">,</span> <span class="n">nphi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">waveform</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span>
+
+	<span class="c1"># Compute the meshgrid for theta and phi.</span>
+	<span class="n">theta</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">theta</span><span class="p">(</span><span class="n">ntheta</span><span class="o">=</span><span class="n">ntheta</span><span class="p">,</span> <span class="n">nphi</span><span class="o">=</span><span class="n">nphi</span><span class="p">)</span>
+
+	<span class="c1"># Compute the meshgrid for theta and phi.</span>
+	<span class="n">phi</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">ntheta</span><span class="o">=</span><span class="n">ntheta</span><span class="p">,</span> <span class="n">nphi</span><span class="o">=</span><span class="n">nphi</span><span class="p">)</span>
+
+	<span class="c1"># decomposed_waveforms = {}</span>
+
+	<span class="n">multipoles_all</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">waveform</span><span class="p">:</span>
+		<span class="c1"># Integrate on the sphere for decomposition into SWSHs</span>
+
+		<span class="sd">&quot;&quot;&quot; This should be fixed with summation over ell &quot;&quot;&quot;</span>
+
+		<span class="c1"># define m values.</span>
+		<span class="k">if</span> <span class="n">emm_all</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+			<span class="n">emm_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">ell</span><span class="p">,</span> <span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+		<span class="c1"># Convert input to arrays.</span>
+
+		<span class="n">integrand_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+		<span class="c1"># Step 1: Compute the surface integral.</span>
+
+		<span class="c1"># Assign data vectors.</span>
+		<span class="c1"># lpole  = {}</span>
+
+		<span class="c1"># Check if data includes ghost zones or not.</span>
+
+		<span class="c1"># Compute the meshgrid for theta and phi.</span>
+		<span class="n">theta</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">theta</span><span class="p">(</span><span class="n">ntheta</span><span class="o">=</span><span class="n">ntheta</span><span class="p">,</span> <span class="n">nphi</span><span class="o">=</span><span class="n">nphi</span><span class="p">)</span>
+
+		<span class="c1"># Compute the meshgrid for theta and phi.</span>
+		<span class="n">phi</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">ntheta</span><span class="o">=</span><span class="n">ntheta</span><span class="p">,</span> <span class="n">nphi</span><span class="o">=</span><span class="n">nphi</span><span class="p">)</span>
+
+		<span class="n">sqrt_met_det</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+
+		<span class="n">integrand_ij</span> <span class="o">=</span> <span class="n">integrand_data</span>
+
+		<span class="n">darea</span> <span class="o">=</span> <span class="n">sqrt_met_det</span> <span class="o">*</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">dtheta</span> <span class="o">*</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">dphi</span>
+
+		<span class="kn">from</span> <span class="nn">qlmtools</span> <span class="kn">import</span> <span class="n">Yslm_vec</span>
+
+		<span class="k">for</span> <span class="n">ell_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ell_max</span><span class="p">):</span>
+
+			<span class="n">multipoles_ell</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="k">for</span> <span class="n">emm_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">emm</span><span class="p">)):</span>
+
+				<span class="c1"># Decompose into seperate m modes.</span>
+
+				<span class="c1"># m value.</span>
+				<span class="n">emm_val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">emm_all</span><span class="p">[</span><span class="n">emm_index</span><span class="p">])</span>
+
+				<span class="c1"># Spin weighted spherical harmonic function at (theta, phi)</span>
+				<span class="n">Ybasis_fun</span> <span class="o">=</span> <span class="n">Yslm_vec</span><span class="p">(</span><span class="n">spin_weight</span><span class="p">,</span> <span class="n">ell_index</span><span class="p">,</span> <span class="n">emm_val</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+				<span class="c1"># Integrate to obtain the multipole of order l.</span>
+
+				<span class="c1"># Integration for real and imaginary parts of the data separately.</span>
+				<span class="c1"># Integrate the function</span>
+
+				<span class="c1"># Using quad</span>
+				<span class="n">multipole_emm</span> <span class="o">=</span> <span class="n">quad_on_sphere</span><span class="p">(</span><span class="n">integrand_ij</span> <span class="o">*</span> <span class="n">Ybasis_fun</span> <span class="o">*</span> <span class="n">darea</span><span class="p">,</span> <span class="n">gridinfo</span><span class="p">)</span>
+				<span class="c1"># multipole_emm	 =	 np.sum(integrand_ij * Ybasis_fun * darea)</span>
+
+				<span class="n">multipoles_ell</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">emm_val</span><span class="p">:</span> <span class="n">multipole_emm</span><span class="p">})</span>
+			<span class="n">multipoles_all</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">ell_index</span><span class="p">:</span> <span class="n">multipoles_ell</span><span class="p">})</span>
+
+		<span class="c1"># Return the computed multipole.</span>
+		<span class="k">return</span> <span class="n">multipoles_all</span></div>
+
+
+<div class="viewcode-block" id="quad_on_sphere"><a class="viewcode-back" href="../../_autosummary/waveformtools.spherical.html#waveformtools.spherical.quad_on_sphere">[docs]</a><span class="k">def</span> <span class="nf">quad_on_sphere</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="n">gridinfo</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;third&quot;</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Integrate on a sphere using the scipy.quad method</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	integrand:		2d array</span>
+<span class="sd">					The two dimensional integrand array defined on the sphere.</span>
+
+<span class="sd">	info:		class instance</span>
+<span class="sd">				The class instance that contains the properties of the spherical grid.</span>
+
+<span class="sd">	kind:		str</span>
+<span class="sd">				The interpolation order to use in integration.</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	final_integral : float</span>
+<span class="sd">				  The given integrand integrated over the sphere.</span>
+
+<span class="sd">	final_errs:	float</span>
+<span class="sd">					The accumulated errors.</span>
+
+<span class="sd">	Notes</span>
+<span class="sd">	-----</span>
+
+<span class="sd">	Assumes that the sphere is a unit round sphere.</span>
+
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># Step 0: Get the grid properties</span>
+
+	<span class="c1"># Compute the meshgrid for theta and phi.</span>
+	<span class="n">theta_1d</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">theta_1d</span>
+	<span class="c1"># theta</span>
+	<span class="c1"># Compute the meshgrid for theta and phi.</span>
+	<span class="n">phi_1d</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">phi_1d</span>
+
+	<span class="c1"># imports</span>
+	<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+	<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span>
+
+	<span class="n">theta_first_integral_vals</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">theta_first_integral_errs</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c1"># Step 1: integrate along the theta direction</span>
+	<span class="k">for</span> <span class="n">phi_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">gridinfo</span><span class="o">.</span><span class="n">nphi</span><span class="p">):</span>
+		<span class="c1"># Interpolate the integrand.</span>
+
+		<span class="n">integrand_phi</span> <span class="o">=</span> <span class="n">integrand</span><span class="p">[:,</span> <span class="n">phi_index</span><span class="p">]</span>
+
+		<span class="n">integrand_phi_interp_func</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">theta_1d</span><span class="p">,</span> <span class="n">integrand_phi</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+
+		<span class="c1"># Integrate on the phi plane</span>
+		<span class="n">integral_phi_vals</span><span class="p">,</span> <span class="n">integral_phi_errs</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">integrand_phi_interp_func</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+		<span class="n">theta_first_integral_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">integral_phi_vals</span><span class="p">)</span>
+		<span class="n">theta_first_integral_errs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">integral_phi_errs</span><span class="p">)</span>
+
+	<span class="c1"># Step 2: integrate along the phi direction</span>
+
+	<span class="c1"># Interpolate the integrand.</span>
+
+	<span class="n">integrand_theta</span> <span class="o">=</span> <span class="n">theta_first_integral_vals</span>
+
+	<span class="n">integrand_theta_interp_func</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">phi_1d</span><span class="p">,</span> <span class="n">integrand_theta</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+
+	<span class="c1"># Integrate on the theta plane</span>
+	<span class="n">final_integral</span><span class="p">,</span> <span class="n">semi_final_errs</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">integrand_theta_interp_func</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+	<span class="c1"># Get final errors</span>
+	<span class="n">final_errs</span> <span class="o">=</span> <span class="n">semi_final_errs</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">theta_first_integral_errs</span><span class="p">))</span>
+
+	<span class="k">return</span> <span class="n">final_integral</span><span class="p">,</span> <span class="n">final_errs</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Vaishak Prasad
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'G-XXXXXXXXXX', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>

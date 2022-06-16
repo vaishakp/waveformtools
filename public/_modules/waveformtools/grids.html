@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>waveformtools.grids &mdash; waveformtools 2022-05-03 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: green" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> waveformtools
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2022-05-03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">waveformtools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../waveformtools.html">waveformtools</a> &raquo;</li>
+        
+      <li>waveformtools.grids</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for waveformtools.grids</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Classes to hold grid information</span>
+
+
+<span class="sd">Classes</span>
+<span class="sd">-------</span>
+<span class="sd">spherical_grid:	grid info.</span>
+<span class="sd">				Stores information on the 2d grid in spherical polar coordinates.</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1">#from numba import jit, njit, jitclass</span>
+<span class="c1">#from numba.experimental import jitclass</span>
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span><span class="p">,</span> <span class="n">njit</span>
+<span class="c1">#from numba import jitclass          # import the decorator</span>
+<span class="kn">import</span> <span class="nn">numba</span> <span class="k">as</span> <span class="nn">nb</span>
+<span class="kn">from</span> <span class="nn">numba.experimental</span> <span class="kn">import</span> <span class="n">jitclass</span>
+
+<span class="n">spec_sp</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;ntheta&#39;</span> <span class="p">:</span> <span class="n">nb</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
+            <span class="s1">&#39;nphi&#39;</span> <span class="p">:</span> <span class="n">nb</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
+            <span class="s1">&#39;nghosts&#39;</span> <span class="p">:</span> <span class="n">nb</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
+            <span class="s1">&#39;nthetamax&#39;</span> <span class="p">:</span> <span class="n">nb</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
+            <span class="s1">&#39;nphimax&#39;</span> <span class="p">:</span> <span class="n">nb</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1">#@jitclass(spec_sp)</span>
+<div class="viewcode-block" id="spherical_grid"><a class="viewcode-back" href="../../_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid">[docs]</a><span class="k">class</span> <span class="nc">spherical_grid</span><span class="p">:</span>
+	<span class="sd">&#39;&#39;&#39; A class to store the coordinate grid on a sphere.</span>
+
+<span class="sd">	Attributes</span>
+<span class="sd">	----------</span>
+<span class="sd">	ntheta:	int</span>
+<span class="sd">				The number of angular points in the :math:`\\theta`</span>
+<span class="sd">				direction, including ghost zones.</span>
+<span class="sd">	nphi:	int</span>
+<span class="sd">			The number of angular points in the :math:`\\phi`</span>
+<span class="sd">			direction, including ghost zones.</span>
+<span class="sd">	nghosts:	int</span>
+<span class="sd">				The number of ghost zones at the end of</span>
+<span class="sd">				each direction.</span>
+<span class="sd">	meshgrid:	tuple of 2d array</span>
+<span class="sd">				The 2d array containing the meshgrid of</span>
+<span class="sd">				(:math:`\\theta, \\phi`) angular points.</span>
+<span class="sd">	theta_1d:	1d array</span>
+<span class="sd">				The 1d array of angular points</span>
+<span class="sd">				along the :math:`\\theta` axis.</span>
+<span class="sd">	phi_1d:	1d array</span>
+<span class="sd">				The 1d array of angular points</span>
+<span class="sd">				along the :math:`\\phi` axis.</span>
+<span class="sd">	dtheta:	float</span>
+<span class="sd">				The angular step size in the :math:`\\theta`</span>
+<span class="sd">				direction.</span>
+<span class="sd">	dphi:	float</span>
+<span class="sd">			The angular step size inthe :math:`\\phi`</span>
+<span class="sd">			direction.</span>
+<span class="sd">	npix_act:	int</span>
+<span class="sd">				The total number of gridpoints on the sphere,</span>
+<span class="sd">				excluding the ghost points.</span>
+<span class="sd">	meshgrid:</span>
+<span class="sd">				Get the 2d angular grid.</span>
+
+<span class="sd">	Methods</span>
+<span class="sd">	-------</span>
+<span class="sd">	theta_1d:</span>
+<span class="sd">				Get the :math:`\\theta` axis.</span>
+<span class="sd">	phi_1d:</span>
+<span class="sd">				Get the :math:`\\phi` axis.</span>
+
+<span class="sd">	&#39;&#39;&#39;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+				 <span class="n">nphi</span>		  <span class="o">=</span> <span class="mi">80</span><span class="p">,</span>
+				 <span class="n">ntheta</span>		  <span class="o">=</span> <span class="mi">41</span><span class="p">,</span>
+				 <span class="n">nphimax</span>	  <span class="o">=</span> <span class="mi">124</span><span class="p">,</span>
+				 <span class="n">nthetamax</span>	  <span class="o">=</span> <span class="mi">66</span><span class="p">,</span>
+				 <span class="n">nghosts</span>	  <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+
+		<span class="c1">#Number of gridpoints along phi direction including ghost points.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nphi</span>	   <span class="o">=</span> <span class="n">nphi</span>
+		<span class="c1">#Number of gridpoints along theta direction including ghost points.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ntheta</span>    <span class="o">=</span> <span class="n">ntheta</span>
+		<span class="c1">#Total length of phi array used by ETK.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nphimax</span>   <span class="o">=</span> <span class="n">nphimax</span>
+		<span class="c1">#Total length of theta array used by ETK.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nthetamax</span> <span class="o">=</span> <span class="n">nthetamax</span>
+		<span class="c1">#Number of ghost points in theta/phi direction.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span>   <span class="o">=</span> <span class="n">nghosts</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">npix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Return the total number of pixels, including the ghost zones present at one iteration. &#39;&#39;&#39;</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ntheta</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nphi</span><span class="p">)</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">npix_act</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Return the actual number of pixels, excluding the ghost zones present at one iteration &#39;&#39;&#39;</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ntheta</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nphi</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">)</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">npix_max</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Return the (max) total number of pixels, including the ghost and buffer zones at one iteration.&#39;&#39;&#39;</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nthetamax</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nphimax</span><span class="p">)</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">ntheta_act</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Return the actual number of valid pixels, excluding the ghost and buffer zones, along the theta axis at one iteration.&#39;&#39;&#39;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ntheta</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">nphi_act</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Return the actual number of valid pixels, excluding the ghost and buffer zones, along the phi axis at one iteration. &#39;&#39;&#39;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nphi</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">dtheta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Return the coodinate spacing :math:`d\\theta.` &#39;&#39;&#39;</span>
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ntheta</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">)</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">dphi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Return the coordinate spacing :math:`d\\phi`. &#39;&#39;&#39;</span>
+		<span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nphi</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">)</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">nbuffer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Return the number of buffer zones (excluding ghosts) &#39;&#39;&#39;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nthetamax</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">ntheta</span>
+
+<div class="viewcode-block" id="spherical_grid.theta_1d"><a class="viewcode-back" href="../../_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.theta_1d">[docs]</a>	<span class="k">def</span> <span class="nf">theta_1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Returns the coordinate value theta given the coordinate index. The coordinate index ranges from (0, ntheta).</span>
+<span class="sd">			The actual indices without the ghost and extra zones is (nghosts, ntheta-nghosts).</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		-----------</span>
+
+<span class="sd">		theta_index:	int/ 1d array</span>
+<span class="sd">						The theta coordinate index or axis.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		theta_1d:	float</span>
+<span class="sd">					The coordinate(s) :math:`\\theta` on the sphere.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">theta_index</span><span class="p">:</span>
+			<span class="n">theta_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ntheta</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="p">(</span><span class="n">theta_index</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ntheta</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="spherical_grid.phi_1d"><a class="viewcode-back" href="../../_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.phi_1d">[docs]</a>	<span class="k">def</span> <span class="nf">phi_1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi_index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Returns the coordinate value theta given the coordinate index. The coordinate index lies in (0, nphi).</span>
+<span class="sd">			The actual indices without the ghost and extra zones is (nghosts, nphi-nghosts).</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		-----------</span>
+
+<span class="sd">		phi_1d:	int / 1d array</span>
+<span class="sd">					The phi coordinate index or axis.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		phi_1d:	float or 1d array</span>
+<span class="sd">					The coordinate(s) :math:`\\phi` on the sphere.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">phi_index</span><span class="p">:</span>
+			<span class="n">phi_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nphi</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="p">(</span><span class="n">phi_index</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nphi</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nghosts</span><span class="p">)</span></div>
+
+
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">meshgrid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; The (:math:`\\theta, \\phi)`: coordinate meshes.</span>
+<span class="sd">			Excludes the ghost zones.</span>
+
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		theta:	2d array</span>
+<span class="sd">				The :math:`\\theta` coordinate matrix for vectorization.</span>
+
+<span class="sd">		phi:	2d array</span>
+<span class="sd">				The :math:`\\phi` coordinate matrix for vectorization.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span>
+
+		<span class="c1">#theta, phi	  =   np.meshgrid(self.theta_1d(), self.phi_1d())</span>
+
+		<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">ntheta_act</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nphi_act</span><span class="p">))</span>
+		<span class="n">phi</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">ntheta_act</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nphi_act</span><span class="p">))</span>
+
+		<span class="k">for</span> <span class="n">theta_index</span><span class="p">,</span> <span class="n">theta_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta_1d</span><span class="p">()):</span>
+			<span class="k">for</span> <span class="n">phi_index</span><span class="p">,</span> <span class="n">phi_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi_1d</span><span class="p">()):</span>
+				<span class="n">theta</span><span class="p">[</span><span class="n">theta_index</span><span class="p">,</span> <span class="n">phi_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">theta_val</span>
+				<span class="n">phi</span><span class="p">[</span><span class="n">theta_index</span><span class="p">,</span> <span class="n">phi_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">phi_val</span>
+
+
+		<span class="c1">#return np.transpose(theta), np.transpose(phi)</span>
+		<span class="k">return</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Vaishak Prasad
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'G-XXXXXXXXXX', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>

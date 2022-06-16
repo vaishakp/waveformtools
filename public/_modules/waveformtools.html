@@ -21,6 +21,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -32,6 +33,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
@@ -81,10 +84,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">Package API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
 </ul>
 
             
@@ -149,31 +153,31 @@
             
   <h1>Source code for waveformtools</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (c) 2020, Vaishak Prasad</span>
-<span class="c1"># See LICENSE file for details: &lt;https://gitlab.com/vaishakp/waveformtools/-/blob/main/LICENSE&gt;</span>
-<span class="sd">&quot;&quot;&quot;Module for the analysis and handling of numerical relativity and gravitational waveform data.</span>
+<span class="c1"># See [LICENSE](https://gitlab.com/vaishakp/waveformtools/-/blob/main/LICENSE) file for details.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for the analysis and handling of numerical relativity and gravitational waveform data.</span>
+
 <span class="sd">Classes</span>
 <span class="sd">-------</span>
-<span class="sd">sim : Base class for NR data</span>
-<span class="sd">    This is needed to retrieve and handle Numerical Relativity data.</span>
+<span class="sd">sim: Base class for NR simulations data.</span>
+<span class="sd">				This is needed to retrieve and handle Numerical Relativity data.</span>
+<span class="sd">spherical_array:	A 2D data-type.</span>
+<span class="sd">					Stores and manages two-dimensional data on surfaces of spherical topology.</span>
+<span class="sd">modes_array: A data-type.</span>
+<span class="sd">			 Handle and work with mode coefficients.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="c1"># try:</span>
-<span class="c1">#    import importlib.metadata as importlib_metadata</span>
-<span class="c1"># except ModuleNotFoundError:  # pragma: no cover</span>
-<span class="c1">#    import importlib_metadata</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-
-
-<span class="c1"># __version__ = importlib_metadata.version(__name__)</span>
 
 <span class="n">package_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="get_version"><a class="viewcode-back" href="../_autosummary/waveformtools.html#waveformtools.get_version">[docs]</a><span class="k">def</span> <span class="nf">get_version</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; Get the latest version number based on the last commit date. </span>
+    <span class="sd">&quot;&quot;&quot; Get the latest version number based on the last commit date.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 

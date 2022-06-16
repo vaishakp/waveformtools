@@ -9,6 +9,12 @@ waveformtools.waveforms
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      construct_mode_list
+   
    
 
    
@@ -17,7 +23,8 @@ waveformtools.waveforms
 
    .. autosummary::
    
-      Psi
+      modes_array
+      spherical_array
    
    
 

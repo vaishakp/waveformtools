@@ -21,6 +21,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -32,6 +33,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -81,10 +84,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Package API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 </ul>
 
             
@@ -155,6 +159,7 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
@@ -163,9 +168,11 @@
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#X"><strong>X</strong></a>
  
@@ -187,6 +194,20 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.bintp">bintp() (in module waveformtools.waveformtools)</a>
 </li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.boost">boost() (waveformtools.waveforms.modes_array method)</a>
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.boost">(waveformtools.waveforms.spherical_array method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.BMS.html#waveformtools.BMS.boost_waveform">boost_waveform() (in module waveformtools.BMS)</a>
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.CoM.html#waveformtools.CoM.boost_waveform">(in module waveformtools.CoM)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -209,9 +230,9 @@
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.center">center() (in module waveformtools.waveformtools)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.chirpmass">chirpmass() (waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.Chebyshev_differential">Chebyshev_differential() (in module waveformtools.differentiate)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.chirpmass">chirpmass (waveformtools.simulations.sim property)</a>
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.cleandata">cleandata() (in module waveformtools.waveformtools)</a>
 </li>
@@ -219,13 +240,35 @@
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.coalignwfs">coalignwfs() (in module waveformtools.waveformtools)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.coalignwfs2">coalignwfs2() (in module waveformtools.waveformtools)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.comm_data_duration">comm_data_duration() (waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.comm_data_duration">comm_data_duration (waveformtools.simulations.sim property)</a>
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.compute_chirp_mass">compute_chirp_mass() (in module waveformtools.waveformtools)</a>
 </li>
+      <li><a href="_autosummary/waveformtools.CoM.html#waveformtools.CoM.compute_com_alpha">compute_com_alpha() (in module waveformtools.CoM)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.CoM.html#waveformtools.CoM.compute_com_beta">compute_com_beta() (in module waveformtools.CoM)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.BMS.html#waveformtools.BMS.compute_conformal_k">compute_conformal_k() (in module waveformtools.BMS)</a>
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.CoM.html#waveformtools.CoM.compute_conformal_k">(in module waveformtools.CoM)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/waveformtools.transforms.html#waveformtools.transforms.compute_fft">compute_fft() (in module waveformtools.transforms)</a>
+</li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.compute_frequencies">compute_frequencies() (in module waveformtools.waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.transforms.html#waveformtools.transforms.compute_ifft">compute_ifft() (in module waveformtools.transforms)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.BMS.html#waveformtools.BMS.compute_supertransl_alpha">compute_supertransl_alpha() (in module waveformtools.BMS)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.CoM.html#waveformtools.CoM.compute_translation_alpha_modes">compute_translation_alpha_modes() (in module waveformtools.CoM)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.construct_mode_list">construct_mode_list() (in module waveformtools.waveforms)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -233,23 +276,57 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.data_duration">data_duration() (waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.data_duration">data_duration (waveformtools.simulations.sim property)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.ddt">ddt() (in module waveformtools.waveformtools)</a>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.data_len">data_len (waveformtools.waveforms.modes_array property)</a>
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.data_len">(waveformtools.waveforms.spherical_array property)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate">differentiate() (in module waveformtools.waveformtools)</a>
+      </ul></li>
+      <li><a href="_autosummary/waveformtools.spherical.html#waveformtools.spherical.decompose_in_SWSHs">decompose_in_SWSHs() (in module waveformtools.spherical)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate2">differentiate2() (in module waveformtools.waveformtools)</a>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.delta_f">delta_f (waveformtools.waveforms.modes_array property)</a>
 </li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.delta_t">delta_t() (waveformtools.waveforms.modes_array method)</a>
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.delta_t">(waveformtools.waveforms.spherical_array method)</a>
+</li>
+      </ul></li>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate">differentiate() (in module waveformtools.differentiate)</a>
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate">(in module waveformtools.waveformtools)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate3">differentiate3() (in module waveformtools.waveformtools)</a>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate2">differentiate2() (in module waveformtools.differentiate)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate4">differentiate4() (in module waveformtools.waveformtools)</a>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate3">differentiate3() (in module waveformtools.differentiate)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate5">differentiate5() (in module waveformtools.waveformtools)</a>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate4">differentiate4() (in module waveformtools.differentiate)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.Psi.dt">dt() (waveformtools.waveforms.Psi property)</a>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate5">differentiate5() (in module waveformtools.differentiate)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate5_vec_nonumba">differentiate5_vec_nonumba() (in module waveformtools.differentiate)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate5_vec_numba">differentiate5_vec_numba() (in module waveformtools.differentiate)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate_cwaveform">differentiate_cwaveform() (in module waveformtools.differentiate)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.dphi">dphi (waveformtools.grids.spherical_grid property)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.dtheta">dtheta (waveformtools.grids.spherical_grid property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.extrap_to_inf">extrap_to_inf() (waveformtools.waveforms.modes_array method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -257,7 +334,13 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.integrate.html#waveformtools.integrate.fixed_frequency_integrator">fixed_frequency_integrator() (in module waveformtools.integrate)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.flatten">flatten() (in module waveformtools.waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.Fourier_differential">Fourier_differential() (in module waveformtools.differentiate)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -265,7 +348,27 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.get_BH_locations">get_BH_locations() (waveformtools.simulations.sim method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.get_centered_taxis">get_centered_taxis() (in module waveformtools.waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.get_CoM_locations">get_CoM_locations() (waveformtools.simulations.sim method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.get_CoM_mean_motion">get_CoM_mean_motion() (waveformtools.simulations.sim method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.get_metadata">get_metadata() (waveformtools.waveforms.modes_array method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.get_news_from_psi4">get_news_from_psi4() (waveformtools.waveforms.modes_array method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.get_starting_angular_frequency">get_starting_angular_frequency() (in module waveformtools.waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.get_strain_from_psi4">get_strain_from_psi4() (waveformtools.waveforms.modes_array method)</a>
+</li>
       <li><a href="_autosummary/waveformtools.html#waveformtools.get_version">get_version() (in module waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.get_waveform_angular_frequency">get_waveform_angular_frequency() (in module waveformtools.waveformtools)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -273,7 +376,7 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.integrate">integrate() (in module waveformtools.waveformtools)</a>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.integrate_first_order">integrate_first_order() (in module waveformtools.waveformtools)</a>
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.interpolate_resample_wfs">interpolate_resample_wfs() (in module waveformtools.waveformtools)</a>
 </li>
@@ -294,16 +397,18 @@
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.lengtheq">lengtheq() (in module waveformtools.waveformtools)</a>
 </li>
       <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.load_data">load_data() (waveformtools.simulations.sim method)</a>
-
-      <ul>
-        <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.Psi.load_data">(waveformtools.waveforms.Psi method)</a>
 </li>
-      </ul></li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.load_modes">load_modes() (waveformtools.waveforms.modes_array method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.load_obj">load_obj() (in module waveformtools.waveformtools)</a>
 </li>
       <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.load_strain">load_strain() (waveformtools.simulations.sim method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.low_cut">low_cut() (waveformtools.waveforms.modes_array method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.low_cut_filter">low_cut_filter() (in module waveformtools.waveformtools)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -311,23 +416,25 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.massratio">massratio() (in module waveformtools.waveformtools)</a>
-
-      <ul>
-        <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.massratio">(waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.massratio">massratio (waveformtools.simulations.sim property)</a>
 </li>
-      </ul></li>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.massratio">massratio() (in module waveformtools.waveformtools)</a>
+</li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.match_wfs">match_wfs() (in module waveformtools.waveformtools)</a>
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.mavg">mavg() (in module waveformtools.waveformtools)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.merger_distance">merger_distance() (waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.merger_distance">merger_distance (waveformtools.simulations.sim property)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.merger_time">merger_time() (waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.merger_time">merger_time (waveformtools.simulations.sim property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.meshgrid">meshgrid (waveformtools.grids.spherical_grid property)</a>
+</li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.message">message() (in module waveformtools.waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.mode">mode() (waveformtools.waveforms.modes_array method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array">modes_array (class in waveformtools.waveforms)</a>
 </li>
       <li>
     module
@@ -335,7 +442,25 @@
       <ul>
         <li><a href="_autosummary/waveformtools.html#module-waveformtools">waveformtools</a>
 </li>
+        <li><a href="_autosummary/waveformtools.BMS.html#module-waveformtools.BMS">waveformtools.BMS</a>
+</li>
+        <li><a href="_autosummary/waveformtools.CoM.html#module-waveformtools.CoM">waveformtools.CoM</a>
+</li>
+        <li><a href="_autosummary/waveformtools.compare.html#module-waveformtools.compare">waveformtools.compare</a>
+</li>
+        <li><a href="_autosummary/waveformtools.differentiate.html#module-waveformtools.differentiate">waveformtools.differentiate</a>
+</li>
+        <li><a href="_autosummary/waveformtools.extrapolate.html#module-waveformtools.extrapolate">waveformtools.extrapolate</a>
+</li>
+        <li><a href="_autosummary/waveformtools.grids.html#module-waveformtools.grids">waveformtools.grids</a>
+</li>
+        <li><a href="_autosummary/waveformtools.integrate.html#module-waveformtools.integrate">waveformtools.integrate</a>
+</li>
         <li><a href="_autosummary/waveformtools.simulations.html#module-waveformtools.simulations">waveformtools.simulations</a>
+</li>
+        <li><a href="_autosummary/waveformtools.spherical.html#module-waveformtools.spherical">waveformtools.spherical</a>
+</li>
+        <li><a href="_autosummary/waveformtools.transforms.html#module-waveformtools.transforms">waveformtools.transforms</a>
 </li>
         <li><a href="_autosummary/waveformtools.waveforms.html#module-waveformtools.waveforms">waveformtools.waveforms</a>
 </li>
@@ -348,7 +473,21 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.nbuffer">nbuffer (waveformtools.grids.spherical_grid property)</a>
+</li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.norm">norm() (in module waveformtools.waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.nphi_act">nphi_act (waveformtools.grids.spherical_grid property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.npix">npix (waveformtools.grids.spherical_grid property)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.npix_act">npix_act (waveformtools.grids.spherical_grid property)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.npix_max">npix_max (waveformtools.grids.spherical_grid property)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.ntheta_act">ntheta_act (waveformtools.grids.spherical_grid property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -364,19 +503,31 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.phi_1d">phi_1d() (waveformtools.grids.spherical_grid method)</a>
+</li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.plot">plot() (in module waveformtools.waveformtools)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.pm_data_duration">pm_data_duration() (waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.compare.html#waveformtools.compare.plot_mode_differences">plot_mode_differences() (in module waveformtools.compare)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.pm_data_length">pm_data_length() (waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.compare.html#waveformtools.compare.plot_modes">plot_modes() (in module waveformtools.compare)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.pm_data_duration">pm_data_duration (waveformtools.simulations.sim property)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.pm_data_length">pm_data_length (waveformtools.simulations.sim property)</a>
+</li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.pmmatch_wfs">pmmatch_wfs() (in module waveformtools.waveformtools)</a>
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.progressbar">progressbar() (in module waveformtools.waveformtools)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.Psi">Psi (class in waveformtools.waveforms)</a>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.spherical.html#waveformtools.spherical.quad_on_sphere">quad_on_sphere() (in module waveformtools.spherical)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -384,6 +535,8 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.extrapolate.html#waveformtools.extrapolate.r_to_ra_conversion">r_to_ra_conversion() (in module waveformtools.extrapolate)</a>
+</li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.removeNans">removeNans() (in module waveformtools.waveformtools)</a>
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.removezeros">removezeros() (in module waveformtools.waveformtools)</a>
@@ -402,9 +555,15 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.sampling_f">sampling_f() (waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.sampling_f">sampling_f (waveformtools.simulations.sim property)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.save_modes">save_modes() (waveformtools.waveforms.modes_array method)</a>
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.save_obj">save_obj() (in module waveformtools.waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.transforms.html#waveformtools.transforms.set_fft_conven">set_fft_conven() (in module waveformtools.transforms)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.set_mode_data">set_mode_data() (waveformtools.waveforms.modes_array method)</a>
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.shiftmatched">shiftmatched() (in module waveformtools.waveformtools)</a>
 </li>
@@ -418,8 +577,18 @@
 </li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.smoothen">smoothen() (in module waveformtools.waveformtools)</a>
 </li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array">spherical_array (class in waveformtools.waveforms)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid">spherical_grid (class in waveformtools.grids)</a>
+</li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.startend">startend() (in module waveformtools.waveformtools)</a>
 </li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.supertranslate">supertranslate() (waveformtools.waveforms.modes_array method)</a>
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.supertranslate">(waveformtools.waveforms.spherical_array method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -427,18 +596,46 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.taper">taper() (in module waveformtools.waveformtools)</a>
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.taper">(waveformtools.waveforms.modes_array method)</a>
 </li>
+      </ul></li>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.taper_tanh">taper_tanh() (in module waveformtools.waveformtools)</a>
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.taper_tanh">(waveformtools.waveforms.modes_array method)</a>
+</li>
+      </ul></li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.taperlengtheq">taperlengtheq() (in module waveformtools.waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.grids.html#waveformtools.grids.spherical_grid.theta_1d">theta_1d() (waveformtools.grids.spherical_grid method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.to_frequency_basis">to_frequency_basis() (waveformtools.waveforms.modes_array method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.totalmass">totalmass() (in module waveformtools.waveformtools)</a>
-
-      <ul>
-        <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.totalmass">(waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.to_modes_array">to_modes_array() (waveformtools.waveforms.spherical_array method)</a>
 </li>
-      </ul></li>
-      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.true_merger_distance">true_merger_distance() (waveformtools.simulations.sim property)</a>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.to_spherical_array">to_spherical_array() (waveformtools.waveforms.modes_array method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.to_time_basis">to_time_basis() (waveformtools.waveforms.modes_array method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.totalmass">totalmass (waveformtools.simulations.sim property)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.totalmass">totalmass() (in module waveformtools.waveformtools)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.trim">trim() (waveformtools.waveforms.modes_array method)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.true_merger_distance">true_merger_distance (waveformtools.simulations.sim property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.transforms.html#waveformtools.transforms.unset_fft_conven">unset_fft_conven() (in module waveformtools.transforms)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -446,11 +643,68 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.extrapolate.html#waveformtools.extrapolate.waveextract_to_inf_perturbative_one_order">waveextract_to_inf_perturbative_one_order() (in module waveformtools.extrapolate)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.extrapolate.html#waveformtools.extrapolate.waveextract_to_inf_perturbative_two_order">waveextract_to_inf_perturbative_two_order() (in module waveformtools.extrapolate)</a>
+</li>
+      <li><a href="_autosummary/waveformtools.extrapolate.html#waveformtools.extrapolate.waveextract_to_inf_perturbative_twop5_order">waveextract_to_inf_perturbative_twop5_order() (in module waveformtools.extrapolate)</a>
+</li>
       <li>
     waveformtools
 
       <ul>
         <li><a href="_autosummary/waveformtools.html#module-waveformtools">module</a>
+</li>
+      </ul></li>
+      <li>
+    waveformtools.BMS
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.BMS.html#module-waveformtools.BMS">module</a>
+</li>
+      </ul></li>
+      <li>
+    waveformtools.CoM
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.CoM.html#module-waveformtools.CoM">module</a>
+</li>
+      </ul></li>
+      <li>
+    waveformtools.compare
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.compare.html#module-waveformtools.compare">module</a>
+</li>
+      </ul></li>
+      <li>
+    waveformtools.differentiate
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.differentiate.html#module-waveformtools.differentiate">module</a>
+</li>
+      </ul></li>
+      <li>
+    waveformtools.extrapolate
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.extrapolate.html#module-waveformtools.extrapolate">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    waveformtools.grids
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.grids.html#module-waveformtools.grids">module</a>
+</li>
+      </ul></li>
+      <li>
+    waveformtools.integrate
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.integrate.html#module-waveformtools.integrate">module</a>
 </li>
       </ul></li>
       <li>
@@ -460,8 +714,20 @@
         <li><a href="_autosummary/waveformtools.simulations.html#module-waveformtools.simulations">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    waveformtools.spherical
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.spherical.html#module-waveformtools.spherical">module</a>
+</li>
+      </ul></li>
+      <li>
+    waveformtools.transforms
+
+      <ul>
+        <li><a href="_autosummary/waveformtools.transforms.html#module-waveformtools.transforms">module</a>
+</li>
+      </ul></li>
       <li>
     waveformtools.waveforms
 
@@ -476,21 +742,21 @@
         <li><a href="_autosummary/waveformtools.waveformtools.html#module-waveformtools.waveformtools">module</a>
 </li>
       </ul></li>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.wavextractinf">wavextractinf() (in module waveformtools.waveformtools)</a>
-</li>
   </ul></td>
 </tr></table>
 
 <h2 id="X">X</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/waveformtools.CoM.html#waveformtools.CoM.X_com_moments">X_com_moments() (in module waveformtools.CoM)</a>
+</li>
       <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.xtract_camp">xtract_camp() (in module waveformtools.waveformtools)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.xtract_cphase">xtract_cphase() (in module waveformtools.waveformtools)</a>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.xtract_camp_phase">xtract_camp_phase() (in module waveformtools.waveformtools)</a>
 </li>
-      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.xtract_cphaseamp">xtract_cphaseamp() (in module waveformtools.waveformtools)</a>
+      <li><a href="_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.xtract_cphase">xtract_cphase() (in module waveformtools.waveformtools)</a>
 </li>
   </ul></td>
 </tr></table>

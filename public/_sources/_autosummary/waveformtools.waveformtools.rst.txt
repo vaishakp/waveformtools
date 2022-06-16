@@ -23,20 +23,19 @@ waveformtools.waveformtools
       coalignwfs2
       compute_chirp_mass
       compute_frequencies
-      ddt
       differentiate
-      differentiate2
-      differentiate3
-      differentiate4
-      differentiate5
       flatten
-      integrate
+      get_centered_taxis
+      get_starting_angular_frequency
+      get_waveform_angular_frequency
+      integrate_first_order
       interpolate_resample_wfs
       interpolate_wfs
       iscontinuous
       iscontinuous_old
       lengtheq
       load_obj
+      low_cut_filter
       massratio
       match_wfs
       mavg
@@ -57,12 +56,12 @@ waveformtools.waveformtools
       smoothen
       startend
       taper
+      taper_tanh
       taperlengtheq
       totalmass
-      wavextractinf
       xtract_camp
+      xtract_camp_phase
       xtract_cphase
-      xtract_cphaseamp
    
    
 
