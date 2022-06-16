@@ -12,3 +12,5 @@ statistics
 termcolor
 pickle
 datetime
+numba
+
