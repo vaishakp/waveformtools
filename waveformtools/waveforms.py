@@ -202,7 +202,7 @@ class spherical_array:
 
 		# Create the modes_array
 		waveform_modes._create_modes_array(ell_max=ell_max, data_len=self.data_len)
-		wavefotm_modes.modes_list = modes_list
+		waveform_modes.modes_list = modes_list
 		# The area element on the sphere
 		# Compute the meshgrid for theta and phi.
 		theta, phi = grid_info.meshgrid
@@ -308,7 +308,7 @@ class spherical_array:
 		"""
 
 		# Create a spherical_array to hold the supertranslated waveform
-		Psi4_supertransl_sp = spherical_array(grid_info=self.grid_info, label='supertranslated frequency space modes')
+		Psi4_supertransl_sp = spherical_array(grid_info=self.grid_info, label='{} -> supertranslated time'.format(self.label))
 
 		delta_t = float(self.delta_t())
 
@@ -883,6 +883,7 @@ class modes_array:
 		key_format=None,
 		modes_to_save=None,
 		out_file_name="mp_psi4_new_modes.h5",
+		compression_opts=0
 	):
 		"""Save the waveform mode data to an hdf file.
 
@@ -920,7 +921,8 @@ class modes_array:
 		# I/O assignments.
 		#############################
 
-		self.out_file_name = out_file_name
+		self.out_file_name = self.label + ' ' + out_file_name
+		self.out_file_name.replace(' ', '_')
 		# get the full path.
 		full_path = self.data_dir + self.out_file_name
 
@@ -952,7 +954,7 @@ class modes_array:
 
 			# dt = h5py.special_dtype(vlen=str)
 			# metadata=np.asarray([metadata_bytes], dtype=dt)
-			wfile.create_dataset("metadata", data=metadata_bytes)
+			wfile.create_dataset("metadata", data=metadata_bytes, compression_opts=compression_opts)
 
 			# Load the modes listed in mode_numbers list
 			for item in modes_to_save:
