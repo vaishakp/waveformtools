@@ -3,9 +3,6 @@ name: myenv
 dependencies:
     - numpy
     - scipy
-    - pycbc
-    - lalsuite
-    - ligo-common
     - matplotlib
     - statistics
     - termcolor
