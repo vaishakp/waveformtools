@@ -160,6 +160,8 @@ pages:
     - which conda
     - conda --version
     - python --version
+    - conda update -y -n base conda
+    - conda update -y --all
   # - which pip
   # - pip --version
     - git show -s --format=%ci >> date.txt
