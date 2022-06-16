@@ -180,10 +180,10 @@ pages:
     - cd docs
     - make html
     #- sphinx-build -b html source ../build/html
-    - cp -r build/html/* ../public/
+    - mv build/html ../public/
     
   artifacts:
     paths:
       - public
   only:
-    - main
+    - merge_requests
