@@ -1861,23 +1861,23 @@
 	<span class="c1"># Try to construct using `delta_t`</span>
 		<span class="k">try</span><span class="p">:</span>
 			<span class="n">time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">data_len</span><span class="o">*</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;time axis&#39;</span><span class="p">,</span> <span class="n">time_axis</span><span class="p">)</span>
+			<span class="c1">#print(&#39;time axis&#39;, time_axis)</span>
 		<span class="k">except</span><span class="p">:</span>
 			<span class="n">message</span><span class="p">(</span><span class="s1">&#39;Please suppy the time axis or delta_t!&#39;</span><span class="p">)</span>
 
 	<span class="n">nearest_lower_power</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data_len</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 
-	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;nearest lower power&#39;</span><span class="p">,</span> <span class="n">nearest_lower_power</span><span class="p">)</span>
+	<span class="c1">#print(&#39;nearest lower power&#39;, nearest_lower_power)</span>
 	<span class="c1"># Change in length of the data.</span>
-	<span class="n">data_delta_len</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nearest_lower_power</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">data_len</span>
-	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;data delta len&#39;</span><span class="p">,</span> <span class="n">data_delta_len</span><span class="p">)</span>
+	<span class="n">data_delta_len</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nearest_lower_power</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">data_len</span>
+	<span class="c1">#print(&#39;data delta len&#39;, data_delta_len)</span>
 	<span class="c1">#nend_points = int((duration/2)/delta_t) + int(data_delta_len/2)</span>
 	<span class="n">nend_points</span> <span class="o">=</span>  <span class="nb">int</span><span class="p">(</span><span class="n">data_delta_len</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 	<span class="n">nstart_points</span> <span class="o">=</span> <span class="n">data_delta_len</span><span class="o">-</span><span class="n">nend_points</span>
 
-	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;N startend points&#39;</span><span class="p">,</span> <span class="n">nend_points</span><span class="p">,</span> <span class="n">nstart_points</span><span class="p">)</span>
+	<span class="c1">#print(&#39;N startend points&#39;, nend_points, nstart_points)</span>
 	<span class="n">new_time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">time_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">nstart_points</span><span class="o">*</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">time_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">nend_points</span><span class="o">*</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
-	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;New time axis&#39;</span><span class="p">,</span> <span class="n">new_time_axis</span><span class="p">)</span>
+	<span class="c1">#print(&#39;New time axis&#39;, new_time_axis)</span>
 	<span class="n">tfinal</span> <span class="o">=</span> <span class="n">data_len</span><span class="o">*</span><span class="n">delta_t</span>
 
 	<span class="c1">#start_axis = np.linspace(-1, 1, nstart_points)</span>

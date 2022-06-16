@@ -162,7 +162,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">message</span><span class="p">,</span> <span class="n">cleandata</span>
-
+<span class="kn">import</span> <span class="nn">config</span>
 <span class="c1"># import waveformtools</span>
 
 
@@ -256,7 +256,10 @@
 
 <span class="sd">	data_duration:	dict of floats</span>
 <span class="sd">					The total cctk_time units of simulations present.</span>
-
+<span class="sd">	BH_locations:	dict of lists.</span>
+<span class="sd">					A dictionary of values containing BH locations of every simulation. Each simulation has three lists, one for each black hole.</span>
+<span class="sd">	CoM_locations:	dict of lists</span>
+<span class="sd">					A dictionary of lists containing the X, Y and Z locations of the CoM of the simulations.</span>
 
 <span class="sd">	Methods</span>
 <span class="sd">	-------</span>
@@ -265,19 +268,23 @@
 
 <span class="sd">		Assignes/Updates:</span>
 <span class="sd">			* ref_multipoles.</span>
+
 <span class="sd">	calc_log_multipoles</span>
 <span class="sd">		Calculate the natural logarithm of the negative of the two sets of multipole moment.</span>
 <span class="sd">		Assignes/ Updates:</span>
 <span class="sd">			* log_multipoles.</span>
+
 <span class="sd">	calc_delta_multipoles</span>
 <span class="sd">		Calculate the two delta multipoles - ref multipoles.</span>
 <span class="sd">		Assignes/ Updates:</span>
 <span class="sd">			* delta_multipoles.</span>
+
 <span class="sd">	calc_amp_phase</span>
 <span class="sd">		Extract the amplitudes and phases of the strain waveforms.</span>
 <span class="sd">		Assignes/Updates:</span>
 <span class="sd">			* strain_amp</span>
 <span class="sd">			* strain_phase.</span>
+
 <span class="sd">	load_data</span>
 <span class="sd">		Load the multipole and distance data of the simulations.</span>
 <span class="sd">		Assignes/Updates:</span>
@@ -294,6 +301,7 @@
 <span class="sd">			* multipoles.</span>
 <span class="sd">			* mass_multipoles.</span>
 <span class="sd">			* spin_multipoles.</span>
+
 <span class="sd">	load_strain</span>
 <span class="sd">		Load the strain data of the simulations from waveform directories.</span>
 <span class="sd">		Assignes/Updates:</span>
@@ -301,6 +309,7 @@
 <span class="sd">			* strain_amp.</span>
 <span class="sd">			* strain_phase.</span>
 <span class="sd">			* strain_shift.</span>
+
 <span class="sd">	load_shears</span>
 <span class="sd">		Load the shear data at a pole of respective horizons of the simulations from waveform directories.</span>
 <span class="sd">		Assignes/Updates:</span>
@@ -308,12 +317,15 @@
 <span class="sd">			* shear_amp.</span>
 <span class="sd">			* shear_phase.</span>
 <span class="sd">			* shear_shift.</span>
+
 <span class="sd">	ret_horizon_radii</span>
 <span class="sd">		A method to retrieve the areal radii of the horizons.</span>
 <span class="sd">		Assigns/Updates</span>
 <span class="sd">			* areal_radii</span>
+
 <span class="sd">	_resize_multipoles</span>
 <span class="sd">		Private method to resize the sim.multipoles after retrieving the length of distance.</span>
+
 <span class="sd">	_ifreversal</span>
 <span class="sd">		Private method to reverse the data of BH 1 and 2 if mass2 &gt; mass1.</span>
 
@@ -1295,7 +1307,259 @@
 			<span class="c1"># Load the data for this simulation in to a dictionary.</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">areal_radii</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span><span class="p">:</span> <span class="p">[</span><span class="n">ar_rad0</span><span class="p">,</span> <span class="n">ar_rad1</span><span class="p">,</span> <span class="n">ar_rad2</span><span class="p">]})</span>
 
-		<span class="k">return</span> <span class="mi">1</span></div></div>
+		<span class="k">return</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="sim.get_BH_locations"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.get_BH_locations">[docs]</a>	<span class="k">def</span> <span class="nf">get_BH_locations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the co-ordinate locations of the BHs.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		alias  :    str, optional.</span>
+<span class="sd">					The simulation label. If not specified, then</span>
+<span class="sd">					all available simulationswill be processed.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+
+<span class="sd">		&#39;&#39;&#39;</span>
+
+		<span class="c1"># A dictionary to store BH location data</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">BH_locations</span> <span class="o">=</span> <span class="p">{}</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">alias</span><span class="p">:</span>
+			<span class="n">list_of_aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span>
+
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">list_of_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+
+
+		<span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">list_of_aliases</span><span class="p">:</span>
+
+			<span class="c1"># Load the data</span>
+			<span class="c1">#alias = &#39;q1a0_a&#39;</span>
+			<span class="c1">#sim_index = 0</span>
+
+			<span class="c1"># Masses of the horizons</span>
+			<span class="n">m1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+			<span class="n">m2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+			<span class="n">M</span> <span class="o">=</span> <span class="n">m1</span><span class="o">+</span><span class="n">m2</span>
+
+			<span class="n">flag</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="n">bh1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_file_path_from_str</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="s1">&#39;*.ah1.gp&#39;</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">alias</span><span class="p">))</span>
+			<span class="n">bh2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_file_path_from_str</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="s1">&#39;*.ah2.gp&#39;</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">alias</span><span class="p">))</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">bh3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_file_path_from_str</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="s1">&#39;*.ah3.gp&#39;</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="n">alias</span><span class="p">))</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="n">message</span><span class="p">(</span><span class="s1">&#39;BH3 file not found!&#39;</span><span class="p">)</span>
+				<span class="n">flag</span><span class="o">=-</span><span class="mi">1</span>
+
+
+			<span class="c1"># Read co-ordinates.</span>
+
+			<span class="n">bhd1_time</span> <span class="o">=</span> <span class="n">bh1</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+			<span class="n">bhd1_x</span>    <span class="o">=</span> <span class="n">bh1</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+			<span class="n">bhd1_y</span>    <span class="o">=</span> <span class="n">bh1</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
+			<span class="n">bhd1_z</span>    <span class="o">=</span> <span class="n">bh1</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span>
+
+			<span class="n">bhd2_time</span> <span class="o">=</span> <span class="n">bh2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+			<span class="n">bhd2_x</span>    <span class="o">=</span> <span class="n">bh2</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+			<span class="n">bhd2_y</span>    <span class="o">=</span> <span class="n">bh2</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
+			<span class="n">bhd2_z</span>    <span class="o">=</span> <span class="n">bh2</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span>
+
+			<span class="k">if</span> <span class="n">flag</span><span class="o">!=-</span><span class="mi">1</span><span class="p">:</span>
+				<span class="n">bhd3_time</span> <span class="o">=</span> <span class="n">bh3</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+				<span class="n">bhd3_x</span>    <span class="o">=</span> <span class="n">bh3</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+				<span class="n">bhd3_y</span>    <span class="o">=</span> <span class="n">bh3</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
+				<span class="n">bhd3_z</span>    <span class="o">=</span> <span class="n">bh3</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">bhd3_time</span> <span class="o">=</span> <span class="kc">None</span>
+				<span class="n">bhd3_x</span> <span class="o">=</span> <span class="kc">None</span>
+				<span class="n">bhd3_y</span> <span class="o">=</span> <span class="kc">None</span>
+				<span class="n">bhd3_z</span> <span class="o">=</span> <span class="kc">None</span>
+
+			<span class="n">bh1_loc</span> <span class="o">=</span> <span class="p">[</span><span class="n">bhd1_time</span><span class="p">,</span> <span class="n">bhd1_x</span><span class="p">,</span> <span class="n">bhd1_y</span><span class="p">,</span> <span class="n">bhd1_z</span><span class="p">]</span>
+			<span class="n">bh2_loc</span> <span class="o">=</span> <span class="p">[</span><span class="n">bhd2_time</span><span class="p">,</span> <span class="n">bhd2_x</span><span class="p">,</span> <span class="n">bhd2_y</span><span class="p">,</span> <span class="n">bhd2_z</span><span class="p">]</span>
+			<span class="n">bh3_loc</span> <span class="o">=</span> <span class="p">[</span><span class="n">bhd3_time</span><span class="p">,</span> <span class="n">bhd3_x</span><span class="p">,</span> <span class="n">bhd3_y</span><span class="p">,</span> <span class="n">bhd3_z</span><span class="p">]</span>
+
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">BH_locations</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span> <span class="p">:</span> <span class="p">[</span><span class="n">bh1_loc</span><span class="p">,</span> <span class="n">bh2_loc</span><span class="p">,</span> <span class="n">bh3_loc</span><span class="p">]})</span></div>
+
+
+<div class="viewcode-block" id="sim.get_CoM_locations"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.get_CoM_locations">[docs]</a>	<span class="k">def</span> <span class="nf">get_CoM_locations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the CoM location of the given simulation.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		alias  :    str, optional.</span>
+<span class="sd">					The simulation label. If not specified, then</span>
+<span class="sd">					all available simulationswill be processed.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		self.CoM_locations :    dict</span>
+<span class="sd">								A dictionary of lists containing</span>
+<span class="sd">								CoM locations of the simulations.</span>
+
+<span class="sd">		Notes</span>
+<span class="sd">		-----</span>
+
+<span class="sd">		This fetches the location of the BHs from data files.</span>
+<span class="sd">		&#39;&#39;&#39;</span>
+
+		<span class="c1"># Storage for CoM locations</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">CoM_locations</span> <span class="o">=</span> <span class="p">{}</span>
+
+		<span class="c1"># Aliases to run over.</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">alias</span><span class="p">:</span>
+			<span class="n">list_of_aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span>
+
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">list_of_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+
+		<span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">list_of_aliases</span><span class="p">:</span>
+
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">BH_locs_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BH_locations</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">get_BH_locations</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+				<span class="n">BH_locs_sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BH_locations</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+
+			<span class="c1"># Unpack the location data.</span>
+			<span class="n">BH1_loc</span><span class="p">,</span> <span class="n">BH2_loc</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">BH_locs_sim</span>
+
+			<span class="n">bh1_time</span><span class="p">,</span> <span class="n">bh1_x</span><span class="p">,</span> <span class="n">bh1_y</span><span class="p">,</span> <span class="n">bh1_z</span> <span class="o">=</span> <span class="n">BH1_loc</span>
+			<span class="n">bh2_time</span><span class="p">,</span> <span class="n">bh2_x</span><span class="p">,</span> <span class="n">bh2_y</span><span class="p">,</span> <span class="n">bh2_z</span> <span class="o">=</span> <span class="n">BH2_loc</span>
+			<span class="c1">#bh3_time, bh3_x, bh3_y, bh3_z = BH3_loc</span>
+
+			<span class="c1"># The masses.</span>
+			<span class="n">mass1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass1</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+			<span class="n">mass2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass2</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+			<span class="n">total_mass</span> <span class="o">=</span> <span class="n">mass1</span><span class="o">+</span><span class="n">mass2</span>
+
+			<span class="c1"># End time</span>
+			<span class="n">max_len</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">merger_ind</span><span class="p">[</span><span class="n">alias</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">bh1_time</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">bh2_time</span><span class="p">))</span>
+
+			<span class="c1"># CoM location</span>
+			<span class="n">T_com</span>   <span class="o">=</span> <span class="n">bh1_time</span><span class="p">[:</span><span class="n">max_len</span><span class="p">]</span>
+			<span class="n">X_com</span>   <span class="o">=</span> <span class="p">(</span><span class="n">mass1</span><span class="o">*</span><span class="n">bh1_x</span><span class="p">[:</span><span class="n">max_len</span><span class="p">]</span> <span class="o">+</span> <span class="n">mass2</span><span class="o">*</span><span class="n">bh2_x</span><span class="p">[:</span><span class="n">max_len</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">total_mass</span><span class="p">)</span>
+			<span class="n">Y_com</span>   <span class="o">=</span> <span class="p">(</span><span class="n">mass1</span><span class="o">*</span><span class="n">bh1_y</span><span class="p">[:</span><span class="n">max_len</span><span class="p">]</span> <span class="o">+</span> <span class="n">mass2</span><span class="o">*</span><span class="n">bh2_y</span><span class="p">[:</span><span class="n">max_len</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">total_mass</span><span class="p">)</span>
+			<span class="n">Z_com</span>   <span class="o">=</span> <span class="p">(</span><span class="n">mass1</span><span class="o">*</span><span class="n">bh1_z</span><span class="p">[:</span><span class="n">max_len</span><span class="p">]</span> <span class="o">+</span> <span class="n">mass2</span><span class="o">*</span><span class="n">bh2_z</span><span class="p">[:</span><span class="n">max_len</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">total_mass</span><span class="p">)</span>
+
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">CoM_locations</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span> <span class="p">:</span> <span class="p">[</span><span class="n">T_com</span><span class="p">,</span> <span class="n">X_com</span><span class="p">,</span> <span class="n">Y_com</span><span class="p">,</span> <span class="n">Z_com</span><span class="p">]})</span></div>
+
+
+
+<div class="viewcode-block" id="sim.get_CoM_mean_motion"><a class="viewcode-back" href="../../_autosummary/waveformtools.simulations.html#waveformtools.simulations.sim.get_CoM_mean_motion">[docs]</a>	<span class="k">def</span> <span class="nf">get_CoM_mean_motion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the mean motion of the CoM.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		alias  :    str, optional.</span>
+<span class="sd">					The simulation label. If not specified, then</span>
+<span class="sd">					all available simulationswill be processed.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		alpha :     dict</span>
+<span class="sd">					A dictionary containing the</span>
+<span class="sd">					mean CoM displacement array.</span>
+
+<span class="sd">		beta :     dict</span>
+<span class="sd">				   A dictionary containing the</span>
+<span class="sd">				   mean CoM velocity array.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span>
+		<span class="n">CoM_motion_params</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="c1"># Aliases to run over.</span>
+
+		<span class="kn">from</span> <span class="nn">waveformtools.CoM</span> <span class="kn">import</span> <span class="n">X_com_moments</span><span class="p">,</span> <span class="n">compute_com_alpha</span><span class="p">,</span> <span class="n">compute_com_beta</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">alias</span><span class="p">:</span>
+			<span class="n">list_of_aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span>
+
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">list_of_aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+
+		<span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">list_of_aliases</span><span class="p">:</span>
+
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">taxis</span><span class="p">,</span> <span class="n">X_com</span><span class="p">,</span> <span class="n">Y_com</span><span class="p">,</span> <span class="n">Z_com</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CoM_locations</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+			<span class="k">except</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">get_CoM_locations</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+				<span class="n">taxis</span><span class="p">,</span> <span class="n">X_com</span><span class="p">,</span> <span class="n">Y_com</span><span class="p">,</span> <span class="n">Z_com</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CoM_locations</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span>
+
+			<span class="n">all_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">X_com</span><span class="p">,</span> <span class="n">Y_com</span><span class="p">,</span> <span class="n">Z_com</span><span class="p">]</span>
+
+			<span class="n">zeroth_moments</span> <span class="o">=</span> <span class="n">X_com_moments</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">all_coords</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="n">first_moments</span>  <span class="o">=</span> <span class="n">X_com_moments</span><span class="p">(</span><span class="n">taxis</span><span class="p">,</span> <span class="n">all_coords</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+			<span class="n">Xcom_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">zeroth_moments</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">zeroth_moments</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+			<span class="n">Xcom_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">first_moments</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">zeroth_moments</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+
+
+			<span class="n">ti</span> <span class="o">=</span> <span class="n">taxis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">tf</span> <span class="o">=</span> <span class="n">taxis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+			<span class="n">alpha</span> <span class="o">=</span> <span class="n">compute_com_alpha</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">Xcom_0</span><span class="p">,</span> <span class="n">Xcom_1</span><span class="p">)</span>
+			<span class="n">beta</span>  <span class="o">=</span> <span class="n">compute_com_beta</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">Xcom_0</span><span class="p">,</span> <span class="n">Xcom_1</span><span class="p">)</span>
+
+			<span class="n">CoM_motion_params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">alias</span> <span class="p">:</span> <span class="p">[</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">]})</span>
+		<span class="k">return</span> <span class="n">CoM_motion_params</span></div>
+
+
+
+	<span class="k">def</span> <span class="nf">_get_file_path_from_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">,</span> <span class="n">string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the path of a file that contains</span>
+<span class="sd">		the given string in its name.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		alias  :    str, optional.</span>
+<span class="sd">					The simulation label. If not specified, then</span>
+<span class="sd">					all available simulationswill be processed.</span>
+
+<span class="sd">		string :    str</span>
+<span class="sd">					The string of a part of a file name.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		file_path : str</span>
+<span class="sd">					The full path of the file</span>
+
+<span class="sd">		Notes</span>
+<span class="sd">		-----</span>
+
+<span class="sd">		The first occuring instance of the file is returned</span>
+<span class="sd">		if there are multiple files found.</span>
+<span class="sd">		&#39;&#39;&#39;</span>
+
+		<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+		<span class="c1"># The directory to look into.</span>
+		<span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ROOTDIR</span> <span class="o">+</span> <span class="n">alias</span>
+
+		<span class="nb">dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+		<span class="c1"># The path of the file.</span>
+		<span class="c1">#print(list(dir.rglob(string)))</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">file_path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dir</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">string</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">message</span><span class="p">(</span><span class="s1">&#39;File not found!&#39;</span><span class="p">)</span>
+
+
+
+		<span class="k">return</span> <span class="n">file_path</span></div>
+
+
+
 </pre></div>
 
            </div>

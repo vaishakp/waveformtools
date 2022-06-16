@@ -169,8 +169,24 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">message</span>
+<span class="kn">from</span> <span class="nn">qlmtools</span> <span class="kn">import</span> <span class="n">Yslm_new</span>
 
+<span class="c1">#from numba import jit, njit</span>
+<span class="c1">#from numba import jitclass          # import the decorator</span>
+<span class="c1">#from numba import int32, float64, complex128    # import the types</span>
+<span class="c1">#import numba as nb</span>
+<span class="c1">#from numba.experimental import jitclass</span>
 
+<span class="c1">#spec_sp = { &#39;label&#39; : nb.types.string,</span>
+<span class="c1">#			&#39;time_axis&#39; : nb.double[:],</span>
+<span class="c1">#			&#39;frequency_axis&#39; : nb.double[:],</span>
+<span class="c1">#			&#39;data&#39; : nb.complex128[:, :, :],</span>
+<span class="c1">#			&#39;base_dir&#39; : nb.types.string,</span>
+<span class="c1">#			&#39;file_name&#39; : nb.types.string,</span>
+<span class="c1">#			&#39;spin_weight&#39; : nb.int32</span>
+
+<span class="c1">#}</span>
+<span class="c1">#@jitclass(spec_sp)</span>
 <div class="viewcode-block" id="spherical_array"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array">[docs]</a><span class="k">class</span> <span class="nc">spherical_array</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;A class for handling waveforms on a sphere.</span>
 
@@ -185,15 +201,23 @@
 <span class="sd">	frequency_axis:	1d array</span>
 <span class="sd">					The frequency axis if the data</span>
 <span class="sd">					is represented in frequency domain.</span>
-<span class="sd">	gridinfo:	spherical_grid</span>
+<span class="sd">	grid_info:	spherical_grid</span>
 <span class="sd">				An instance of the `spherical_grid` class.</span>
+<span class="sd">	data_len:	int</span>
+<span class="sd">				The length of the data along the time axis.</span>
 
 <span class="sd">	Methods</span>
 <span class="sd">	-------</span>
 
-<span class="sd">	delta_t:	Fetch the time stepping `delta_t`.</span>
-<span class="sd">	to_modes_array:	Find the waveform expressed in the</span>
+<span class="sd">	delta_t:</span>
+<span class="sd">			Fetch the time stepping `delta_t`.</span>
+<span class="sd">	to_modes_array:</span>
+<span class="sd">					Find the waveform expressed in the</span>
 <span class="sd">					SWSH basis.</span>
+<span class="sd">	boost:</span>
+<span class="sd">			Boost the waveform.</span>
+<span class="sd">	supertranslate:</span>
+<span class="sd">					Supertranslate the waveform.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -205,7 +229,8 @@
 		<span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">base_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-		<span class="n">gridinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">grid_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">spin_weight</span> <span class="o">=</span> <span class="mi">2</span>
 	<span class="p">):</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
@@ -214,7 +239,8 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="n">time_axis</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">frequency_axis</span> <span class="o">=</span> <span class="n">frequency_axis</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">gridinfo</span> <span class="o">=</span> <span class="n">gridinfo</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">grid_info</span> <span class="o">=</span> <span class="n">grid_info</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">spin_weight</span> <span class="o">=</span> <span class="n">spin_weight</span>
 
 <div class="viewcode-block" id="spherical_array.delta_t"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.delta_t">[docs]</a>	<span class="k">def</span> <span class="nf">delta_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Sets and returns the value of time stepping :math:`dt`.</span>
@@ -260,7 +286,7 @@
 
 		<span class="k">return</span> <span class="n">data_len</span>
 
-<div class="viewcode-block" id="spherical_array.to_modes_array"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.to_modes_array">[docs]</a>	<span class="k">def</span> <span class="nf">to_modes_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gridinfo</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+<div class="viewcode-block" id="spherical_array.to_modes_array"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.to_modes_array">[docs]</a>	<span class="k">def</span> <span class="nf">to_modes_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Decompose a given spherical array function on a sphere</span>
 <span class="sd">		into Spin Weighted Spherical Harmonic modes.</span>
 
@@ -270,7 +296,7 @@
 <span class="sd">						The spin weight of the waveform. It defaults to -2 for a gravitational waveform.</span>
 <span class="sd">		ell_max:	int, optional</span>
 <span class="sd">					The maximum value of the :math:`\\ell` polar quantum number. Defaults to 8.</span>
-<span class="sd">		gridinfo:	class instance</span>
+<span class="sd">		grid_info:	class instance</span>
 <span class="sd">					The class instance that contains the properties of the spherical grid.</span>
 
 <span class="sd">		Returns</span>
@@ -287,13 +313,32 @@
 <span class="sd">		   it is a time domain data or frequency domain data.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
+		<span class="k">if</span> <span class="n">grid_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">message</span><span class="p">(</span><span class="s1">&#39;Please specify the grid specs. Assuming defaults.&#39;</span><span class="p">)</span>
+				<span class="n">grid_info</span> <span class="o">=</span> <span class="n">waveformtools</span><span class="o">.</span><span class="n">grids</span><span class="o">.</span><span class="n">spherical_array</span><span class="p">()</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">grid_info</span> <span class="o">=</span> <span class="n">grid_info</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">grid_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_info</span>
+
+		<span class="k">if</span> <span class="n">spin_weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin_weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">message</span><span class="p">(</span><span class="s1">&#39;Please specify spin weight. Assuming 2&#39;</span><span class="p">)</span>
+				<span class="n">spin_weight</span> <span class="o">=</span> <span class="mi">2</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">spin_weight</span> <span class="o">=</span> <span class="n">spin_weight</span>
+
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">spin_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin_weight</span>
+
+
+
 		<span class="c1"># Compute the meshgrid for theta and phi.</span>
-		<span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">meshgrid</span>
+		<span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">grid_info</span><span class="o">.</span><span class="n">meshgrid</span>
 
 		<span class="c1"># Create a modes array object</span>
 
 		<span class="c1"># Create a modes list.</span>
-		<span class="n">modes_list</span> <span class="o">=</span> <span class="n">construct_mode_list</span><span class="p">(</span><span class="n">ell_max</span><span class="p">)</span>
+		<span class="n">modes_list</span> <span class="o">=</span> <span class="n">construct_mode_list</span><span class="p">(</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=</span><span class="n">spin_weight</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
 			<span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;decomposed_time_domain&quot;</span>
@@ -301,7 +346,7 @@
 			<span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
 
 		<span class="c1"># Create a mode array for the decomposed_waveform</span>
-		<span class="n">waveform_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+		<span class="n">waveform_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=</span><span class="n">spin_weight</span><span class="p">)</span>
 
 		<span class="c1"># Inherit the time or frequency axis.</span>
 		<span class="k">if</span> <span class="s2">&quot;time&quot;</span> <span class="ow">in</span> <span class="n">label</span><span class="p">:</span>
@@ -313,39 +358,144 @@
 
 		<span class="c1"># Create the modes_array</span>
 		<span class="n">waveform_modes</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_len</span><span class="p">)</span>
-
+		<span class="n">wavefotm_modes</span><span class="o">.</span><span class="n">modes_list</span> <span class="o">=</span> <span class="n">modes_list</span>
 		<span class="c1"># The area element on the sphere</span>
 		<span class="c1"># Compute the meshgrid for theta and phi.</span>
-		<span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">meshgrid</span>
+		<span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">grid_info</span><span class="o">.</span><span class="n">meshgrid</span>
 
+		<span class="c1">#sqrt_met_det = np.sin(theta)</span>
 		<span class="n">sqrt_met_det</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
 
-		<span class="n">darea</span> <span class="o">=</span> <span class="n">sqrt_met_det</span> <span class="o">*</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">dtheta</span> <span class="o">*</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">dphi</span>
+		<span class="n">darea</span> <span class="o">=</span> <span class="n">sqrt_met_det</span> <span class="o">*</span> <span class="n">grid_info</span><span class="o">.</span><span class="n">dtheta</span> <span class="o">*</span> <span class="n">grid_info</span><span class="o">.</span><span class="n">dphi</span>
 
-		<span class="kn">from</span> <span class="nn">qlmtools</span> <span class="kn">import</span> <span class="n">Yslm_vec</span>
+		<span class="kn">from</span> <span class="nn">qlmtools</span> <span class="kn">import</span> <span class="n">Yslm_new</span>
 
-		<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axis</span><span class="p">):</span>
-			<span class="c1"># Integrate on the sphere for</span>
-			<span class="c1"># for each time/frequency</span>
+		<span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">:</span>
+			<span class="n">ell_value</span><span class="p">,</span> <span class="n">all_emm_values</span> <span class="o">=</span> <span class="n">mode</span>
 
-			<span class="c1"># Convert input to arrays.</span>
-			<span class="n">integrand_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">index</span><span class="p">]</span>
+			<span class="k">for</span> <span class="n">emm_value</span> <span class="ow">in</span> <span class="n">all_emm_values</span><span class="p">:</span>
+				<span class="c1"># m value.</span>
 
-			<span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">:</span>
-				<span class="n">ell_value</span><span class="p">,</span> <span class="n">all_emm_values</span> <span class="o">=</span> <span class="n">mode</span>
+				<span class="c1"># Spin weighted spherical harmonic function at (theta, phi)</span>
 
-				<span class="k">for</span> <span class="n">emm_value</span> <span class="ow">in</span> <span class="n">all_emm_values</span><span class="p">:</span>
-					<span class="c1"># m value.</span>
+				<span class="n">Ybasis_fun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">Yslm_new</span><span class="p">(</span><span class="n">spin_weight</span><span class="p">,</span> <span class="n">ell</span><span class="o">=</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm</span><span class="o">=</span><span class="n">emm_value</span><span class="p">,</span> <span class="n">theta_grid</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi_grid</span><span class="o">=</span><span class="n">phi</span><span class="p">))</span>
 
-					<span class="c1"># Spin weighted spherical harmonic function at (theta, phi)</span>
-					<span class="n">Ybasis_fun</span> <span class="o">=</span> <span class="n">Yslm_vec</span><span class="p">(</span><span class="n">spin_weight</span><span class="p">,</span> <span class="n">ell</span><span class="o">=</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm</span><span class="o">=</span><span class="n">emm_value</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="n">phi</span><span class="p">)</span>
+				<span class="n">Ydarea</span> <span class="o">=</span> <span class="n">Ybasis_fun</span> <span class="o">*</span> <span class="n">darea</span>
 
-					<span class="c1"># Using quad</span>
-					<span class="n">multipole_ell_emm</span> <span class="o">=</span> <span class="n">integrand_data</span> <span class="o">*</span> <span class="n">Ybasis_fun</span> <span class="o">*</span> <span class="n">darea</span>
+				<span class="c1">#print(full_integrand)</span>
+				<span class="c1"># Using quad</span>
+				<span class="n">multipole_ell_emm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">Ydarea</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
 
-					<span class="n">waveform_modes</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">,</span> <span class="n">multipole_ell_emm</span><span class="p">)</span>
+				<span class="c1">#print(f&#39;l{ell_value}m{emm_value}&#39;, multipole_ell_emm)</span>
 
-			<span class="k">return</span> <span class="n">waveform_modes</span></div></div>
+				<span class="n">waveform_modes</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">,</span> <span class="n">multipole_ell_emm</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">waveform_modes</span></div>
+
+<div class="viewcode-block" id="spherical_array.boost"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.boost">[docs]</a>	<span class="k">def</span> <span class="nf">boost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conformal_factor</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Boost the waveform given the unboosted waveform and the boost conformal factor.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+
+<span class="sd">		self:     spherical_array</span>
+<span class="sd">								A class instance of `spherical array`.</span>
+
+<span class="sd">		conformal_factor:       2d array</span>
+<span class="sd">								The conformal factor for the Lorentz transformation. It may be a single floating point number or an array on a spherical grid. The array will be of dimensions</span>
+<span class="sd">								[ntheta, nphi]</span>
+
+<span class="sd">		grid_info:       class instance</span>
+<span class="sd">						The class instance that contains the properties of the spherical grid.</span>
+
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+
+<span class="sd">		boosted_waveform:     sp_array</span>
+<span class="sd">							  The class instance `sp_array` that</span>
+<span class="sd">							  contains the boosted waveform.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="kn">from</span> <span class="nn">waveformtools.waveforms</span> <span class="kn">import</span> <span class="n">spherical_array</span>
+
+		<span class="c1"># Compute the boosted waveform on the spherical grid on all the elements.</span>
+
+		<span class="n">boosted_waveform_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">conformal_factor</span>
+		<span class="c1">#boosted_waveform_data = np.multiply(self.data, conformal_factor[:, :, None])</span>
+		<span class="c1">#boosted_waveform_data = boosted_waveform_item</span>
+		<span class="c1">#boosted_waveform_data = np.array([np.transpose(item)*conformal_factor for item in np.transpose(self.data)])</span>
+
+		<span class="c1"># Construct a 2d waveform array object</span>
+		<span class="n">boosted_waveform</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">grid_info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">boosted_waveform_data</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+
+		<span class="c1"># Assign other attributes.</span>
+		<span class="n">boosted_waveform</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;boosted &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+		<span class="n">boosted_waveform</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_axis</span>
+
+		<span class="k">return</span> <span class="n">boosted_waveform</span></div>
+
+
+<div class="viewcode-block" id="spherical_array.supertranslate"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.spherical_array.supertranslate">[docs]</a>	<span class="k">def</span> <span class="nf">supertranslate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supertransl_alpha_sp</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+		<span class="sd">&quot;&quot;&quot;Supertranslate the :math:`\\Psi_{4\\ell m}` waveform modes, give the,</span>
+<span class="sd">		the supertranslation parameter and the order.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		supertransl_alpha_modes :  modes_array</span>
+<span class="sd">														   The modes_array containing the</span>
+<span class="sd">														   supertranslation mode coefficients.</span>
+<span class="sd">		grid_info:      class instance</span>
+<span class="sd">										The class instance that contains</span>
+<span class="sd">										the properties of the spherical grid</span>
+<span class="sd">										using which the computations are</span>
+<span class="sd">										carried out.</span>
+<span class="sd">		order:      int</span>
+<span class="sd">								The number of terms to use to</span>
+<span class="sd">								approximate the supertranslation.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		Psi4_supertransl:     modes_array</span>
+<span class="sd">												  A class instance containg the</span>
+<span class="sd">												  modes of the supertranslated</span>
+<span class="sd">												  waveform :math:`\\Psi_4`.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1"># Create a spherical_array to hold the supertranslated waveform</span>
+		<span class="n">Psi4_supertransl_sp</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">grid_info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;supertranslated frequency space modes&#39;</span><span class="p">)</span>
+
+		<span class="n">delta_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">())</span>
+
+
+		<span class="c1"># Set the data.</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="c1">#data = self.data</span>
+		<span class="c1">#Psi4_supertransl_sp.data = self.data</span>
+		<span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="kn">from</span> <span class="nn">waveformtools.differentiate</span> <span class="kn">import</span> <span class="n">differentiate5_vec_numba</span>
+		<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">):</span>
+			<span class="c1">#print(f&#39;{index} loop&#39;)</span>
+			<span class="n">dPsidu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+			<span class="k">for</span> <span class="n">dorder</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+				<span class="c1">#print(f&#39;differentiating {dorder+1} times&#39;)</span>
+				<span class="n">dPsidu</span> <span class="o">=</span> <span class="n">differentiate5_vec_numba</span><span class="p">(</span><span class="n">dPsidu</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Incrementing...&#39;</span><span class="p">)</span>
+			<span class="c1">#delta = np.power(supertransl_alpha_sp.data, index+1) * dPsidu / np.math.factorial(index+1)</span>
+			<span class="c1">#print(delta/self.data)</span>
+
+			<span class="n">data</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">supertransl_alpha_sp</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dPsidu</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#delta</span>
+
+		<span class="n">data</span><span class="o">+=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+		<span class="nb">print</span><span class="p">((</span><span class="n">data</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+
+		<span class="n">Psi4_supertransl_sp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+		<span class="n">Psi4_supertransl_sp</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_axis</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done.&#39;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">Psi4_supertransl_sp</span></div></div>
 
 
 <span class="c1">#	def reconstr_waveform():</span>
@@ -399,7 +549,26 @@
 <span class="c1"># Modes array class</span>
 <span class="c1">################################################################</span>
 
-
+<span class="c1">#spec_ma = { &#39;label&#39; : nb.types.string,</span>
+<span class="c1">#			&#39;data_dir&#39; : nb.types.string,</span>
+<span class="c1">#			&#39;key_format&#39; : nb.types.string,</span>
+<span class="c1">#			&#39;key_ex&#39; : nb.types.string,</span>
+<span class="c1">#			&#39;ell_max&#39; : nb.int32,</span>
+<span class="c1">#			&#39;r_ext&#39; :	nb.double,</span>
+<span class="c1">#			&#39;out_file_name&#39; : nb.types.string,</span>
+<span class="c1">#			&#39;maxtime&#39; :	nb.types.double,</span>
+<span class="c1">#			&#39;date&#39; : nb.types.string,</span>
+<span class="c1">#			&#39;time&#39; : nb.types.string,</span>
+<span class="c1">#            &#39;time_axis&#39; : nb.double[:],</span>
+<span class="c1">#            &#39;frequency_axis&#39; : nb.double[:],</span>
+<span class="c1">#            &#39;modes_data&#39; : nb.complex128[:, :, :],</span>
+<span class="c1">#            &#39;base_dir&#39; : nb.types.string,</span>
+<span class="c1">#            &#39;file_name&#39; : nb.types.string,</span>
+<span class="c1">#            &#39;spin_weight&#39; : nb.int32,</span>
+<span class="c1">#			&#39;modes_list&#39; : nb.types.List(nb.int32)</span>
+<span class="c1">#</span>
+<span class="c1">#}</span>
+<span class="c1">#@jitclass(spec_ma)</span>
 <div class="viewcode-block" id="modes_array"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array">[docs]</a><span class="k">class</span> <span class="nc">modes_array</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;A class that holds mode array of waveforms</span>
 
@@ -432,21 +601,30 @@
 
 <span class="sd">	Methods</span>
 <span class="sd">	-------</span>
-<span class="sd">	get_metadata:	Get the metadata associated with the modes_array.</span>
-<span class="sd">	mode:	Get the data for the given :math:`\\ell, m` mode.</span>
-<span class="sd">	_create_modes_array:	A private method to create an empty</span>
-<span class="sd">							modes_array of given shape.</span>
-<span class="sd">	delta_t:	Set the attribute `delta_t` and/ or return its value.</span>
-<span class="sd">	load_modes:	Load the waveform modes from a specified h5 file.</span>
-<span class="sd">	save_modes: Save the waveform modes to a specified h5 file.</span>
-<span class="sd">	set_mode_data:	Set the `mode` data of specified modes.</span>
-<span class="sd">	to_frequency_basis:	Get the `modes_array` in frequency basis</span>
-<span class="sd">						from its time basis representation.</span>
-<span class="sd">	to_time_basis: Get the `modes_array` in temporal basis</span>
-<span class="sd">					from its frequency basis representation.</span>
-<span class="sd">	extrap_to_inf:	Extrapolate the modes to infinity.</span>
-<span class="sd">	supertranslate: Supertranslate the waveform modes.</span>
-<span class="sd">	boost:	Boost the waveform modes.</span>
+<span class="sd">	get_metadata:</span>
+<span class="sd">					Get the metadata associated with the modes_array.</span>
+<span class="sd">	mode:</span>
+<span class="sd">			Get the data for the given :math:`\\ell, m` mode.</span>
+<span class="sd">	_create_modes_array:</span>
+<span class="sd">						A private method to create an empty modes_array of given shape.</span>
+<span class="sd">	delta_t:</span>
+<span class="sd">			Set the attribute `delta_t` and/ or return its value.</span>
+<span class="sd">	load_modes:</span>
+<span class="sd">				Load the waveform modes from a specified h5 file.</span>
+<span class="sd">	save_modes:</span>
+<span class="sd">				Save the waveform modes to a specified h5 file.</span>
+<span class="sd">	set_mode_data:</span>
+<span class="sd">					Set the `mode` data of specified modes.</span>
+<span class="sd">	to_frequency_basis:</span>
+<span class="sd">						Get the `modes_array` in frequency basis from its time basis representation.</span>
+<span class="sd">	to_time_basis:</span>
+<span class="sd">					Get the `modes_array` in temporal basis from its frequency basis representation.</span>
+<span class="sd">	extrap_to_inf:</span>
+<span class="sd">					Extrapolate the modes to infinity.</span>
+<span class="sd">	supertranslate:</span>
+<span class="sd">					Supertranslate the waveform modes.</span>
+<span class="sd">	boost:</span>
+<span class="sd">			Boost the waveform modes.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -466,7 +644,8 @@
 		<span class="n">maxtime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-		<span class="n">key_ex</span><span class="o">=</span><span class="kc">None</span>
+		<span class="n">key_ex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">spin_weight</span><span class="o">=</span><span class="kc">None</span>
 	<span class="p">):</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
@@ -484,7 +663,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">date</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">key_ex</span> <span class="o">=</span> <span class="n">key_ex</span>
-
+		<span class="bp">self</span><span class="o">.</span><span class="n">spin_weight</span> <span class="o">=</span> <span class="n">spin_weight</span>
 <div class="viewcode-block" id="modes_array.get_metadata"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.get_metadata">[docs]</a>	<span class="k">def</span> <span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Get the metadata associated with the instance.</span>
 
@@ -551,7 +730,8 @@
 		<span class="kn">import</span> <span class="nn">time</span>
 		<span class="kn">import</span> <span class="nn">datetime</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">modes_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">ell_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">data_len</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+		<span class="c1">#self.modes_data = np.zeros([ell_max + 1, 2 * (ell_max + 1) + 1, data_len], dtype=np.complex128)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">modes_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ell_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">data_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
 
 		<span class="c1"># Set the time metadata</span>
 		<span class="n">time_now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">()</span>
@@ -632,7 +812,7 @@
 
 		<span class="k">return</span> <span class="n">delta_f</span>
 
-<div class="viewcode-block" id="modes_array.load_modes"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.load_modes">[docs]</a>	<span class="k">def</span> <span class="nf">load_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_ext</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pre_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">key_ex</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="modes_array.load_modes"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.load_modes">[docs]</a>	<span class="k">def</span> <span class="nf">load_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r_ext</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pre_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">key_ex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">r_ext_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Load the waveform mode data from an hdf file.</span>
 
 <span class="sd">		Parameters</span>
@@ -675,6 +855,11 @@
 		<span class="n">full_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span>
 
 		<span class="n">cflag</span> <span class="o">=</span> <span class="mi">0</span>
+
+		<span class="c1"># Ext radius</span>
+		<span class="k">if</span> <span class="n">r_ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">r_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_ext</span>
+
 
 		<span class="c1"># Open the modes file.</span>
 		<span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wfile</span><span class="p">:</span>
@@ -737,7 +922,7 @@
 							<span class="c1"># construct the list of modes using</span>
 							<span class="c1"># the list of modes h5 file keys.</span>
 							<span class="n">modes_list</span> <span class="o">=</span> <span class="n">_get_modes_list_from_keys</span><span class="p">(</span><span class="n">modes_keys_list</span><span class="p">,</span> <span class="n">r_ext</span><span class="p">)</span>
-							<span class="c1"># print(modes_list)</span>
+							<span class="c1">#print(modes_list)</span>
 							<span class="c1"># Get the ell max</span>
 							<span class="n">ell_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">])</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max</span>
@@ -826,12 +1011,14 @@
 							<span class="c1"># Create an array for the waveform mode object</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="p">)</span>
 							<span class="c1"># self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)</span>
+							<span class="c1">#self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)</span>
+
 							<span class="n">cflag</span> <span class="o">=</span> <span class="mi">1</span>
 
 							<span class="c1"># set the time axis.</span>
 							<span class="c1"># self.time_axis = time_axis[shift:]</span>
 
-					<span class="bp">self</span><span class="o">.</span><span class="n">modes_data</span><span class="p">[</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_re</span><span class="p">[</span><span class="n">shift</span><span class="p">:]</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">data_im</span><span class="p">[</span><span class="n">shift</span><span class="p">:]</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">modes_data</span><span class="p">[</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_ext_factor</span><span class="o">*</span><span class="p">(</span><span class="n">data_re</span><span class="p">[</span><span class="n">shift</span><span class="p">:]</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">data_im</span><span class="p">[</span><span class="n">shift</span><span class="p">:])</span>
 
 			<span class="c1">##############################</span>
 			<span class="c1"># Recenter axis</span>
@@ -968,14 +1155,14 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">modes_data</span><span class="p">[</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span></div>
 
 
-
-<div class="viewcode-block" id="modes_array.to_spherical_array"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.to_spherical_array">[docs]</a>	<span class="k">def</span> <span class="nf">to_spherical_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gridinfo</span><span class="p">):</span>
+	<span class="c1">#@njit(parallel=True)</span>
+<div class="viewcode-block" id="modes_array.to_spherical_array"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.to_spherical_array">[docs]</a>	<span class="k">def</span> <span class="nf">to_spherical_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid_info</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&#39;&#39;&#39; Obtain the spherical array from the modes array.</span>
 
 <span class="sd">		Parameters</span>
 <span class="sd">		----------</span>
 
-<span class="sd">		gridinfo:	cls instance</span>
+<span class="sd">		grid_info:	cls instance</span>
 <span class="sd">					An instance of the &quot;spherical_grid&quot; class</span>
 <span class="sd">					to hold the grid info.</span>
 
@@ -988,11 +1175,21 @@
 
 <span class="sd">		&#39;&#39;&#39;</span>
 
-		<span class="kn">from</span> <span class="nn">qlmtools</span> <span class="kn">import</span> <span class="n">Yslm_vec</span>
+		<span class="c1">#from qlmtools import Yslm_new</span>
+
 
 		<span class="c1"># Create a spherical array.</span>
-		<span class="n">waveform_sp</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">gridinfo</span><span class="o">=</span><span class="n">gridinfo</span><span class="p">)</span>
+		<span class="n">waveform_sp</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">grid_info</span><span class="o">=</span><span class="n">grid_info</span><span class="p">)</span>
 
+		<span class="k">if</span> <span class="n">spin_weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">spin_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin_weight</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">spin_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">spin_weight</span> <span class="o">=</span> <span class="n">spin_weight</span>
+
+		<span class="n">spin_weight</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">spin_weight</span><span class="p">)</span>
+		<span class="n">waveform_sp</span><span class="o">.</span><span class="n">spin_weight</span> <span class="o">=</span> <span class="n">spin_weight</span>
 		<span class="c1"># Set the time-axis</span>
 		<span class="k">try</span><span class="p">:</span>
 			<span class="n">waveform_sp</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_axis</span>
@@ -1000,19 +1197,26 @@
 			<span class="n">waveform_sp</span><span class="o">.</span><span class="n">frequency_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency_axis</span>
 
 		<span class="c1"># Get the coordinate meshgrid</span>
-		<span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">meshgrid</span>
+		<span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">grid_info</span><span class="o">.</span><span class="n">meshgrid</span>
 
-		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">:</span>
+		<span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">theta</span><span class="o">.</span><span class="n">shape</span>
+		<span class="n">s3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_len</span>
+		<span class="n">sp_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">s3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">[</span><span class="n">spin_weight</span><span class="p">:]:</span>
 			<span class="c1"># Get modes.</span>
 			<span class="n">ell</span><span class="p">,</span> <span class="n">emm_list</span> <span class="o">=</span> <span class="n">item</span>
 
 			<span class="k">for</span> <span class="n">emm</span> <span class="ow">in</span> <span class="n">emm_list</span><span class="p">:</span>
 				<span class="c1"># For every l, m</span>
-				<span class="n">sp_data</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">Yslm_vec</span><span class="p">(</span><span class="n">spin_weight</span><span class="p">,</span> <span class="n">ell</span><span class="o">=</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm</span><span class="o">=</span><span class="n">emm_value</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="n">phi</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">))</span>
-
+				<span class="n">sp_data</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">Yslm_new</span><span class="p">(</span><span class="n">spin_weight</span><span class="p">,</span> <span class="n">ell</span><span class="o">=</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="o">=</span><span class="n">emm</span><span class="p">,</span> <span class="n">theta_grid</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi_grid</span><span class="o">=</span><span class="n">phi</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">))</span>
+				<span class="c1">#print(sp_data)</span>
 		<span class="c1"># Set the data of the spherical array.</span>
 		<span class="n">waveform_sp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">sp_data</span>
-
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">waveform_sp</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_axis</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">waveform_sp</span><span class="o">.</span><span class="n">frequency_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency_axis</span>
 		<span class="k">return</span> <span class="n">waveform_sp</span></div>
 
 <div class="viewcode-block" id="modes_array.trim"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.trim">[docs]</a>	<span class="k">def</span> <span class="nf">trim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trim_upto_time</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1055,7 +1259,7 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="c1"># Create a new modes array</span>
-		<span class="n">waveform_tilde_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;frequency_domain&quot;</span><span class="p">)</span>
+		<span class="n">waveform_tilde_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2"> -&gt; frequency_domain&quot;</span><span class="p">)</span>
 		<span class="n">waveform_tilde_modes</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_len</span><span class="p">)</span>
 
 		<span class="kn">from</span> <span class="nn">waveformtools.transforms</span> <span class="kn">import</span> <span class="n">compute_fft</span>
@@ -1073,7 +1277,8 @@
 				<span class="n">waveform_tilde_modes</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">,</span> <span class="n">freq_data</span><span class="p">)</span>
 
 		<span class="n">waveform_tilde_modes</span><span class="o">.</span><span class="n">frequency_axis</span> <span class="o">=</span> <span class="n">freq_axis</span>
-
+		<span class="n">waveform_tilde_modes</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span>
+		<span class="n">waveform_tilde_modes</span><span class="o">.</span><span class="n">modes_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span>
 		<span class="k">return</span> <span class="n">waveform_tilde_modes</span></div>
 
 <div class="viewcode-block" id="modes_array.to_time_basis"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.to_time_basis">[docs]</a>	<span class="k">def</span> <span class="nf">to_time_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1087,7 +1292,7 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="c1"># Create a new modes array</span>
-		<span class="n">waveform_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;time_domain&quot;</span><span class="p">)</span>
+		<span class="n">waveform_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2"> -&gt; time_domain&quot;</span><span class="p">)</span>
 		<span class="n">waveform_modes</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_len</span><span class="p">)</span>
 
 		<span class="kn">from</span> <span class="nn">waveformtools.transforms</span> <span class="kn">import</span> <span class="n">compute_ifft</span>
@@ -1104,14 +1309,18 @@
 
 				<span class="n">waveform_modes</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">,</span> <span class="n">time_data</span><span class="p">)</span>
 
-		<span class="n">maxloc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">waveform_modes</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">maxloc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">waveform_modes</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="n">maxloc</span> <span class="o">=</span> <span class="mi">0</span>
+
 		<span class="n">maxtime</span> <span class="o">=</span> <span class="n">time_axis</span><span class="p">[</span><span class="n">maxloc</span><span class="p">]</span>
 
 		<span class="n">waveform_modes</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="n">time_axis</span> <span class="o">-</span> <span class="n">maxtime</span>
 
 		<span class="k">return</span> <span class="n">waveform_modes</span></div>
 
-<div class="viewcode-block" id="modes_array.extrap_to_inf"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.extrap_to_inf">[docs]</a>	<span class="k">def</span> <span class="nf">extrap_to_inf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">spin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;SIO&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="modes_array.extrap_to_inf"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.extrap_to_inf">[docs]</a>	<span class="k">def</span> <span class="nf">extrap_to_inf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">spin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;SIO&quot;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Extrapolate the :math:`\\Psi_4` modes to infinity</span>
 <span class="sd">		using the perturbative improved second order method.</span>
 
@@ -1186,7 +1395,7 @@
 			<span class="n">modes_list</span> <span class="o">=</span> <span class="n">construct_mode_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">)</span>
 
 		<span class="c1"># Create a mode array for the extrapolated waveform.</span>
-		<span class="n">extrap_wf</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;rPsi4_inf&quot;</span><span class="p">,</span>  <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">)</span>
+		<span class="n">extrap_wf</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2"> -&gt; rPsi4_inf&quot;</span><span class="p">,</span>  <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">)</span>
 
 		<span class="n">extrap_wf</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_len</span><span class="p">)</span>
 
@@ -1202,19 +1411,19 @@
 				<span class="c1"># For every emm value</span>
 				<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing l</span><span class="si">{</span><span class="n">ell_value</span><span class="si">}</span><span class="s2">, m</span><span class="si">{</span><span class="n">emm_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 				<span class="c1"># Compute rPsi4_lm</span>
-				<span class="n">mode_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_ext</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">)</span>
+				<span class="n">mode_data</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">)</span>
 
 				<span class="c1"># Extrapolate</span>
 				<span class="c1"># import ipdb; ipdb.set_trace()</span>
 				<span class="n">extrap_mode_data</span> <span class="o">=</span> <span class="n">extrap_method</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="o">=</span><span class="n">mode_data</span><span class="p">)</span>
 
 				<span class="c1"># Assign data to new modes array</span>
-				<span class="n">extrap_wf</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">,</span> <span class="n">extrap_mode_data</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_ext</span><span class="p">)</span>
+				<span class="n">extrap_wf</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">,</span> <span class="n">extrap_mode_data</span><span class="p">)</span>
 
 		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done!&quot;</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">extrap_wf</span></div>
 
-<div class="viewcode-block" id="modes_array.supertranslate"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.supertranslate">[docs]</a>	<span class="k">def</span> <span class="nf">supertranslate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supertransl_alpha_modes</span><span class="p">,</span> <span class="n">gridinfo</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+<div class="viewcode-block" id="modes_array.supertranslate"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.supertranslate">[docs]</a>	<span class="k">def</span> <span class="nf">supertranslate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supertransl_alpha_modes</span><span class="p">,</span> <span class="n">grid_info</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
 
 		<span class="sd">&quot;&quot;&quot;Supertranslate the :math:`\\Psi_{4\\ell m}` waveform modes, give the,</span>
 <span class="sd">		the supertranslation parameter and the order.</span>
@@ -1224,7 +1433,7 @@
 <span class="sd">		supertransl_alpha_modes :  modes_array</span>
 <span class="sd">														   The modes_array containing the</span>
 <span class="sd">														   supertranslation mode coefficients.</span>
-<span class="sd">		gridinfo:		class instance</span>
+<span class="sd">		grid_info:		class instance</span>
 <span class="sd">										The class instance that contains</span>
 <span class="sd">										the properties of the spherical grid</span>
 <span class="sd">										using which the computations are</span>
@@ -1247,7 +1456,7 @@
 		<span class="c1"># Step 0: Get the grid properties for integrations</span>
 
 		<span class="c1"># Compute the meshgrid for theta and phi.</span>
-		<span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">gridinfo</span><span class="o">.</span><span class="n">meshgrid</span>
+		<span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">grid_info</span><span class="o">.</span><span class="n">meshgrid</span>
 		<span class="c1"># theta</span>
 		<span class="c1"># Step 1: get the grid function for supertranslation parameter</span>
 		<span class="n">supertransl_alpha_sphere</span> <span class="o">=</span> <span class="n">BMS</span><span class="o">.</span><span class="n">compute_supertransl_alpha</span><span class="p">(</span><span class="n">supertransl_alpha_modes</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
@@ -1268,20 +1477,20 @@
 		<span class="c1"># Multiply with the fourier modes.</span>
 		<span class="n">supertransl_spherical_factor</span> <span class="o">=</span> <span class="n">Psi4_tilde_modes</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">supertransl_factor</span><span class="p">)</span>
 
-		<span class="kn">from</span> <span class="nn">qlmtools</span> <span class="kn">import</span> <span class="n">Yslm_vec</span>
+		<span class="kn">from</span> <span class="nn">qlmtools</span> <span class="kn">import</span> <span class="n">Yslm_new</span>
 
 		<span class="c1"># Reconstruct the modes</span>
-		<span class="k">for</span> <span class="n">ell_value</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ell_max</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">ell_value</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ell_max</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
 			<span class="k">for</span> <span class="n">emm_value</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">ell_value</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
 				<span class="c1"># Multiply with the SWSH basis.</span>
-				<span class="n">supertransl_spherical_grid</span> <span class="o">+=</span> <span class="n">supertransl_spherical_factor</span> <span class="o">*</span> <span class="n">Yslm_vec</span><span class="p">(</span>
+				<span class="n">supertransl_spherical_grid</span> <span class="o">+=</span> <span class="n">supertransl_spherical_factor</span> <span class="o">*</span> <span class="n">Yslm_new</span><span class="p">(</span>
 					<span class="n">spin_weight</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">ell</span><span class="o">=</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm</span><span class="o">=</span><span class="n">emm_value</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="n">phi</span>
 				<span class="p">)</span>
 
 				<span class="c1"># Step 3: Reconstruct the function on the sphere</span>
 
 		<span class="c1"># Create a spherical_array to hold the supertranslated waveform</span>
-		<span class="n">supertransl_spherical_waveform</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">gridinfo</span><span class="o">=</span><span class="n">gridinfo</span><span class="p">)</span>
+		<span class="n">supertransl_spherical_waveform</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">grid_info</span><span class="o">=</span><span class="n">grid_info</span><span class="p">)</span>
 
 		<span class="c1"># Set the data.</span>
 		<span class="n">supertransl_spherical_waveform</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">supertransl_spherical_grid</span>
@@ -1291,7 +1500,7 @@
 
 		<span class="k">return</span> <span class="n">Psi4_supertransl_modes</span></div>
 
-<div class="viewcode-block" id="modes_array.boost"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.boost">[docs]</a>	<span class="k">def</span> <span class="nf">boost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conformal_factor</span><span class="p">):</span>
+<div class="viewcode-block" id="modes_array.boost"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.boost">[docs]</a>	<span class="k">def</span> <span class="nf">boost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conformal_factor</span><span class="p">,</span> <span class="n">grid_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Boost the waveform given the unboosted waveform and the boost conformal factor.</span>
 
 <span class="sd">		Parameters</span>
@@ -1309,34 +1518,26 @@
 <span class="sd">							  that contains the boosted waveform.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
-		<span class="kn">from</span> <span class="nn">grids</span> <span class="kn">import</span> <span class="n">spherical_grid</span>
+		<span class="kn">from</span> <span class="nn">waveformtools.grids</span> <span class="kn">import</span> <span class="n">spherical_grid</span>
 
 		<span class="c1"># Construct a spherical grid.</span>
-		<span class="n">info</span> <span class="o">=</span> <span class="n">spherical_grid</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">grid_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">grid_info</span> <span class="o">=</span> <span class="n">spherical_grid</span><span class="p">()</span>
 
 		<span class="c1"># Get spherical array from modes.</span>
-		<span class="n">unboosted_waveform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_spherical_array</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+		<span class="n">unboosted_waveform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_spherical_array</span><span class="p">(</span><span class="n">grid_info</span><span class="p">)</span>
 
-		<span class="c1"># A list to store the boosted waveform.</span>
-		<span class="n">boosted_waveform_data</span> <span class="o">=</span> <span class="p">[]</span>
-
-		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">unboosted_waveform</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-			<span class="c1"># Compute the boosted waveform on the spherical grid on all the elements.</span>
-
-			<span class="c1"># conformal_k_on_sphere = compute_conformal_k(vec_v, theta, phi)</span>
-			<span class="n">boosted_waveform_item</span> <span class="o">=</span> <span class="n">conformal_factor</span> <span class="o">*</span> <span class="n">item</span>
-
-			<span class="n">boosted_waveform_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boosted_waveform_item</span><span class="p">)</span>
+		<span class="n">boosted_waveform_data</span> <span class="o">=</span> <span class="n">unboosted_waveform</span><span class="o">.</span><span class="n">boost</span><span class="p">(</span><span class="n">conformal_factor</span><span class="p">)</span>
 
 		<span class="c1"># Construct a 2d waveform array object</span>
-		<span class="n">boosted_waveform</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">gridinfo</span><span class="o">=</span><span class="n">unboosted_waveform</span><span class="o">.</span><span class="n">gridinfo</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">boosted_waveform_data</span><span class="p">))</span>
+		<span class="n">boosted_waveform</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">grid_info</span><span class="o">=</span><span class="n">unboosted_waveform</span><span class="o">.</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">boosted_waveform_data</span><span class="p">))</span>
 		<span class="n">boosted_waveform</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;boosted&quot;</span>
 
 		<span class="c1"># Get modes from spherical data.</span>
-		<span class="n">boosted_waveform_modes</span> <span class="o">=</span> <span class="n">boosted_waveform</span><span class="o">.</span><span class="n">to_modes_array</span><span class="p">()</span>
+		<span class="c1">#boosted_waveform_modes = boosted_waveform.to_modes_array()</span>
 
-		<span class="k">return</span> <span class="n">boosted_waveform_modes</span></div>
-
+		<span class="c1">#return boosted_waveform_modes</span>
+		<span class="k">return</span> <span class="n">boosted_waveform</span></div>
 
 <div class="viewcode-block" id="modes_array.get_strain_from_psi4"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.get_strain_from_psi4">[docs]</a>	<span class="k">def</span> <span class="nf">get_strain_from_psi4</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">):</span>
 		<span class="sd">&#39;&#39;&#39; Get the strain `modes_array` from :math:`\\Psi_4` by</span>
@@ -1358,7 +1559,8 @@
 <span class="sd">		&#39;&#39;&#39;</span>
 
 		<span class="c1"># Initialize a mode array for strain.</span>
-		<span class="n">strain_waveform</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s1"> strain from Psi4&#39;</span><span class="p">,</span> <span class="n">r_ext</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">)</span>
+		<span class="c1">#strain_waveform = modes_array(label=f&#39;{self.label} strain from Psi4&#39;, r_ext=500, ell_max=8, modes_list=self.modes_list)</span>
+		<span class="n">strain_waveform</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> strain from Psi4&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">),</span> <span class="n">r_ext</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">)</span>
 
 		<span class="n">strain_waveform</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_axis</span>
 		<span class="n">strain_waveform</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span>
@@ -1383,6 +1585,52 @@
 
 		<span class="k">return</span> <span class="n">strain_waveform</span></div>
 
+
+
+<div class="viewcode-block" id="modes_array.get_news_from_psi4"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.get_news_from_psi4">[docs]</a>	<span class="k">def</span> <span class="nf">get_news_from_psi4</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">):</span>
+		<span class="sd">&#39;&#39;&#39; Get the News `modes_array` from :math:`\\Psi_4` by</span>
+<span class="sd">		fixed frequency integration.</span>
+
+<span class="sd">		Parameters</span>
+<span class="sd">		----------</span>
+<span class="sd">		omega0:	float, optional</span>
+<span class="sd">				The lower cutoff angular frequency for FFI.</span>
+<span class="sd">				By default, it computes this as one tenth of</span>
+<span class="sd">				the starting frequency of the mode data.</span>
+
+<span class="sd">		Returns</span>
+<span class="sd">		-------</span>
+<span class="sd">		news_waveform:	modes_array</span>
+<span class="sd">						The computed strain modes.</span>
+
+<span class="sd">		&#39;&#39;&#39;</span>
+
+		<span class="c1"># Initialize a mode array for strain.</span>
+		<span class="c1">#news_waveform = modes_array(label=f&#39;{self.label} news from Psi4&#39;, r_ext=500, ell_max=8, modes_list=self.modes_list)</span>
+		<span class="n">news_waveform</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> news from Psi4&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">),</span> <span class="n">r_ext</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">)</span>
+
+		<span class="n">news_waveform</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_axis</span>
+		<span class="n">news_waveform</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span>
+
+		<span class="n">data_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_len</span>
+
+		<span class="n">news_waveform</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="n">data_len</span><span class="p">)</span>
+
+		<span class="c1"># Integrate,</span>
+		<span class="kn">from</span> <span class="nn">waveformtools.integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
+		<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">get_starting_angular_frequency</span> <span class="k">as</span> <span class="n">sang_f</span>
+
+		<span class="n">omega_st</span> <span class="o">=</span> <span class="n">omega0</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span>
+			<span class="n">ell</span><span class="p">,</span> <span class="n">emm_list</span> <span class="o">=</span> <span class="n">item</span>
+			<span class="k">for</span> <span class="n">emm</span> <span class="ow">in</span> <span class="n">emm_list</span><span class="p">:</span>
+				<span class="n">mode_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">omega0</span><span class="o">==</span><span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+					<span class="n">omega_st</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sang_f</span><span class="p">(</span><span class="n">mode_data</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">()))</span><span class="o">/</span><span class="mi">10</span>
+				<span class="n">news_mode_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fixed_frequency_integrator</span><span class="p">(</span><span class="n">udata_time</span><span class="o">=</span><span class="n">mode_data</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">(),</span> <span class="n">omega0</span><span class="o">=</span><span class="n">omega_st</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+				<span class="n">news_waveform</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">news_mode_data</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">news_waveform</span></div>
 
 <div class="viewcode-block" id="modes_array.taper"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveforms.html#waveformtools.waveforms.modes_array.taper">[docs]</a>	<span class="k">def</span> <span class="nf">taper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zeros</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">):</span>
 		<span class="sd">&#39;&#39;&#39; Taper a waveform at both ends and insert zeros if needed</span>
@@ -1431,7 +1679,9 @@
 				<span class="n">new_data_len</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tapered_data_re</span><span class="p">)</span>
 
 				<span class="k">if</span> <span class="n">tapered_modes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-					<span class="n">tapered_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;tapered </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">r_ext</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r_ext</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">)</span>
+					<span class="c1">#tapered_modes = modes_array(label = f&#39;tapered {self.label}&#39;, r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)</span>
+					<span class="n">tapered_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;tapered </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">),</span> <span class="n">r_ext</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r_ext</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">)</span>
+
 					<span class="n">tapered_modes</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="n">new_data_len</span><span class="p">)</span>
 				<span class="n">tapered_data</span> <span class="o">=</span> <span class="n">tapered_data_re</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">tapered_data_im</span>
 
@@ -1474,7 +1724,7 @@
 			<span class="n">nearest_power</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data_len</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 			<span class="n">req_len</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">nearest_power</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
 			<span class="n">zeros</span> <span class="o">=</span> <span class="n">req_len</span> <span class="o">-</span> <span class="n">data_len</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;num_zeros&#39;</span><span class="p">,</span> <span class="n">zeros</span><span class="p">)</span>
+			<span class="c1">#print(&#39;num_zeros&#39;, zeros)</span>
 
 		<span class="c1"># New modes array.</span>
 
@@ -1495,7 +1745,9 @@
 				<span class="n">new_data_len</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tapered_data_re</span><span class="p">)</span>
 
 				<span class="k">if</span> <span class="n">tapered_modes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-					<span class="n">tapered_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;tapered </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">r_ext</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r_ext</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">)</span>
+					<span class="c1">#tapered_modes = modes_array(label = f&#39;tapered {self.label}&#39;, r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)</span>
+					<span class="n">tapered_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;tapered </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">),</span> <span class="n">r_ext</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r_ext</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">)</span>
+
 					<span class="n">tapered_modes</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="n">new_data_len</span><span class="p">)</span>
 				<span class="n">tapered_data</span> <span class="o">=</span> <span class="n">tapered_data_re</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">tapered_data_im</span>
 
@@ -1543,7 +1795,9 @@
 
 				<span class="k">if</span> <span class="n">filtered_modes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 					<span class="c1"># Create filtered_modes</span>
-					<span class="n">filtered_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;lc filtered </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">r_ext</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r_ext</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">)</span>
+					<span class="c1">#filtered_modes = modes_array(label = f&#39;lc filtered {self.label}&#39;, r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)</span>
+					<span class="n">filtered_modes</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;lc filtered </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">),</span> <span class="n">r_ext</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r_ext</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modes_list</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">)</span>
+
 					<span class="n">filtered_modes</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_len</span><span class="p">)</span>
 
 				<span class="c1"># Get filtered mode data.</span>
@@ -1557,7 +1811,7 @@
 
 		<span class="k">return</span> <span class="n">filtered_modes</span></div></div>
 
-
+<span class="c1">#######################################################################################################</span>
 <span class="k">def</span> <span class="nf">_get_modes_list_from_keys</span><span class="p">(</span><span class="n">keys_list</span><span class="p">,</span> <span class="n">r_ext</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Get the modes list from the keys list</span>
 <span class="sd">	of an hdf file.</span>
@@ -1618,8 +1872,10 @@
 		<span class="c1"># Update it with the new emm mode.</span>
 		<span class="n">emm_modes_for_ell</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">emm_value</span><span class="p">)</span>
 
+	<span class="n">modes_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_modes_for_ell</span><span class="p">])</span>
+
 	<span class="k">return</span> <span class="n">modes_list</span>
-<span class="c1">###########################################################################################################</span>
+
 <span class="k">def</span> <span class="nf">_get_ell_emm_from_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Get the :math:`\\ell` and :math:`m` values</span>
 <span class="sd">	from a given key string of an hdf file.</span>

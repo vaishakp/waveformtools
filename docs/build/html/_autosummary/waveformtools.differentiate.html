@@ -185,6 +185,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.differentiate.differentiate5" title="waveformtools.differentiate.differentiate5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">differentiate5</span></code></a>(data, delta_t)</p></td>
 <td><p>Eleven point difference derivative calculator.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.differentiate.differentiate5_vec_nonumba" title="waveformtools.differentiate.differentiate5_vec_nonumba"><code class="xref py py-obj docutils literal notranslate"><span class="pre">differentiate5_vec_nonumba</span></code></a>(data, delta_t)</p></td>
+<td><p>Eleven point difference derivative calculator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.differentiate.differentiate5_vec_numba" title="waveformtools.differentiate.differentiate5_vec_numba"><code class="xref py py-obj docutils literal notranslate"><span class="pre">differentiate5_vec_numba</span></code></a>(data, delta_t)</p></td>
+<td><p>Eleven point difference derivative calculator.</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.differentiate.differentiate_cwaveform" title="waveformtools.differentiate.differentiate_cwaveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">differentiate_cwaveform</span></code></a>(time_axis, waveform)</p></td>
 <td><p>Differentiate a given waveform by differentiating the Amplitude-Phase form.</p></td>
 </tr>
@@ -350,6 +356,50 @@ is real.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="waveformtools.differentiate.differentiate5">
 <span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Eleven point difference derivative calculator. Not accurate near the boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data:   1d array</strong></dt><dd><p>The 1d data.</p>
+</dd>
+<dt><strong>delta_t:        float</strong></dt><dd><p>The time step in t/M.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dAdt:   1d array</dt><dd><p>The derivative of the data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate5_vec_nonumba">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate5_vec_nonumba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate5_vec_nonumba"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate5_vec_nonumba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Eleven point difference derivative calculator. Not accurate near the boundaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data:   1d array</strong></dt><dd><p>The 1d data.</p>
+</dd>
+<dt><strong>delta_t:        float</strong></dt><dd><p>The time step in t/M.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dAdt:   1d array</dt><dd><p>The derivative of the data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate5_vec_numba">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate5_vec_numba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate5_vec_numba"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate5_vec_numba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Eleven point difference derivative calculator. Not accurate near the boundaries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

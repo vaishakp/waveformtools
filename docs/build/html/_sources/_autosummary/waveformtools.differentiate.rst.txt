@@ -1,4 +1,4 @@
-waveformtools.differentiate
+﻿waveformtools.differentiate
 ===========================
 
 .. automodule:: waveformtools.differentiate
@@ -20,6 +20,8 @@ waveformtools.differentiate
       differentiate3
       differentiate4
       differentiate5
+      differentiate5_vec_nonumba
+      differentiate5_vec_numba
       differentiate_cwaveform
    
    

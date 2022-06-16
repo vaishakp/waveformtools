@@ -1,4 +1,4 @@
-waveformtools.grids
+﻿waveformtools.grids
 ===================
 
 .. automodule:: waveformtools.grids

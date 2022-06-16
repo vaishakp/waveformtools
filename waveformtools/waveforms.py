@@ -47,13 +47,21 @@ class spherical_array:
 					is represented in frequency domain.
 	grid_info:	spherical_grid
 				An instance of the `spherical_grid` class.
+	data_len:	int
+				The length of the data along the time axis.
 
 	Methods
 	-------
 
-	delta_t:	Fetch the time stepping `delta_t`.
-	to_modes_array:	Find the waveform expressed in the
+	delta_t:
+			Fetch the time stepping `delta_t`.
+	to_modes_array:
+					Find the waveform expressed in the
 					SWSH basis.
+	boost:
+			Boost the waveform.
+	supertranslate:
+					Supertranslate the waveform.
 
 	"""
 
@@ -437,21 +445,30 @@ class modes_array:
 
 	Methods
 	-------
-	get_metadata:	Get the metadata associated with the modes_array.
-	mode:	Get the data for the given :math:`\\ell, m` mode.
-	_create_modes_array:	A private method to create an empty
-							modes_array of given shape.
-	delta_t:	Set the attribute `delta_t` and/ or return its value.
-	load_modes:	Load the waveform modes from a specified h5 file.
-	save_modes: Save the waveform modes to a specified h5 file.
-	set_mode_data:	Set the `mode` data of specified modes.
-	to_frequency_basis:	Get the `modes_array` in frequency basis
-						from its time basis representation.
-	to_time_basis: Get the `modes_array` in temporal basis
-					from its frequency basis representation.
-	extrap_to_inf:	Extrapolate the modes to infinity.
-	supertranslate: Supertranslate the waveform modes.
-	boost:	Boost the waveform modes.
+	get_metadata:
+					Get the metadata associated with the modes_array.
+	mode:
+			Get the data for the given :math:`\\ell, m` mode.
+	_create_modes_array:
+						A private method to create an empty modes_array of given shape.
+	delta_t:
+			Set the attribute `delta_t` and/ or return its value.
+	load_modes:
+				Load the waveform modes from a specified h5 file.
+	save_modes:
+				Save the waveform modes to a specified h5 file.
+	set_mode_data:
+					Set the `mode` data of specified modes.
+	to_frequency_basis:
+						Get the `modes_array` in frequency basis from its time basis representation.
+	to_time_basis:
+					Get the `modes_array` in temporal basis from its frequency basis representation.
+	extrap_to_inf:
+					Extrapolate the modes to infinity.
+	supertranslate:
+					Supertranslate the waveform modes.
+	boost:
+			Boost the waveform modes.
 
 	"""
 

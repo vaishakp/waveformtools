@@ -39,7 +39,7 @@
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="waveformtools.extrapolate" href="waveformtools.extrapolate.html" />
+    <link rel="next" title="waveformtools.compare" href="waveformtools.compare.html" />
     <link rel="prev" title="waveformtools.BMS" href="waveformtools.BMS.html" /> 
 </head>
 
@@ -96,12 +96,14 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.html#classes">Classes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.CoM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.compare.html">waveformtools.compare</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.grids.html">waveformtools.grids</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.integrate.html">waveformtools.integrate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
@@ -201,7 +203,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.CoM.compute_conformal_k" title="waveformtools.CoM.compute_conformal_k"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_conformal_k</span></code></a>(vec_v, info[, spin_phase])</p></td>
 <td><p>Compute the conformal factor for the boost transformation</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.CoM.compute_transl_alpha_modes" title="waveformtools.CoM.compute_transl_alpha_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_transl_alpha_modes</span></code></a>(time_axis, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.CoM.compute_translation_alpha_modes" title="waveformtools.CoM.compute_translation_alpha_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_translation_alpha_modes</span></code></a>(time_axis, ...)</p></td>
 <td><p>Compute the translation scalar <span class="math notranslate nohighlight">\(\alpha\)</span> in its spherical harmonic components given the mean motion of the centre of mass.</p></td>
 </tr>
 </tbody>
@@ -320,8 +322,8 @@ contains the boosted waveform.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.CoM.compute_transl_alpha_modes">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></span><span class="sig-name descname"><span class="pre">compute_transl_alpha_modes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">com_alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">com_beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_transl_alpha_modes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_transl_alpha_modes" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.CoM.compute_translation_alpha_modes">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></span><span class="sig-name descname"><span class="pre">compute_translation_alpha_modes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">com_alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">com_beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_translation_alpha_modes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_translation_alpha_modes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the translation scalar <span class="math notranslate nohighlight">\(\alpha\)</span> in its spherical harmonic components given the mean motion of the centre of mass.
 These are basically the quantities in Eq. (4-5d) in the reference Woodford et al. 2019.</p>
 <dl class="field-list simple">
@@ -354,7 +356,7 @@ These are basically the quantities in Eq. (4-5d) in the reference Woodford et al
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="waveformtools.extrapolate.html" class="btn btn-neutral float-right" title="waveformtools.extrapolate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="waveformtools.compare.html" class="btn btn-neutral float-right" title="waveformtools.compare" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="waveformtools.BMS.html" class="btn btn-neutral float-left" title="waveformtools.BMS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

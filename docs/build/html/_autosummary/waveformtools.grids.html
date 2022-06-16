@@ -96,12 +96,17 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.html#classes">Classes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.CoM.html">waveformtools.CoM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.compare.html">waveformtools.compare</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.grids</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.grids</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.integrate.html">waveformtools.integrate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
@@ -179,6 +184,12 @@
   <section id="module-waveformtools.grids">
 <span id="waveformtools-grids"></span><h1>waveformtools.grids<a class="headerlink" href="#module-waveformtools.grids" title="Permalink to this headline">¶</a></h1>
 <p>Classes to hold grid information</p>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>spherical_grid: grid info.</dt><dd><p>Stores information on the 2d grid in spherical polar coordinates.</p>
+</dd>
+</dl>
 <p class="rubric">Classes</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -225,21 +236,23 @@ direction.</p>
 <dt><strong>npix_act:       int</strong></dt><dd><p>The total number of gridpoints on the sphere,
 excluding the ghost points.</p>
 </dd>
+<dt><strong>meshgrid:</strong></dt><dd><p>Get the 2d angular grid.</p>
+</dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="docutils align-default">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col style="width: 32%" />
+<col style="width: 68%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.grids.spherical_grid.phi_1d" title="waveformtools.grids.spherical_grid.phi_1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">phi_1d</span></code></a>([phi_index])</p></td>
-<td><p>Returns the coordinate value theta given the coordinate index. The coordinate index lies in (0, nphi).</p></td>
+<tr class="row-odd"><td><p><strong>theta_1d:</strong></p></td>
+<td><p>Get the <span class="math notranslate nohighlight">\(\theta\)</span> axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.grids.spherical_grid.theta_1d" title="waveformtools.grids.spherical_grid.theta_1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">theta_1d</span></code></a>([theta_index])</p></td>
-<td><p>Returns the coordinate value theta given the coordinate index. The coordinate index ranges from (0, ntheta).</p></td>
+<tr class="row-even"><td><p><strong>phi_1d:</strong></p></td>
+<td><p>Get the <span class="math notranslate nohighlight">\(\phi\)</span> axis.</p></td>
 </tr>
 </tbody>
 </table>
@@ -358,6 +371,7 @@ excluding the ghost points.</p>
 
 </dd></dl>
 
+</section>
 </section>
 
 

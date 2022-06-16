@@ -1,4 +1,12 @@
-''' Classes to hold grid information '''
+''' Classes to hold grid information
+
+
+Classes
+-------
+spherical_grid:	grid info.
+				Stores information on the 2d grid in spherical polar coordinates.
+
+'''
 
 import numpy as np
 #from numba import jit, njit, jitclass
@@ -15,51 +23,48 @@ spec_sp = { 'ntheta' : nb.int32,
             'nphimax' : nb.int32,
 }
 
-@jitclass(spec_sp)
+#@jitclass(spec_sp)
 class spherical_grid:
 	''' A class to store the coordinate grid on a sphere.
 
 	Attributes
 	----------
-
 	ntheta:	int
 				The number of angular points in the :math:`\\theta`
 				direction, including ghost zones.
-
-
 	nphi:	int
 			The number of angular points in the :math:`\\phi`
 			direction, including ghost zones.
-
 	nghosts:	int
 				The number of ghost zones at the end of
 				each direction.
-
 	meshgrid:	tuple of 2d array
 				The 2d array containing the meshgrid of
 				(:math:`\\theta, \\phi`) angular points.
-
-
 	theta_1d:	1d array
 				The 1d array of angular points
 				along the :math:`\\theta` axis.
-
 	phi_1d:	1d array
 				The 1d array of angular points
 				along the :math:`\\phi` axis.
-
 	dtheta:	float
 				The angular step size in the :math:`\\theta`
 				direction.
-
 	dphi:	float
 			The angular step size inthe :math:`\\phi`
 			direction.
-
 	npix_act:	int
 				The total number of gridpoints on the sphere,
 				excluding the ghost points.
+	meshgrid:
+				Get the 2d angular grid.
 
+	Methods
+	-------
+	theta_1d:
+				Get the :math:`\\theta` axis.
+	phi_1d:
+				Get the :math:`\\phi` axis.
 
 	'''
 

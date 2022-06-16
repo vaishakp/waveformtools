@@ -163,7 +163,7 @@
 <span class="c1">#######################################################</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span><span class="p">,</span> <span class="n">njit</span>
 <span class="c1">########################################################</span>
 <span class="c1"># Chebyshev differentiation</span>
 <span class="c1">########################################################</span>
@@ -670,6 +670,268 @@
 
 	<span class="k">return</span> <span class="n">der_data</span></div>
 
+<div class="viewcode-block" id="differentiate5_vec_nonumba"><a class="viewcode-back" href="../../_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate5_vec_nonumba">[docs]</a><span class="k">def</span> <span class="nf">differentiate5_vec_nonumba</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Eleven point difference derivative calculator. Not accurate near the boundaries.</span>
+
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	data:	1d array</span>
+<span class="sd">			The 1d data.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">				The time step in t/M.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	dAdt:	1d array</span>
+<span class="sd">			The derivative of the data.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#import pdb</span>
+	<span class="c1">#pdb.set_trace()</span>
+
+	<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+	<span class="n">der_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+
+	<span class="n">aax</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="c1"># The number of points on one side.</span>
+	<span class="n">order</span> <span class="o">=</span> <span class="mi">5</span>
+	<span class="c1"># The stencil.</span>
+	<span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="o">-</span><span class="mi">2100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2100</span><span class="p">,</span> <span class="o">-</span><span class="mi">600</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+	<span class="c1"># The divison factor.</span>
+	<span class="n">divide</span> <span class="o">=</span> <span class="mi">2520</span>
+
+	<span class="c1"># A list to hold the derivatives.</span>
+	<span class="c1">#der_data = np.array([])</span>
+
+	<span class="c1"># Near the boundaries</span>
+
+	<span class="c1"># n=0, N-1</span>
+	<span class="n">der0</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">delta_t</span>
+	<span class="n">derNm1</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">delta_t</span>
+
+	<span class="c1">#der_data = np.append(der_data, [der0], axis=aax)</span>
+
+	<span class="n">der_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">der0</span>
+	<span class="c1"># for n=1, N-2</span>
+	<span class="n">der1</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">derNm2</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>
+
+	<span class="c1">#der_data = np.append(der_data, [der1], axis=aax)</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">der1</span>
+
+	<span class="c1"># For n=2, N-3</span>
+	<span class="n">stencil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">12</span>
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+
+	<span class="n">der2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">data_vec</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">)))</span> <span class="o">/</span> <span class="n">delta_t</span>
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>
+
+	<span class="n">derNm3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">data_vec</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">)))</span> <span class="o">/</span> <span class="n">delta_t</span>
+
+
+	<span class="c1">#der_data = np.append(der_data, [der2], axis=aax)</span>
+
+	<span class="n">der_data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">der2</span>
+	<span class="c1"># For n=3, N-4</span>
+	<span class="n">stencil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mi">45</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">60</span>
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span>
+
+	<span class="n">der3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">data_vec</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">)))</span> <span class="o">/</span> <span class="n">delta_t</span>
+
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">7</span><span class="p">:]</span>
+
+	<span class="n">derNm4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">data_vec</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">)))</span> <span class="o">/</span> <span class="n">delta_t</span>
+
+
+	<span class="c1">#der_data = np.append(der_data, [der3], axis=aax)</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">der3</span>
+	<span class="c1"># For n=4, N-5</span>
+	<span class="n">stencil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">32</span><span class="p">,</span> <span class="mi">168</span><span class="p">,</span> <span class="o">-</span><span class="mi">672</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">672</span><span class="p">,</span> <span class="o">-</span><span class="mi">168</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mi">840</span>
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span>
+
+	<span class="n">der4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">data_vec</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">)))</span> <span class="o">/</span> <span class="n">delta_t</span>
+
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">9</span><span class="p">:]</span>
+
+	<span class="n">derNm5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">stencil</span><span class="p">,</span> <span class="n">data_vec</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">)))</span> <span class="o">/</span> <span class="n">delta_t</span>
+
+
+	<span class="c1">#der_data = np.append(der_data, [der4], axis=aax)</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">der4</span>
+	<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="n">order</span><span class="p">):</span>
+		<span class="c1"># For the interior points.</span>
+		<span class="n">data_subarray</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="n">order</span> <span class="p">:</span> <span class="n">index</span> <span class="o">+</span> <span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+		<span class="c1">#der_data = np.append(der_data, [np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)], axis=aax)</span>
+		<span class="n">der_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">data_subarray</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">((</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span><span class="n">divide</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>
+
+
+	<span class="c1">#der_data = np.append(der_data, [derNm5], axis=aax)</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">derNm5</span>
+	<span class="c1">#der_data = np.append(der_data, [derNm4], axis=aax)</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">derNm4</span>
+	<span class="c1">#der_data = np.append(der_data, [derNm3], axis=aax)</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">derNm3</span>
+	<span class="c1">#der_data = np.append(der_data, [derNm2], axis=aax)</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">derNm2</span>
+	<span class="c1">#der_data = np.append(der_data, [derNm1], axis=aax)</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">derNm1</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="n">der_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">der_data</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="differentiate5_vec_numba"><a class="viewcode-back" href="../../_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.differentiate5_vec_numba">[docs]</a><span class="nd">@njit</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">differentiate5_vec_numba</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Eleven point difference derivative calculator. Not accurate near the boundaries.</span>
+
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	data:	1d array</span>
+<span class="sd">			The 1d data.</span>
+<span class="sd">	delta_t:	float</span>
+<span class="sd">				The time step in t/M.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+
+<span class="sd">	dAdt:	1d array</span>
+<span class="sd">			The derivative of the data.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#import pdb</span>
+	<span class="c1">#pdb.set_trace()</span>
+
+	<span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+	<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+	<span class="n">der_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+
+	<span class="n">aax</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="c1"># The number of points on one side.</span>
+	<span class="n">order</span> <span class="o">=</span> <span class="mi">5</span>
+	<span class="c1"># The stencil.</span>
+	<span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="o">-</span><span class="mi">150</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="o">-</span><span class="mi">2100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2100</span><span class="p">,</span> <span class="o">-</span><span class="mi">600</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+	<span class="c1"># The divison factor.</span>
+	<span class="n">divide</span> <span class="o">=</span> <span class="mi">2520</span>
+
+	<span class="c1"># A list to hold the derivatives.</span>
+	<span class="c1">#der_data = np.array([])</span>
+
+	<span class="c1"># Near the boundaries</span>
+
+	<span class="c1"># n=0, N-1</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">delta_t</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">delta_t</span>
+
+	<span class="c1">#der_data = np.append(der_data, [der0], axis=aax)</span>
+
+	<span class="c1">#der_data[0] = der0</span>
+	<span class="c1"># for n=1, N-2</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">)</span>
+
+	<span class="c1">#der_data = np.append(der_data, [der1], axis=aax)</span>
+	<span class="c1">#der_data[1] = der1</span>
+
+	<span class="c1"># For n=2, N-3</span>
+	<span class="n">stencil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">12</span>
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+
+	<span class="c1">#der2 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t</span>
+
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stencil</span><span class="p">):</span>
+		<span class="n">der_data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">val</span><span class="o">*</span><span class="n">data_vec</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">/</span><span class="n">delta_t</span>
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>
+
+	<span class="c1">#derNm3 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t</span>
+
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stencil</span><span class="p">):</span>
+		<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+=</span> <span class="n">val</span><span class="o">*</span><span class="n">data_vec</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">/</span><span class="n">delta_t</span>
+
+
+
+	<span class="c1">#der_data = np.append(der_data, [der2], axis=aax)</span>
+
+	<span class="c1">#der_data[2] = der2</span>
+	<span class="c1"># For n=3, N-4</span>
+	<span class="n">stencil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mi">45</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">60</span>
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span>
+
+	<span class="c1">#der3 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t</span>
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stencil</span><span class="p">):</span>
+		<span class="n">der_data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+=</span> <span class="n">val</span><span class="o">*</span><span class="n">data_vec</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">/</span><span class="n">delta_t</span>
+
+
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">7</span><span class="p">:]</span>
+
+	<span class="c1">#derNm4 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t</span>
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stencil</span><span class="p">):</span>
+		<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+=</span> <span class="n">val</span><span class="o">*</span><span class="n">data_vec</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">/</span><span class="n">delta_t</span>
+
+
+
+	<span class="c1">#der_data = np.append(der_data, [der3], axis=aax)</span>
+	<span class="c1">#der_data[3] = der3</span>
+	<span class="c1"># For n=4, N-5</span>
+	<span class="n">stencil</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">32</span><span class="p">,</span> <span class="mi">168</span><span class="p">,</span> <span class="o">-</span><span class="mi">672</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">672</span><span class="p">,</span> <span class="o">-</span><span class="mi">168</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mi">840</span>
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="mi">9</span><span class="p">]</span>
+
+	<span class="c1">#der4 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t</span>
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stencil</span><span class="p">):</span>
+		<span class="n">der_data</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">+=</span> <span class="n">val</span><span class="o">*</span><span class="n">data_vec</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">/</span><span class="n">delta_t</span>
+
+
+
+	<span class="n">data_vec</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">9</span><span class="p">:]</span>
+
+	<span class="c1">#derNm5 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t</span>
+
+
+	<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stencil</span><span class="p">):</span>
+		<span class="n">der_data</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="o">+=</span> <span class="n">val</span><span class="o">*</span><span class="n">data_vec</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">/</span><span class="n">delta_t</span>
+
+
+	<span class="c1">#der_data = np.append(der_data, [der4], axis=aax)</span>
+	<span class="c1">#der_data[4] = der4</span>
+
+
+	<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="n">order</span><span class="p">):</span>
+		<span class="c1"># For the interior points.</span>
+		<span class="n">data_subarray</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="n">order</span> <span class="p">:</span> <span class="n">index</span> <span class="o">+</span> <span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+		<span class="c1">#der_data = np.append(der_data, [np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)], axis=aax)</span>
+		<span class="c1">#der_data[index] = np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)</span>
+		<span class="k">for</span> <span class="n">inner_index</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coeffs</span><span class="p">):</span>
+			<span class="n">der_data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">+=</span> <span class="n">val</span><span class="o">*</span><span class="n">data_subarray</span><span class="p">[</span><span class="n">inner_index</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">divide</span><span class="o">*</span><span class="n">delta_t</span><span class="p">)</span>
+
+
+
+	<span class="c1">#der_data = np.append(der_data, [derNm5], axis=aax)</span>
+	<span class="c1">#der_data[-5] = derNm5</span>
+	<span class="c1">#der_data = np.append(der_data, [derNm4], axis=aax)</span>
+	<span class="c1">#der_data[-4] = derNm4</span>
+	<span class="c1">#der_data = np.append(der_data, [derNm3], axis=aax)</span>
+	<span class="c1">#der_data[-3] = derNm3</span>
+	<span class="c1">#der_data = np.append(der_data, [derNm2], axis=aax)</span>
+	<span class="c1">#der_data[-2] = derNm2</span>
+	<span class="c1">#der_data = np.append(der_data, [derNm1], axis=aax)</span>
+	<span class="c1">#der_data[-1] = derNm1</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="n">der_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">der_data</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
 
 <span class="c1">######################################################################################</span>
 <span class="c1"># Complex Amplitude-Phase differentiation</span>

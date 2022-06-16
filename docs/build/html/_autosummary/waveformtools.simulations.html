@@ -348,6 +348,72 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.get_BH_locations">
+<span class="sig-name descname"><span class="pre">get_BH_locations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.get_BH_locations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.get_BH_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the co-ordinate locations of the BHs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alias</strong><span class="classifier">str, optional.</span></dt><dd><p>The simulation label. If not specified, then
+all available simulationswill be processed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"></dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.get_CoM_locations">
+<span class="sig-name descname"><span class="pre">get_CoM_locations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.get_CoM_locations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.get_CoM_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the CoM location of the given simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alias</strong><span class="classifier">str, optional.</span></dt><dd><p>The simulation label. If not specified, then
+all available simulationswill be processed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.CoM_locations</strong><span class="classifier">dict</span></dt><dd><p>A dictionary of lists containing
+CoM locations of the simulations.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This fetches the location of the BHs from data files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="waveformtools.simulations.sim.get_CoM_mean_motion">
+<span class="sig-name descname"><span class="pre">get_CoM_mean_motion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.get_CoM_mean_motion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.get_CoM_mean_motion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the mean motion of the CoM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>alias</strong><span class="classifier">str, optional.</span></dt><dd><p>The simulation label. If not specified, then
+all available simulationswill be processed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>alpha</strong><span class="classifier">dict</span></dt><dd><p>A dictionary containing the
+mean CoM displacement array.</p>
+</dd>
+<dt><strong>beta</strong><span class="classifier">dict</span></dt><dd><p>A dictionary containing the
+mean CoM velocity array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="waveformtools.simulations.sim.load_data">
 <span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/simulations.html#sim.load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.simulations.sim.load_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load data of the simulations.</p>

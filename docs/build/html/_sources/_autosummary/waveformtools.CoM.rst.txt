@@ -1,4 +1,4 @@
-waveformtools.CoM
+﻿waveformtools.CoM
 =================
 
 .. automodule:: waveformtools.CoM
@@ -18,7 +18,7 @@ waveformtools.CoM
       compute_com_alpha
       compute_com_beta
       compute_conformal_k
-      compute_transl_alpha_modes
+      compute_translation_alpha_modes
    
    
 
