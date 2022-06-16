@@ -8,7 +8,9 @@ dependencies:
     - statistics
     - termcolor
     - numba
-
+    - scipy
+    - matplotlib
+    - h5py
 
 channels:
     - defaults
