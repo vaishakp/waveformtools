@@ -1,0 +1,19 @@
+name: myenv
+
+dependencies:
+    - python=3
+    - numpy
+    - scipy
+    - pycbc
+    - lalsuite
+    - ligo-common
+    - matplotlib
+    - statistics
+    - termcolor
+    - h5py
+    - numba
+
+
+channels:
+    - defaults
+    - conda-forge
