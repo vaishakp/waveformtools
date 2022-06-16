@@ -178,8 +178,8 @@ pages:
     #- sphinx-build -b html docs/source public
     #- which sphinx
     - cd docs
-    #- make html
-    - sphinx-build -b html source ../build/html
+    - make html
+    #- sphinx-build -b html source ../build/html
     - mv build/html/ ../public/
     
   artifacts:
