@@ -179,11 +179,11 @@ pages:
     #- which sphinx
     - cd docs
     - make html
-    #- sphinx-build -b html source ../build/html
-    - mv build/html ../public/
+    - sphinx-build -b html source ../build/html
+    # - mv build/html ../public/
     
   artifacts:
     paths:
       - public
   only:
-    - merge_requests
+    - main
