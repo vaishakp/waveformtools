@@ -148,6 +148,7 @@ pages:
     - apk update
     - apk add make
     - apk add git
+    - apk add gcc 
     - source venv/bin/activate
     #- apt-get update -q -y
     #- apt-get install -y build-essential git
