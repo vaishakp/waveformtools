@@ -1,16 +1,15 @@
 # Modules to install
 
-pycbc
-lalsuite
-ligo-commons
-h5py
 numpy
 scipy
 math
 matplotlib
 statistics
+numba
+h5py
 termcolor
 pickle
 datetime
-numba
-
+lalsuite
+ligo-commons
+pycbc
