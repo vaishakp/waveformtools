@@ -65,27 +65,27 @@ else:
 
 # -- Try to auto-generate numba-decorated signatures -----------------
 
-import numba
+#import numba
 import inspect
 
 
-def process_numba_docstring(app, what, name, obj, options, signature, return_annotation):
-    if type(obj) is not numba.core.registry.CPUDispatcher:
-        return (signature, return_annotation)
-    else:
-        original = obj.py_func
-        orig_sig = inspect.signature(original)
+#def process_numba_docstring(app, what, name, obj, options, signature, return_annotation):
+#    if type(obj) is not numba.core.registry.CPUDispatcher:
+#        return (signature, return_annotation)
+#    else:
+#        original = obj.py_func
+#        orig_sig = inspect.signature(original)
 
-        if (orig_sig.return_annotation) is inspect._empty:
-            ret_ann = None
-        else:
-            ret_ann = orig_sig.return_annotation.__name__
+#        if (orig_sig.return_annotation) is inspect._empty:
+#            ret_ann = None
+#        else:
+#            ret_ann = orig_sig.return_annotation.__name__
+#
+#        return (str(orig_sig), ret_ann)
 
-        return (str(orig_sig), ret_ann)
 
-
-def setup(app):
-    app.connect("autodoc-process-signature", process_numba_docstring)
+#def setup(app):
+#    app.connect("autodoc-process-signature", process_numba_docstring)
 
 
 # --------------------------------------------------------------------
