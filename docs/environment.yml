@@ -2,12 +2,11 @@ name: myenv
 
 dependencies:
     - python=3.9
-    - numpy
-    - scipy
-    - matplotlib
+    - pycbc
+    - lalsuite
+    - ligo-common
     - statistics
     - termcolor
-    - h5py
     - numba
 
 
