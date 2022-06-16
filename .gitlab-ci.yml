@@ -114,8 +114,8 @@ pylint:
 
 pages:
   stage: deploy
-  #image: continuumio/miniconda3:latest
-  image: python:3.9-alpine
+  image: continuumio/miniconda3:latest
+  # image: python:3.9-alpine
   script:
   # image: python:3.9-alpine
   # Note: only 3.9 works with rinohtype
@@ -143,22 +143,22 @@ pages:
     - python --version  # For debugging
     - which python
     - pip install virtualenv
-    - virtualenv venv
+  #  - virtualenv venv
   #- dnf install -y make
-    - apk update
-    - apk add make
-    - apk add git
-    - apk add gcc 
-    - source venv/bin/activate
-    #- apt-get update -q -y
-    #- apt-get install -y build-essential git
-    #- conda env create -f docs/environment.yml
-    #- conda init
-    #- source ~/.bashrc
-    #- conda activate myenv
-    #- which python
-    #- which conda
-    #- conda --version
+  #  - apk update
+  #  - apk add make
+  #  - apk add git
+  #  - apk add gcc 
+  #  - source venv/bin/activate
+    - apt-get update -q -y
+    - apt-get install -y build-essential git
+    - conda env create -f docs/environment.yml
+    - conda init
+    - source ~/.bashrc
+    - conda activate myenv
+    - which python
+    - which conda
+    - conda --version
     - python --version
   # - which pip
   # - pip --version
@@ -174,7 +174,8 @@ pages:
     #- pip install -U sphinx sphinx-rtd-theme rinohtype numpydoc
     #- pip install rinohtype numpydoc
     # - pip install -r requirements.txt
-    - pip install -U 'sphinx==3.5.4' 'sphinx-rtd-theme==0.4.3' 'rinohtype==0.5.2' numpydoc 'jinja2<3.1.0' numpy
+    - pip install -U 'sphinx==3.5.4' 'sphinx-rtd-theme==0.4.3' 'rinohtype==0.5.2' numpydoc 'jinja2<3.1.0'
+    - conda install -y numpy
     #- pip install sphinx-rtd-theme rinohtype
     #- sphinx-build -b html docs/source public
     #- which sphinx
