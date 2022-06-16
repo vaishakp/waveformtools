@@ -15,21 +15,21 @@ import h5py
 from waveformtools.waveformtools import message
 from qlmtools import Yslm_new
 
-from numba import jit, njit
+#from numba import jit, njit
 #from numba import jitclass          # import the decorator
-from numba import int32, float64    # import the types
-import numba as nb
-from numba.experimental import jitclass
+#from numba import int32, float64, complex128    # import the types
+#import numba as nb
+#from numba.experimental import jitclass
 
-spec_sp = { 'label' : nb.types.string,
-			'time_axis' : nb.double[:],
-			'frequency_axis' : nb.double[:],
-			'data' : nb.complex128[:, :, :],
-			'base_dir' : nb.types.string,
-			'file_name' : nb.types.string,
-			'spin_weight' : nb.int32
+#spec_sp = { 'label' : nb.types.string,
+#			'time_axis' : nb.double[:],
+#			'frequency_axis' : nb.double[:],
+#			'data' : nb.complex128[:, :, :],
+#			'base_dir' : nb.types.string,
+#			'file_name' : nb.types.string,
+#			'spin_weight' : nb.int32
 
-}
+#}
 #@jitclass(spec_sp)
 class spherical_array:
 	"""A class for handling waveforms on a sphere.
@@ -194,7 +194,7 @@ class spherical_array:
 
 		# Create the modes_array
 		waveform_modes._create_modes_array(ell_max=ell_max, data_len=self.data_len)
-
+		wavefotm_modes.modes_list = modes_list
 		# The area element on the sphere
 		# Compute the meshgrid for theta and phi.
 		theta, phi = grid_info.meshgrid
@@ -272,7 +272,7 @@ class spherical_array:
 		return boosted_waveform
 
 
-	def supertranslate(selfa, supertransl_alpha_sp, order=1):
+	def supertranslate(self, supertransl_alpha_sp, order=1):
 
 		"""Supertranslate the :math:`\\Psi_{4\\ell m}` waveform modes, give the,
 		the supertranslation parameter and the order.
@@ -300,35 +300,36 @@ class spherical_array:
 		"""
 
 		# Create a spherical_array to hold the supertranslated waveform
-		Psi4_supertransl_sp = spherical_array(grid_info=grid_info, label='supertranslated frequency space modes')
+		Psi4_supertransl_sp = spherical_array(grid_info=self.grid_info, label='supertranslated frequency space modes')
 
-		delta_t = float(selfa.delta_t())
+		delta_t = float(self.delta_t())
 
 
 		# Set the data.
 		data = 0
-		#data = selfa.data
-		#Psi4_supertransl_sp.data = selfa.data
+		#data = self.data
+		#Psi4_supertransl_sp.data = self.data
 		delta = 0
 		count = 0
+		from waveformtools.differentiate import differentiate5_vec_numba
 		for index in range(order):
-			print(f'{index} loop')
-			dPsidu = selfa.data
+			#print(f'{index} loop')
+			dPsidu = self.data
 			for dorder in range(index+1):
-				print(f'differentiating {dorder+1} times')
+				#print(f'differentiating {dorder+1} times')
 				dPsidu = differentiate5_vec_numba(dPsidu, delta_t)
 
 			print('Incrementing...')
 			#delta = np.power(supertransl_alpha_sp.data, index+1) * dPsidu / np.math.factorial(index+1)
-			#print(delta/selfa.data)
+			#print(delta/self.data)
 
 			data += np.power(supertransl_alpha_sp.data, index+1) * dPsidu / np.math.factorial(index+1) #delta
 
-		data+=selfa.data
-		print((data == selfa.data).all())
+		data+=self.data
+		print((data == self.data).all())
 
 		Psi4_supertransl_sp.data = data
-
+		Psi4_supertransl_sp.time_axis = self.time_axis
 		print('Done.')
 		return Psi4_supertransl_sp
 
@@ -384,7 +385,26 @@ class spherical_array:
 # Modes array class
 ################################################################
 
-
+#spec_ma = { 'label' : nb.types.string,
+#			'data_dir' : nb.types.string,
+#			'key_format' : nb.types.string,
+#			'key_ex' : nb.types.string,
+#			'ell_max' : nb.int32,
+#			'r_ext' :	nb.double,
+#			'out_file_name' : nb.types.string,
+#			'maxtime' :	nb.types.double,
+#			'date' : nb.types.string,
+#			'time' : nb.types.string,
+#            'time_axis' : nb.double[:],
+#            'frequency_axis' : nb.double[:],
+#            'modes_data' : nb.complex128[:, :, :],
+#            'base_dir' : nb.types.string,
+#            'file_name' : nb.types.string,
+#            'spin_weight' : nb.int32,
+#			'modes_list' : nb.types.List(nb.int32)
+#
+#}
+#@jitclass(spec_ma)
 class modes_array:
 	"""A class that holds mode array of waveforms
 
@@ -537,7 +557,8 @@ class modes_array:
 		import time
 		import datetime
 
-		self.modes_data = np.zeros([ell_max + 1, 2 * (ell_max + 1) + 1, data_len], dtype=np.complex128)
+		#self.modes_data = np.zeros([ell_max + 1, 2 * (ell_max + 1) + 1, data_len], dtype=np.complex128)
+		self.modes_data = np.zeros((ell_max + 1, 2 * (ell_max + 1) + 1, data_len), dtype=np.complex128)
 
 		# Set the time metadata
 		time_now = time.localtime()
@@ -817,6 +838,8 @@ class modes_array:
 							# Create an array for the waveform mode object
 							self._create_modes_array(self.ell_max, data_len)
 							# self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)
+							#self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)
+
 							cflag = 1
 
 							# set the time axis.
@@ -1005,7 +1028,7 @@ class modes_array:
 
 		s1, s2 = theta.shape
 		s3 = self.data_len
-		sp_data = np.zeros((s1, s2, s3), dtype='complex128')
+		sp_data = np.zeros((s1, s2, s3), dtype=np.complex128)
 
 		for item in self.modes_list[spin_weight:]:
 			# Get modes.
@@ -1363,7 +1386,8 @@ class modes_array:
 		'''
 
 		# Initialize a mode array for strain.
-		strain_waveform = modes_array(label=f'{self.label} strain from Psi4', r_ext=500, ell_max=8, modes_list=self.modes_list)
+		#strain_waveform = modes_array(label=f'{self.label} strain from Psi4', r_ext=500, ell_max=8, modes_list=self.modes_list)
+		strain_waveform = modes_array(label='{} strain from Psi4'.format(self.label), r_ext=500, ell_max=8, modes_list=self.modes_list)
 
 		strain_waveform.time_axis = self.time_axis
 		strain_waveform.ell_max = self.ell_max
@@ -1409,7 +1433,8 @@ class modes_array:
 		'''
 
 		# Initialize a mode array for strain.
-		news_waveform = modes_array(label=f'{self.label} news from Psi4', r_ext=500, ell_max=8, modes_list=self.modes_list)
+		#news_waveform = modes_array(label=f'{self.label} news from Psi4', r_ext=500, ell_max=8, modes_list=self.modes_list)
+		news_waveform = modes_array(label='{} news from Psi4'.format(self.label), r_ext=500, ell_max=8, modes_list=self.modes_list)
 
 		news_waveform.time_axis = self.time_axis
 		news_waveform.ell_max = self.ell_max
@@ -1481,7 +1506,9 @@ class modes_array:
 				new_data_len  = len(tapered_data_re)
 
 				if tapered_modes is None:
-					tapered_modes = modes_array(label = f'tapered {self.label}', r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+					#tapered_modes = modes_array(label = f'tapered {self.label}', r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+					tapered_modes = modes_array(label = 'tapered {}'.format(self.label), r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+
 					tapered_modes._create_modes_array(ell_max=self.ell_max, data_len=new_data_len)
 				tapered_data = tapered_data_re + 1j*tapered_data_im
 
@@ -1545,7 +1572,9 @@ class modes_array:
 				new_data_len  = len(tapered_data_re)
 
 				if tapered_modes is None:
-					tapered_modes = modes_array(label = f'tapered {self.label}', r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+					#tapered_modes = modes_array(label = f'tapered {self.label}', r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+					tapered_modes = modes_array(label = 'tapered {}'.format(self.label), r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+
 					tapered_modes._create_modes_array(ell_max=self.ell_max, data_len=new_data_len)
 				tapered_data = tapered_data_re + 1j*tapered_data_im
 
@@ -1593,7 +1622,9 @@ class modes_array:
 
 				if filtered_modes is None:
 					# Create filtered_modes
-					filtered_modes = modes_array(label = f'lc filtered {self.label}', r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+					#filtered_modes = modes_array(label = f'lc filtered {self.label}', r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+					filtered_modes = modes_array(label = 'lc filtered {}'.format(self.label), r_ext=self.r_ext, modes_list=self.modes_list, ell_max=self.ell_max)
+
 					filtered_modes._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
 
 				# Get filtered mode data.
@@ -1607,7 +1638,7 @@ class modes_array:
 
 		return filtered_modes
 
-
+#######################################################################################################
 def _get_modes_list_from_keys(keys_list, r_ext):
 	"""Get the modes list from the keys list
 	of an hdf file.
@@ -1671,7 +1702,7 @@ def _get_modes_list_from_keys(keys_list, r_ext):
 	modes_list.append([ell_value, emm_modes_for_ell])
 
 	return modes_list
-###########################################################################################################
+
 def _get_ell_emm_from_key(key):
 	"""Get the :math:`\\ell` and :math:`m` values
 	from a given key string of an hdf file.
