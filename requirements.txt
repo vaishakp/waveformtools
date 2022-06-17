@@ -4,7 +4,6 @@ numpy
 scipy
 math
 matplotlib
-statistics
 numba
 h5py
 termcolor

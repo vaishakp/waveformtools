@@ -5,7 +5,7 @@ dependencies:
     - pycbc
     - lalsuite
     - ligo-common
-    - statistics
+    - matplotlib
     - termcolor
     - numba
     - scipy
