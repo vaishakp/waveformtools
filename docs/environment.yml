@@ -5,12 +5,12 @@ dependencies:
     - pycbc
     - lalsuite
     - ligo-common
-    - matplotlib
-    - termcolor
-    - numba
-    - scipy
-    - matplotlib
-    - h5py
+#    - matplotlib
+#    - termcolor
+#    - numba
+#    - scipy
+#    - matplotlib
+#    - h5py
 
 channels:
     - defaults
