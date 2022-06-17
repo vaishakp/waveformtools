@@ -40,7 +40,9 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Simulations" href="../simulations.html" />
-    <link rel="prev" title="waveformtools.waveforms" href="waveformtools.waveforms.html" /> 
+    <link rel="prev" title="waveformtools.waveforms" href="waveformtools.waveforms.html" />
+    <link href="../_static/css/my_theme.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body class="wy-body-for-nav">
@@ -269,70 +271,73 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.message" title="waveformtools.waveformtools.message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">message</span></code></a>(*args[, message_verbosity, ...])</p></td>
 <td><p>The print function with verbosity levels and logging facility.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.norm" title="waveformtools.waveformtools.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a>(hdat[, psd])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.mode" title="waveformtools.waveformtools.mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code></a>(a_list)</p></td>
+<td><p>Find the mode of a list</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.norm" title="waveformtools.waveformtools.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a>(hdat[, psd])</p></td>
 <td><p>Calculate the norm of a vector.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.olap" title="waveformtools.waveformtools.olap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">olap</span></code></a>(data1, data2[, psd])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.olap" title="waveformtools.waveformtools.olap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">olap</span></code></a>(data1, data2[, psd])</p></td>
 <td><p>Calcuate the overlap between two data vectors weighted by the given psd.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.plot" title="waveformtools.waveformtools.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(xdata, func_x[, save])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.plot" title="waveformtools.waveformtools.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(xdata, func_x[, save])</p></td>
 <td><p>A Basic plotting function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.pmmatch_wfs" title="waveformtools.waveformtools.pmmatch_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmmatch_wfs</span></code></a>(waveforms[, offset, crop])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.pmmatch_wfs" title="waveformtools.waveformtools.pmmatch_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmmatch_wfs</span></code></a>(waveforms[, offset, crop])</p></td>
 <td><p>Match function for post merger waveforms.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.progressbar" title="waveformtools.waveformtools.progressbar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">progressbar</span></code></a>(present_count, total_counts[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.progressbar" title="waveformtools.waveformtools.progressbar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">progressbar</span></code></a>(present_count, total_counts[, ...])</p></td>
 <td><p>Display the progress bar to std out from present_count and total_count.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.removeNans" title="waveformtools.waveformtools.removeNans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeNans</span></code></a>(xdata, ydata)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.removeNans" title="waveformtools.waveformtools.removeNans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeNans</span></code></a>(xdata, ydata)</p></td>
 <td><p>Remove Nans from (xdata,ydata) data pair.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.removezeros" title="waveformtools.waveformtools.removezeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removezeros</span></code></a>(data, delta_t)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.removezeros" title="waveformtools.waveformtools.removezeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removezeros</span></code></a>(data, delta_t)</p></td>
 <td><p>Remove zeros from the input waveform from either sides.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.resample" title="waveformtools.waveformtools.resample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample</span></code></a>(interp_data, new_delta_t, epoch, length)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.resample" title="waveformtools.waveformtools.resample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample</span></code></a>(interp_data, new_delta_t, epoch, length)</p></td>
 <td><p>Function to generate timeseries out of the given interpolated data function, epoch,sampling frequency, length(duration).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.roll" title="waveformtools.waveformtools.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a>(tsdata, i_roll)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.roll" title="waveformtools.waveformtools.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a>(tsdata, i_roll)</p></td>
 <td><p>Roll the data circularly.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.save_obj" title="waveformtools.waveformtools.save_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_obj</span></code></a>(obj, name[, obj_dir, protocol])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.save_obj" title="waveformtools.waveformtools.save_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_obj</span></code></a>(obj, name[, obj_dir, protocol])</p></td>
 <td><p>A function to save python objects to disk using pickle.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.shiftmatched" title="waveformtools.waveformtools.shiftmatched"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shiftmatched</span></code></a>(hdat, ind[, delta_t])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.shiftmatched" title="waveformtools.waveformtools.shiftmatched"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shiftmatched</span></code></a>(hdat, ind[, delta_t])</p></td>
 <td><p>Timeshift an array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.shorten" title="waveformtools.waveformtools.shorten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shorten</span></code></a>(tsdata, start, end[, delta_t])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.shorten" title="waveformtools.waveformtools.shorten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shorten</span></code></a>(tsdata, start, end[, delta_t])</p></td>
 <td><p>Shorten an array given the start and end points.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.simplematch_wfs" title="waveformtools.waveformtools.simplematch_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplematch_wfs</span></code></a>(waveforms[, delta_t])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.simplematch_wfs" title="waveformtools.waveformtools.simplematch_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplematch_wfs</span></code></a>(waveforms[, delta_t])</p></td>
 <td><p>Simple match the given waveforms.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.smoothen" title="waveformtools.waveformtools.smoothen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smoothen</span></code></a>(func_x, win, order[, xdata, to_plot])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.smoothen" title="waveformtools.waveformtools.smoothen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smoothen</span></code></a>(func_x, win, order[, xdata, to_plot])</p></td>
 <td><p>Use the Savitzky-Golay Filter to smoothen the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.startend" title="waveformtools.waveformtools.startend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startend</span></code></a>(data)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.startend" title="waveformtools.waveformtools.startend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startend</span></code></a>(data)</p></td>
 <td><p>Identify the start and endpoints of the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taper" title="waveformtools.waveformtools.taper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taper</span></code></a>(data[, delta_t, zeros])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taper" title="waveformtools.waveformtools.taper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taper</span></code></a>(data[, delta_t, zeros])</p></td>
 <td><p>A method to taper and append additional zeros at either ends, using the <cite>taper</cite> function of the pycbc TimeSeries object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taper_tanh" title="waveformtools.waveformtools.taper_tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taper_tanh</span></code></a>(waveform[, time_axis, delta_t, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taper_tanh" title="waveformtools.waveformtools.taper_tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taper_tanh</span></code></a>(waveform[, time_axis, delta_t, ...])</p></td>
 <td><p>Taper a waveform with a <span class="math notranslate nohighlight">\(tanh\)</span> function at either ends</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taperlengtheq" title="waveformtools.waveformtools.taperlengtheq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taperlengtheq</span></code></a>(data_a, data_b[, delta_t])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taperlengtheq" title="waveformtools.waveformtools.taperlengtheq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taperlengtheq</span></code></a>(data_a, data_b[, delta_t])</p></td>
 <td><p>Taper and equalize the lengths of two arrays.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.totalmass" title="waveformtools.waveformtools.totalmass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">totalmass</span></code></a>(mass_ratio, chirp_mass)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.totalmass" title="waveformtools.waveformtools.totalmass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">totalmass</span></code></a>(mass_ratio, chirp_mass)</p></td>
 <td><p>Find total mass from mass ratio and chirpmass.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_camp" title="waveformtools.waveformtools.xtract_camp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_camp</span></code></a>(tsdata_p, tsdata_x[, to_plot])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_camp" title="waveformtools.waveformtools.xtract_camp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_camp</span></code></a>(tsdata_p, tsdata_x[, to_plot])</p></td>
 <td><p>Given real and imaginary parts of a complex timeseries, extract the amplitude of the complex data vector : (tsdata_p + i * tsdata_x)</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_camp_phase" title="waveformtools.waveformtools.xtract_camp_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_camp_phase</span></code></a>(tsdata_1, tsdata_2)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_camp_phase" title="waveformtools.waveformtools.xtract_camp_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_camp_phase</span></code></a>(tsdata_1, tsdata_2)</p></td>
 <td><p>Wrapper for extracting the amplitude and the phase of the complex vector.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_cphase" title="waveformtools.waveformtools.xtract_cphase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_cphase</span></code></a>(tsdata_p, tsdata_x[, delta_t, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_cphase" title="waveformtools.waveformtools.xtract_cphase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_cphase</span></code></a>(tsdata_p, tsdata_x[, delta_t, ...])</p></td>
 <td><p>Given real and imaginary parts of a complex timeseries, extract the phase of the waveform :arctan_(Img(data)/Re(data))</p></td>
 </tr>
 </tbody>
@@ -1031,6 +1036,26 @@ using the Savgol filter.</p>
 <p>1: Warnings</p>
 <p>2: Information</p>
 </div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.waveformtools.mode">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the mode of a list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>a_list: list</strong></dt><dd><p>The list whose mode is to be found</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>list_mode:      float</dt><dd><p>The mode of the list.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

@@ -119,6 +119,7 @@ else:
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+#html_style = 'css/my_theme.css'
 
 html_theme_options = {
     "analytics_id": "G-XXXXXXXXXX",  #  Provided by Google in your dashboard
@@ -129,6 +130,7 @@ html_theme_options = {
     #'style_external_links': False,
     #'vcs_pageview_mode': '',
     "style_nav_header_background": "green",
+#	"body_max_width" : "70%"
     # Toc options
     #'collapse_navigation': True,
     #'sticky_navigation': True,

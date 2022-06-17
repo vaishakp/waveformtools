@@ -1,4 +1,4 @@
-waveformtools.waveformtools
+﻿waveformtools.waveformtools
 ===========================
 
 .. automodule:: waveformtools.waveformtools
@@ -40,6 +40,7 @@ waveformtools.waveformtools
       match_wfs
       mavg
       message
+      mode
       norm
       olap
       plot

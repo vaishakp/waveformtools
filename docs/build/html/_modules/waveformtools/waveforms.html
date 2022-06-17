@@ -31,10 +31,10 @@
     
 
   
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/my_thema.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/my_thema.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -358,7 +358,7 @@
 
 		<span class="c1"># Create the modes_array</span>
 		<span class="n">waveform_modes</span><span class="o">.</span><span class="n">_create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_len</span><span class="p">)</span>
-		<span class="n">wavefotm_modes</span><span class="o">.</span><span class="n">modes_list</span> <span class="o">=</span> <span class="n">modes_list</span>
+		<span class="n">waveform_modes</span><span class="o">.</span><span class="n">modes_list</span> <span class="o">=</span> <span class="n">modes_list</span>
 		<span class="c1"># The area element on the sphere</span>
 		<span class="c1"># Compute the meshgrid for theta and phi.</span>
 		<span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">grid_info</span><span class="o">.</span><span class="n">meshgrid</span>
@@ -464,7 +464,7 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="c1"># Create a spherical_array to hold the supertranslated waveform</span>
-		<span class="n">Psi4_supertransl_sp</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">grid_info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;supertranslated frequency space modes&#39;</span><span class="p">)</span>
+		<span class="n">Psi4_supertransl_sp</span> <span class="o">=</span> <span class="n">spherical_array</span><span class="p">(</span><span class="n">grid_info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_info</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> -&gt; supertranslated time&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">))</span>
 
 		<span class="n">delta_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span><span class="p">())</span>
 
@@ -1039,6 +1039,7 @@
 		<span class="n">key_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">modes_to_save</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">out_file_name</span><span class="o">=</span><span class="s2">&quot;mp_psi4_new_modes.h5&quot;</span><span class="p">,</span>
+		<span class="n">compression_opts</span><span class="o">=</span><span class="mi">0</span>
 	<span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Save the waveform mode data to an hdf file.</span>
 
@@ -1076,7 +1077,8 @@
 		<span class="c1"># I/O assignments.</span>
 		<span class="c1">#############################</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">out_file_name</span> <span class="o">=</span> <span class="n">out_file_name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">out_file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">out_file_name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">out_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
 		<span class="c1"># get the full path.</span>
 		<span class="n">full_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_file_name</span>
 
@@ -1108,7 +1110,7 @@
 
 			<span class="c1"># dt = h5py.special_dtype(vlen=str)</span>
 			<span class="c1"># metadata=np.asarray([metadata_bytes], dtype=dt)</span>
-			<span class="n">wfile</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">metadata_bytes</span><span class="p">)</span>
+			<span class="n">wfile</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">metadata_bytes</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="n">compression_opts</span><span class="p">)</span>
 
 			<span class="c1"># Load the modes listed in mode_numbers list</span>
 			<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modes_to_save</span><span class="p">:</span>
