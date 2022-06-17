@@ -7,7 +7,7 @@
 import datetime
 import os
 import pickle
-import statistics
+#import statistics
 import sys
 import traceback
 from inspect import getframeinfo, stack
@@ -26,6 +26,7 @@ from termcolor import colored
 ##########################################################################
 """ Basic functions """
 ##########################################################################
+
 
 
 def message(
@@ -93,6 +94,22 @@ def message(
 			log_file.write("\n")
 	return 1
 
+def mode(a_list):
+	''' Find the mode of a list
+
+	Parameters
+	----------
+	a_list:	list
+			The list whose mode is to be found
+
+	Returns
+	-------
+	list_mode:	float
+				The mode of the list.
+
+	'''
+
+	return max(set(a_list), key=a_list.count)
 
 ##########################################################################
 """ Data handling functions """
@@ -705,7 +722,9 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
 	# Check data for continuity.
 	# If delta_t is not supplied
 	if delta_t == 0:
-		delta_t = statistics.mode(np.diff(timeaxis))
+		#delta_t = statistics.mode(np.diff(timeaxis))
+		delta_t = mode(np.diff(timeaxis))
+
 	# Set epoch to first element of timeaxis
 	epoch = timeaxis[0]
 	# List to hold discintinuity details
@@ -850,7 +869,9 @@ def cleandata_old(data, verbose=False):
 	else:
 		time = data
 	# Assign delta_t
-	delta_t = statistics.mode(np.diff(time))
+	#delta_t = statistics.mode(np.diff(time))
+	delta_t = mode(np.diff(time))
+
 	if verbose:
 		message("length,shape of data", len(data), data.shape)
 	# Reassign data without time_array
@@ -954,7 +975,9 @@ def cleandata(data, toldt=1e-3, bridge="no"):
 		message("The time array:%s" % time, message_verbosity=3)
 	else:
 		time = data
-	delta_t = statistics.mode(np.diff(time))
+	#delta_t = statistics.mode(np.diff(time))
+	delta_t = mode(np.diff(time))
+
 	message("shape of data:", (data.shape), message_verbosity=3)
 	# Reassign data without time_array
 	# data=data[:,1:]
