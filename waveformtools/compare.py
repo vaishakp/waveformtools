@@ -50,7 +50,7 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100]):
 	from waveformtools.waveformtools import xtract_cphase
 
 	# Start from l=2.
-	modes_to_plot = wf1.modes_list[2:]
+	modes_to_plot = wf1.modes_list[:]
 
 	# Order the modes as per 1st waveform modes_array object.
 	modes_list = []

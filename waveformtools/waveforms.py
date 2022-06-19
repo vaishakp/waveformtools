@@ -16,8 +16,8 @@ from waveformtools.waveformtools import message
 from qlmtools import Yslm_new
 
 #from numba import jit, njit
-#from numba import jitclass          # import the decorator
-#from numba import int32, float64, complex128    # import the types
+#from numba import jitclass			 # import the decorator
+#from numba import int32, float64, complex128	 # import the types
 #import numba as nb
 #from numba.experimental import jitclass
 
@@ -242,21 +242,21 @@ class spherical_array:
 		Parameters
 		----------
 
-		self:     spherical_array
+		self:	  spherical_array
 								A class instance of `spherical array`.
 
-		conformal_factor:       2d array
+		conformal_factor:		2d array
 								The conformal factor for the Lorentz transformation. It may be a single floating point number or an array on a spherical grid. The array will be of dimensions
 								[ntheta, nphi]
 
-		grid_info:       class instance
+		grid_info:		 class instance
 						The class instance that contains the properties of the spherical grid.
 
 
 		Returns
 		-------
 
-		boosted_waveform:     sp_array
+		boosted_waveform:	  sp_array
 							  The class instance `sp_array` that
 							  contains the boosted waveform.
 		"""
@@ -290,18 +290,18 @@ class spherical_array:
 		supertransl_alpha_modes :  modes_array
 														   The modes_array containing the
 														   supertranslation mode coefficients.
-		grid_info:      class instance
+		grid_info:		class instance
 										The class instance that contains
 										the properties of the spherical grid
 										using which the computations are
 										carried out.
-		order:      int
+		order:		int
 								The number of terms to use to
 								approximate the supertranslation.
 
 		Returns
 		-------
-		Psi4_supertransl:     modes_array
+		Psi4_supertransl:	  modes_array
 												  A class instance containg the
 												  modes of the supertranslated
 												  waveform :math:`\\Psi_4`.
@@ -403,12 +403,12 @@ class spherical_array:
 #			'maxtime' :	nb.types.double,
 #			'date' : nb.types.string,
 #			'time' : nb.types.string,
-#            'time_axis' : nb.double[:],
-#            'frequency_axis' : nb.double[:],
-#            'modes_data' : nb.complex128[:, :, :],
-#            'base_dir' : nb.types.string,
-#            'file_name' : nb.types.string,
-#            'spin_weight' : nb.int32,
+#			 'time_axis' : nb.double[:],
+#			 'frequency_axis' : nb.double[:],
+#			 'modes_data' : nb.complex128[:, :, :],
+#			 'base_dir' : nb.types.string,
+#			 'file_name' : nb.types.string,
+#			 'spin_weight' : nb.int32,
 #			'modes_list' : nb.types.List(nb.int32)
 #
 #}
@@ -583,8 +583,10 @@ class modes_array:
 
 		date_now = str(datetime.date.today())
 
-		self.time = time_now
-		self.date = date_now
+		if self.time is None:
+			# Assign time and date stamp if it doesnt exist
+			self.time = time_now
+			self.date = date_now
 
 	@property
 	def data_len(self):
@@ -656,7 +658,7 @@ class modes_array:
 
 		return delta_f
 
-	def load_modes(self, r_ext=500, ell_max=None, pre_key=None, modes_list=None, crop=False, center=True, key_ex=None, r_ext_factor=1):
+	def load_modes(self, r_ext=None, ell_max=None, pre_key=None, modes_list=None, crop=False, center=True, key_ex=None, r_ext_factor=1):
 		"""Load the waveform mode data from an hdf file.
 
 		Parameters
@@ -703,7 +705,6 @@ class modes_array:
 		# Ext radius
 		if r_ext is None:
 			r_ext = self.r_ext
-
 
 		# Open the modes file.
 		with h5py.File(full_path, "r") as wfile:
@@ -877,12 +878,12 @@ class modes_array:
 
 	def save_modes(
 		self,
-		r_ext=None,
 		ell_max=None,
 		pre_key=None,
 		key_format=None,
 		modes_to_save=None,
-		out_file_name="mp_psi4_new_modes.h5",
+		out_file_name="mp_new_modes.h5",
+		r_ext_factor = None,
 		compression_opts=0
 	):
 		"""Save the waveform mode data to an hdf file.
@@ -923,11 +924,12 @@ class modes_array:
 
 		self.out_file_name = self.label + ' ' + out_file_name
 		self.out_file_name.replace(' ', '_')
+
 		# get the full path.
 		full_path = self.data_dir + self.out_file_name
 
-		if not r_ext:
-			r_ext = self.r_ext
+		if r_ext_factor is None:
+			r_ext_factor = self.r_ext
 
 		###################################
 		# Identify the modes to save.
@@ -1001,7 +1003,6 @@ class modes_array:
 		self.modes_data[ell_value, emm_index] = data
 
 
-	#@njit(parallel=True)
 	def to_spherical_array(self, grid_info, spin_weight=None):
 		''' Obtain the spherical array from the modes array.
 
@@ -1064,6 +1065,7 @@ class modes_array:
 		except:
 			waveform_sp.frequency_axis = self.frequency_axis
 		return waveform_sp
+
 
 	def trim(self, trim_upto_time=None):
 		""" Trim the modes_array at the beginning.
@@ -1166,7 +1168,7 @@ class modes_array:
 
 		return waveform_modes
 
-	def extrap_to_inf(self, mass=1, spin=None, modes_list="all", method="SIO", factor=1):
+	def extrap_to_inf(self, mass=1, spin=None, modes_list="all", method="SIO", r_ext_factor=1):
 		"""Extrapolate the :math:`\\Psi_4` modes to infinity
 		using the perturbative improved second order method.
 
@@ -1257,7 +1259,7 @@ class modes_array:
 				# For every emm value
 				print(f"Processing l{ell_value}, m{emm_value}")
 				# Compute rPsi4_lm
-				mode_data = factor * self.mode(ell_value, emm_value)
+				mode_data = r_ext_factor * self.mode(ell_value, emm_value)
 
 				# Extrapolate
 				# import ipdb; ipdb.set_trace()
@@ -1467,7 +1469,7 @@ class modes_array:
 		from waveformtools.waveformtools import get_starting_angular_frequency as sang_f
 
 		omega_st = omega0
-		for item in self.modes_list[2:]:
+		for item in self.modes_list[:]:
 			ell, emm_list = item
 			for emm in emm_list:
 				mode_data = self.mode(ell, emm)

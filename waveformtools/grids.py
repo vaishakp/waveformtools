@@ -16,12 +16,12 @@ from numba import jit, njit
 import numba as nb
 from numba.experimental import jitclass
 
-spec_sp = { 'ntheta' : nb.int32,
-            'nphi' : nb.int32,
-            'nghosts' : nb.int32,
-            'nthetamax' : nb.int32,
-            'nphimax' : nb.int32,
-}
+#spec_sp = { 'ntheta' : nb.int32,
+#            'nphi' : nb.int32,
+#            'nghosts' : nb.int32,
+#            'nthetamax' : nb.int32,
+#            'nphimax' : nb.int32,
+#}
 
 #@jitclass(spec_sp)
 class spherical_grid:
@@ -191,16 +191,16 @@ class spherical_grid:
 
 		'''
 
-		#theta, phi	  =   np.meshgrid(self.theta_1d(), self.phi_1d())
+		theta, phi	  =   np.meshgrid(self.theta_1d(), self.phi_1d())
 
-		theta = np.zeros((self.ntheta_act, self.nphi_act))
-		phi   = np.zeros((self.ntheta_act, self.nphi_act))
+		#theta = np.zeros((self.ntheta_act, self.nphi_act))
+		#phi   = np.zeros((self.ntheta_act, self.nphi_act))
 
-		for theta_index, theta_val in enumerate(self.theta_1d()):
-			for phi_index, phi_val in enumerate(self.phi_1d()):
-				theta[theta_index, phi_index] = theta_val
-				phi[theta_index, phi_index] = phi_val
+		#for theta_index, theta_val in enumerate(self.theta_1d()):
+		#	for phi_index, phi_val in enumerate(self.phi_1d()):
+		#		theta[theta_index, phi_index] = theta_val
+	    #		phi[theta_index, phi_index] = phi_val
 
 
-		#return np.transpose(theta), np.transpose(phi)
+		return np.transpose(theta), np.transpose(phi)
 		return theta, phi

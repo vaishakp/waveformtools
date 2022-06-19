@@ -15,6 +15,7 @@ from inspect import getframeinfo, stack
 import config
 import numpy as np
 
+from numba import njit
 # from scipy import signal
 import pycbc
 import scipy
@@ -108,6 +109,8 @@ def mode(a_list):
 				The mode of the list.
 
 	'''
+
+	a_list = list(a_list)
 
 	return max(set(a_list), key=a_list.count)
 
@@ -2290,10 +2293,11 @@ def simplematch_wfs(waveforms, delta_t=None):
 				message("Waveform is not a pycbc TimeSeries. Please provide the gridspacing delt")
 				sys.exit(0)
 		# Match procedure
-		signaldat = lengtheq(waveformdat[0], waveformdat[1], delta_t)
+		#signaldat = lengtheq(waveformdat[0], waveformdat[1], delta_t)
+		waveform1, waveform2, _ = lengtheq(waveformdat[0], waveformdat[1], delta_t)
 
-		waveform1 = signaldat[0]
-		waveform2 = signaldat[1]
+		#waveform1 = signaldat[0]
+		#waveform2 = signaldat[1]
 
 		# alignedwvs = pycbc.waveform.utils.coalign_waveforms(signaldat,hpa)
 		# Compute the match to calculate match and shift.
@@ -2414,7 +2418,6 @@ def match_wfs(waveforms, delt=None):
 
 	Procedure
 	---------
-
 	1. For each pair of waveforms as a list:
 																	a. Findout if delt has been specified.
 																	b. Findout if the object has attribute delta_t to discern whether it is a pycbc timeseries ( not exactly. ). If not then exit.
@@ -2429,20 +2432,15 @@ def match_wfs(waveforms, delt=None):
 
 	Parameters
 	----------
-
 	waveforms:	list
 													A List of pairs [waveform A, waveform B].
 
-
 	Notes
 	-----
-	Assumes:
-
-	That the sampling rate is the  same for each pair.
+	Assumes that the sampling rate is the  same for each pair.
 
 	Returns
 	-------
-
 	match:	a list of dicts
 									A list of dictionaries in the format {match score (float), shift (number), start_index, end_index}
 	"""
@@ -2457,16 +2455,20 @@ def match_wfs(waveforms, delt=None):
 				message("Waveform is not a pycbc TimeSeries. Please provide the gridspacing delt")
 				sys.exit(0)
 		# Match procedure
-		signaldat = lengtheq(waveformdat[0], waveformdat[1], delt)
 
-		waveform1 = signaldat[0]
-		waveform2 = signaldat[1]
+		#signaldat = lengtheq(waveformdat[0], waveformdat[1], delt)
+
+		#waveform1 = signaldat[0]
+		#waveform2 = signaldat[1]
+		waveform1, waveform2, _ = lengtheq(waveformdat[0], waveformdat[1], delt)
 
 		# alignedwvs = pycbc.waveform.utils.coalign_waveforms(signaldat,hpa)
 		# Compute the match to calculate match and shift.
 		# Note: The match function from pycbc returns the match of the
 		# normalized templates
+
 		(match_score, shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
+
 		# Shift the matched data against the template using the shift obtained
 		# above
 		waveform1 = shiftmatched(np.array(waveform1), int(shift), delt)

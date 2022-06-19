@@ -104,6 +104,8 @@ class sim:
 					A dictionary of values containing BH locations of every simulation. Each simulation has three lists, one for each black hole.
 	CoM_locations:	dict of lists
 					A dictionary of lists containing the X, Y and Z locations of the CoM of the simulations.
+	NP_1d:	dict
+			A dict of dicts of lists containig the 1d Newman Penrose data from simulations.
 
 	Methods
 	-------
@@ -213,6 +215,7 @@ class sim:
 		log_multipoles=None,
 		ref_multipoles=None,
 		indjn=None,
+		NP_1d=None
 	):
 
 		# Load the variables at initialization.
@@ -251,7 +254,7 @@ class sim:
 		self.log_multipoles = log_multipoles
 		self.ref_multipoles = ref_multipoles
 		self.indjn = indjn
-
+		self.NP_1d = NP_1d
 	@property
 	def data_duration(self):
 		"""Compute and return the data duration of the simulations."""
@@ -1402,5 +1405,51 @@ class sim:
 
 		return file_path
 
+
+	def load_NP_1d_data(self, np_qty='sigma', source='qlm'):
+		''' Load the 1d NP quantities. '''
+
+		import re
+
+		np_data_dict = {}
+
+
+		if self.NP_1d is None:
+			self.NP_1d = {}
+
+		np_data_alias_dict = {}
+
+		for alias in self.aliases:
+
+			if source=='qlm':
+				file_string = f"{self.data_dir}quasilocalmeasures-qlm_newman_penrose..asc"
+			elif source=='ih':
+				file_string = f"{self.data_dir}isolatedhorizon-ih_newman_penrose..asc"
+
+			full_file_path = self._get_file_path_from_str(alias, string=file_string)
+
+			with open(full_file_path, 'r') as file:
+				for line_index in range(15):
+					fline = next(file)
+					#print(fline)
+					str_match = re.search(f"\d\d:qlm_np{np_qty}", fline)
+					#print(str_match)
+					if str_match is not None:
+						start_col = int(str_match[0][:2])
+						#print(start_col)
+						break;
+
+
+
+			NP_all_data = np.genfromtxt(full_file_path)[
+				:, np.r_[8, start_col-1, start_col, start_col+1,
+						 start_col+2, start_col+3, start_col+4]]
+
+
+			np_data_alias_dict.update({alias : NP_all_data})
+
+
+
+		self.NP_1d.update({np_qty : np_data_alias_dict})
 
 
