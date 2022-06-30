@@ -1074,13 +1074,12 @@ def cleandata(data, toldt=1e-3, bridge="no"):
 # Time shift an array
 
 
-def shiftmatched(hdat, ind, delta_t=None):
+def shiftmatched(hdat, ind, delta_t=None, is_ts=False):
 	"""Timeshift an array. IMP: After timeshifting, the original length of the array is retained by clipping last(first) when ind > 0(ind <0) `ind` number of points!!.
 	Make sure the input array already has number of zeros z > ind (z<ind) initially at the end.
 
 	Parameters
 	----------
-
 	hdat:	1d array or a pycbc TimeSeries object
 									The input waveform to be shifted in time.
 	ind:	int
@@ -1090,20 +1089,17 @@ def shiftmatched(hdat, ind, delta_t=None):
 
 	Returns
 	-------
-
 	shifted_wf:	a pycbc TimeSeries object
 																	The waveform array of same length timeshifted by `ind` units by prepending zeros."""
 
-	if not delta_t:
-		try:
-			delta_t = hdat.delta_t
-		except BaseException:
-			message("Input is not a TimeSeries. Please supply gridspacing as delta_t", message_verbosity=0)
+	if is_ts:
+		if not delta_t:
+			try:
+				delta_t = hdat.delta_t
+			except BaseException:
+				message("Input is not a TimeSeries. Please supply gridspacing as delta_t", message_verbosity=0)
 
-	if ind == 0:
-		# Do nothing if ind is 0
-		shifted_wf = pycbc.types.timeseries.TimeSeries(np.array(hdat), delta_t)
-	elif ind > 0:
+	if ind > 0:
 		# ind>0 case for shifting array to the right
 		# message hdat
 		# Length of the data
@@ -1111,24 +1107,28 @@ def shiftmatched(hdat, ind, delta_t=None):
 		# Array holding zeroes to be appended
 		zeros = np.zeros([ind])
 		# The shifted array
-		msig = np.transpose(np.concatenate((np.transpose(zeros), np.transpose(hdat))))
+		shifted_wf = np.transpose(np.concatenate((np.transpose(zeros), np.transpose(hdat))))[:-ind]
 		# message msig
 		# message msig[:-ind]
 		# Return the clipped, shifted timeseries
 
-		shifted_wf = pycbc.types.timeseries.TimeSeries(msig[:-ind], delta_t)
-	else:
+	elif ind <0:
 		# ind <0 case for shifting array to the left
 		# Length of the data
 		# l = len(hdat)
 		# Array holding zeroes to be appended
 		zeros = np.zeros([ind])
 		# The shifted array
-		msig = np.transpose(np.concatenate((np.transpose(hdat), np.transpose(zeros))))
+		shifted_wf = np.transpose(np.concatenate((np.transpose(hdat), np.transpose(zeros))))[ind:]
 		# message msig
 		# message msig[:-ind]
 		# Return a timeseries
-		shifted_wf = pycbc.types.timeseries.TimeSeries(msig[ind:], delta_t)
+
+	else:
+		shifted_wf = hdat
+
+	if is_ts:
+		shifted_wf = pycbc.types.timeseries.TimeSeries(shifted_wf, delta_t)
 
 	return shifted_wf
 
@@ -1746,8 +1746,7 @@ def taper_tanh(waveform, time_axis=None, delta_t=None, duration=10, sides='both'
 	nstart_points = data_delta_len-nend_points
 
 	#print('N startend points', nend_points, nstart_points)
-	new_time_axis = np.arange(time_axis[0] - nstart_points*delta_t, time_axis[-1] + nend_points*delta_t, delta_t)
-	#print('New time axis', new_time_axis)
+		#print('New time axis', new_time_axis)
 	tfinal = data_len*delta_t
 
 	#start_axis = np.linspace(-1, 1, nstart_points)
@@ -1758,11 +1757,13 @@ def taper_tanh(waveform, time_axis=None, delta_t=None, duration=10, sides='both'
 
 	#n_delta_t = delta_t/data_len
 
+		#from scipy.interpolate import interpolate
+	waveform_widened = np.concatenate((np.zeros([nstart_points]), waveform, np.zeros([nend_points-1])))
+	new_time_axis = np.linspace(time_axis[0] - nstart_points*delta_t, time_axis[-1] + nend_points*delta_t, len(waveform_widened))
+
 	start_win = (np.tanh(3*(new_time_axis - duration/2)/(duration/2))+1)/2
 	end_win   = (np.tanh(3*(-new_time_axis + (tfinal- duration/2))/(duration/2)) + 1)/2
 
-	#from scipy.interpolate import interpolate
-	waveform_widened = np.concatenate((np.zeros([nstart_points]), waveform, np.zeros([nend_points-1])))
 
 	#plt.scatter(new_time_axis, waveform_widened, s=1)
 	#plt.show()
@@ -2073,7 +2074,7 @@ def coalignwfs(tsdata1, tsdata2, delta_t=None):
 			except BaseException:
 				message("Input is not a TimeSeries. Please supply gridspacing as delta_t", message_verbosity=0)
 
-	tsdata1, tsdata2, _ = lengtheq(tsdata1, tsdata2, delta_t)
+	tsdata1, tsdata2, _ = lengtheq(tsdata1, tsdata2, delta_t, is_ts=True)
 
 	# Calculate complex SNR using pycbc function. Note: This complex SNR is
 	# actually the complex SNR * norm of the timeseries.
@@ -2087,7 +2088,9 @@ def coalignwfs(tsdata1, tsdata2, delta_t=None):
 	message("Max location is %s, match is %s" % (maxloc, np.max(acsnr)))
 
 	# Shift the waveform 1 in time using maxloc
-	tsdata1 = shiftmatched(tsdata1, maxloc, delta_t)
+	tsdata1 = roll(tsdata1, maxloc, is_ts=True)
+
+	#tsdata1 = shiftmatched(tsdata1, maxloc, delta_t, is_ts=True)
 	# Phase shift ( rotate) the waveform 1 by multipying the frequency series of waveform 1 with the phase of the max element in acsnr
 	# Calculate the rotation (as phase of the max complex modulous element in
 	# acsnr
@@ -2177,7 +2180,7 @@ def coalignwfs2(tsdata1, tsdata2, delta_t=None):
 			except:
 				message("Please input delta_t or a valid TimeSeries!")
 
-	tsdata1, tsdata2, _ = lengtheq(tsdata2, tsdata1, delta_t)
+	tsdata1, tsdata2, _ = lengtheq(tsdata2, tsdata1, delta_t, is_ts=True)
 
 	# Find startend.
 	if len1 == len2:
@@ -2207,8 +2210,15 @@ def coalignwfs2(tsdata1, tsdata2, delta_t=None):
 	# Normalize the waveforms
 	norm1 = norm(np.array(tsdata1[start:end]))
 	norm2 = norm(np.array(tsdata2[start:end]))
+
+	tsdata1_cropped = pycbc.types.timeseries.TimeSeries(np.array(tsdata1[start:end]) / norm1, delta_t)
+	tsdata2_cropped = pycbc.types.timeseries.TimeSeries(np.array(tsdata2[start:end]) / norm2, delta_t)
+
+	max_match, max_shift = pycbc.filter.matchedfilter.match(tsdata1_cropped, tsdata2_cropped)
+
 	tsdata1 = pycbc.types.timeseries.TimeSeries(np.array(tsdata1) / norm1, delta_t)
 	tsdata2 = pycbc.types.timeseries.TimeSeries(np.array(tsdata2) / norm2, delta_t)
+
 
 	# Calculate complex SNR using pycbc function. Note: This complex SNR is
 	# actually the complex SNR * norm of the timeseries.
@@ -2220,10 +2230,11 @@ def coalignwfs2(tsdata1, tsdata2, delta_t=None):
 
 	# Find the location of the maximum element in acsnr
 	maxloc = (np.where(acsnr == np.max(acsnr)))[0][0]
-	message("Max location is %s, match is %s" % (maxloc, np.max(acsnr)))
+	mmatch  = np.amax(acsnr)
+	message(f"Max location is {maxloc}, match is {mmatch} max shift is {max_shift}")
 
 	# Shift the waveform 1 in time using maxloc
-	tsdata1 = shiftmatched(tsdata1, maxloc, delta_t)
+	tsdata1 = shiftmatched(tsdata1, maxloc, delta_t, is_ts=True)
 
 	# Phase shift ( rotate) the waveform 1 by multipying the frequency series of waveform 1 with the phase of the max element in acsnr
 	# Calculate the rotation (as phase of the max complex modulous element in
@@ -2239,12 +2250,142 @@ def coalignwfs2(tsdata1, tsdata2, delta_t=None):
 
 	# Return the normalized, time and phase shifted waveform 1 to coalign with
 	# 2 and waveform 2.
-	aligned_waveforms = [ctsdata1, tsdata2, [norm1, norm2, maxloc]]
+	aligned_waveforms = {'wf1' : ctsdata1, 'wf2' : tsdata2, 'norms' : [norm1, norm2], 'shift': maxloc, 'match' : max_match}
 
 	return aligned_waveforms
 
+def simple_match_wfs(all_time_axes, all_waveforms):
+    ''' Match two waveforms and return the time shift,
+    phase shift, normalized waveforms and match coefficient.
 
-def simplematch_wfs(waveforms, delta_t=None):
+    Parameters
+    ----------
+    time_axes: list
+            A list containing the time axes
+            of the two waveforms
+
+    waveforms: list
+                A list of two waveforms.
+                Each is a 1d array.
+
+    change: int
+            Which waveform to change, 1 or 2.
+
+    Returns
+    -------
+    match_details: dict
+                    A dictionary containing the
+                    i). match coeffient
+                    ii). time_shift
+                    iii). phase shift
+                    iv). normalized waveforms and their
+                         time-axes.
+    '''
+
+    # Step 1: resample
+    from scipy.interpolate import interp1d
+
+    from waveformtools.waveformtools import match_wfs
+    from waveformtools.waveformtools import lengtheq
+
+    waveform1, waveform2 = all_waveforms
+    time_axis1, time_axis2 = all_time_axes
+
+    print('Taxis limits')
+    print(f'Shear tmin {min(time_axis1)} tmax {max(time_axis1)}')
+    print(f'News tmin {min(time_axis2)} tmax {max(time_axis2)}')
+
+    delta_t_1 = time_axis1[1] - time_axis1[0]
+    delta_t = time_axis2[1] - time_axis2[0]
+    #plt.plot(shear_1.time_axis, np.absolute(shear_1.mode(2, 2))/np.amax(shear_1.mode(2, 2)), label='shear')
+    #plt.plot(shear_1.time_axis, np.absolute(wf1_resam)/np.amax(wf1.mode(2, 2)), label='news')
+    #plt.grid()
+    #plt.legend()
+    #plt.show()
+
+    #time_axis = shear_1.time_axis
+    #waveform1, waveform2, flag = lengtheq(waveform1, waveform2, delta_t=delta_t)
+
+    wf1_amp, wf1_phase = xtract_camp_phase(waveform1.real, waveform1.imag)
+    wf2_amp, wf2_phase = xtract_camp_phase(waveform2.real, waveform2.imag)
+
+    wf1_amp_int_fun = interp1d(time_axis1, wf1_amp)
+    wf1_phase_int_fun = interp1d(time_axis1, wf1_phase)
+
+    wf1_amp_resam = wf1_amp_int_fun(time_axis2)
+    wf1_phase_resam = wf1_phase_int_fun(time_axis2)
+
+    delta_phase = wf1_phase_resam - wf2_phase
+
+    from waveformtools.waveformtools import roll
+    corrs = []
+    for index in range(len(time_axis2)):
+        rwf2 = roll(wf2_amp, index)
+
+        corrs.append(np.dot(rwf2, wf1_amp_resam))
+
+    #maxloc = np.argmax(corrs)
+    shift  = np.argmax(np.array(corrs))
+    print(f'The shift units is {shift}')
+    ## ii). apply the time shift to the second waveform
+
+    if shift != 0:
+        wf2_amp_shifted = roll(wf2_amp, shift)
+        wf2_phase_shifted = roll(wf2_phase, shift)
+        wf2_shifted = roll(waveform2, shift)
+    else:
+        wf2_amp_shifted = wf2_amp
+        wf2_phase_shifted = wf2_phase
+        wf2_shifted = waveform2
+
+    mid = int(len(time_axis2)/2)
+    phase_shift = np.mean(delta_phase[mid-100:mid+100])
+
+    from waveformtools.transforms import compute_fft, compute_ifft
+    faxis0, wf1_tilde = compute_fft(waveform1, delta_t_1)
+
+    delta_f = faxis0[1] - faxis0[0]
+
+    wf1_tilde_phase_shifted = wf1_tilde * np.exp(1j * phase_shift)
+    taxis0, wf1_aligned = compute_ifft(wf1_tilde_phase_shifted, delta_f)
+
+    maxloc = np.argmax(np.absolute(wf1_aligned))
+    taxis0 = taxis0 - taxis0[maxloc]
+
+    start_time = min(time_axis2)
+    end_time = max(time_axis2)
+
+    start_ind = int((start_time - taxis0[0])/delta_t)
+    end_ind = int((end_time - taxis0[0])/delta_t)
+
+    wf1_aligned_cropped = wf1_aligned[start_ind:end_ind]
+
+    aligned_time_axis = taxis0[start_ind:end_ind]
+
+    norm1 = np.sum(wf1_aligned_cropped * np.conjugate(wf1_aligned_cropped))
+    norm2 = np.sum(waveform2 * np.conjugate(waveform2))
+
+
+
+    mlen = min(len(wf1_aligned_cropped), len(wf2_shifted))
+
+    waveform1_aligned= wf1_aligned_cropped[:mlen]/norm1
+    waveform2_aligned= wf2_shifted[:mlen]/norm2
+
+    aligned_time_axis = aligned_time_axis[:mlen]
+    match_score = np.dot(wf1_aligned_cropped[:mlen], np.conjugate(wf2_shifted[:mlen]))/(norm1*norm2)
+
+    match_details = { 'match_score' : match_score,
+                      'time_shift'  : shift * delta_t,
+                      'phase_shift' : phase_shift,
+                      'time'        : aligned_time_axis,
+                      'aligned_waveforms' : [waveform1_aligned, waveform2_aligned]
+                    }
+
+    return match_details
+
+
+def simplematch_wfs_old(waveforms, delta_t=None):
 	"""Simple match the given waveforms. Does not clip the waveforms at either ends.
 
 	Procedure
@@ -2444,7 +2585,6 @@ def match_wfs(waveforms, delt=None):
 	match:	a list of dicts
 									A list of dictionaries in the format {match score (float), shift (number), start_index, end_index}
 	"""
-	match = []
 	# Iterate over (signal,template) pairs in waveforms
 	for waveformdat in waveforms:
 		# Carryout the match
@@ -2460,7 +2600,7 @@ def match_wfs(waveforms, delt=None):
 
 		#waveform1 = signaldat[0]
 		#waveform2 = signaldat[1]
-		waveform1, waveform2, _ = lengtheq(waveformdat[0], waveformdat[1], delt)
+		waveform1, waveform2, _ = lengtheq(waveformdat[0], waveformdat[1], delt, is_ts=True)
 
 		# alignedwvs = pycbc.waveform.utils.coalign_waveforms(signaldat,hpa)
 		# Compute the match to calculate match and shift.
@@ -2469,9 +2609,11 @@ def match_wfs(waveforms, delt=None):
 
 		(match_score, shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
 
+		print('Priliminary match', match_score, shift)
 		# Shift the matched data against the template using the shift obtained
 		# above
-		waveform1 = shiftmatched(np.array(waveform1), int(shift), delt)
+		waveform1 = roll(np.array(waveform1), int(shift))
+		#waveform1 = shiftmatched(np.array(waveform1), int(shift), delt)
 		# Compute the start and end of the non-zero signal
 		# First try with absolute startend. Then with approximate startend.
 		# Note: The criterion that handles.startend() uses is that the signal
@@ -2483,8 +2625,10 @@ def match_wfs(waveforms, delt=None):
 			starti, endi = apxstartend(waveform1)
 			message("starti, endi")
 
+		print('The approximate start and end indices are', starti, endi, 'length', endi-starti)
 		# Convert the non-zero portion of the signal and template to
 		# time-series
+		print('Converting shifted vectors to time series')
 		signal = pycbc.types.timeseries.TimeSeries(
 			np.array(waveform1)[starti:endi] / np.linalg.norm(np.array(waveform1)[starti:endi]), delt
 		)
@@ -2507,11 +2651,10 @@ def match_wfs(waveforms, delt=None):
 			match_score = None
 			shift = None
 
-		match.append({"Match score": match_score, "Shift": shift, "Start index": starti, "End index": endi})
+		match = {"Match score": match_score, "Shift": shift, "Start index": starti, "End index": endi}
 	return match
 
-
-def roll(tsdata, i_roll):
+def roll(tsdata, i_roll, is_ts=False):
 	"""Roll the data circularly. Circular counterpart of shiftmatched function.
 
 	Parameters
@@ -2529,12 +2672,14 @@ def roll(tsdata, i_roll):
 											The rolled wavefrom.
 	"""
 
-	try:
-		# Assign the time step.
-		delta_t = tsdata.delta_t
-		flag = 1
-	except BaseException:
-		flag = 0
+	flag = 0
+	if is_ts:
+		try:
+			# Assign the time step.
+			delta_t = tsdata.delta_t
+			flag = 1
+		except BaseException:
+			flag = 0
 
 	# Assign the data array
 	tsdata = np.array(tsdata)

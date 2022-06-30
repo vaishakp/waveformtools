@@ -2,8 +2,9 @@
 
 
 import numpy as np
+#from numba import jit, njit
 
-
+#@njit(parallel=True)
 def compute_fft(udata_x, delta_x):
 	""" Find the FFT of the samples in time-space, and return with the frequencies.
 
@@ -48,7 +49,7 @@ def compute_fft(udata_x, delta_x):
 
 	return freq_axis, utilde
 
-
+#@njit(parallel=True)
 def compute_ifft(utilde, delta_f):
 	""" Find the inverse FFT of the samples in frequency-space, and return with the time axis.
 
@@ -98,7 +99,7 @@ def compute_ifft(utilde, delta_f):
 
 	return time_axis, udata_time
 
-
+#@njit(parallel=True)
 def set_fft_conven(utilde_orig):
 	""" Make a numppy fft consistent with the chosen conventions.
 		This takes care of the zero mode factor and array position.
@@ -126,7 +127,7 @@ def set_fft_conven(utilde_orig):
 
 	return utilde_conven
 
-
+#@njit(parallel=True)
 def unset_fft_conven(utilde_conven):
 	""" Make an actual conventional fft consistent with numpy's conventions.
 		The inverse of set_conv.

@@ -28,7 +28,7 @@ plt.rcParams.update({'legend.markerscale': 9})
 # from waveformtools.waveforms import modes_array
 
 
-def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100]):
+def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100], ylim='auto', nstop=1, plot22=False):
 	"""Plot the first `nmodes` dominant modes of
 	the input waveforms
 
@@ -63,7 +63,8 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100]):
 
 			mode_values = wf1.mode(ell, emm)
 			mode_amp = np.absolute(mode_values)
-			max_mode_value = np.amax(mode_values)
+
+			max_mode_value = np.amax(mode_amp[:-nstop])
 
 			mode_phase = xtract_cphase(mode_values.real, mode_values.imag)
 
@@ -103,9 +104,23 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100]):
 			mode_phase = xtract_cphase(mode_values.real, mode_values.imag)
 
 			ax1.scatter(
-				wf1.time_axis[100:], mode_amp[100:], label=rf"$\ell${ell}$m${emm}", s=1, alpha=0.2 * abs(emm) % 1
+				wf1.time_axis[:], mode_amp[:], label=rf"$\ell${ell}$m${emm}", s=1, alpha=0.2 * abs(emm) % 1
 			)
-			ax2.scatter(wf1.time_axis[100:], abs(mode_phase[100:]), label=rf"$\ell${ell}$m${emm}", s=1)
+			ax2.scatter(wf1.time_axis[:], abs(mode_phase[:]), label=rf"$\ell${ell}$m${emm}", s=1)
+
+	if plot22:
+		ell=2
+		emm=2
+		mode_values = wf1.mode(ell, emm)
+		mode_amp = np.absolute(mode_values)
+		max_mode_value = np.amax(mode_values)
+
+		mode_phase = xtract_cphase(mode_values.real, mode_values.imag)
+
+		ax1.scatter(
+			wf1.time_axis[:], mode_amp[:], label=rf"$\ell${ell}$m${emm}", s=1, alpha=0.2 * abs(emm) % 1
+			)
+		ax2.scatter(wf1.time_axis[:], abs(mode_phase[:]), label=rf"$\ell${ell}$m${emm}", s=1)
 
 	ax1.grid(which="both")
 	ax2.grid(which="both")
@@ -113,7 +128,7 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100]):
 	ax2.legend()
 	plt.tight_layout()
 	ax1.set_xlabel("t/M")
-	ax1.set_ylabel(r"$\vert \Psi_{4}^{(\ell m)}\vert$")
+	ax1.set_ylabel(r"$\vert$" +  wf1.label + r"$^{(\ell m)}\vert$")
 	ax2.set_xlabel("t/M")
 	ax2.set_ylabel(r"$\Phi^{(\ell m)}$")
 	ax2.set_xlim(
@@ -125,8 +140,16 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100]):
 	# fig1.savefig('figures/waveform_extrapolation/amp_evol_modes_q1a0.pdf')
 	# fig2.savefig('figures/waveform_extrapolation/phase_evol_modes_q1a0.pdf')
 	if save_fig:
-		fig1.savefig("waveform_amp_modes.pdf")
-		fig2.savefig("waveform_phase_modes.pdf")
+		fig1.savefig(f"{wf1.label}_waveform_amp_modes.pdf")
+		fig2.savefig(f"{wf1.label}_waveform_phase_modes.pdf")
+	if ylim != 'auto':
+		#ax2.set_ylim(
+		#	*ylim
+		#)
+		ax1.set_ylim(
+			*ylim,
+		)
+
 	plt.show()
 
 
@@ -173,7 +196,7 @@ def plot_mode_differences(
 	wf0 = waveforms[0]
 
 	# Start from l=2.
-	modes_to_plot = modes_list[2:]
+	modes_to_plot = modes_list[:]
 
 	# Sort the modes as per 1st waveform modes_array object mode strenghts.
 	modes_list = []
@@ -290,8 +313,10 @@ def plot_mode_differences(
 
 				rms_amp_diff = np.sqrt(np.sum(delta_mode_ampx**2)/(len(delta_mode_ampx)))
 				rms_phase_diff = np.sqrt(np.sum(delta_mode_phasex**2)/(len(delta_mode_phasex)))
-
-				cumulative_diff.update({f'l{ell}m{emm}' : [rms_amp_diff, rms_phase_diff]})
+				max_phase_diff = np.amax(np.absolute(delta_mode_phasex))
+				max_phase_diff_loc = np.argmax(np.absolute(delta_mode_phasex))
+				max_phase_diff_time = new_time_axis[max_phase_diff_loc]
+				cumulative_diff.update({f'l{ell}m{emm}' : [rms_amp_diff, rms_phase_diff, [max_phase_diff, max_phase_diff_time]]})
 				max_mode_value = np.amax(mode_values)
 
 			ax1.scatter(

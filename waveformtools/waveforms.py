@@ -71,16 +71,17 @@ class spherical_array:
 		time_axis=None,
 		frequency_axis=None,
 		data=None,
-		base_dir=None,
+		data_dir=None,
 		file_name=None,
 		grid_info=None,
-		spin_weight = 2
+		spin_weight = 2,
 	):
 
 		self.label = label
-		self.base_dir = base_dir  # The base directory containing the
+		#self.base_dir = base_dir  # The base directory containing the
 		self.data = data
 		self.file_name = file_name
+		self.data_dir = data_dir
 		self.time_axis = time_axis
 		self.frequency_axis = frequency_axis
 		self.grid_info = grid_info
@@ -176,6 +177,7 @@ class spherical_array:
 
 
 
+		spin_weight=abs(spin_weight)
 		# Compute the meshgrid for theta and phi.
 		theta, phi = grid_info.meshgrid
 
@@ -214,6 +216,8 @@ class spherical_array:
 
 		from qlmtools import Yslm_new
 
+		modes_list = [item for item in modes_list if item[0]>=spin_weight]
+
 		for mode in modes_list:
 			ell_value, all_emm_values = mode
 
@@ -225,7 +229,7 @@ class spherical_array:
 				Ybasis_fun = np.conj(Yslm_new(spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta, phi_grid=phi))
 
 				Ydarea = Ybasis_fun * darea
-
+				#print(Ydarea.shape)
 				#print(full_integrand)
 				# Using quad
 				multipole_ell_emm = np.tensordot(self.data, Ydarea, axes=((0, 1), (0, 1)))
@@ -334,12 +338,357 @@ class spherical_array:
 			data += np.power(supertransl_alpha_sp.data, index+1) * dPsidu / np.math.factorial(index+1) #delta
 
 		data+=self.data
-		print((data == self.data).all())
+		print('Equal to original waveform?', (data == self.data).all())
 
 		Psi4_supertransl_sp.data = data
 		Psi4_supertransl_sp.time_axis = self.time_axis
 		print('Done.')
 		return Psi4_supertransl_sp
+
+
+
+	def load_shear_data(self, data_dir=None, grid_info=None, bh=0):
+		''' Load the 2D shear data from h5 files.
+
+		Parameters
+		----------
+		file_name: str
+					The name of the file containing data.
+		data_dir: str
+					The name of the directory containing data.
+		grid_info: class instance
+					An instance of the grid_info class.
+		bh: int
+			The black hole number (0, 1 or 2)
+
+		'''
+
+		import sys
+		import re
+		import json
+
+		#if file_name is None:
+		#	if self.file_name is None:
+		#		print('Please supply the file name!')
+		#	else:
+		#		file_name = self.file_name
+		#else:
+		#	if self.file_name is None:
+		#		self.file_name = file_name
+
+		if data_dir is None:
+			if self.data_dir is None:
+				print('Please supply the data directory!')
+			else:
+				data_dir = self.data_dir
+		else:
+			if self.data_dir is None:
+				self.data_dir = data_dir
+
+
+		if grid_info is None:
+			if self.grid_info is None:
+				print('Please supply the grid spec!')
+			else:
+				grid_info = self.grid_info
+		else:
+			if self.grid_info is None:
+				self.grid_info = grid_info
+		# get the full path.
+
+		file_name=	f'qlm_npsigma[{bh}].xy.h5'
+
+		full_path = self.data_dir + file_name
+
+		cflag = 0
+
+		nghosts = grid_info.nghosts
+		ntheta = grid_info.ntheta
+		nphi = grid_info.nphi
+
+		# Open the modes file.
+		with h5py.File(full_path, "r") as wfile:
+
+			# Get all the mode keys.
+			modes_keys_list = list(wfile.keys())
+			#modes_keys_list = sorted(modes_keys_list)
+
+			# Get the mode keys containing the data.
+			modes_keys_list = [item for item in modes_keys_list if 'it=' in item]
+
+			# Get the itaration numbers.
+			iteration_numbers = sorted(get_iteration_numbers_from_keys(modes_keys_list))
+			#sargs = np.argsort(iteration_numbers)
+			#iteration_numbers = iteration_numbers[sargs]
+			modes_keys_list = sort_keys(modes_keys_list)
+			# Construct the data array.
+
+			data_array = []
+
+			for key in modes_keys_list:
+				#data_item = np.array(wfile[key])
+				#print(data_item.shape)
+				data_item = np.array(wfile[key])[nghosts: nphi-nghosts, nghosts: ntheta-nghosts]
+				data_item = data_item['real'] + 1j*data_item['imag']
+				data_array.append(data_item)
+
+
+		self.data = np.transpose(np.array(data_array), (2, 1, 0))
+
+		self.iteration_axis = np.array(iteration_numbers)
+
+		#########################################################
+		# Load inv_coords data
+		#########################################################
+
+		inv_file_name = f'qlm_inv_z[{bh}].xy.h5'
+
+		# get the full path.
+		full_path = self.data_dir + inv_file_name
+
+		# Open the modes file.
+		with h5py.File(full_path, "r") as wfile:
+
+			# Get all the mode keys.
+			modes_keys_list = list(wfile.keys())
+			#modes_keys_list = sorted(modes_keys_list)
+
+			# Get the mode keys containing the data.
+			modes_keys_list = [item for item in modes_keys_list if 'it=' in item]
+
+			modes_keys_list = sort_keys(modes_keys_list)
+			data_array = []
+
+			for key in modes_keys_list:
+				data_item = np.array(wfile[key])[nghosts: nphi-nghosts, nghosts: ntheta-nghosts]
+				#data_item = data_item['real'] + 1j*data_item['imag']
+				data_array.append(data_item)
+
+
+		self.invariant_coordinates_data = np.transpose(np.array(data_array), (2, 1, 0))
+
+
+
+		#########################################################
+		# Load metric determinant  data
+		#########################################################
+
+		twometric_qtt_file_name = f'qlm_qtt[{bh}].xy.h5'
+		twometric_qtp_file_name = f'qlm_qtp[{bh}].xy.h5'
+		twometric_qpp_file_name = f'qlm_qpp[{bh}].xy.h5'
+
+
+		# set the full path.
+		full_path = self.data_dir + twometric_qtt_file_name
+
+		# Open the modes file.
+		with h5py.File(full_path, "r") as wfile:
+
+			# Get all the mode keys.
+			modes_keys_list = list(wfile.keys())
+			#modes_keys_list = sorted(modes_keys_list)
+
+			# Get the mode keys containing the data.
+			modes_keys_list = [item for item in modes_keys_list if 'it=' in item]
+
+			modes_keys_list = sort_keys(modes_keys_list)
+
+			qtt_data_array = []
+
+			for key in modes_keys_list:
+				data_item = np.array(wfile[key])[nghosts: nphi-nghosts, nghosts: ntheta-nghosts]
+				#data_item = data_item['real'] + 1j*data_item['imag']
+				qtt_data_array.append(data_item)
+
+		qtt_data_array = np.array(qtt_data_array)
+		qtt_data_array = np.transpose(qtt_data_array, (2, 1, 0))
+
+		# set the full path.
+		full_path = self.data_dir + twometric_qtp_file_name
+
+		# Open the modes file.
+		with h5py.File(full_path, "r") as wfile:
+
+			# Get all the mode keys.
+			modes_keys_list = list(wfile.keys())
+			#modes_keys_list = sorted(modes_keys_list)
+
+			# Get the mode keys containing the data.
+			modes_keys_list = [item for item in modes_keys_list if 'it=' in item]
+
+			modes_keys_list = sort_keys(modes_keys_list)
+
+			qtp_data_array = []
+
+			for key in modes_keys_list:
+				data_item = np.array(wfile[key])[nghosts: nphi-nghosts, nghosts: ntheta-nghosts]
+				#data_item = data_item['real'] + 1j*data_item['imag']
+				qtp_data_array.append(data_item)
+
+
+		qtp_data_array = np.array(qtp_data_array)
+		qtp_data_array = np.transpose(qtp_data_array, (2, 1, 0))
+
+		# set the full path.
+		full_path = self.data_dir + twometric_qpp_file_name
+
+		# Open the modes file.
+		with h5py.File(full_path, "r") as wfile:
+
+			# Get all the mode keys.
+			modes_keys_list = list(wfile.keys())
+			#modes_keys_list = sorted(modes_keys_list)
+
+
+			# Get the mode keys containing the data.
+			modes_keys_list = [item for item in modes_keys_list if 'it=' in item]
+
+			modes_keys_list = sort_keys(modes_keys_list)
+
+			qpp_data_array = []
+
+			for key in modes_keys_list:
+				data_item = np.array(wfile[key])[nghosts: nphi-nghosts, nghosts: ntheta-nghosts]
+				#data_item = data_item['real'] + 1j*data_item['imag']
+				qpp_data_array.append(data_item)
+
+		qpp_data_array = np.array(qpp_data_array)
+		qpp_data_array = np.transpose(qpp_data_array, (2, 1, 0))
+
+		sqrt_met_det = np.sqrt(np.linalg.det(np.transpose(np.array([[qtt_data_array, qtp_data_array], [qtp_data_array, qpp_data_array]]), (2, 3, 4, 0, 1))))
+
+
+		self.sqrt_met_det_data = sqrt_met_det
+
+
+
+
+	def to_shear_modes_array(self, grid_info=None, spin_weight=None, ell_max=8):
+		"""Decompose a given spherical array function on a sphere
+		into Spin Weighted Spherical Harmonic modes.
+
+		Parameters
+		----------
+		spin_weight:	int, optional
+						The spin weight of the waveform. It defaults to -2 for a gravitational waveform.
+		ell_max:	int, optional
+					The maximum value of the :math:`\\ell` polar quantum number. Defaults to 8.
+		grid_info:	class instance
+					The class instance that contains the properties of the spherical grid.
+
+		Returns
+		-------
+		waveforms_modes:	modes_array
+							An instance of the `modes_array` class containing the decomposed modes.
+
+		Notes
+		-----
+		1. Assumes that the sphere on which this decomposition is carried out is so far out
+		   that the coordinate system is spherical polar on a round sphere.
+		2. Assumes that the poper area is the same as its co-ordinate area.
+		3. Ensure that the label of the input spherical array indicates whether
+		   it is a time domain data or frequency domain data.
+		"""
+
+		if grid_info is None:
+			if self.grid_info is None:
+				message('Please specify the grid specs. Assuming defaults.')
+				grid_info = waveformtools.grids.spherical_array()
+				self.grid_info = grid_info
+			else:
+				grid_info = self.grid_info
+
+		if spin_weight is None:
+			if self.spin_weight is None:
+				message('Please specify spin weight. Assuming 2')
+				spin_weight = 2
+				self.spin_weight = spin_weight
+
+			else:
+				spin_weight = self.spin_weight
+
+
+
+		spin_weight=abs(spin_weight)
+		# Compute the meshgrid for theta and phi.
+		theta, phi = grid_info.meshgrid
+
+		# Create a modes array object
+
+		# Create a modes list.
+		modes_list = construct_mode_list(ell_max, spin_weight=spin_weight)
+
+		if not self.label:
+			label = "decomposed_time_domain"
+		else:
+			label = self.label
+
+		# Create a mode array for the decomposed_waveform
+		waveform_modes = modes_array(label=label, ell_max=ell_max, spin_weight=spin_weight)
+
+		# Inherit the time or frequency axis.
+		if "time" in label:
+			axis = self.time_axis
+			waveform_modes.time_axis = self.time_axis
+		else:
+			axis = self.frequency_axis
+			waveform_modes.frequency_axis = self.frequency_axis
+
+		# Create the modes_array
+		waveform_modes.time_axis = self.time_axis[:]
+		sargs = np.argsort(waveform_modes.time_axis)
+		#print(sargs)
+		waveform_modes.time_axis = waveform_modes.time_axis
+
+		waveform_modes._create_modes_array(ell_max=ell_max, data_len=self.data_len)
+		waveform_modes.modes_list = modes_list
+		# The area element on the sphere
+		# Compute the meshgrid for theta and phi.
+		theta, phi = grid_info.meshgrid
+
+		phi = np.transpose(np.array([phi for index in range(len(self.time_axis))]), (1, 2, 0))
+
+		#sqrt_met_det = np.sin(theta)
+		#sqrt_met_det = np.sqrt(np.power(np.sin(theta), 2))
+
+		darea = self.sqrt_met_det_data * grid_info.dtheta * grid_info.dphi
+
+		theta			   =   np.emath.arccos(self.invariant_coordinates_data)
+
+		from qlmtools import Yslm_new
+
+		modes_list = [item for item in modes_list if item[0]>=spin_weight]
+
+		for mode in modes_list:
+			ell_value, all_emm_values = mode
+
+			for emm_value in all_emm_values:
+				# m value.
+				#print(f'Processing l{ell_value} m{emm_value}')
+				# Spin weighted spherical harmonic function at (theta, phi)
+
+				Ybasis_fun = np.conj(Yslm_new(spin_weight=spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta, phi_grid=phi))
+				#Ybasis_fun = np.array([np.conj(Yslm_new(spin_weight=spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta[:, :, index], phi_grid=phi[:, :, index])) for index in range(self.data_len)])
+				#Ybasis_fun = np.transpose(Ybasis_fun, (1, 2, 0))
+				#print('Ybasis_fun', Ybasis_fun.shape)
+				Ydarea = Ybasis_fun * darea
+				#print('Ydarea', Ydarea.shape)
+				#print(full_integrand)
+				# Using quad
+				#print('self.data', self.data.shape)
+				#multipole_ell_emm = np.tensordot(self.data, Ydarea, axes=((0, 1), (0, 1)))
+				multipole_ell_emm = np.sum(self.data * Ydarea, (0, 1))
+
+				#print(f'l{ell_value}m{emm_value}', multipole_ell_emm)
+
+				#print('multipole_ell_emm', multipole_ell_emm.shape)
+				waveform_modes.set_mode_data(ell_value, emm_value, data=multipole_ell_emm)
+
+		return waveform_modes
+
+	# Construct the time axis
+
+
 
 
 #	def reconstr_waveform():
@@ -658,7 +1007,7 @@ class modes_array:
 
 		return delta_f
 
-	def load_modes(self, r_ext=None, ell_max=None, pre_key=None, modes_list=None, crop=False, center=True, key_ex=None, r_ext_factor=1):
+	def load_modes(self, r_ext=None, ell_max=None, pre_key=None, modes_list=None, crop=False, centre=True, key_ex=None, r_ext_factor=1):
 		"""Load the waveform mode data from an hdf file.
 
 		Parameters
@@ -868,12 +1217,13 @@ class modes_array:
 			##############################
 			# Recenter axis
 			##############################
-
-			if center:
-				maxloc = np.argmax(np.absolute(self.mode(2, 2)))
-				maxtime = time_axis[shift + maxloc]
+			maxloc = np.argmax(np.absolute(self.mode(2, 2)))
+			maxtime = time_axis[shift + maxloc]
+			if self.maxtime is None:
 				self.maxtime = maxtime
-				print("Max time is", maxtime)
+			print("Max time is", maxtime)
+
+			if centre:
 				self.time_axis = time_axis[shift:] - maxtime
 
 	def save_modes(
@@ -884,7 +1234,8 @@ class modes_array:
 		modes_to_save=None,
 		out_file_name="mp_new_modes.h5",
 		r_ext_factor = None,
-		compression_opts=0
+		compression_opts=0,
+		r_ext=None
 	):
 		"""Save the waveform mode data to an hdf file.
 
@@ -922,11 +1273,17 @@ class modes_array:
 		# I/O assignments.
 		#############################
 
-		self.out_file_name = self.label + ' ' + out_file_name
+		self.out_file_name = self.label + '_' + out_file_name
 		self.out_file_name.replace(' ', '_')
 
 		# get the full path.
 		full_path = self.data_dir + self.out_file_name
+
+		if r_ext is None:
+			if self.r_ext is None:
+				r_ext = 500
+			else:
+				r_ext = self.r_ext
 
 		if r_ext_factor is None:
 			r_ext_factor = self.r_ext
@@ -1050,9 +1407,13 @@ class modes_array:
 		s3 = self.data_len
 		sp_data = np.zeros((s1, s2, s3), dtype=np.complex128)
 
-		for item in self.modes_list[spin_weight:]:
+		modes_list = [item for item in self.modes_list if item[0]>=spin_weight]
+		for item in modes_list:
+
 			# Get modes.
 			ell, emm_list = item
+			#if ell<spin_weight:
+			#	continue
 
 			for emm in emm_list:
 				# For every l, m
@@ -1243,7 +1604,7 @@ class modes_array:
 			modes_list = construct_mode_list(self.ell_max)
 
 		# Create a mode array for the extrapolated waveform.
-		extrap_wf = modes_array(label=f"{self.label} -> rPsi4_inf",  modes_list=self.modes_list, ell_max=self.ell_max)
+		extrap_wf = modes_array(label=f"{self.label} -> rPsi4_inf",  modes_list=self.modes_list, ell_max=self.ell_max, r_ext = self.r_ext)
 
 		extrap_wf._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
 
@@ -1408,7 +1769,7 @@ class modes_array:
 
 		# Initialize a mode array for strain.
 		#strain_waveform = modes_array(label=f'{self.label} strain from Psi4', r_ext=500, ell_max=8, modes_list=self.modes_list)
-		strain_waveform = modes_array(label='{} strain from Psi4'.format(self.label), r_ext=500, ell_max=8, modes_list=self.modes_list)
+		strain_waveform = modes_array(label='{} strain from Psi4'.format(self.label), r_ext=self.r_ext, ell_max=8, modes_list=self.modes_list)
 
 		strain_waveform.time_axis = self.time_axis
 		strain_waveform.ell_max = self.ell_max
@@ -1422,7 +1783,7 @@ class modes_array:
 		from waveformtools.waveformtools import get_starting_angular_frequency as sang_f
 
 		omega_st = omega0
-		for item in self.modes_list[2:]:
+		for item in self.modes_list[:]:
 			ell, emm_list = item
 			for emm in emm_list:
 				mode_data = self.mode(ell, emm)
@@ -1763,6 +2124,34 @@ def _get_ell_emm_from_key(key):
 	return ell_value, emm_value
 
 
+def get_iteration_numbers_from_keys(keys_list):
+	''' Get the iteration number from keys.
+
+	Parameters
+	----------
+	keys_list: list
+			   The list of keys.
+
+	Returns
+	-------
+	iteration_numbers: list
+						The list containing the iteration
+						numbers.
+	'''
+	import re
+
+	iteration_numbers = []
+
+	for key in keys_list:
+		str_match = re.search(" it=\d* ", key)
+		it_str_start = str_match.start()
+		it_str_end = str_match.end()
+		it_value = int(key[it_str_start + 4 : it_str_end])
+		iteration_numbers.append(it_value)
+
+	return iteration_numbers
+
+
 def construct_mode_list(ell_max, spin_weight=-2):
 	"""
 	Construct a modes list in the form [[ell1, [emm1, emm2, ...], [ell2, [emm..]],..]
@@ -1789,7 +2178,7 @@ def construct_mode_list(ell_max, spin_weight=-2):
 	# The modes list.
 	modes_list = []
 
-	for ell_index in range(abs(spin_weight), ell_max+1):
+	for ell_index in range(0, ell_max+1):
 		# Append all emm modes for each ell mode.
 		modes_list.append([ell_index, list(range(-ell_index, ell_index + 1))])
 
@@ -1825,3 +2214,27 @@ def _key_gen(ell, emm, extras=None):
 		# print('adding rext')
 
 	return key
+
+def sort_keys(modes_keys_list):
+    ''' Sort the keys in a list based on
+        its iteration number
+
+    Parameters
+    ----------
+    modes_keys_list: str
+                     The list of keys.
+
+    Returns
+    -------
+    sorted_modes_keys_list: str
+                            The sorted list.
+    '''
+
+    iteration_numbers = get_iteration_numbers_from_keys(modes_keys_list)
+
+    sargs = np.argsort(iteration_numbers)
+
+    sorted_modes_keys_list = np.array(modes_keys_list)[sargs]
+
+    return sorted_modes_keys_list
+
