@@ -347,7 +347,7 @@ class spherical_array:
 
 
 
-	def load_shear_data(self, data_dir=None, grid_info=None, bh=0):
+	def load_qlm_data(self, data_dir=None, grid_info=None, bh=0, variable='sigma'):
 		''' Load the 2D shear data from h5 files.
 
 		Parameters
@@ -396,7 +396,7 @@ class spherical_array:
 				self.grid_info = grid_info
 		# get the full path.
 
-		file_name=	f'qlm_npsigma[{bh}].xy.h5'
+		file_name=	f'qlm_{variable}[{bh}].xy.h5'
 
 		full_path = self.data_dir + file_name
 
@@ -429,7 +429,10 @@ class spherical_array:
 				#data_item = np.array(wfile[key])
 				#print(data_item.shape)
 				data_item = np.array(wfile[key])[nghosts: nphi-nghosts, nghosts: ntheta-nghosts]
-				data_item = data_item['real'] + 1j*data_item['imag']
+				try:
+					data_item = data_item['real'] + 1j*data_item['imag']
+				except:
+					pass
 				data_array.append(data_item)
 
 
@@ -905,7 +908,7 @@ class modes_array:
 
 		return self.modes_data[ell, emm_index, :]
 
-	def _create_modes_array(self, ell_max, data_len):
+	def _create_modes_array(self, ell_max=None, data_len=None):
 		"""Create a modes array and initialize it with zeros.
 
 		Parameters
@@ -922,6 +925,22 @@ class modes_array:
 		"""
 		import time
 		import datetime
+
+		# Check ell_max
+		if ell_max is None:
+			try:
+				ell_max = self.ell_max
+			except:
+				raise NameError('Please supply ell_max')
+
+		if data_len is None:
+			try:
+				data_len = self.data_len
+			except:
+				raise NameError('Please supply data_len')
+
+		if self.modes_list is None:
+			self.modes_list = construct_modes_list(ell_max = ell_max)
 
 		#self.modes_data = np.zeros([ell_max + 1, 2 * (ell_max + 1) + 1, data_len], dtype=np.complex128)
 		self.modes_data = np.zeros((ell_max + 1, 2 * (ell_max + 1) + 1, data_len), dtype=np.complex128)
@@ -954,6 +973,7 @@ class modes_array:
 			data_len = len(self.frequency_axis)
 
 		return data_len
+
 
 	def delta_t(self, value=None):
 		"""Sets and returns the value of time stepping :math:`dt`.

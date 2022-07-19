@@ -139,19 +139,19 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100], ylim='auto', ns
 	)
 	# fig1.savefig('figures/waveform_extrapolation/amp_evol_modes_q1a0.pdf')
 	# fig2.savefig('figures/waveform_extrapolation/phase_evol_modes_q1a0.pdf')
-	if save_fig:
-		fig1.savefig(f"{wf1.label}_waveform_amp_modes.pdf")
-		fig2.savefig(f"{wf1.label}_waveform_phase_modes.pdf")
 	if ylim != 'auto':
-		#ax2.set_ylim(
-		#	*ylim
-		#)
+	#ax2.set_ylim(
+	#	*ylim
+	#)
 		ax1.set_ylim(
 			*ylim,
 		)
 
-	plt.show()
+	if save_fig:
+		fig1.savefig(f"{wf1.label}_waveform_amp_modes.pdf")
+		fig2.savefig(f"{wf1.label}_waveform_phase_modes.pdf")
 
+	plt.show()
 
 def plot_mode_differences(
 	waveforms, nmodes=3, save_fig=False, xlabel="t/M", ylabel=r"r\Psi_{4}^{(\ell m)}", labels=None, xlim=[-1000, 100]
