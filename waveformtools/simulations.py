@@ -1118,7 +1118,7 @@ class sim:
 
 	def calc_amp_phase(self):
 		""" Extract the amplitude and the phase from strain data. """
-		from waveformtools import xtract_cphase, xtract_camp
+		from waveformtools.waveformtools import xtract_cphase, xtract_camp
 
 		for alias in self.aliases:
 			# Loop over simulations.
@@ -1129,8 +1129,8 @@ class sim:
 			# Load the time stepping.
 			delta_t = self.delta_t[alias]
 			# Extract and update the amplitude and phases.
-			self.strain_phase.update({alias: (xtract_cphase(hpdat, hxdat, delta_t=delta_t, plot="yes"))})
-			self.strain_amplitude.update({alias: xtract_camp(hpdat, hxdat, delta_t=delta_t)})
+			self.strain_phase.update({alias: (xtract_cphase(hpdat, hxdat, delta_t=delta_t, to_plot="yes"))})
+			self.strain_amplitude.update({alias: xtract_camp(hpdat, hxdat)})
 			self.strain_frequency.update({alias: np.diff(self.strain_phase[alias]) / delta_t})
 		return 1
 

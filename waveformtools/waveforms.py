@@ -940,7 +940,7 @@ class modes_array:
 				raise NameError('Please supply data_len')
 
 		if self.modes_list is None:
-			self.modes_list = construct_modes_list(ell_max = ell_max)
+			self.modes_list = construct_mode_list(ell_max = ell_max)
 
 		#self.modes_data = np.zeros([ell_max + 1, 2 * (ell_max + 1) + 1, data_len], dtype=np.complex128)
 		self.modes_data = np.zeros((ell_max + 1, 2 * (ell_max + 1) + 1, data_len), dtype=np.complex128)
