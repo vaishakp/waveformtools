@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ''' Classes for handling the waveform modes or data defined on spheres.
 
 
@@ -16,6 +15,10 @@ import h5py
 from waveformtools.waveformtools import message
 from qlmtools import Yslm_new
 
+####################################################################
+# Numba experimentation
+#######################
+
 #from numba import jit, njit
 #from numba import jitclass			 # import the decorator
 #from numba import int32, float64, complex128	 # import the types
@@ -31,6 +34,13 @@ from qlmtools import Yslm_new
 #			'spin_weight' : nb.int32
 
 #}
+####################################################################
+
+
+##########################################################
+# Spherical array class
+#######################
+
 #@jitclass(spec_sp)
 class spherical_array:
 	"""A class for handling waveforms on a sphere.
@@ -215,8 +225,6 @@ class spherical_array:
 
 		darea = sqrt_met_det * grid_info.dtheta * grid_info.dphi
 
-		from qlmtools import Yslm_new
-
 		modes_list = [item for item in modes_list if item[0]>=spin_weight]
 
 		for mode in modes_list:
@@ -241,51 +249,12 @@ class spherical_array:
 
 		return waveform_modes
 
-	def boost(self, conformal_factor):
+	def boost(self, conformal_factor, grid_info=None):
 		""" Boost the waveform given the unboosted waveform and the boost conformal factor.
-=======
-##########################################################################
-# A Class for handling the waveform data
-##########################################################################
-
-import numpy as np
-import h5py
-from waveformtools import message
-
-class waveform:
-	""" A class for handling waveforms."""
-
-	def __init__(self,	timeaxis=None,
-						wavedata=None,
-						base_dir=None,
-						data_dir=None,
-						filename=None,
-						frequency_series=None,
-						key_format=None,
-						mode=None,
-						ell_max = 8
-						):
-
-		self.basedir						= base_dir # The base directory containing the
-		self.datadir						= data_dir
-		self.filename						= filename
-		self.time_axis						= timeaxis
-		self.time_domain_waveform			= time_domain_waveform
-		self.delta_t						= delta_t
-		self.frequency_domain_waveform		= frequency_domain_waveform
-		self.frequency_axis					= frequency_axis
-		self.key_format						= key_format
-		self.modes							= modes
-		self.modes_data						= modes_data
-
-	def load_modes(self, ell_max, pre_key = None, mode_numbers=None):
-		''' Load the waveform mode data from an hdf file.
->>>>>>> ca9e0de (modes_array init)
 
 		Parameters
 		----------
 
-<<<<<<< HEAD
 		self:	  spherical_array
 								A class instance of `spherical array`.
 
@@ -296,30 +265,19 @@ class waveform:
 		grid_info:		 class instance
 						The class instance that contains the properties of the spherical grid.
 
-=======
-		pre_key :	str, optional
-					A string containing the key of the group in
-					the HDF file in which the modes` dataset exists.
-					It defaults to `None`.
-
-		mode_numbers :	list
-						The mode numbers to load from the file.
-						Each item in the list is a list that
-						contains two integrer numbers, one for
-						the mode index :math:`\\ell` and the
-						other for the mode index :math:`m`.
->>>>>>> ca9e0de (modes_array init)
 
 		Returns
 		-------
 
-<<<<<<< HEAD
 		boosted_waveform:	  sp_array
 							  The class instance `sp_array` that
 							  contains the boosted waveform.
 		"""
 
 		from waveformtools.waveforms import spherical_array
+
+		if grid_info is None:
+			grid_info = self.grid_info
 
 		# Compute the boosted waveform on the spherical grid on all the elements.
 
@@ -329,7 +287,7 @@ class waveform:
 		#boosted_waveform_data = np.array([np.transpose(item)*conformal_factor for item in np.transpose(self.data)])
 
 		# Construct a 2d waveform array object
-		boosted_waveform = spherical_array(grid_info=self.grid_info, data=np.transpose(np.array(boosted_waveform_data), (1, 2, 0)))
+		boosted_waveform = spherical_array(grid_info=grid_info, data=np.transpose(np.array(boosted_waveform_data), (1, 2, 0)))
 
 		# Assign other attributes.
 		boosted_waveform.label = "boosted " + self.label
@@ -712,7 +670,6 @@ class waveform:
 
 		theta			   =   np.emath.arccos(self.invariant_coordinates_data)
 
-		from qlmtools import Yslm_new
 
 		modes_list = [item for item in modes_list if item[0]>=spin_weight]
 
@@ -743,228 +700,16 @@ class waveform:
 
 		return waveform_modes
 
-	# Construct the time axis
-
-=======
-		waveform_obj :	3d array
-						Sets the three dimensional array `waveform.modes` that contains
-						the required :math:`\\ell, m` modes.
-
-		Examples
-		--------
-
-		>>> from waveformtools.waveforms import waveform
-		>>> waveform.set_basedir('./')
-		>>> waveform.set_datadir('data/')
-		>>> mode_numbers = [[2, 2], [3, 3]]
-		>>> waveform.load_data(mode_numbers=mode_numbers)
-		'''
-
-		# get the full path.
-		full_path = self.base_dir + self.data_dir + self.filename
-
-		# Load the modes listed in mode_numbers list
-		for item in mode_numbers:
-			ell, emm = item
-
-			# Find the data key in the file
-			with h5py.File(full_path, "r") as wfile:
-
-				# List all dataset keys.
-				keys = list(wfile.keys())
-
-				# Iteration index
-				index = 0
-				# Key found token
-				token = -1
-
-				# Find the key corresponding to the mode
-				while token < 0 and index < len(keys):
-					# Get the current key
-					key = keys[index]
-					# Update the token if the required mode string is found
-					token = key.find(f"l{ell}_m{emm}")
-					# message(key)
-					index += 1
-
-				if token < 0:
-					message("Waveform dataset not found")
-				else:
-					message(key)
-
-				# Get the data
-				data = np.array(wfile[key])
-
-				# set the time and data axis
-				time_axis = data[:, 0]
-				data_re = data[:, 1]
-				data_im = data[:, 2]
-
-				data_len = len(timeaxis)
-
-				if not waveform.modes:
-					# Create an array for the waveform mode object
-					self.modes_data	= np.zeros([ell_max, 2*ell_max +1, data_len])
-
-				self.time_axis = time_axis
-				self.modes_data[ell, emm] = data_re + 1j*data_im
-
-
-
-	def set_delta_t(self, delta_t = None):
-		''' Set the time step of the waveform. Sets the value from the timeaxis
-			if the optional argument `delta_t` is not specified.
-
-		Parameters
-		----------
-
-		delta_t :	float
-					The time stepping `delta_t`
-
-		Returns
-		-------
-
-		Sets the variable `waveform.delta_t`.`
-
-		'''
-
-		self.delta_t = self.timeaxis[1] - self.timeaxis[0]
-
-
-
-	def get_frequency_domain_waveform(self, new_delta_f = None):
-		''' Get the frequency domain waveform from the timedomain waveform.
-
-		Parameters
-		----------
-
-		new_delta_f :	float, optional
-						The sampling frequency. If set, then the frequency domain
-						data is resampled at the requested sampling frequency.
-
-		Returns
-		-------
-
-		frequency_axis :	1d array
-							The frequency axis of the FFT. Also sets the
-							variable `waveforms.frequency_axis`
-
-		frequency_domain_waveform :	1d array
-									The frequency domain waveform. Also sets
-									the variable `waveforms.frequency_axis`
-
-
-		'''
-
-
-
-
-	def get_angular_frequencies(self, method='CS'):
-		''' Get the instantaneous angular frequency of the waveform.
-
-
-		Parameters
-		----------
-
-		method :	str
-					The method to use for computing the derivative.
-					The available methods are 'CS' (Chebyshev series)
-					or 'FD' (Smoothened finite differences).
-		Returns
-		-------
-
-		waveforms.omega :	1d array
-							The instantaneous frequencies of the waveform.
-							Also sets the corresponding variable.
-
-		'''
->>>>>>> ca9e0de (modes_array init)
-
-
-
-#	def reconstr_waveform():
-
-
-<<<<<<< HEAD
-=======
-
->>>>>>> ca9e0de (modes_array init)
-#	def decompose_waaveform():
-#
-
-
-#	def resample_data():
-
-
-<<<<<<< HEAD
-#	def extrapolate_to_inf_per():
-
-
-#	def extrapolate_to_inf_numeric():
-
-
-#	def apply_CoM_correction():
-
-
-#	def get_strain_from_psi4():
-
-
-=======
-
-#	def extrapolate_to_inf_per():
-
-
-
-#	def extrapolate_to_inf_numeric():
-
-
-
-#	def apply_CoM_correction():
-
-
-
-#	def get_strain_from_psi4():
-
-
-
->>>>>>> ca9e0de (modes_array init)
-#	def get_news_from_psi4():
-
-
-#	def get_psi4_from_news():
-
-
-#	def get_strain_from_news():
-
-
-<<<<<<< HEAD
-=======
-
->>>>>>> ca9e0de (modes_array init)
-#	def get_psi4_from_strain():
-
-
-#	def get_news_from_strain():
-
-
-<<<<<<< HEAD
-=======
-
->>>>>>> ca9e0de (modes_array init)
-#	def apply_supertranslation():
-
-
-#	def apply_boost():
-
-
-<<<<<<< HEAD
-# @base_dir.setter
-# def base_dir(self, base_dir):
-#	 self.__base_dir = base_dir
 
 ################################################################
 # Modes array class
 ################################################################
+
+
+###############################################
+# Numba experimentation
+#######################
+
 
 #spec_ma = { 'label' : nb.types.string,
 #			'data_dir' : nb.types.string,
@@ -985,6 +730,9 @@ class waveform:
 #			'modes_list' : nb.types.List(nb.int32)
 #
 #}
+######################################################
+
+
 #@jitclass(spec_ma)
 class modes_array:
 	"""A class that holds mode array of waveforms
@@ -1927,7 +1675,6 @@ class modes_array:
 		# Multiply with the fourier modes.
 		supertransl_spherical_factor = Psi4_tilde_modes.multiply(supertransl_factor)
 
-		from qlmtools import Yslm_new
 
 		# Reconstruct the modes
 		for ell_value in range(ell_max+1):
@@ -2478,550 +2225,3 @@ def sort_keys(modes_keys_list):
     sorted_modes_keys_list = np.array(modes_keys_list)[sargs]
 
     return sorted_modes_keys_list
-
-=======
-
-
-
-	# @base_dir.setter
-	# def base_dir(self, base_dir):
-	#	 self.__base_dir = base_dir
-
-class modes_array:
-	''' A class that holds mode array of waveforms
-
-	Attributes
-	----------
-
-	label : str
-			The label of the modes array.
-
-	r_ext : float
-			The extraction radius.
-
-	modes_list : list
-				 The list of available modes
-				 in the format [l1, [m values], [l2, [m values], ...]]
-
-	ell_max :	int
-				The maximum :math:`\\ell`
-				mode available.
-
-	modes_data : 3d array
-				 The three dimensional array
-				 containing modes in time/frequency
-				 space. The axis of the array is
-				 (:math:`\\ell`, :math:`m`, time/freq).
-
-	base_dir :	str
-				The base directory containing the
-				modes data.
-
-	data_dir :	str
-				The subdirectory in which to look
-				for the data.
-
-	filename : str
-				The filename containg the modes data.
-
-
-
-	'''
-	def __init__(self,
-				data_dir=None,
-				filename=None,
-				modes_data=None,
-				time_domain=None,
-				freq_domain=None,
-				file_path=None,
-				key_format=None,
-				ell_max=None,
-				modes_list=None,
-				label=None,
-				r_ext = 500
-				):
-
-		self.label		 = label
-		self.datadir	 = data_dir
-		self.filename	 = filename
-		self.modes_data  = modes_data
-		self.key_format  = key_format
-		self.ell_max	 = ell_max
-		self.modes_list  = modes_list
-		self.r_ext		 = r_ext
-
-	def modes_array(self, ell, emm):
-		''' The modes array data structure to hold waveform modes.
-
-		Parameters
-		----------
-
-		ell :		int
-					The :math:`\\ell` index of the mode.
-
-		emm :		int
-					The :math:`m` index of the mode.
-
-		Returns
-		-------
-
-		mode_data :		array
-						The array of the requested mode.
-
-
-		'''
-
-		emm_index = ell+emm
-
-		return self.modes_data[ell, emm_index, :]
-
-	def _create_modes_array(self, ell_max, data_len):
-		''' Create a modes array and initialize it with zeros.
-
-		Parameters
-		----------
-
-		ell_max :	 int
-					 The maximum :math:`\\ell` value of the modes.
-
-		data_len :	int
-					The number of points along the third (time / frequency) axis.
-
-		Returns
-		-------
-
-		self.modes_array :		 modes_array
-								 sets the `self.modes_array` attribute.
-
-		'''
-
-
-		self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)
-
-	@property
-	def delta_t(self, value=None):
-		''' Sets and returns the value of time stepping :math:`dt`.
-
-		Parameters
-		----------
-
-		value : float, optional
-				The value of :math:`dt`
-				to set to the attribute.
-
-		Returns
-		-------
-
-		self.delta_t :	 float
-						 Sets the attribute.
-
-		'''
-
-		#if not self.delta_t:
-		if not value:
-			try:
-					delta_t = self.time_axis[1] - self.time_axis[0]
-			except:
-					print('Please input the value of `delta_t` or supply the `time_axis` to the waveform.')
-		else:
-			delta_t = value
-
-
-		return delta_t
-
-	def load_modes(self, r_ext=500, ell_max=None, pre_key = None, modes_list=None, crop=False):
-			''' Load the waveform mode data from an hdf file.
-
-			Parameters
-			----------
-
-			pre_key :	str, optional
-						A string containing the key of the group in
-						the HDF file in which the modes` dataset exists.
-						It defaults to `None`.
-
-			mode_numbers :	list
-							The mode numbers to load from the file.
-							Each item in the list is a list that
-							contains two integrer numbers, one for
-							the mode index :math:`\\ell` and the
-							other for the mode index :math:`m`.
-
-			crop :	bool
-					Whether or not to crop the beginning of the input
-					waveform. If yes, the first :math:`t=r_{ext}`
-					length of data will be discarded.
-
-			Returns
-			-------
-
-			waveform_obj :	3d array
-							Sets the three dimensional array `waveform.modes` that contains
-							the required :math:`\\ell, m` modes.
-
-			Examples
-			--------
-
-			>>> from waveformtools.waveforms import waveform
-			>>> waveform.set_basedir('./')
-			>>> waveform.set_datadir('data/')
-			>>> mode_numbers = [[2, 2], [3, 3]]
-			>>> waveform.load_data(mode_numbers=mode_numbers)
-			'''
-			import sys
-			# get the full path.
-			full_path = self.data_dir + self.filename
-
-
-			cflag = 0
-			# Open the modes file.
-			with h5py.File(full_path, "r") as wfile:
-
-				#data = np.array(wfile['l0_m0_r500.00'])
-				#print(data)
-				# Get the list of keys.
-				modes_keys_list = sorted(list(wfile.keys()))
-
-				# Construct the list of modes if it doesnt exist.
-				if not modes_list:
-					# If the list of modes is not given
-
-					if not ell_max:
-						# If ell max is also not specified,
-						# construct the list of modes using
-						# the list of modes h5 file keys.
-						modes_list = _get_modes_list_from_keys(modes_keys_list, r_ext)
-
-					else:
-						# If ell max is given, construct the
-						# list of modes.
-						modes_list = construct_mode_list(ell_max)
-
-						# set the modes_list arrtibute.
-				self.modes_list = modes_list
-
-				# Get the ell max
-				ell_max = max([item[0] for item in modes_list])
-
-
-				# Set the ell_max attribute.
-				self.ell_max = ell_max
-
-				# Load the modes listed in mode_numbers list
-				for item in modes_list:
-					# For every ell mode list in modes_list
-
-					ell_value, emm_list = item
-
-					# Iteration index
-					index = 0
-					# Key found token
-					token = -1
-
-					for emm_index, emm_value in enumerate(emm_list):
-						# For every (ell, emm) mode.
-
-						# Find the key corresponding to the mode
-						try:
-							key = str([item for item in modes_keys_list if re.search(f"l{ell_value}_m{emm_value}_r{r_ext}", item)][0])
-							#print('The loaded key is ', key, type(key))
-						   #print('The loaded key is ', key, type(key))
-							#if key=='l0_m0_r500.00':
-								#print('Its alright')
-						except:
-							message(f"Waveform dataset for l{ell_value}, m{emm_value} not found")
-							sys.exit(0)
-
-						# Get the data
-						data = np.array(wfile[key])
-
-						# set the time and data axis
-						time_axis = data[:, 0]
-						data_re   = data[:, 1]
-						data_im   = data[:, 2]
-
-
-
-
-						if not cflag:
-							if not self.modes_data:
-
-								if crop:
-									# Crop the beginning portion.
-									delta_t = time_axis[1] - time_axis[0]
-									shift = int(self.r_ext/delta_t)
-
-								else:
-									shift=0
-								self.data_len  = len(time_axis) - shift
-
-								# Delete the attribute
-								del self.modes_data
-								# Create an array for the waveform mode object
-								self._create_modes_array(ell_max, self.data_len)
-								#self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)
-								cflag = 1
-
-								# set the time axis.
-								self.time_axis = time_axis[shift:]
-
-						self.modes_data[ell_value, emm_index] = data_re[shift:] + 1j*data_im[shift:]
-
-
-	def set_mode_data(self, ell_value, emm_value, data):
-				''' Set the mode array data for the respective :math:`(\\ell, m)` mode.
-
-
-				Parameters
-				----------
-
-				ell_value :		int
-								The :math:`\\ell` polar mode number.
-
-				emm_value :		int
-								The :math:`emm` azimuthal mode number.
-
-				data :		1d array
-							The array consisting of mode data for the requested mode.
-
-				Returns
-				-------
-
-				self.mode_data :	modes_data
-									The updated modes data.
-
-				'''
-				# Compute the emm index given ell.
-				emm_index = emm_value + ell_value
-
-				# Set the mode data.
-				self.modes_data[ell_value, emm_index] = data
-
-
-
-	def extrap_to_inf(self, mass=1, spin=None, modes_list='all', method='SIO'):
-			''' Extrapolate the :math:`\\Psi_4` modes to infinity
-			using the perturbative improved second order method.
-
-			Parameters
-			----------
-
-			mass :		float
-						The effective total mass of the system.
-
-			spin :		float
-						The effective spin of the system.
-
-			modes :		modes array, optional
-						The modes to extrapolate. Defaults
-						to `all` if not specified.
-
-			method :	str
-						The method to use for extrapolation. The available methods are:
-
-						 Method str | Name									|
-						------------+---------------------------------------+
-						'FO'		| First order							|
-						'SO'		| Second order							|
-						'SIO'		| Second improved order					|
-						'NM'		| Numerical method (not ready yet)		|
-
-			Returns
-			-------
-
-			waveform_inf_modes :	modes array
-									A new modes array that contains
-									the extrapolated modes.
-
-			'''
-
-			from functools import partial
-			from waveformtools import extrapolate
-
-			from waveformtools.extrapolate import \
-			waveextract_to_inf_perturbative_one_order, \
-			waveextract_to_inf_perturbative_two_order, \
-			waveextract_to_inf_perturbative_twop5_order
-
-			# Prepare the extrapolating method.
-			if method=='SIO':
-				extrap_method = partial(waveextract_to_inf_perturbative_twop5_order, delta_t=self.delta_t, areal_radius=self.r_ext, Mass=mass, spin=spin)
-
-			if method=='SO' :
-				extrap_method = partial(waveextract_to_inf_perturbative_two_order, delta_t=self.delta_t, areal_radius=self.r_ext, Mass=mass, spin=spin)
-
-			if method=='FO' :
-				extrap_method = partial(waveextract_to_inf_perturbative_one_order, u_ret=self.time_axis, areal_radius=self.r_ext, Mass=mass)
-
-			if method=='NM' :
-				print('This method is not available yet! ')
-
-			# Prepare the modes to be extrapolated.
-			if modes_list=='all':
-				modes_list = construct_mode_list(self.ell_max)
-
-			# Create a mode array for the extrapolated waveform.
-			extrap_wf = modes_array(label='rPsi4_inf')
-
-			extrap_wf._create_modes_array(ell_max=self.ell_max, data_len=self.data_len)
-
-			# Retain the time axis.
-			extrap_wf.time_axis = self.time_axis
-			for mode in modes_list:
-			# Extrapolate every mode
-
-				# Ge the ell value
-				ell_value, emm_list = mode
-
-				for emm_value in emm_list:
-				# For every emm value
-					print(f'Processing l{ell_value}, m{emm_value}')
-					# Compute rPsi4_lm
-					mode_data = self.r_ext * self.modes_array(ell_value, emm_value)
-
-					# Extrapolate
-					#import ipdb; ipdb.set_trace()
-					extrap_mode_data = extrap_method(rPsi4_rlm=mode_data)
-
-					# Assign data to new modes array
-					extrap_wf.set_mode_data(ell_value, emm_value, extrap_mode_data/self.r_ext)
-
-			print('Done!')
-			return extrap_wf
-
-
-	def supertranslate(self, supertrans_alpha_modes, gridinfo, order=4):
-
-			''' Supertranslate the :math:`\\Psi_{4\ell\emm}` waveform modes, give the,
-				the supertranslation parameter and the order.
-
-				Parameters
-				----------
-
-				supertransl_alpha_modes :  modes_array
-										   The modes_array containing the
-										   supertranslation mode coefficients.
-
-
-				gridinfo :		class instance
-								The class instance that contains
-								the properties of the spherical grid
-								using which the computations are
-								carried out.
-
-				order :		int
-							The number of terms to use to
-							approximate the supertranslation.
-
-
-				Returns
-				-------
-
-				Psi4_supertransl :	  modes_array
-									  A class instance containg the
-									  modes of the supertranslated
-									  waveform :math:`\\Psi_4`.
-
-				'''
-
-			ell_max = self.ell_max
-			# Step 0: Get the grid properties for integrations
-
-			# Compute the meshgrid for theta and phi.
-			theta = gridinfo.theta
-			#theta
-			 # Compute the meshgrid for theta and phi.
-			phi   = gridinfo.phi
-
-			# Step 1: get the grid function for supertranslation parameter
-			supertransl_alpha_sphere = BMS.compute_supertransl_alpha(supertransl_alpha_modes, theta, phi)
-
-			# The supertranslation is carried out in frequency space.
-			# Step 2: get the FFT of the mode coefficients of Psi4
-			Psi4_tilde_modes = self.to_frequency_space()
-
-			# Get the 2d angular frequency array
-			omega_axis_2d = Psi4_tilde_modes.omega
-
-			# Construct the supertranslation factor
-			supertransl_factor = np.sum(np.array([np.power((-1j*omega_axis_2d*supertransl_alpha_sphere), index) for index in range(order)]), axis=0)
-
-			# Multiply with the fourier modes.
-			supertransl_spherical_factor = Psi4_tilde_modes.multiply(supertransl_factor)
-
-			from transforms import Yslm
-
-			# Reconstruct the modes
-			for ell_value in range(ell_max):
-				for emm_value in range(-ell_value, ell_value+1):
-					# Multiply with the SWSH basis.
-					supertransl_spherical_grid += supertransl_spherical_factor * Yslm(spin_weight=-2, ell=ell_value, emm=emm_value, theta=theta, phi=phi)
-
-					# Step 3: Reconstruct the function on the sphere
-
-			# Create a spherical_array to hold the supertranslated waveform
-			supertransl_spherical_waveform = spherical_array(gridinfo=gridinfo)
-
-			# Set the data.
-			supertransl_spherical_waveform.data = supertransl_spherical_grid
-
-			# Get modes_array from spherical_array
-			Psi4_supertransl_modes = supertransl_spherical_waveform.to_modes_array(ell_max=ell_max)
-
-			return Psi4_supertransl_modes
-
-
-
-	def boost(self, conformal_factor):
-			''' Boost the waveform given the unboosted waveform and the boost conformal factor.
-
-			Parameters
-			----------
-
-			conformal_factor :		2d array
-									The conformal factor for the Lorentz transformation.
-									It may be a single floating point number or an array
-									on a spherical grid. The array will be of dimensions
-									[ntheta, nphi]
-
-
-			Returns
-			-------
-
-			boosted_waveform :	  spherical_array
-								  The class instance `spherical_array`
-								  that contains the boosted waveform.
-			'''
-
-			from grids import spherical_grid
-
-			# Construct a spherical grid.
-			info = spherical_grid()
-
-			# Get spherical array from modes.
-			unboosted_waveform = self.to_spherical_array(info)
-
-			# Compute the meshgrid for theta and phi.
-			theta = unboosted_waveform.gridinfo.theta
-			phi   = unboosted_waveform.gridinfo.phi
-
-			# A list to store the boosted waveform.
-			boosted_waveform_data = []
-
-			for item in unboosted_waveform.data:
-				# Compute the boosted waveform on the spherical grid on all the elements.
-
-				conformal_k_on_sphere = compute_conformal_k(vec_v, theta, phi)
-				boosted_waveform_item = conformal_k_on_sphere * item
-
-				boosted_waveform_data.append(boosted_waveform_item)
-
-			# Construct a 2d waveform array object
-			boosted_waveform = spherical_array(gridinfo=unboosted_waveform.gridinfo, data=np.array(boosted_waveform_data))
-			boosted_waveform.label='boosted'
-
-			# Get modes from spherical data.
-			boosted_waveform_modes = boosted_waveform.to_modes_array()
-
-			return boosted_waveform_modes
->>>>>>> ca9e0de (modes_array init)
