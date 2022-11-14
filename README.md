@@ -1,6 +1,7 @@
 [![pipeline status](https://gitlab.com/vaishakp/waveformtools/badges/main/pipeline.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main/LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/scri/badge/?version=latest)](https://vaishakp.gitlab.io/waveformtools/?badge=latest)
+[![Project landing page](https://sites.google.com/view/waveformtools/home)]
 
 Waveformtools 
 ===============
