@@ -16,9 +16,14 @@ from waveformtools.waveformtools import message
 from qlmtools import Yslm_new
 
 ####################################################################
+<<<<<<< HEAD
 # Numba experimentation
 #######################
 
+=======
+# Numba
+####################################################################
+>>>>>>> 1f8d932 (add comments sep wave)
 #from numba import jit, njit
 #from numba import jitclass			 # import the decorator
 #from numba import int32, float64, complex128	 # import the types
@@ -34,12 +39,14 @@ from qlmtools import Yslm_new
 #			'spin_weight' : nb.int32
 
 #}
+<<<<<<< HEAD
 ####################################################################
 
 
 ##########################################################
 # Spherical array class
 #######################
+=======
 
 ####################################################################
 
@@ -56,6 +63,7 @@ from qlmtools import Yslm_new
 #################################################
 # Spherical array class
 ################################################
+>>>>>>> 1f8d932 (add comments sep wave)
 
 #@jitclass(spec_sp)
 class spherical_array:
@@ -783,17 +791,21 @@ class spherical_array:
 
 
 
+>>>>>>> 1f8d932 (add comments sep wave)
 
 ################################################################
 # Modes array class
 ################################################################
 
+<<<<<<< HEAD
 
 ###############################################
 # Numba experimentation
 #######################
 
+=======
 # Numba
+>>>>>>> 1f8d932 (add comments sep wave)
 
 #spec_ma = { 'label' : nb.types.string,
 #			'data_dir' : nb.types.string,
@@ -814,10 +826,13 @@ class spherical_array:
 #			'modes_list' : nb.types.List(nb.int32)
 #
 #}
+<<<<<<< HEAD
 ######################################################
+=======
 
 ##############################
 
+>>>>>>> 1f8d932 (add comments sep wave)
 
 
 #@jitclass(spec_ma)

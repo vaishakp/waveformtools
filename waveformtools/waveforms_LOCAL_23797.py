@@ -41,22 +41,6 @@ from qlmtools import Yslm_new
 # Spherical array class
 #######################
 
-####################################################################
-
-
-
-
-###################################################################
-# Begin
-##################################################################
-
-
-
-
-#################################################
-# Spherical array class
-################################################
-
 #@jitclass(spec_sp)
 class spherical_array:
 	"""A class for handling waveforms on a sphere.
@@ -716,73 +700,6 @@ class spherical_array:
 
 		return waveform_modes
 
-<<<<<<< HEAD
-=======
-#########################################################################################
-
-
-
-
-#################################
-# Junk 
-#################################
-
-	# Construct the time axis
-
-
-
-
-#	def reconstr_waveform():
-
-
-#	def decompose_waaveform():
-#
-
-
-#	def resample_data():
-
-
-#	def extrapolate_to_inf_per():
-
-
-#	def extrapolate_to_inf_numeric():
-
-
-#	def apply_CoM_correction():
-
-
-#	def get_strain_from_psi4():
-
-
-#	def get_news_from_psi4():
-
-
-#	def get_psi4_from_news():
-
-
-#	def get_strain_from_news():
-
-
-#	def get_psi4_from_strain():
-
-
-#	def get_news_from_strain():
-
-
-#	def apply_supertranslation():
-
-
-#	def apply_boost():
-
-
-# @base_dir.setter
-# def base_dir(self, base_dir):
-#	 self.__base_dir = base_dir
-###############################################################
-
-
-
-
 
 ################################################################
 # Modes array class
@@ -793,7 +710,6 @@ class spherical_array:
 # Numba experimentation
 #######################
 
-# Numba
 
 #spec_ma = { 'label' : nb.types.string,
 #			'data_dir' : nb.types.string,
@@ -815,9 +731,6 @@ class spherical_array:
 #
 #}
 ######################################################
-
-##############################
-
 
 
 #@jitclass(spec_ma)

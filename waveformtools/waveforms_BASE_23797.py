@@ -15,10 +15,6 @@ import h5py
 from waveformtools.waveformtools import message
 from qlmtools import Yslm_new
 
-####################################################################
-# Numba experimentation
-#######################
-
 #from numba import jit, njit
 #from numba import jitclass			 # import the decorator
 #from numba import int32, float64, complex128	 # import the types
@@ -34,29 +30,6 @@ from qlmtools import Yslm_new
 #			'spin_weight' : nb.int32
 
 #}
-####################################################################
-
-
-##########################################################
-# Spherical array class
-#######################
-
-####################################################################
-
-
-
-
-###################################################################
-# Begin
-##################################################################
-
-
-
-
-#################################################
-# Spherical array class
-################################################
-
 #@jitclass(spec_sp)
 class spherical_array:
 	"""A class for handling waveforms on a sphere.
@@ -241,6 +214,8 @@ class spherical_array:
 
 		darea = sqrt_met_det * grid_info.dtheta * grid_info.dphi
 
+		from qlmtools import Yslm_new
+
 		modes_list = [item for item in modes_list if item[0]>=spin_weight]
 
 		for mode in modes_list:
@@ -265,7 +240,7 @@ class spherical_array:
 
 		return waveform_modes
 
-	def boost(self, conformal_factor, grid_info=None):
+	def boost(self, conformal_factor):
 		""" Boost the waveform given the unboosted waveform and the boost conformal factor.
 
 		Parameters
@@ -292,9 +267,6 @@ class spherical_array:
 
 		from waveformtools.waveforms import spherical_array
 
-		if grid_info is None:
-			grid_info = self.grid_info
-
 		# Compute the boosted waveform on the spherical grid on all the elements.
 
 		boosted_waveform_data = np.transpose(self.data, (2, 0, 1)) * conformal_factor
@@ -303,7 +275,7 @@ class spherical_array:
 		#boosted_waveform_data = np.array([np.transpose(item)*conformal_factor for item in np.transpose(self.data)])
 
 		# Construct a 2d waveform array object
-		boosted_waveform = spherical_array(grid_info=grid_info, data=np.transpose(np.array(boosted_waveform_data), (1, 2, 0)))
+		boosted_waveform = spherical_array(grid_info=self.grid_info, data=np.transpose(np.array(boosted_waveform_data), (1, 2, 0)))
 
 		# Assign other attributes.
 		boosted_waveform.label = "boosted " + self.label
@@ -686,6 +658,7 @@ class spherical_array:
 
 		theta			   =   np.emath.arccos(self.invariant_coordinates_data)
 
+		from qlmtools import Yslm_new
 
 		modes_list = [item for item in modes_list if item[0]>=spin_weight]
 
@@ -715,17 +688,6 @@ class spherical_array:
 				waveform_modes.set_mode_data(ell_value, emm_value, data=multipole_ell_emm)
 
 		return waveform_modes
-
-<<<<<<< HEAD
-=======
-#########################################################################################
-
-
-
-
-#################################
-# Junk 
-#################################
 
 	# Construct the time axis
 
@@ -778,22 +740,10 @@ class spherical_array:
 # @base_dir.setter
 # def base_dir(self, base_dir):
 #	 self.__base_dir = base_dir
-###############################################################
-
-
-
-
 
 ################################################################
 # Modes array class
 ################################################################
-
-
-###############################################
-# Numba experimentation
-#######################
-
-# Numba
 
 #spec_ma = { 'label' : nb.types.string,
 #			'data_dir' : nb.types.string,
@@ -814,12 +764,6 @@ class spherical_array:
 #			'modes_list' : nb.types.List(nb.int32)
 #
 #}
-######################################################
-
-##############################
-
-
-
 #@jitclass(spec_ma)
 class modes_array:
 	"""A class that holds mode array of waveforms
@@ -1762,6 +1706,7 @@ class modes_array:
 		# Multiply with the fourier modes.
 		supertransl_spherical_factor = Psi4_tilde_modes.multiply(supertransl_factor)
 
+		from qlmtools import Yslm_new
 
 		# Reconstruct the modes
 		for ell_value in range(ell_max+1):
@@ -2312,3 +2257,4 @@ def sort_keys(modes_keys_list):
     sorted_modes_keys_list = np.array(modes_keys_list)[sargs]
 
     return sorted_modes_keys_list
+
