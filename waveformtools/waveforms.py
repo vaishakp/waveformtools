@@ -14,7 +14,7 @@ import numpy as np
 import h5py
 from waveformtools.waveformtools import message
 from qlmtools import Yslm_new
-
+from waveformtools import dataIO
 ####################################################################
 # Numba experimentation
 #######################
@@ -716,8 +716,6 @@ class spherical_array:
 
 		return waveform_modes
 
-<<<<<<< HEAD
-=======
 #########################################################################################
 
 
@@ -925,7 +923,7 @@ class modes_array:
 								A dictionary of metedata.
 		"""
 		# The metadata dict
-		unnecessary_keys = ["time_axis", "modes_data", "freq_axis"]
+		unnecessary_keys = ["_time_axis", "_modes_data", "freq_axis"]
 
 		# Get all attributes
 		# metadata = self.__dict__
@@ -963,6 +961,27 @@ class modes_array:
 		emm_index = ell + emm
 
 		return self.modes_data[ell, emm_index, :]
+
+	@property
+	def time_axis(self):
+		''' The time axis '''
+		return np.array(self._time_axis)
+
+	
+	@time_axis.setter
+	def time_axis(self, time_axis):
+		self._time_axis = time_axis
+
+
+	@property
+	def modes_data(self):
+		''' The modes array '''
+		return np.array(self._modes_data)
+
+	@modes_data.setter
+	def modes_data(self, modes_data):
+		self._modes_data = modes_data
+
 
 	def _create_modes_array(self, ell_max=None, data_len=None):
 		"""Create a modes array and initialize it with zeros.
@@ -1030,6 +1049,9 @@ class modes_array:
 
 		return data_len
 
+	@data_len.setter
+	def data_len(self, data_len):
+		self._data_len = data_len
 
 	def delta_t(self, value=None):
 		"""Sets and returns the value of time stepping :math:`dt`.
@@ -1083,7 +1105,21 @@ class modes_array:
 
 		return delta_f
 
-	def load_modes(self, r_ext=None, ell_max=None, pre_key=None, modes_list=None, crop=False, centre=True, key_ex=None, r_ext_factor=1):
+	def load_modes(self, 
+					fdir="./", 
+					fname='*.h5', 
+					ftype='generic', 
+					var_type='Psi4', 
+					resam_type='finest', 
+					interp_kind='cubic', 
+					r_ext=None, 
+					ell_max=None, 
+					pre_key=None, 
+					modes_list=None, 
+					crop=False, 
+					centre=True, 
+					key_ex=None, 
+					r_ext_factor=1):
 		"""Load the waveform mode data from an hdf file.
 
 		Parameters
@@ -1118,189 +1154,66 @@ class modes_array:
 		>>> mode_numbers = [[2, 2], [3, 3]]
 		>>> waveform.load_data(mode_numbers=mode_numbers)
 		"""
-		import sys
-		import re
-		import json
 
-		# get the full path.
-		full_path = self.data_dir + self.file_name
+		#import dataIO
 
-		cflag = 0
-
-		# Ext radius
-		if r_ext is None:
-			r_ext = self.r_ext
-
-		# Open the modes file.
-		with h5py.File(full_path, "r") as wfile:
-
-			#################################
-			# Get metadata
-			###############################
-
-			# Load metadata if present.
-			try:
-				metadata_bytes = bytes(np.void(wfile["metadata"])).decode()
-				metadata = json.loads(metadata_bytes)
-				self.__dict__.update(metadata)
-				message("Metadata loaded")
-
-			except:
-				pass
-
-			# data = np.array(wfile['l0_m0_r500.00'])
-			# print(data)
-			# Get the list of keys.
-			modes_keys_list = list(wfile.keys())
-
-
-			if key_ex is None:
-				# Check attribute.
-				key_ex = self.key_ex
-
-			if key_ex is not None:
-				# Filter the keys according to key_ex if specified.
-				print(key_ex)
-				self.key_ex=key_ex
-				modes_keys_list=[item for item in modes_keys_list if key_ex in item]
-				#print(modes_keys_list)
-
+		if ftype=='generic':
+			dataIO.load_gen_data_from_disk(self, 
+											fdir, 
+											fname, 
+											ftype, 
+											var_type, 
+											resam_type, 
+											interp_kind, 
+											r_ext, 
+											ell_max, 
+											pre_key, 
+											modes_list, 
+											crop, 
+											centre, 
+											key_ex, 
+											r_ext_factor)
+		elif ftype=='RIT':
+			if var_type=='Psi4':
+				dataIO.load_RIT_Psi4_data_from_disk(self,
+                                            fdir,
+                                            fname,
+                                            ftype,
+                                            var_type,
+                                            resam_type,
+                                            interp_kind,
+                                            r_ext,
+                                            ell_max,
+                                            pre_key,
+                                            modes_list,
+                                            crop,
+                                            centre,
+                                            key_ex,
+                                            r_ext_factor)
+			elif var_type=='Strain':
+				dataIO.load_RIT_Strain_data_from_disk(self,
+                                            fdir,
+                                            fname,
+                                            ftype,
+                                            var_type,
+                                            resam_type,
+                                            interp_kind,
+                                            r_ext,
+                                            ell_max,
+                                            pre_key,
+                                            modes_list,
+                                            crop,
+                                            centre,
+                                            key_ex,
+                                            r_ext_factor)
 			else:
-				print('key_ex is not given')
-			modes_keys_list = sorted(modes_keys_list)
+				message(f"Data {ftype} {var_type} not supported yet!")
+				sys.exit(0)
 
-			#print('Modes keys', modes_keys_list)
-			# self.mode_keys_list = modes_keys_list
-			# Construct the list of modes if it doesnt exist.
-
-			##########################
-			# Construct modes list
-			##########################
-
-			if not modes_list:
-				# Check if modes list is given for which mode to load.
-
-				if not self.modes_list:
-					# If the list of modes is not given and the attribute is
-					# also not set, then construct the list of modes.
-
-					if not ell_max:
-						# If ell max is also not specified,
-						# Get it from attr or construct.
-
-						if not self.ell_max:
-							# construct the list of modes using
-							# the list of modes h5 file keys.
-							modes_list = _get_modes_list_from_keys(modes_keys_list, r_ext)
-							#print(modes_list)
-							# Get the ell max
-							ell_max = max([item[0] for item in modes_list])
-							self.ell_max = ell_max
-
-						else:
-							# Get ell_max from attr.
-							ell_max = self.ell_max
-
-					else:
-						self.ell_max = ell_max
-						# If ell max is given, construct the
-						# list of modes directly.
-						modes_list = construct_mode_list(ell_max)
-
-					# set the modes list attr.
-					self.modes_list = modes_list
-
-				else:
-					# Assign to modes_list the attr.
-					modes_list = self.modes_list
-					# if modes list attr is present do nothing.
-
-			else:
-				self.modes_list = modes_list
-				# If modes list is given, get ell_max from it.
-				if not ell_max:
-					# Get the ell max
-					ell_max = max([item[0] for item in modes_list])
-
-			# Set the ell_max attribute if not already.
-			if not self.ell_max:
-				self.ell_max = ell_max
-
-			#################################################
-			# Load modes
-			#################################################
-
-			# Load the modes listed in mode_numbers list
-			for item in self.modes_list:
-				# For every ell mode list in modes_list
-
-				ell_value, emm_list = item
-
-				for emm_index, emm_value in enumerate(emm_list):
-					# For every (ell, emm) mode.
-
-					# Find the key corresponding to the mode
-					try:
-						key = str(
-							[
-								item
-								for item in modes_keys_list
-								if re.search(f"l{ell_value}_m{emm_value}_r{r_ext}", item)
-							][0]
-						)
-						# print('The loaded key is ', key, type(key))
-						# print('The loaded key is ', key, type(key))
-						# if key=='l0_m0_r500.00':
-						# print('Its alright')
-					except:
-						message(f"Waveform dataset for l{ell_value}, m{emm_value} not found")
-						sys.exit(0)
-
-					# Get the data
-					data = np.array(wfile[key])
-
-					# set the time and data axis
-					time_axis = data[:, 0]
-					data_re = data[:, 1]
-					data_im = data[:, 2]
-
-					if not cflag:
-						if not self.modes_data:
-
-							if crop:
-								# Crop the beginning portion.
-								delta_t = time_axis[1] - time_axis[0]
-								shift = int(self.r_ext / delta_t)
-
-							else:
-								shift = 0
-							data_len = len(time_axis) - shift
-							# self.data_len = data_len
-							# Delete the attribute
-							del self.modes_data
-							# Create an array for the waveform mode object
-							self._create_modes_array(self.ell_max, data_len)
-							# self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)
-							#self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)
-
-							cflag = 1
-
-							# set the time axis.
-							# self.time_axis = time_axis[shift:]
-
-					self.modes_data[ell_value, emm_index] = r_ext_factor*(data_re[shift:] + 1j * data_im[shift:])
-
-			##############################
-			# Recenter axis
-			##############################
-			maxloc = np.argmax(np.absolute(self.mode(2, 2)))
-			maxtime = time_axis[shift + maxloc]
-			if self.maxtime is None:
-				self.maxtime = maxtime
-			print("Max time is", maxtime)
-
-			if centre:
-				self.time_axis = time_axis[shift:] - maxtime
+		else:
+			message(f"Data {ftype} {var_type} not supported yet!")
+			sys.exit(0)
+			
 
 	def save_modes(
 		self,
@@ -1342,75 +1255,17 @@ class modes_array:
 		>>> mode_numbers = [[2, 2], [3, 3]]
 		>>> waveform.load_data(mode_numbers=mode_numbers)
 		"""
+		#import dataIO
 
-		import json
-
-		#############################
-		# I/O assignments.
-		#############################
-
-		self.out_file_name = self.label + '_' + out_file_name
-		self.out_file_name.replace(' ', '_')
-
-		# get the full path.
-		full_path = self.data_dir + self.out_file_name
-
-		if r_ext is None:
-			if self.r_ext is None:
-				r_ext = 500
-			else:
-				r_ext = self.r_ext
-
-		if r_ext_factor is None:
-			r_ext_factor = self.r_ext
-
-		###################################
-		# Identify the modes to save.
-		###################################
-
-		if not modes_to_save:
-
-			if ell_max is not None:
-				modes_to_save = self.modes_list[:ell_max]
-
-			else:
-				modes_to_save = self.modes_list
-
-		##########################
-		# Create the modes file.
-		##########################
-
-		with h5py.File(full_path, "w") as wfile:
-
-			# Create the metadata dataset.
-			metadata = self.get_metadata()
-
-			metadata_bytes = json.dumps(metadata).encode()
-
-			# dt = h5py.special_dtype(vlen=str)
-			# metadata=np.asarray([metadata_bytes], dtype=dt)
-			wfile.create_dataset("metadata", data=metadata_bytes, compression_opts=compression_opts)
-
-			# Load the modes listed in mode_numbers list
-			for item in modes_to_save:
-				# For every ell mode list in modes_list
-
-				ell_value, emm_list = item
-
-				for emm_value in emm_list:
-					# For every (ell, emm) mode.
-
-					data = self.mode(ell_value, emm_value)
-					# set the time and data axis
-					data_re = data.real
-					data_im = data.imag
-
-					save_data = np.transpose(np.array([self.time_axis, data_re, data_im]))
-					# Make the key
-					key = _key_gen(ell_value, emm_value, extras=f"r{r_ext:.2f}")
-					# print('Processing key', key)
-					# Create data set
-					wfile.create_dataset(key, data=save_data)
+		dataIO.save_modes_data_to_gen(self,
+        								ell_max=None,
+        								pre_key=None,
+        								key_format=None,
+        								modes_to_save=None,
+        								out_file_name="mp_new_modes.h5",
+        								r_ext_factor = None,
+        								compression_opts=0,
+        								r_ext=None)
 
 	def set_mode_data(self, ell_value, emm_value, data):
 		"""Set the mode array data for the respective :math:`(\\ell, m)` mode.
@@ -1433,7 +1288,7 @@ class modes_array:
 		emm_index = emm_value + ell_value
 
 		# Set the mode data.
-		self.modes_data[ell_value, emm_index] = data
+		self._modes_data[ell_value, emm_index] = data
 
 
 	def to_spherical_array(self, grid_info, spin_weight=None):
@@ -1505,7 +1360,8 @@ class modes_array:
 
 
 	def trim(self, trim_upto_time=None):
-		""" Trim the modes_array at the beginning.
+		""" Trim the modes_array at the beginning and center about
+			the peak of the 2,2 mode.
 
 		Parameters
 		----------
@@ -1524,14 +1380,14 @@ class modes_array:
 		start = int(trim_upto_time/self.delta_t())
 
 		# Trim the time axis
-		self.time_axis = self.time_axis[start:]
+		self._time_axis = self.time_axis[start:]
 
 		# Trim the data
-		self.modes_data = self.modes_data[:, :, start:]
+		self._modes_data = self.modes_data[:, :, start:]
 
 		# Recenter the time axis
 		max_ind = np.argmax(np.absolute(self.mode(2, 2)))
-		self.time_axis = self.time_axis - self.time_axis[max_ind]
+		self._time_axis = self.time_axis - self.time_axis[max_ind]
 
 	def to_frequency_basis(self):
 		"""Compute the modes in frequency basis.
@@ -2259,36 +2115,6 @@ def construct_mode_list(ell_max, spin_weight=-2):
 
 	return modes_list
 
-
-def _key_gen(ell, emm, extras=None):
-	"""Generates strings to be used as keys for
-	managing h5 datasets.
-
-	Parameters
-	----------
-	ell:	int
-					The polar angular mode number
-					:math:`\\ell`.
-	emm : int
-			  The aximuthal angular mode number
-			  :math:`m`.
-	extras:	str
-				Any extra string to be appended
-				to the end of the key.
-
-	Returns
-	-------
-	key:	 str
-					 A string key.
-	"""
-
-	key = f"l{ell}_m{emm}"
-
-	if extras is not None:
-		key += f"_{extras}"
-		# print('adding rext')
-
-	return key
 
 def sort_keys(modes_keys_list):
     ''' Sort the keys in a list based on
