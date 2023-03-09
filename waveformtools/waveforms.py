@@ -1112,6 +1112,7 @@ class modes_array:
 					var_type='Psi4',
 					resam_type='finest',
 					interp_kind='cubic',
+					extrap_order=4,
 					r_ext=None,
 					ell_max=None,
 					pre_key=None,
@@ -1124,6 +1125,8 @@ class modes_array:
 
 		Parameters
 		----------
+		extrap_order : int, optional
+					   For SpEC waveforms only. This is the order of extrapolation to use.
 
 		pre_key:	str, optional
 								A string containing the key of the group in
@@ -1210,6 +1213,22 @@ class modes_array:
 				message(f"Data {ftype} {var_type} not supported yet!")
 				sys.exit(0)
 
+		elif ftype=="SpEC":
+			dataIO.load_SpEC_data_from_disk(self,
+                                            label,
+                                            fdir,
+                                            fname,
+											extrap_order,
+                                            r_ext,
+                                            ell_max,
+                                            centre,
+                                            modes_list,
+                                            r_ext_factor,
+                                            save_as_ma,
+                                            resam_type,
+                                            interp_kind,
+                                            compression_opts,
+                                            r_ext_factor)
 		elif ftype=='SpECTRE':
 			dataIO.load_SpECTRE_data_from_disk(self,
 											alias,
