@@ -722,7 +722,7 @@ class spherical_array:
 
 
 #################################
-# Junk 
+# Junk
 #################################
 
 	# Construct the time axis
@@ -967,7 +967,7 @@ class modes_array:
 		''' The time axis '''
 		return np.array(self._time_axis)
 
-	
+
 	@time_axis.setter
 	def time_axis(self, time_axis):
 		self._time_axis = time_axis
@@ -1105,20 +1105,20 @@ class modes_array:
 
 		return delta_f
 
-	def load_modes(self, 
-					fdir="./", 
-					fname='*.h5', 
-					ftype='generic', 
-					var_type='Psi4', 
-					resam_type='finest', 
-					interp_kind='cubic', 
-					r_ext=None, 
-					ell_max=None, 
-					pre_key=None, 
-					modes_list=None, 
-					crop=False, 
-					centre=True, 
-					key_ex=None, 
+	def load_modes(self,
+					fdir="./",
+					fname='*.h5',
+					ftype='generic',
+					var_type='Psi4',
+					resam_type='finest',
+					interp_kind='cubic',
+					r_ext=None,
+					ell_max=None,
+					pre_key=None,
+					modes_list=None,
+					crop=False,
+					centre=True,
+					key_ex=None,
 					r_ext_factor=1):
 		"""Load the waveform mode data from an hdf file.
 
@@ -1158,20 +1158,20 @@ class modes_array:
 		#import dataIO
 
 		if ftype=='generic':
-			dataIO.load_gen_data_from_disk(self, 
-											fdir, 
-											fname, 
-											ftype, 
-											var_type, 
-											resam_type, 
-											interp_kind, 
-											r_ext, 
-											ell_max, 
-											pre_key, 
-											modes_list, 
-											crop, 
-											centre, 
-											key_ex, 
+			dataIO.load_gen_data_from_disk(self,
+											fdir,
+											fname,
+											ftype,
+											var_type,
+											resam_type,
+											interp_kind,
+											r_ext,
+											ell_max,
+											pre_key,
+											modes_list,
+											crop,
+											centre,
+											key_ex,
 											r_ext_factor)
 		elif ftype=='RIT':
 			if var_type=='Psi4':
@@ -1210,10 +1210,25 @@ class modes_array:
 				message(f"Data {ftype} {var_type} not supported yet!")
 				sys.exit(0)
 
+		elif ftype=='SpECTRE':
+			dataIO.load_SpECTRE_data_from_disk(self,
+											alias,
+                                            fdir,
+                                            fname,
+											r_ext,
+                                            ell_max,
+                                            centre,
+                                            modes_list,
+                                            r_ext_factor,
+											save_as_ma,
+											resam_type,
+											interp_kind,
+											compression_opts,
+                                            r_ext_factor)
 		else:
 			message(f"Data {ftype} {var_type} not supported yet!")
 			sys.exit(0)
-			
+
 
 	def save_modes(
 		self,
