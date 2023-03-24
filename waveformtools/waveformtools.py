@@ -1842,49 +1842,49 @@ def taper(data, delta_t=1, zeros=150):
 	return tapered_data
 
 def low_cut_filter(utilde, freqs, order=2, omega0=0.03):
-    ''' Apply low frequency cut filter using a butterworth filter.
+	''' Apply low frequency cut filter using a butterworth filter.
 
-    Parameters
-    ----------
-    utilde:    1d array
-               The frequency domain data.
-    freqs:     1d array
-               The frequencies.
-    order:     int
-               The order of the butterworth filter.
-    omega0:    float
-               The cutoff frequency of the butterworth filter.
+	Parameters
+	----------
+	utilde:    1d array
+			   The frequency domain data.
+	freqs:	   1d array
+			   The frequencies.
+	order:	   int
+			   The order of the butterworth filter.
+	omega0:    float
+			   The cutoff frequency of the butterworth filter.
 
-    Returns
-    -------
-    utilde_lc:    1d array
-                  The filtered data.
-    '''
+	Returns
+	-------
+	utilde_lc:	  1d array
+				  The filtered data.
+	'''
 
-    from scipy import signal
-    from scipy.interpolate import interp1d
+	from scipy import signal
+	from scipy.interpolate import interp1d
 
-    #import matplotlib.pyplot as plt
+	#import matplotlib.pyplot as plt
 
-    b, a = signal.butter(order, omega0, 'high', analog=True)
+	b, a = signal.butter(order, omega0, 'high', analog=True)
 
-    w, h = signal.freqs(b, a)
+	w, h = signal.freqs(b, a)
 
-    # Make negative axis and data.
-    filter_freqs = np.concatenate((-w[::-1], w))
-    filter_coeffs = np.concatenate((np.conjugate(h[::-1]), h))
+	# Make negative axis and data.
+	filter_freqs = np.concatenate((-w[::-1], w))
+	filter_coeffs = np.concatenate((np.conjugate(h[::-1]), h))
 
-    # Resample the filter at data freqs.
-    filter_int = interp1d(filter_freqs, filter_coeffs)
-    filter_resam = filter_int(freqs)
+	# Resample the filter at data freqs.
+	filter_int = interp1d(filter_freqs, filter_coeffs)
+	filter_resam = filter_int(freqs)
 
-    #signal_int = interp1d(wf1_strain_tap2_tilde.frequency_axis, wf1_strain_tap2_tilde.mode(2,2))
+	#signal_int = interp1d(wf1_strain_tap2_tilde.frequency_axis, wf1_strain_tap2_tilde.mode(2,2))
 
-    #signal_resam = signal_int(w)
+	#signal_resam = signal_int(w)
 
-    filtered_signal = utilde*filter_resam
+	filtered_signal = utilde*filter_resam
 
-    return filtered_signal
+	return filtered_signal
 
 
 def center(wvp, wvc=None, delta_t=None):
@@ -2230,7 +2230,7 @@ def coalignwfs2(tsdata1, tsdata2, delta_t=None):
 
 	# Find the location of the maximum element in acsnr
 	maxloc = (np.where(acsnr == np.max(acsnr)))[0][0]
-	mmatch  = np.amax(acsnr)
+	mmatch	= np.amax(acsnr)
 	message(f"Max location is {maxloc}, match is {mmatch} max shift is {max_shift}")
 
 	# Shift the waveform 1 in time using maxloc
@@ -2254,135 +2254,320 @@ def coalignwfs2(tsdata1, tsdata2, delta_t=None):
 
 	return aligned_waveforms
 
-def simple_match_wfs(all_time_axes, all_waveforms):
-    ''' Match two waveforms and return the time shift,
-    phase shift, normalized waveforms and match coefficient.
 
-    Parameters
-    ----------
-    time_axes: list
-            A list containing the time axes
-            of the two waveforms
+def resample_wfs(both_time_axes, both_waveforms, delta_t='auto'):
+	''' Resample the waveform pairs.
 
-    waveforms: list
-                A list of two waveforms.
-                Each is a 1d array.
+	Parameters
+	----------
+	both_time_axes : list
+					 A list containing two 1d arrays representing the time axes.
+	both_waveforms : list
+					 A list containing two 1d arrays respresenting the waveforms.
+	delta_t		   : string, float
+					 The time step to resample at. Auto uses the finest of the two available.
+					 A float value can be provided by the user as well.
 
-    change: int
-            Which waveform to change, 1 or 2.
+	Returns
+	-------
+	both_time_axes_resam : 1d array
+						   A 1d array representing the resampled time axes.
+	both_waveforms_resam : list
+						   A list containing two 1d arrays respresenting the resampled waveforms.
+	'''
 
-    Returns
-    -------
-    match_details: dict
-                    A dictionary containing the
-                    i). match coeffient
-                    ii). time_shift
-                    iii). phase shift
-                    iv). normalized waveforms and their
-                         time-axes.
-    '''
+	from waveformtools.waveformtools import lengtheq
 
-    # Step 1: resample
-    from scipy.interpolate import interp1d
+	waveform1, waveform2 = all_waveforms
+	time_axis1, time_axis2 = all_time_axes
+	
+	min_t = max(min(time_axis1), min(time_axis2))
+	max_t = min(max(time_axis1), max(time_axis2))
 
-    from waveformtools.waveformtools import match_wfs
-    from waveformtools.waveformtools import lengtheq
+	print('Taxis limits')
+	print(f'WF1 tmin {min(time_axis1)} tmax {max(time_axis1)}')
+	print(f'WF2 tmin {min(time_axis2)} tmax {max(time_axis2)}')
 
-    waveform1, waveform2 = all_waveforms
-    time_axis1, time_axis2 = all_time_axes
+	delta_t1 = sorted(time_axis1)[1] - sorted(time_axis1)[0]
+	delta_t2 = sorted(time_axis2)[1] - sorted(time_axis2)[0]
+ 
+	if not isinstance(delta_t, float):
 
-    print('Taxis limits')
-    print(f'Shear tmin {min(time_axis1)} tmax {max(time_axis1)}')
-    print(f'News tmin {min(time_axis2)} tmax {max(time_axis2)}')
+		if delta_t=='auto':
+			delta_t = min(delta_t1, delta_t2) 
+		elif delta_t=='A':
+			delta_t = delta_t1
+		elif delta_t=='B':
+			delta_t = delta_t2
+			  
+	# Plot
+	#plt.plot(shear_1.time_axis, np.absolute(shear_1.mode(2, 2))/np.amax(shear_1.mode(2, 2)), label='shear')
+	#plt.plot(shear_1.time_axis, np.absolute(wf1_resam)/np.amax(wf1.mode(2, 2)), label='news')
+	#plt.grid()
+	#plt.legend()
+	#plt.show()
 
-    delta_t_1 = time_axis1[1] - time_axis1[0]
-    delta_t = time_axis2[1] - time_axis2[0]
-    #plt.plot(shear_1.time_axis, np.absolute(shear_1.mode(2, 2))/np.amax(shear_1.mode(2, 2)), label='shear')
-    #plt.plot(shear_1.time_axis, np.absolute(wf1_resam)/np.amax(wf1.mode(2, 2)), label='news')
-    #plt.grid()
-    #plt.legend()
-    #plt.show()
+	#time_axis = shear_1.time_axis
+	#waveform1, waveform2, flag = lengtheq(waveform1, waveform2, delta_t=delta_t)
 
-    #time_axis = shear_1.time_axis
-    #waveform1, waveform2, flag = lengtheq(waveform1, waveform2, delta_t=delta_t)
+	
+	new_time_axis		= np.linspace(min_t, max_t, delta_t)
 
-    wf1_amp, wf1_phase = xtract_camp_phase(waveform1.real, waveform1.imag)
-    wf2_amp, wf2_phase = xtract_camp_phase(waveform2.real, waveform2.imag)
-
-    wf1_amp_int_fun = interp1d(time_axis1, wf1_amp)
-    wf1_phase_int_fun = interp1d(time_axis1, wf1_phase)
-
-    wf1_amp_resam = wf1_amp_int_fun(time_axis2)
-    wf1_phase_resam = wf1_phase_int_fun(time_axis2)
-
-    delta_phase = wf1_phase_resam - wf2_phase
-
-    from waveformtools.waveformtools import roll
-    corrs = []
-    for index in range(len(time_axis2)):
-        rwf2 = roll(wf2_amp, index)
-
-        corrs.append(np.dot(rwf2, wf1_amp_resam))
-
-    #maxloc = np.argmax(corrs)
-    shift  = np.argmax(np.array(corrs))
-    print(f'The shift units is {shift}')
-    ## ii). apply the time shift to the second waveform
-
-    if shift != 0:
-        wf2_amp_shifted = roll(wf2_amp, shift)
-        wf2_phase_shifted = roll(wf2_phase, shift)
-        wf2_shifted = roll(waveform2, shift)
-    else:
-        wf2_amp_shifted = wf2_amp
-        wf2_phase_shifted = wf2_phase
-        wf2_shifted = waveform2
-
-    mid = int(len(time_axis2)/2)
-    phase_shift = np.mean(delta_phase[mid-100:mid+100])
-
-    from waveformtools.transforms import compute_fft, compute_ifft
-    faxis0, wf1_tilde = compute_fft(waveform1, delta_t_1)
-
-    delta_f = faxis0[1] - faxis0[0]
-
-    wf1_tilde_phase_shifted = wf1_tilde * np.exp(1j * phase_shift)
-    taxis0, wf1_aligned = compute_ifft(wf1_tilde_phase_shifted, delta_f)
-
-    maxloc = np.argmax(np.absolute(wf1_aligned))
-    taxis0 = taxis0 - taxis0[maxloc]
-
-    start_time = min(time_axis2)
-    end_time = max(time_axis2)
-
-    start_ind = int((start_time - taxis0[0])/delta_t)
-    end_ind = int((end_time - taxis0[0])/delta_t)
-
-    wf1_aligned_cropped = wf1_aligned[start_ind:end_ind]
-
-    aligned_time_axis = taxis0[start_ind:end_ind]
-
-    norm1 = np.sum(wf1_aligned_cropped * np.conjugate(wf1_aligned_cropped))
-    norm2 = np.sum(waveform2 * np.conjugate(waveform2))
+	wf1_amp, wf1_phase	= xtract_camp_phase(waveform1.real, waveform1.imag)
+	wf2_amp, wf2_phase	= xtract_camp_phase(waveform2.real, waveform2.imag)
 
 
+	wf1_amp_int_fun		= interp1d(time_axis1, wf1_amp)
+	wf1_phase_int_fun	= interp1d(time_axis1, wf1_phase)
 
-    mlen = min(len(wf1_aligned_cropped), len(wf2_shifted))
+	wf1_amp_resam		= wf1_amp_int_fun(new_time_axis)
+	wf1_phase_resam		= wf1_phase_int_fun(new_time_axis)
+	wf1_resam			= wf2_amp_resam*np.exp(1j*wf2_phase_resam)
+		
+	wf2_amp_resam		= wf2_amp_int_fun(new_time_axis)
+	wf2_phase_resam		= wf2_phase_int_fun(new_time_axis)
+	wf2_resam			= wf2_amp_resam*np.exp(1j*wf2_phase_resam)
 
-    waveform1_aligned= wf1_aligned_cropped[:mlen]/norm1
-    waveform2_aligned= wf2_shifted[:mlen]/norm2
 
-    aligned_time_axis = aligned_time_axis[:mlen]
-    match_score = np.dot(wf1_aligned_cropped[:mlen], np.conjugate(wf2_shifted[:mlen]))/(norm1*norm2)
+	return [new_time_axis, [wf1_resam, wf2_resam]]
+	
 
-    match_details = { 'match_score' : match_score,
-                      'time_shift'  : shift * delta_t,
-                      'phase_shift' : phase_shift,
-                      'time'        : aligned_time_axis,
-                      'aligned_waveforms' : [waveform1_aligned, waveform2_aligned]
-                    }
+	
+def match_wfs(all_time_axes, all_waveforms, delta_t='auto'):
+	''' Match two waveforms and return the time shift,
+	phase shift, normalized waveforms and match coefficient.
 
-    return match_details
+	Parameters
+	----------
+	time_axes: list
+			A list containing the time axes
+			of the two waveforms
+
+	waveforms: list
+				A list of two waveforms.
+				Each is a 1d array.
+	delta_t: float, string, optional
+			 The time step of the resampled arrays.
+			 Can be A, B, auto or any float value.
+	
+	Returns
+	-------
+	match_details: dict
+					A dictionary containing the
+					i). match coeffient
+					ii). time_shift
+					iii). phase shift in radians
+					iv). normalized, resampled, waveforms and their
+						 time-axes.
+
+	Note
+	----
+	The shifts give by how much the first waveform has to be shifted to match with the second.
+
+	'''
+
+	time_axis1, time_axis2 = all_time_axes
+
+	if time_axis1.all() == time_axis2.all():
+		time_axis  = time_axis1
+		wf1, wf2 = all_waveforms
+		delta_t = sorted(time_axis1)[0] - sorted(time_axis1)[1]		
+
+	else:
+		time_axis, wf1, wf2 = resample_wfs(all_time_axes, all_waveforms, delta_t)
+
+	from waveformtools.transforms import compute_fft, compute_ifft
+
+	# The Fspace waveforms
+	faxis, wf1_tilde	= compute_fft(wf1, delta_t)
+	_, wf2_tilde		= compute_fft(wf2, delta_t)
+	delta_f 			= faxis[1] - faxis[0]
+	# Compute the Fspace complex SNR
+	csnr_tilde			= wf1_tilde * np.conjugate(wf2_tilde)
+	# Tspace CSNR
+	_, csnr				= compute_ifft(csnr_tilde, delta_f)
+	# T space CSNR amp and phase
+	Acsnr				= np.absolute(csnr)
+
+	# Compute shift quantities for waveform 2 against 1
+	# Time shift
+	Tshift_rec_index	= np.argmax(Acsnr)
+	max_snr				= np.amax(Acsnr)
+	Tshift_rec			= (len(time_axis) - Tshift_rec_index)*delta_t
+	# Phase shift
+	Pshift_rec			= csnr[Tshift_rec_index]/np.absolute(csnr[Tshift_rec_index])
+	Pshift_rec_rad		= np.log(Pshift_rec)/(1j)
+
+	print('-----------------------------------\n Shift information for waveform 2 against 1 \n')
+	print(f'Recovered Time shift: {Tshift_rec}')
+	print(f'Recovered Phase shift: {Pshift_rec}, {Pshift_rec_rad} in radians')
+	print('-----------------------------------')
+
+
+	## Apply the time shift to the second waveform
+
+	if Tshift_rec_index != 0:
+		wf2_Trec = roll(wf2, Tshift_rec_index)
+	else:
+		wf2_Trec = wf2
+
+	if Pshift_rec != 1:
+		_, wf2_Trec_tilde = compute_fft(wf2_Trec, delta_t)
+		Pshift2_rad = (2*np.pi-Pshift_rec_rad)
+		Pshift2_fac = np.exp(1j*Pshift2_rad)
+		wf2_TPrec_tilde =  wf2_Trec_tilde*Pshift2_fac
+
+		_, wf2_TPrec = compute_ifft(wf2_TPrec_tilde, delta_f)
+
+	else:
+		wf2_TPrec = wf2_Tshifted
+
+	norm1 = np.sqrt(np.sum(wf1* np.conjugate(wf1)))
+	norm2 = np.sqrt(np.sum(wf2_TPrec * np.conjugate(wf2_TPrec)))
+
+	waveform1_aligned= wf1/norm1
+	waveform2_aligned= wf2_TPrec/norm2
+
+	match_score = np.sum(waveform1_aligned * np.conjugate(waveform2_aligned)) #max_snr/(norm1*norm2)
+	
+	match_details = { 'match_score' : match_score,
+					  'time_shift'	: Tshift_rec,
+					  'phase_shift' : Pshift_rec_rad,
+					  'time'		: time_axis,
+					  'aligned_waveforms' : [waveform1_aligned, waveform2_aligned]
+					}
+
+	return match_details
+
+def match_wfs_pycbc(all_time_axes, all_waveforms):
+	''' Match two waveforms using pycbc subroutines and return the time shift,
+	phase shift, normalized waveforms and match coefficient.
+
+	Parameters
+	----------
+	time_axes: list
+			A list containing the time axes
+			of the two waveforms
+
+	waveforms: list
+				A list of two waveforms.
+				Each is a 1d array.
+
+	change: int
+			Which waveform to change, 1 or 2.
+
+	Returns
+	-------
+	match_details: dict
+					A dictionary containing the
+					i). match coeffient
+					ii). time_shift
+					iii). phase shift
+					iv). normalized waveforms and their
+						 time-axes.
+	'''
+
+	# Step 1: resample
+	from scipy.interpolate import interp1d
+
+	from waveformtools.waveformtools import match_wfs
+	from waveformtools.waveformtools import lengtheq
+
+	waveform1, waveform2 = all_waveforms
+	time_axis1, time_axis2 = all_time_axes
+
+	print('Taxis limits')
+	print(f'Shear tmin {min(time_axis1)} tmax {max(time_axis1)}')
+	print(f'News tmin {min(time_axis2)} tmax {max(time_axis2)}')
+
+	delta_t_1 = time_axis1[1] - time_axis1[0]
+	delta_t = time_axis2[1] - time_axis2[0]
+	#plt.plot(shear_1.time_axis, np.absolute(shear_1.mode(2, 2))/np.amax(shear_1.mode(2, 2)), label='shear')
+	#plt.plot(shear_1.time_axis, np.absolute(wf1_resam)/np.amax(wf1.mode(2, 2)), label='news')
+	#plt.grid()
+	#plt.legend()
+	#plt.show()
+
+	#time_axis = shear_1.time_axis
+	#waveform1, waveform2, flag = lengtheq(waveform1, waveform2, delta_t=delta_t)
+
+	wf1_amp, wf1_phase = xtract_camp_phase(waveform1.real, waveform1.imag)
+	wf2_amp, wf2_phase = xtract_camp_phase(waveform2.real, waveform2.imag)
+
+	wf1_amp_int_fun = interp1d(time_axis1, wf1_amp)
+	wf1_phase_int_fun = interp1d(time_axis1, wf1_phase)
+
+	wf1_amp_resam = wf1_amp_int_fun(time_axis2)
+	wf1_phase_resam = wf1_phase_int_fun(time_axis2)
+
+	delta_phase = wf1_phase_resam - wf2_phase
+
+	from waveformtools.waveformtools import roll
+	corrs = []
+	for index in range(len(time_axis2)):
+		rwf2 = roll(wf2_amp, index)
+
+		corrs.append(np.dot(rwf2, wf1_amp_resam))
+
+	#maxloc = np.argmax(corrs)
+	shift  = np.argmax(np.array(corrs))
+	print(f'The shift units is {shift}')
+	## ii). apply the time shift to the second waveform
+
+	if shift != 0:
+		wf2_amp_shifted = roll(wf2_amp, shift)
+		wf2_phase_shifted = roll(wf2_phase, shift)
+		wf2_shifted = roll(waveform2, shift)
+	else:
+		wf2_amp_shifted = wf2_amp
+		wf2_phase_shifted = wf2_phase
+		wf2_shifted = waveform2
+
+	mid = int(len(time_axis2)/2)
+	phase_shift = np.mean(delta_phase[mid-100:mid+100])
+
+	from waveformtools.transforms import compute_fft, compute_ifft
+	faxis0, wf1_tilde = compute_fft(waveform1, delta_t_1)
+
+	delta_f = faxis0[1] - faxis0[0]
+
+	wf1_tilde_phase_shifted = wf1_tilde * np.exp(1j * phase_shift)
+	taxis0, wf1_aligned = compute_ifft(wf1_tilde_phase_shifted, delta_f)
+
+	maxloc = np.argmax(np.absolute(wf1_aligned))
+	taxis0 = taxis0 - taxis0[maxloc]
+
+	start_time = min(time_axis2)
+	end_time = max(time_axis2)
+
+	start_ind = int((start_time - taxis0[0])/delta_t)
+	end_ind = int((end_time - taxis0[0])/delta_t)
+
+	wf1_aligned_cropped = wf1_aligned[start_ind:end_ind]
+
+	aligned_time_axis = taxis0[start_ind:end_ind]
+
+	norm1 = np.sum(wf1_aligned_cropped * np.conjugate(wf1_aligned_cropped))
+	norm2 = np.sum(waveform2 * np.conjugate(waveform2))
+
+
+
+	mlen = min(len(wf1_aligned_cropped), len(wf2_shifted))
+
+	waveform1_aligned= wf1_aligned_cropped[:mlen]/norm1
+	waveform2_aligned= wf2_shifted[:mlen]/norm2
+
+	aligned_time_axis = aligned_time_axis[:mlen]
+	match_score = np.dot(wf1_aligned_cropped[:mlen], np.conjugate(wf2_shifted[:mlen]))/(norm1*norm2)
+
+	match_details = { 'match_score' : match_score,
+					  'time_shift'	: shift * delta_t,
+					  'phase_shift' : phase_shift,
+					  'time'		: aligned_time_axis,
+					  'aligned_waveforms' : [waveform1_aligned, waveform2_aligned]
+					}
+
+	return match_details
 
 
 def simplematch_wfs_old(waveforms, delta_t=None):
@@ -2554,7 +2739,7 @@ def pmmatch_wfs(waveforms, offset=25, crop=None):
 	return matchdet
 
 
-def match_wfs(waveforms, delt=None):
+def match_wfs_pycbc_old(waveforms, delt=None):
 	"""Match given waveforms. Find the overlap.
 
 	Procedure

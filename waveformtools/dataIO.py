@@ -353,6 +353,7 @@ def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT
 
 	# Max available mode l.
 	ell_max_act, keys_list = get_ell_max_RIT(data_dir=data_dir, var_type='Strain', file_name=file_name)
+	
 	if ell_max == None:
 		ell_max = ell_max_act
 
