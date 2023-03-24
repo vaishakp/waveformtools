@@ -13,8 +13,8 @@ modes_array: A data-type.
 import numpy as np
 import h5py
 from waveformtools.waveformtools import message
-from qlmtools import Yslm_new
-from waveformtools import dataIO
+from qlmtools import Yslm_vec
+#from waveformtools import dataIO
 ####################################################################
 # Numba experimentation
 #######################
@@ -251,7 +251,7 @@ class spherical_array:
 
 				# Spin weighted spherical harmonic function at (theta, phi)
 
-				Ybasis_fun = np.conj(Yslm_new(spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta, phi_grid=phi))
+				Ybasis_fun = np.conj(Yslm_vec(spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta, phi_grid=phi))
 
 				Ydarea = Ybasis_fun * darea
 				#print(Ydarea.shape)
@@ -697,8 +697,8 @@ class spherical_array:
 				#print(f'Processing l{ell_value} m{emm_value}')
 				# Spin weighted spherical harmonic function at (theta, phi)
 
-				Ybasis_fun = np.conj(Yslm_new(spin_weight=spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta, phi_grid=phi))
-				#Ybasis_fun = np.array([np.conj(Yslm_new(spin_weight=spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta[:, :, index], phi_grid=phi[:, :, index])) for index in range(self.data_len)])
+				Ybasis_fun = np.conj(Yslm_vec(spin_weight=spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta, phi_grid=phi))
+				#Ybasis_fun = np.array([np.conj(Yslm_vec(spin_weight=spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta[:, :, index], phi_grid=phi[:, :, index])) for index in range(self.data_len)])
 				#Ybasis_fun = np.transpose(Ybasis_fun, (1, 2, 0))
 				#print('Ybasis_fun', Ybasis_fun.shape)
 				Ydarea = Ybasis_fun * darea
@@ -1106,8 +1106,9 @@ class modes_array:
 		return delta_f
 
 	def load_modes(self,
-					fdir="./",
-					fname='*.h5',
+					label=None,
+					data_dir=None,
+					file_name=None,
 					ftype='generic',
 					var_type='Psi4',
 					resam_type='finest',
@@ -1159,15 +1160,39 @@ class modes_array:
 		"""
 
 		#import dataIO
+		from waveformtools import dataIO
 
+
+		if not data_dir:
+			data_dir = self.data_dir
+		else:
+			self.data_dir = data_dir
+
+		if not file_name:
+			file_name = self.file_name
+		else:
+			self.file_name = file_name
+
+		if not ell_max:
+			ell_max = self.ell_max
+		else:
+			self.ell_max = ell_max
+
+		if not label:
+			label = self.label
+
+
+		#if self.data_dir is not None:
+		#	data_dir = self.data_dir
+
+		#if self.file_name is not None:
+		#	file_name = self.file_name
+		print('Passing', data_dir, file_name)
 		if ftype=='generic':
 			dataIO.load_gen_data_from_disk(self,
-											fdir,
-											fname,
-											ftype,
-											var_type,
-											resam_type,
-											interp_kind,
+											label,
+											data_dir,
+											file_name,
 											r_ext,
 											ell_max,
 											pre_key,
@@ -1179,8 +1204,8 @@ class modes_array:
 		elif ftype=='RIT':
 			if var_type=='Psi4':
 				dataIO.load_RIT_Psi4_data_from_disk(self,
-                                            fdir,
-                                            fname,
+                                            data_dir,
+                                            file_name,
                                             ftype,
                                             var_type,
                                             resam_type,
@@ -1195,8 +1220,8 @@ class modes_array:
                                             r_ext_factor)
 			elif var_type=='Strain':
 				dataIO.load_RIT_Strain_data_from_disk(self,
-                                            fdir,
-                                            fname,
+                                            data_dir,
+                                            file_name,
                                             ftype,
                                             var_type,
                                             resam_type,
@@ -1216,8 +1241,8 @@ class modes_array:
 		elif ftype=="SpEC":
 			dataIO.load_SpEC_data_from_disk(self,
                                             label,
-                                            fdir,
-                                            fname,
+                                            data_dir,
+                                            file_name,
 											extrap_order,
                                             r_ext,
                                             ell_max,
@@ -1232,8 +1257,8 @@ class modes_array:
 		elif ftype=='SpECTRE':
 			dataIO.load_SpECTRE_data_from_disk(self,
 											alias,
-                                            fdir,
-                                            fname,
+                                            data_dir,
+                                            file_name,
 											r_ext,
                                             ell_max,
                                             centre,
@@ -1290,6 +1315,7 @@ class modes_array:
 		>>> waveform.load_data(mode_numbers=mode_numbers)
 		"""
 		#import dataIO
+		from waveformtools import dataIO
 
 		dataIO.save_modes_data_to_gen(self,
         								ell_max=None,
@@ -1344,7 +1370,7 @@ class modes_array:
 
 		'''
 
-		#from qlmtools import Yslm_new
+		#from qlmtools import Yslm_vec
 
 
 		# Create a spherical array.
@@ -1382,7 +1408,7 @@ class modes_array:
 
 			for emm in emm_list:
 				# For every l, m
-				sp_data += np.multiply.outer(Yslm_new(spin_weight, ell=ell, emm=emm, theta_grid=theta, phi_grid=phi), self.mode(ell, emm))
+				sp_data += np.multiply.outer(Yslm_vec(spin_weight, ell=ell, emm=emm, theta_grid=theta, phi_grid=phi), self.mode(ell, emm))
 				#print(sp_data)
 		# Set the data of the spherical array.
 		waveform_sp.data = sp_data
@@ -1657,7 +1683,7 @@ class modes_array:
 		for ell_value in range(ell_max+1):
 			for emm_value in range(-ell_value, ell_value + 1):
 				# Multiply with the SWSH basis.
-				supertransl_spherical_grid += supertransl_spherical_factor * Yslm_new(
+				supertransl_spherical_grid += supertransl_spherical_factor * Yslm_vec(
 					spin_weight=-2, ell=ell_value, emm=emm_value, theta=theta, phi=phi
 				)
 

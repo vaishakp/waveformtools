@@ -83,17 +83,17 @@ def get_ell_max_from_keys(all_keys):
 	ell_max = max(all_ell_modes)
 	return ell_max
 
-def get_ell_max_from_file(fdir, var_type='Psi4', fname='*.h5'):
+def get_ell_max_from_file(data_dir, var_type='Psi4', file_name='*.h5'):
 	''' Get the largest available mode number from available data in files.
 
 	Parameters
 	----------
-	fdir :	string
+	data_dir :	string
 				A string containing the directory path where the mode files can be found.
 	var_type: string, optional
 			A string that denotes the variable that is being loaded. Options are Psi4 and strain.
 			The former is the default.
-	fname : string, optional
+	file_name : string, optional
 			  The h5 file that contains the modes data. It defaults to the only file in the directory.
 			  If there are multiple files, it throws an error.
 	Returns
@@ -113,14 +113,14 @@ def get_ell_max_from_file(fdir, var_type='Psi4', fname='*.h5'):
 		import os
 
 		# Get files
-		all_fnames = os.listdir(fdir)
+		all_fnames = os.listdir(data_dir)
 		# Get only files
-		all_fnames = [item for item in all_fnames if os.path.isfile(f'{fdir}/{item}')]
+		all_fnames = [item for item in all_fnames if os.path.isfile(f'{data_dir}/{item}')]
 
 	elif var_type=='Strain':
 		#import h5py
 
-		data_file = h5py.File(f'{fdir}/{fname}.h5')
+		data_file = h5py.File(f'{data_dir}/{file_name}.h5')
 		all_fnames = list(data_file.keys())
 		data_file.close()
 		#print(all_fnames)
@@ -137,7 +137,7 @@ def get_ell_max_from_file(fdir, var_type='Psi4', fname='*.h5'):
 	return ell_max, all_fnames
 
 
-def load_RIT_Psi4_from_disk(wfa=None, fdir='./', label='RIT_rPsi4inf', ell_max=None, save_as_ma=False, spin_weight=-2, resam_type='finest', interp_kind='cubic'):
+def load_RIT_Psi4_from_disk(wfa=None, data_dir='./', label='RIT_rPsi4inf', ell_max=None, save_as_ma=False, spin_weight=-2, resam_type='finest', interp_kind='cubic'):
 	''' Load the Psi4 waveforms from the RIT catalogue
 		from ASCII files from disk.
 
@@ -145,7 +145,7 @@ def load_RIT_Psi4_from_disk(wfa=None, fdir='./', label='RIT_rPsi4inf', ell_max=N
 		----------
 		wfa  :	waveforms
 				An instance of the waveforms class. Updates this instance if provided, else creates a new instance.
-		fdir :	string
+		data_dir :	string
 				A string containing the directory path where the mode files can be found.
 		label : string, optional
 				The label of the modes_array object.
@@ -178,7 +178,7 @@ def load_RIT_Psi4_from_disk(wfa=None, fdir='./', label='RIT_rPsi4inf', ell_max=N
 
 	# Max available mode l.
 	if ell_max == None:
-		ell_max, _ = get_ell_max_RIT(fdir)
+		ell_max, _ = get_ell_max_RIT(data_dir)
 
 	# Construct a modes list
 	wf_modes_list = waveforms.construct_mode_list(ell_max = ell_max, spin_weight=spin_weight)
@@ -195,7 +195,7 @@ def load_RIT_Psi4_from_disk(wfa=None, fdir='./', label='RIT_rPsi4inf', ell_max=N
 
 	# Create a modes array
 	if not wfa:
-		wfa = modes_array(label=label, data_dir=fdir, modes_list=wf_modes_list)
+		wfa = modes_array(label=label, data_dir=data_dir, modes_list=wf_modes_list)
 
 	# Enforce only l>2 modes.
 	wf_modes_list = [item for item in wf_modes_list if item[0]>=abs(spin_weight)]
@@ -213,7 +213,7 @@ def load_RIT_Psi4_from_disk(wfa=None, fdir='./', label='RIT_rPsi4inf', ell_max=N
 
 			print('Loading', ell, emm)
 			# Construct file path
-			wf_psi4_file_path = fdir + f'/rPsi4_l{ell}_m{emm}_rInf.asc'
+			wf_psi4_file_path = data_dir + f'/rPsi4_l{ell}_m{emm}_rInf.asc'
 			# Read in the data
 			wf_psi4_file = np.genfromtxt(wf_psi4_file_path)
 
@@ -309,7 +309,7 @@ def load_RIT_Psi4_from_disk(wfa=None, fdir='./', label='RIT_rPsi4inf', ell_max=N
 
 
 
-def load_RIT_Strain_from_disk(wfa=None, fdir='./', fname='*', label='RIT_strain', ell_max=None, save_as_ma=False, spin_weight=-2, resam_type='finest', interp_kind='cubic'):
+def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT_strain', ell_max=None, save_as_ma=False, spin_weight=-2, resam_type='finest', interp_kind='cubic'):
 	''' Load the RIT strain waveforms from the RIT catalogue,
 		from hdf5 files from disk.
 
@@ -317,7 +317,7 @@ def load_RIT_Strain_from_disk(wfa=None, fdir='./', fname='*', label='RIT_strain'
 		----------
 		wfa  : waveforms
 			   An instance of the waveforms class. Creates a new one if not provided.
-		fdir :	string
+		data_dir :	string
 				A string containing the directory path where the mode files can be found.
 		label : string, optional
 				The label of the modes_array object.
@@ -352,7 +352,7 @@ def load_RIT_Strain_from_disk(wfa=None, fdir='./', fname='*', label='RIT_strain'
 	from waveformtools.waveforms import modes_array
 
 	# Max available mode l.
-	ell_max_act, keys_list = get_ell_max_RIT(fdir=fdir, var_type='Strain', fname=fname)
+	ell_max_act, keys_list = get_ell_max_RIT(data_dir=data_dir, var_type='Strain', file_name=file_name)
 	if ell_max == None:
 		ell_max = ell_max_act
 
@@ -372,7 +372,7 @@ def load_RIT_Strain_from_disk(wfa=None, fdir='./', fname='*', label='RIT_strain'
 	#label = 'q1a0_a'
 
 	# Create a modes array
-	wfa = modes_array(label=label, data_dir=fdir, modes_list=wf_modes_list)
+	wfa = modes_array(label=label, data_dir=data_dir, modes_list=wf_modes_list)
 
 	# Enforce only l>2 modes.
 	wf_modes_list = [item for item in wf_modes_list if item[0]>=abs(spin_weight)]
@@ -386,7 +386,7 @@ def load_RIT_Strain_from_disk(wfa=None, fdir='./', fname='*', label='RIT_strain'
 
 	# Get the time axis
 	#import h5py
-	data_file = h5py.File(f'{fdir}/{fname}.h5')
+	data_file = h5py.File(f'{data_dir}/{file_name}.h5')
 
 	time_axis = data_file['NRTimes'][...]
 	dt_auto = time_axis[1]-time_axis[0]
@@ -495,13 +495,13 @@ def load_RIT_Strain_from_disk(wfa=None, fdir='./', fname='*', label='RIT_strain'
 # Generic data type
 #################################################################
 
-def load_gen_data_from_disk(wfa=None, label='generic waveform', fdir='./', fname= '*.h5', r_ext=None, ell_max=8, pre_key=None, modes_list=None, crop=False, centre=True, key_ex=None, r_ext_factor=1, *args, **kwargs):
+def load_gen_data_from_disk(wfa=None, label='generic waveform', data_dir='./', file_name= '*.h5', r_ext=None, ell_max=8, pre_key=None, modes_list=None, crop=False, centre=True, key_ex=None, r_ext_factor=1, *args, **kwargs):
 	''' Load the RIT strain waveforms from the RIT catalogue,
 		from hdf5 files from disk.
 
 		Parameters
 		----------
-		fdir :	string
+		data_dir :	string
 				A string containing the directory path where the mode files can be found.
 		label : string, optional
 				The label of the modes_array object.
@@ -538,28 +538,30 @@ def load_gen_data_from_disk(wfa=None, label='generic waveform', fdir='./', fname
 	# Max available mode l.
 	if not wfa:
 		# Create a modes array
-		wfa = modes_array(label=label, data_dir=fdir, modes_list=modes_list, ell_max=ell_max)
+		wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list, ell_max=ell_max)
 
-	if not fdir:
-		fdir = wfa.data_dir
-	else:
-		wfa.data_dir = fdir
+	#if not data_dir:
+	#	data_dir = wfa.data_dir
+	#else:
+	#	wfa.data_dir = data_dir
 
-	if not fname:
-		fname = wfa.file_name
-	else:
-		wfa.file_name = fname
+	#if not file_name:
+	#	file_name = wfa.file_name
+	#else:
+	#	wfa.file_name = file_name
 
-	if not ell_max:
-		ell_max = wfa.ell_max
-	else:
-		wfa.ell_max = ell_max
+	#if not ell_max:
+	#	ell_max = wfa.ell_max
+	#else:
+	#	wfa.ell_max = ell_max
 
+	#if not label:
+	#	label = wfa.label
 	#ell_max		= 12
 	# Max available mode l.
 
-	full_path = f"{fdir}/{fname}"
-
+	full_path = f"{data_dir}/{file_name}"
+	print(f'Loading data from {full_path}')
 	# Enforce only l>2 modes.
 	#wf_modes_list = [item for item in wf_modes_list if item[0]>=abs(spin_weight)]
 
@@ -766,8 +768,8 @@ def load_gen_data_from_disk(wfa=None, label='generic waveform', fdir='./', fname
 
 def load_SpEC_data_from_disk(wfa=None,
 							label='SXS Strain',
-							fdir="./",
-							fname="rhOverM_Extrapolated_N5_CoM_Mem.h5",
+							data_dir="./",
+							file_name="rhOverM_Extrapolated_N5_CoM_Mem.h5",
 							extrap_order=4,
 							r_ext=None,
 							ell_max=None,
@@ -786,9 +788,9 @@ def load_SpEC_data_from_disk(wfa=None,
 		wfa : modes_array, optional
 			  The modes array to which to store the loaded waveform to. A new modes array will be returned
 			  if not provided.
-		fdir :	string
+		data_dir :	string
 				A string containing the directory path where the mode files can be found.
-		fname : string
+		file_name : string
 				The name of the file containing the waveform data.
 		label : string, optional
 				The label of the modes_array object.
@@ -820,7 +822,7 @@ def load_SpEC_data_from_disk(wfa=None,
 	from waveformtools.waveformtools import message
 
 
-	full_path = f"{fdir}/{fname}"
+	full_path = f"{data_dir}/{file_name}"
 
 
 	gkey = f'Extrapolated_N{extrap_order}.dir'
@@ -850,17 +852,17 @@ def load_SpEC_data_from_disk(wfa=None,
 	if not wfa:
 		# Create a modes array
 		wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
-	   #wfa = modes_array(label=label, data_dir=fdir, modes_list=modes_list)
+	   #wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
 
-	if not fdir:
-		fdir = wfa.data_dir
+	if not data_dir:
+		data_dir = wfa.data_dir
 	else:
-		wfa.data_dir = fdir
+		wfa.data_dir = data_dir
 
-	if not fname:
-		fname = wfa.file_name
+	if not file_name:
+		file_name = wfa.file_name
 	else:
-		wfa.file_name = fname
+		wfa.file_name = file_name
 
 	if not ell_max:
 		ell_max = wfa.ell_max
@@ -970,8 +972,8 @@ def load_SpEC_data_from_disk(wfa=None,
 
 def load_SpECTRE_data_from_disk(wfa=None,
 							label='SpECTRE Strain',
-							fdir="./",
-							fname="rhOverM_Extrapolated_N5_CoM_Mem.h5",
+							data_dir="./",
+							file_name="rhOverM_Extrapolated_N5_CoM_Mem.h5",
 							r_ext=None,
 							ell_max=12,
 							centre=True,
@@ -989,9 +991,9 @@ def load_SpECTRE_data_from_disk(wfa=None,
 		wfa : modes_array, optional
 			  The modes array to which to store the loaded waveform to. A new modes array will be returned
 			  if not provided.
-		fdir :	string
+		data_dir :	string
 				A string containing the directory path where the mode files can be found.
-		fname : string
+		file_name : string
 				The name of the file containing the waveform data.
 		label : string, optional
 				The label of the modes_array object.
@@ -1023,7 +1025,7 @@ def load_SpECTRE_data_from_disk(wfa=None,
 	from waveformtools.waveformtools import message
 
 
-	full_path = f"{fdir}/{fname}"
+	full_path = f"{data_dir}/{file_name}"
 
 	try:
 		import scri
@@ -1050,15 +1052,15 @@ def load_SpECTRE_data_from_disk(wfa=None,
 		# Create a modes array
 		wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
 
-	if not fdir:
-		fdir = wfa.data_dir
+	if not data_dir:
+		data_dir = wfa.data_dir
 	else:
-		wfa.data_dir = fdir
+		wfa.data_dir = data_dir
 
-	if not fname:
-		fname = wfa.file_name
+	if not file_name:
+		file_name = wfa.file_name
 	else:
-		wfa.file_name = fname
+		wfa.file_name = file_name
 
 	if not ell_max:
 		ell_max = wfa.ell_max
@@ -1208,7 +1210,8 @@ def save_modes_data_to_gen(wfa,
 	#############################
 
 	wfa.out_file_name = wfa.label + '_' + out_file_name
-	wfa.out_file_name.replace(' ', '_')
+	wfa.out_file_name = wfa.out_file_name.replace(' ', '_')
+	wfa.out_file_name = wfa.out_file_name.replace('->', '_')
 
 	# get the full path.
 	full_path = wfa.data_dir + "/" + wfa.out_file_name
