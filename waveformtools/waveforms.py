@@ -15,6 +15,7 @@ import h5py
 from waveformtools.waveformtools import message
 from qlmtools import Yslm_vec
 #from waveformtools import dataIO
+
 ####################################################################
 # Numba experimentation
 #######################
@@ -1158,6 +1159,8 @@ class modes_array:
 		>>> mode_numbers = [[2, 2], [3, 3]]
 		>>> waveform.load_data(mode_numbers=mode_numbers)
 		"""
+
+		from waveformtools import dataIO
 
 		#import dataIO
 		from waveformtools import dataIO
