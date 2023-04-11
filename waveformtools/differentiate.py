@@ -8,12 +8,13 @@ Tools for differentiating data.
 
 import numpy as np
 from numba import jit, njit
+import matplotlib.pyplot as plt
 ########################################################
 # Chebyshev differentiation
 ########################################################
 
 
-def Chebyshev_differential(x_data, y_data, order=1, degree=5):
+def Chebyshev_differential(x_data, y_data, order=1, degree=8):
 	""" Differentiate a function using the Chebyshev expansion.
 
 
@@ -44,7 +45,50 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=5):
 	# Find the basis coefficients.
 	from numpy.polynomial.chebyshev import chebfit, chebder, chebval
 
-	cheb_coeffs = chebfit(x_data, y_data, deg=degree)
+	#L2errs = []
+	
+	#p_res = 1e21
+	
+	#for deg_index in range(degree):
+	#	cheb_coeffs, result = chebfit(x_data, y_data, deg=deg_index, full=True)
+		
+	#	res = result[0][0]
+		#if res%2==0:
+	#	L2errs.append(res)
+	
+	cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)
+		
+	res = result[0][0]
+
+	#L2errs = [(a + b)  for a, b in zip(L2errs[::2], L2errs[1::2])]
+	
+	
+	#best_deg = 2*np.argmin(L2errs)+2
+	#if best_deg<degree:
+		#plt.plot(L2errs)
+		#plt.show()
+
+	#	print(f'Optimizing degree to {best_deg}')
+	#	degree=best_deg
+	#	cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)
+
+	#	res = result[0][0]
+	if res>=1e-3:
+		
+		
+		if res<=1e-1 and res>=1e-3:
+			print(f'Residue warning {res}')
+		elif res>1e-1:
+			import traceback
+			traceback.print_stack()
+			y_fit_data = chebval(x_data, cheb_coeffs)
+			plt.plot(x_data, y_data, label='Input', c='magenta', linestyle='--')
+			plt.scatter(x_data, y_fit_data, label='fit', s=3, c='blue', marker='x')
+			plt.grid()
+			plt.legend()
+			plt.show()
+
+			print(f'Residue warning {res}: Bad fit!')
 
 	# compute the derivative
 	cheb_der_coeffs = chebder(cheb_coeffs, m=order)

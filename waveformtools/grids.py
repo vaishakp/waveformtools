@@ -203,4 +203,3 @@ class spherical_grid:
 
 
 		return np.transpose(theta), np.transpose(phi)
-		return theta, phi
