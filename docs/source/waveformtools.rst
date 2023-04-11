@@ -6,7 +6,7 @@ This is a class and a set of functions to conveniently load, transform, handle a
 
 # Introduction 
 
-Waveforms data from NR simulations are routinely described in terms of modes, from expansion in a spectral basis on spherical surfaces. In gravitational wave astronomy, one is mainly conerned with the Weyl scalar component $$\Psi_4$$ and the strain $`h`$.
+Waveforms data from NR simulations are routinely described in terms of modes, from expansion in a spectral basis on spherical surfaces. In gravitational wave physics, one is mainly conerned with the Weyl scalar component $`r\Psi_4/M`$ and the strain $`r h/M`$.
 
 
 The `modes_array' class provides a container for holding modes data of such spectral expansions of any spin weight, and carrying out various transformations on them. Some of the main features/capabilities are:
