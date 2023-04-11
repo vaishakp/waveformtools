@@ -9,10 +9,10 @@ This is a class and a set of functions to conveniently load, transform, handle a
 Waveforms data from NR simulations are routinely described in terms of modes, from expansion in a spectral basis on spherical surfaces. In gravitational wave physics, one is mainly conerned with the Weyl scalar component $`r\Psi_4/M`$ and the strain $`r h/M`$.
 
 
-The `modes_array' class provides a container for holding modes data of such spectral expansions of any spin weight, and carrying out various transformations on them. Some of the main features/capabilities are:
+The `modes_array' class provides a container for holding modes data of such spectral expansions of any spin weight, and carrying out various transformations on them. Some of the basic features/capabilities are:
 
 1. Time domain integration and differentiation using Fixed frequency integration. Integrate e.g. $`\Psi_4`$ twice to obtain the strain $`h`$. 
-2. Convenient access of modes data using (l, m) notation.
+2. Convenient access of modes data using (l, m) notation. E.g. wf(2, 2) is used to access the (l=2, m=2) mode time series.
 3. Data output to custom simple data format (explained below) called "gen".
 4. Automatically load strain $`h`$ or $`\Psi_4`$ modes data from various catalogues, given the source file path.
 	1. RIT
@@ -31,8 +31,8 @@ The `modes_array' class provides a container for holding modes data of such spec
 ## The simple "gen" data format
 
 1. This is based on h5 files with optional compression. 
-2. All the attributes of the `modes_array` class, barring the main numerical modes data values are treated as metadata data and saved into the h5 file. 
-3. The data, when loaded into a modes_array, automatically loads the metadata and associates to to the attributes.
+2. All the attributes of the `modes_array` class, barring the main numerical modes data values, are treated as metadata and saved into the h5 file. 
+3. The data, when loaded into a modes_array, automatically loads the metadata and assigns them to its attributes at once.
 4. The data  of individual modes is saved as data sets of the h5 file.
 5. The time axis is common across the modes and is uniformly sampled. 
 6. If the input data loaded from a catalogue is non uniformly sampled, the user can specify the resampled time stepping, or default to finest/ coarsest available.
