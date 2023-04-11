@@ -11,7 +11,7 @@ Waveforms data from NR simulations are routinely described in terms of modes, fr
 
 The `modes_array' class provides a container for holding modes data of such spectral expansions of any spin weight, and carrying out various transformations on them. Some of the basic features/capabilities are:
 
-1. Time domain integration and differentiation using Fixed frequency integration. Integrate e.g. $`\Psi_4`$ twice to obtain the strain $`h`$. 
+1. Time domain integration and differentiation using Fixed frequency integration. e.g. integrate $`\Psi_4`$ twice to obtain the strain $`h`$. 
 2. Convenient access of modes data using (l, m) notation. E.g. wf(2, 2) is used to access the (l=2, m=2) mode time series.
 3. Data output to custom simple data format (explained below) called "gen".
 4. Automatically load strain $`h`$ or $`\Psi_4`$ modes data from various catalogues, given the source file path.
