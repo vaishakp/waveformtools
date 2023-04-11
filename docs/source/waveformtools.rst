@@ -29,19 +29,19 @@ The `modes_array' class provides a container for holding modes data of such spec
 
 
 ## The simple "gen" data format
-
-1. This is based on h5 files with optional compression. 
-2. All the attributes of the `modes_array` class, barring the main numerical modes data values, are treated as metadata and saved into the h5 file. 
-3. The data, when loaded into a modes_array, automatically loads the metadata and assigns them to its attributes at once.
-4. The data  of individual modes is saved as data sets of the h5 file.
+1. All the attributes of the `modes_array` class, barring the main numerical modes data values, are treated as metadata and saved into the h5 file. 
+2. Based on h5 files with optional compression. 
+3. The data, when loaded into a modes_array, automatically loads all available metadata and assigns them to its attributes at once.
+4. The data of individual modes is saved as data sets of the h5 file.
 5. The time axis is common across the modes and is uniformly sampled. 
-6. If the input data loaded from a catalogue is non uniformly sampled, the user can specify the resampled time stepping, or default to finest/ coarsest available.
+6. If the input data loaded from a catalogue is non uniformly sampled, the user can specify the resampled time stepping, or it defaults to the finest/ coarsest available.
 7. Examples of default metadata attributes:
 	1. spin_weight
 	2. time stepping.
 	3. Last modified.
 	4. Source file path
 	5. label / alias
+	6. Extraction radius
 
 ## `spherical_array` class is the coordinate space ($`\theta, \phi`$) representation of waveforms data. This contains data represented on a spherical grid and has the following main features
 
