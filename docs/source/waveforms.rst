@@ -52,7 +52,7 @@ The simple "gen" data format
 `spherical_array` class 
 -----------------------
 
-The `spherical_array` class is the coordinate space ($`\theta, \phi`$) representation of waveforms time series data. This contains data represented on a spherical grid and has the following main features
+The `spherical_array` class is the coordinate space (:math:`\theta, \phi`) representation of waveforms time series data. This contains data represented on a spherical grid and has the following main features
 
 1. The grid is staggered across the poles to circumvent dealing with coordinate singularities.
 2. Transformation/ expansion to spectral basis i.e. `modes_array` given the spin weight.
