@@ -16,6 +16,9 @@ Welcome to waveformtools' documentation!
    basic_features
    api
    simulations
+   transforms
+   waveforms
+   wavefotmtools
 
 Indices and tables
 ==================
