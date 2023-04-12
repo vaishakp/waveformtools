@@ -14,4 +14,6 @@ The `waveformtools.waveformtools` module is a toolkit to carryout various transf
 7. Conversion to `pycbc` timeseties.
 8. Check data continuity
 9. Extraction of amplitudes and unwrapped phases.
+10. A simple progress bar
+11. A logger/print function with verbosity levels.
 
