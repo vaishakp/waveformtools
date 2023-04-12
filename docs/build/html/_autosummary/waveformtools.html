@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -22,7 +22,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -34,8 +33,6 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="waveformtools.BMS" href="waveformtools.BMS.html" />
@@ -51,7 +48,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: green" >
+        <div class="wy-side-nav-search"  style="background: blue" >
           
 
           
@@ -89,7 +86,7 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
@@ -104,13 +101,15 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveformtools.html">Waveformtools</a></li>
 </ul>
 
             
@@ -192,10 +191,6 @@
 </dl>
 <p class="rubric">Functions</p>
 <table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.get_version" title="waveformtools.get_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_version</span></code></a>()</p></td>
 <td><p>Get the latest version number based on the last commit date.</p></td>
@@ -203,18 +198,14 @@
 </tbody>
 </table>
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.get_version">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.</span></span><span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools.html#get_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.get_version" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.get_version">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.</span></code><code class="sig-name descname"><span class="pre">get_version</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools.html#get_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.get_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the latest version number based on the last commit date.</p>
 </dd></dl>
 
 </section>
 <p class="rubric">Modules</p>
 <table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.BMS.html#module-waveformtools.BMS" title="waveformtools.BMS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.BMS</span></code></a></p></td>
 <td><p>The implementation of BMS transformations on the waveforms.</p></td>
@@ -246,10 +237,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="waveformtools.transforms.html#module-waveformtools.transforms" title="waveformtools.transforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.transforms</span></code></a></p></td>
 <td><p>Methods to transform the waveform</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.waveforms.html#module-waveformtools.waveforms" title="waveformtools.waveforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveforms</span></code></a></p></td>
-<td><p>Classes for handling the waveform modes or data defined on spheres.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#module-waveformtools.waveformtools" title="waveformtools.waveformtools"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveformtools</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#module-waveformtools.waveformtools" title="waveformtools.waveformtools"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveformtools</span></code></a></p></td>
 <td><p>This module contains a set of tools to handle data from numerical relativity simulations and gravitational waves.</p></td>
 </tr>
 </tbody>

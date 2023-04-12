@@ -1,4 +1,4 @@
-﻿waveformtools.CoM
+waveformtools.CoM
 =================
 
 .. automodule:: waveformtools.CoM

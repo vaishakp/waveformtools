@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -22,11 +22,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -35,8 +34,6 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="waveformtools.compare" href="waveformtools.compare.html" />
@@ -52,7 +49,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: green" >
+        <div class="wy-side-nav-search"  style="background: blue" >
           
 
           
@@ -90,7 +87,7 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
@@ -105,13 +102,15 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveformtools.html">Waveformtools</a></li>
 </ul>
 
             
@@ -185,15 +184,11 @@
 <p>Centre of mass correction for the waveforms.</p>
 <p class="rubric">Functions</p>
 <table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.CoM.X_com_moments" title="waveformtools.CoM.X_com_moments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X_com_moments</span></code></a>(time_axis, Xcom, order)</p></td>
 <td><p>Compute the nth order temporal moment of the COM coordinates.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.CoM.boost_waveform" title="waveformtools.CoM.boost_waveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">boost_waveform</span></code></a>(unboosted_waveform, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.CoM.boost_waveform" title="waveformtools.CoM.boost_waveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">boost_waveform</span></code></a>(unboosted_waveform, …)</p></td>
 <td><p>Boost the waveform given the unboosted waveform and the boost conformal factor.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.CoM.compute_com_alpha" title="waveformtools.CoM.compute_com_alpha"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_com_alpha</span></code></a>(time_i, time_f, Xcom_0, Xcom_1)</p></td>
@@ -205,17 +200,17 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.CoM.compute_conformal_k" title="waveformtools.CoM.compute_conformal_k"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_conformal_k</span></code></a>(vec_v, info[, spin_phase])</p></td>
 <td><p>Compute the conformal factor for the boost transformation</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.CoM.compute_translation_alpha_modes" title="waveformtools.CoM.compute_translation_alpha_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_translation_alpha_modes</span></code></a>(time_axis, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.CoM.compute_translation_alpha_modes" title="waveformtools.CoM.compute_translation_alpha_modes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_translation_alpha_modes</span></code></a>(time_axis, …)</p></td>
 <td><p>Compute the translation scalar <span class="math notranslate nohighlight">\(\alpha\)</span> in its spherical harmonic components given the mean motion of the centre of mass.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.CoM.X_com_moments">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></span><span class="sig-name descname"><span class="pre">X_com_moments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#X_com_moments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.X_com_moments" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.CoM.X_com_moments">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></code><code class="sig-name descname"><span class="pre">X_com_moments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#X_com_moments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.X_com_moments" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the nth order temporal moment of the COM coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>time_axis:              1d array</strong></dt><dd><p>The time axis.</p>
 </dd>
@@ -226,7 +221,7 @@ time series of the x, y and z co-ordinates in that order.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>moments:        list</dt><dd><p>A list containing three real numbers, one each for the moment
 of x, y and z locations.</p>
@@ -237,11 +232,11 @@ of x, y and z locations.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.CoM.boost_waveform">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></span><span class="sig-name descname"><span class="pre">boost_waveform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unboosted_waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conformal_factor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#boost_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.boost_waveform" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.CoM.boost_waveform">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></code><code class="sig-name descname"><span class="pre">boost_waveform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unboosted_waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conformal_factor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#boost_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.boost_waveform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Boost the waveform given the unboosted waveform and the boost conformal factor.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>unboosted_waveform:             spherical_array</strong></dt><dd><p>A class instance of <cite>spherical array</cite>.</p>
 </dd>
@@ -252,7 +247,7 @@ of x, y and z locations.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>boosted_waveform:         sp_array</dt><dd><p>The class instance <cite>sp_array</cite> that
 contains the boosted waveform.</p>
@@ -263,11 +258,11 @@ contains the boosted waveform.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.CoM.compute_com_alpha">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></span><span class="sig-name descname"><span class="pre">compute_com_alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom_1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_com_alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_com_alpha" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.CoM.compute_com_alpha">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></code><code class="sig-name descname"><span class="pre">compute_com_alpha</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom_1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_com_alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_com_alpha" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the CoM correction alpha parameter: the mean displacement of the system, of the COM correction as defined in Woodford et al. 2019 (Phys. Rev. D 100, 124010).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>time_i: float</strong></dt><dd><p>initial time</p>
 </dd>
@@ -279,7 +274,7 @@ contains the boosted waveform.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>com_alpha:              list</dt><dd><p>The list containig the alpha parameter vector</p>
 </dd>
@@ -289,11 +284,11 @@ contains the boosted waveform.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.CoM.compute_com_beta">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></span><span class="sig-name descname"><span class="pre">compute_com_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom_1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_com_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_com_beta" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.CoM.compute_com_beta">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></code><code class="sig-name descname"><span class="pre">compute_com_beta</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcom_1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_com_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_com_beta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the CoM beta parameter: the mean drift of the system, of the COM correction as defined in Woodford et al. 2019 (Phys. Rev. D 100, 124010).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>time_i:  float</strong></dt><dd><p>initial time</p>
 </dd>
@@ -305,7 +300,7 @@ contains the boosted waveform.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>com_beta:               list</dt><dd><p>The list containig the alpha parameter vector</p>
 </dd>
@@ -315,21 +310,21 @@ contains the boosted waveform.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.CoM.compute_conformal_k">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></span><span class="sig-name descname"><span class="pre">compute_conformal_k</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec_v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_conformal_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_conformal_k" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.CoM.compute_conformal_k">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></code><code class="sig-name descname"><span class="pre">compute_conformal_k</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec_v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_conformal_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_conformal_k" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
-<dt>Compute the conformal factor for the boost transformation</dt><dd><p>:math:<a href="#id1"><span class="problematic" id="id2">`</span></a>k = exp(-2i lambda) gamma^3 (1 - mathbf{v} cdot mathbf{r})^3</p>
+<dt>Compute the conformal factor for the boost transformation</dt><dd><p>:math:<a href="#system-message-1"><span class="problematic" id="problematic-1">`</span></a>k = exp(-2i lambda) gamma^3 (1 - mathbf{v} cdot mathbf{r})^3</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.CoM.compute_translation_alpha_modes">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></span><span class="sig-name descname"><span class="pre">compute_translation_alpha_modes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">com_alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">com_beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_translation_alpha_modes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_translation_alpha_modes" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.CoM.compute_translation_alpha_modes">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.CoM.</span></code><code class="sig-name descname"><span class="pre">compute_translation_alpha_modes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">com_alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">com_beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/CoM.html#compute_translation_alpha_modes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.CoM.compute_translation_alpha_modes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the translation scalar <span class="math notranslate nohighlight">\(\alpha\)</span> in its spherical harmonic components given the mean motion of the centre of mass.
 These are basically the quantities in Eq. (4-5d) in the reference Woodford et al. 2019.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>time_axis:              1d array</strong></dt><dd><p>The 1D array containing the time axis of the simulation.</p>
 </dd>
@@ -339,7 +334,7 @@ These are basically the quantities in Eq. (4-5d) in the reference Woodford et al
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>alpha_modes:      modes_array</dt><dd><p>A <cite>waveforms.modes_array</cite> object containing the SH decomposition of the ‘Alpha’ supertranslation variable.</p>
 </dd>

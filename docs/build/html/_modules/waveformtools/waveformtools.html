@@ -21,7 +21,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
@@ -31,12 +30,12 @@
     
 
   
-  <link rel="stylesheet" href="../../_static/css/my_thema.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/my_thema.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/css/my_theme.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,11 +83,13 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveforms.html">Waveforms</a></li>
 </ul>
 
             
@@ -171,6 +172,7 @@
 <span class="kn">import</span> <span class="nn">config</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">njit</span>
 <span class="c1"># from scipy import signal</span>
 <span class="kn">import</span> <span class="nn">pycbc</span>
 <span class="kn">import</span> <span class="nn">scipy</span>
@@ -264,6 +266,8 @@
 <span class="sd">				The mode of the list.</span>
 
 <span class="sd">	&#39;&#39;&#39;</span>
+
+	<span class="n">a_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a_list</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">a_list</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">a_list</span><span class="o">.</span><span class="n">count</span><span class="p">)</span></div>
 
@@ -1227,13 +1231,12 @@
 <span class="c1"># Time shift an array</span>
 
 
-<div class="viewcode-block" id="shiftmatched"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.shiftmatched">[docs]</a><span class="k">def</span> <span class="nf">shiftmatched</span><span class="p">(</span><span class="n">hdat</span><span class="p">,</span> <span class="n">ind</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="shiftmatched"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.shiftmatched">[docs]</a><span class="k">def</span> <span class="nf">shiftmatched</span><span class="p">(</span><span class="n">hdat</span><span class="p">,</span> <span class="n">ind</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_ts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Timeshift an array. IMP: After timeshifting, the original length of the array is retained by clipping last(first) when ind &gt; 0(ind &lt;0) `ind` number of points!!.</span>
 <span class="sd">	Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) initially at the end.</span>
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
-
 <span class="sd">	hdat:	1d array or a pycbc TimeSeries object</span>
 <span class="sd">									The input waveform to be shifted in time.</span>
 <span class="sd">	ind:	int</span>
@@ -1243,20 +1246,17 @@
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
-
 <span class="sd">	shifted_wf:	a pycbc TimeSeries object</span>
 <span class="sd">																	The waveform array of same length timeshifted by `ind` units by prepending zeros.&quot;&quot;&quot;</span>
 
-	<span class="k">if</span> <span class="ow">not</span> <span class="n">delta_t</span><span class="p">:</span>
-		<span class="k">try</span><span class="p">:</span>
-			<span class="n">delta_t</span> <span class="o">=</span> <span class="n">hdat</span><span class="o">.</span><span class="n">delta_t</span>
-		<span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
-			<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Input is not a TimeSeries. Please supply gridspacing as delta_t&quot;</span><span class="p">,</span> <span class="n">message_verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">is_ts</span><span class="p">:</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">delta_t</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">delta_t</span> <span class="o">=</span> <span class="n">hdat</span><span class="o">.</span><span class="n">delta_t</span>
+			<span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+				<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Input is not a TimeSeries. Please supply gridspacing as delta_t&quot;</span><span class="p">,</span> <span class="n">message_verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-	<span class="k">if</span> <span class="n">ind</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-		<span class="c1"># Do nothing if ind is 0</span>
-		<span class="n">shifted_wf</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hdat</span><span class="p">),</span> <span class="n">delta_t</span><span class="p">)</span>
-	<span class="k">elif</span> <span class="n">ind</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+	<span class="k">if</span> <span class="n">ind</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
 		<span class="c1"># ind&gt;0 case for shifting array to the right</span>
 		<span class="c1"># message hdat</span>
 		<span class="c1"># Length of the data</span>
@@ -1264,24 +1264,28 @@
 		<span class="c1"># Array holding zeroes to be appended</span>
 		<span class="n">zeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">ind</span><span class="p">])</span>
 		<span class="c1"># The shifted array</span>
-		<span class="n">msig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">zeros</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">hdat</span><span class="p">))))</span>
+		<span class="n">shifted_wf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">zeros</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">hdat</span><span class="p">))))[:</span><span class="o">-</span><span class="n">ind</span><span class="p">]</span>
 		<span class="c1"># message msig</span>
 		<span class="c1"># message msig[:-ind]</span>
 		<span class="c1"># Return the clipped, shifted timeseries</span>
 
-		<span class="n">shifted_wf</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span><span class="n">msig</span><span class="p">[:</span><span class="o">-</span><span class="n">ind</span><span class="p">],</span> <span class="n">delta_t</span><span class="p">)</span>
-	<span class="k">else</span><span class="p">:</span>
+	<span class="k">elif</span> <span class="n">ind</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
 		<span class="c1"># ind &lt;0 case for shifting array to the left</span>
 		<span class="c1"># Length of the data</span>
 		<span class="c1"># l = len(hdat)</span>
 		<span class="c1"># Array holding zeroes to be appended</span>
 		<span class="n">zeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">ind</span><span class="p">])</span>
 		<span class="c1"># The shifted array</span>
-		<span class="n">msig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">hdat</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">zeros</span><span class="p">))))</span>
+		<span class="n">shifted_wf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">hdat</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">zeros</span><span class="p">))))[</span><span class="n">ind</span><span class="p">:]</span>
 		<span class="c1"># message msig</span>
 		<span class="c1"># message msig[:-ind]</span>
 		<span class="c1"># Return a timeseries</span>
-		<span class="n">shifted_wf</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span><span class="n">msig</span><span class="p">[</span><span class="n">ind</span><span class="p">:],</span> <span class="n">delta_t</span><span class="p">)</span>
+
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">shifted_wf</span> <span class="o">=</span> <span class="n">hdat</span>
+
+	<span class="k">if</span> <span class="n">is_ts</span><span class="p">:</span>
+		<span class="n">shifted_wf</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span><span class="n">shifted_wf</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="n">shifted_wf</span></div>
 
@@ -1899,8 +1903,7 @@
 	<span class="n">nstart_points</span> <span class="o">=</span> <span class="n">data_delta_len</span><span class="o">-</span><span class="n">nend_points</span>
 
 	<span class="c1">#print(&#39;N startend points&#39;, nend_points, nstart_points)</span>
-	<span class="n">new_time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">time_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">nstart_points</span><span class="o">*</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">time_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">nend_points</span><span class="o">*</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
-	<span class="c1">#print(&#39;New time axis&#39;, new_time_axis)</span>
+		<span class="c1">#print(&#39;New time axis&#39;, new_time_axis)</span>
 	<span class="n">tfinal</span> <span class="o">=</span> <span class="n">data_len</span><span class="o">*</span><span class="n">delta_t</span>
 
 	<span class="c1">#start_axis = np.linspace(-1, 1, nstart_points)</span>
@@ -1911,11 +1914,13 @@
 
 	<span class="c1">#n_delta_t = delta_t/data_len</span>
 
+		<span class="c1">#from scipy.interpolate import interpolate</span>
+	<span class="n">waveform_widened</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">nstart_points</span><span class="p">]),</span> <span class="n">waveform</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">nend_points</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+	<span class="n">new_time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">time_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">nstart_points</span><span class="o">*</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">time_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">nend_points</span><span class="o">*</span><span class="n">delta_t</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">waveform_widened</span><span class="p">))</span>
+
 	<span class="n">start_win</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">new_time_axis</span> <span class="o">-</span> <span class="n">duration</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">duration</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
 	<span class="n">end_win</span>   <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="n">new_time_axis</span> <span class="o">+</span> <span class="p">(</span><span class="n">tfinal</span><span class="o">-</span> <span class="n">duration</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">duration</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
 
-	<span class="c1">#from scipy.interpolate import interpolate</span>
-	<span class="n">waveform_widened</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">nstart_points</span><span class="p">]),</span> <span class="n">waveform</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">nend_points</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
 
 	<span class="c1">#plt.scatter(new_time_axis, waveform_widened, s=1)</span>
 	<span class="c1">#plt.show()</span>
@@ -1994,49 +1999,49 @@
 	<span class="k">return</span> <span class="n">tapered_data</span></div>
 
 <div class="viewcode-block" id="low_cut_filter"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.low_cut_filter">[docs]</a><span class="k">def</span> <span class="nf">low_cut_filter</span><span class="p">(</span><span class="n">utilde</span><span class="p">,</span> <span class="n">freqs</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mf">0.03</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Apply low frequency cut filter using a butterworth filter.</span>
+	<span class="sd">&#39;&#39;&#39; Apply low frequency cut filter using a butterworth filter.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    utilde:    1d array</span>
-<span class="sd">               The frequency domain data.</span>
-<span class="sd">    freqs:     1d array</span>
-<span class="sd">               The frequencies.</span>
-<span class="sd">    order:     int</span>
-<span class="sd">               The order of the butterworth filter.</span>
-<span class="sd">    omega0:    float</span>
-<span class="sd">               The cutoff frequency of the butterworth filter.</span>
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	utilde:    1d array</span>
+<span class="sd">			   The frequency domain data.</span>
+<span class="sd">	freqs:	   1d array</span>
+<span class="sd">			   The frequencies.</span>
+<span class="sd">	order:	   int</span>
+<span class="sd">			   The order of the butterworth filter.</span>
+<span class="sd">	omega0:    float</span>
+<span class="sd">			   The cutoff frequency of the butterworth filter.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    utilde_lc:    1d array</span>
-<span class="sd">                  The filtered data.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	utilde_lc:	  1d array</span>
+<span class="sd">				  The filtered data.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
 
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
-    <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+	<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
+	<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 
-    <span class="c1">#import matplotlib.pyplot as plt</span>
+	<span class="c1">#import matplotlib.pyplot as plt</span>
 
-    <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">butter</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">omega0</span><span class="p">,</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span> <span class="n">analog</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">butter</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">omega0</span><span class="p">,</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span> <span class="n">analog</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">freqs</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+	<span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">freqs</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
 
-    <span class="c1"># Make negative axis and data.</span>
-    <span class="n">filter_freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="o">-</span><span class="n">w</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">w</span><span class="p">))</span>
-    <span class="n">filter_coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">h</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">h</span><span class="p">))</span>
+	<span class="c1"># Make negative axis and data.</span>
+	<span class="n">filter_freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="o">-</span><span class="n">w</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">w</span><span class="p">))</span>
+	<span class="n">filter_coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">h</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">h</span><span class="p">))</span>
 
-    <span class="c1"># Resample the filter at data freqs.</span>
-    <span class="n">filter_int</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">filter_freqs</span><span class="p">,</span> <span class="n">filter_coeffs</span><span class="p">)</span>
-    <span class="n">filter_resam</span> <span class="o">=</span> <span class="n">filter_int</span><span class="p">(</span><span class="n">freqs</span><span class="p">)</span>
+	<span class="c1"># Resample the filter at data freqs.</span>
+	<span class="n">filter_int</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">filter_freqs</span><span class="p">,</span> <span class="n">filter_coeffs</span><span class="p">)</span>
+	<span class="n">filter_resam</span> <span class="o">=</span> <span class="n">filter_int</span><span class="p">(</span><span class="n">freqs</span><span class="p">)</span>
 
-    <span class="c1">#signal_int = interp1d(wf1_strain_tap2_tilde.frequency_axis, wf1_strain_tap2_tilde.mode(2,2))</span>
+	<span class="c1">#signal_int = interp1d(wf1_strain_tap2_tilde.frequency_axis, wf1_strain_tap2_tilde.mode(2,2))</span>
 
-    <span class="c1">#signal_resam = signal_int(w)</span>
+	<span class="c1">#signal_resam = signal_int(w)</span>
 
-    <span class="n">filtered_signal</span> <span class="o">=</span> <span class="n">utilde</span><span class="o">*</span><span class="n">filter_resam</span>
+	<span class="n">filtered_signal</span> <span class="o">=</span> <span class="n">utilde</span><span class="o">*</span><span class="n">filter_resam</span>
 
-    <span class="k">return</span> <span class="n">filtered_signal</span></div>
+	<span class="k">return</span> <span class="n">filtered_signal</span></div>
 
 
 <div class="viewcode-block" id="center"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.center">[docs]</a><span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="n">wvp</span><span class="p">,</span> <span class="n">wvc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -2226,7 +2231,7 @@
 			<span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
 				<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Input is not a TimeSeries. Please supply gridspacing as delta_t&quot;</span><span class="p">,</span> <span class="n">message_verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-	<span class="n">tsdata1</span><span class="p">,</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lengtheq</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">,</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">tsdata1</span><span class="p">,</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lengtheq</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">,</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">is_ts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 	<span class="c1"># Calculate complex SNR using pycbc function. Note: This complex SNR is</span>
 	<span class="c1"># actually the complex SNR * norm of the timeseries.</span>
@@ -2240,7 +2245,9 @@
 	<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Max location is </span><span class="si">%s</span><span class="s2">, match is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">maxloc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">acsnr</span><span class="p">)))</span>
 
 	<span class="c1"># Shift the waveform 1 in time using maxloc</span>
-	<span class="n">tsdata1</span> <span class="o">=</span> <span class="n">shiftmatched</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">,</span> <span class="n">maxloc</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">tsdata1</span> <span class="o">=</span> <span class="n">roll</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">,</span> <span class="n">maxloc</span><span class="p">,</span> <span class="n">is_ts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="c1">#tsdata1 = shiftmatched(tsdata1, maxloc, delta_t, is_ts=True)</span>
 	<span class="c1"># Phase shift ( rotate) the waveform 1 by multipying the frequency series of waveform 1 with the phase of the max element in acsnr</span>
 	<span class="c1"># Calculate the rotation (as phase of the max complex modulous element in</span>
 	<span class="c1"># acsnr</span>
@@ -2330,7 +2337,7 @@
 			<span class="k">except</span><span class="p">:</span>
 				<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Please input delta_t or a valid TimeSeries!&quot;</span><span class="p">)</span>
 
-	<span class="n">tsdata1</span><span class="p">,</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lengtheq</span><span class="p">(</span><span class="n">tsdata2</span><span class="p">,</span> <span class="n">tsdata1</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">tsdata1</span><span class="p">,</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lengtheq</span><span class="p">(</span><span class="n">tsdata2</span><span class="p">,</span> <span class="n">tsdata1</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">is_ts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 	<span class="c1"># Find startend.</span>
 	<span class="k">if</span> <span class="n">len1</span> <span class="o">==</span> <span class="n">len2</span><span class="p">:</span>
@@ -2360,8 +2367,15 @@
 	<span class="c1"># Normalize the waveforms</span>
 	<span class="n">norm1</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]))</span>
 	<span class="n">norm2</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tsdata2</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]))</span>
+
+	<span class="n">tsdata1_cropped</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span> <span class="o">/</span> <span class="n">norm1</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">tsdata2_cropped</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tsdata2</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span> <span class="o">/</span> <span class="n">norm2</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+
+	<span class="n">max_match</span><span class="p">,</span> <span class="n">max_shift</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">matchedfilter</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tsdata1_cropped</span><span class="p">,</span> <span class="n">tsdata2_cropped</span><span class="p">)</span>
+
 	<span class="n">tsdata1</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm1</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
 	<span class="n">tsdata2</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tsdata2</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm2</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+
 
 	<span class="c1"># Calculate complex SNR using pycbc function. Note: This complex SNR is</span>
 	<span class="c1"># actually the complex SNR * norm of the timeseries.</span>
@@ -2373,10 +2387,11 @@
 
 	<span class="c1"># Find the location of the maximum element in acsnr</span>
 	<span class="n">maxloc</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">acsnr</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">acsnr</span><span class="p">)))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-	<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Max location is </span><span class="si">%s</span><span class="s2">, match is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">maxloc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">acsnr</span><span class="p">)))</span>
+	<span class="n">mmatch</span>	<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">acsnr</span><span class="p">)</span>
+	<span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max location is </span><span class="si">{</span><span class="n">maxloc</span><span class="si">}</span><span class="s2">, match is </span><span class="si">{</span><span class="n">mmatch</span><span class="si">}</span><span class="s2"> max shift is </span><span class="si">{</span><span class="n">max_shift</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 	<span class="c1"># Shift the waveform 1 in time using maxloc</span>
-	<span class="n">tsdata1</span> <span class="o">=</span> <span class="n">shiftmatched</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">,</span> <span class="n">maxloc</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">tsdata1</span> <span class="o">=</span> <span class="n">shiftmatched</span><span class="p">(</span><span class="n">tsdata1</span><span class="p">,</span> <span class="n">maxloc</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">is_ts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 	<span class="c1"># Phase shift ( rotate) the waveform 1 by multipying the frequency series of waveform 1 with the phase of the max element in acsnr</span>
 	<span class="c1"># Calculate the rotation (as phase of the max complex modulous element in</span>
@@ -2392,12 +2407,327 @@
 
 	<span class="c1"># Return the normalized, time and phase shifted waveform 1 to coalign with</span>
 	<span class="c1"># 2 and waveform 2.</span>
-	<span class="n">aligned_waveforms</span> <span class="o">=</span> <span class="p">[</span><span class="n">ctsdata1</span><span class="p">,</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="p">[</span><span class="n">norm1</span><span class="p">,</span> <span class="n">norm2</span><span class="p">,</span> <span class="n">maxloc</span><span class="p">]]</span>
+	<span class="n">aligned_waveforms</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wf1&#39;</span> <span class="p">:</span> <span class="n">ctsdata1</span><span class="p">,</span> <span class="s1">&#39;wf2&#39;</span> <span class="p">:</span> <span class="n">tsdata2</span><span class="p">,</span> <span class="s1">&#39;norms&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="n">norm1</span><span class="p">,</span> <span class="n">norm2</span><span class="p">],</span> <span class="s1">&#39;shift&#39;</span><span class="p">:</span> <span class="n">maxloc</span><span class="p">,</span> <span class="s1">&#39;match&#39;</span> <span class="p">:</span> <span class="n">max_match</span><span class="p">}</span>
 
 	<span class="k">return</span> <span class="n">aligned_waveforms</span></div>
 
 
-<div class="viewcode-block" id="simplematch_wfs"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.simplematch_wfs">[docs]</a><span class="k">def</span> <span class="nf">simplematch_wfs</span><span class="p">(</span><span class="n">waveforms</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="resample_wfs"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.resample_wfs">[docs]</a><span class="k">def</span> <span class="nf">resample_wfs</span><span class="p">(</span><span class="n">both_time_axes</span><span class="p">,</span> <span class="n">both_waveforms</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39; Resample the waveform pairs.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	both_time_axes : list</span>
+<span class="sd">					 A list containing two 1d arrays representing the time axes.</span>
+<span class="sd">	both_waveforms : list</span>
+<span class="sd">					 A list containing two 1d arrays respresenting the waveforms.</span>
+<span class="sd">	delta_t		   : string, float</span>
+<span class="sd">					 The time step to resample at. Auto uses the finest of the two available.</span>
+<span class="sd">					 A float value can be provided by the user as well.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	both_time_axes_resam : 1d array</span>
+<span class="sd">						   A 1d array representing the resampled time axes.</span>
+<span class="sd">	both_waveforms_resam : list</span>
+<span class="sd">						   A list containing two 1d arrays respresenting the resampled waveforms.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+
+	<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">lengtheq</span>
+
+	<span class="n">waveform1</span><span class="p">,</span> <span class="n">waveform2</span> <span class="o">=</span> <span class="n">all_waveforms</span>
+	<span class="n">time_axis1</span><span class="p">,</span> <span class="n">time_axis2</span> <span class="o">=</span> <span class="n">all_time_axes</span>
+	
+	<span class="n">min_t</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">))</span>
+	<span class="n">max_t</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">))</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Taxis limits&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WF1 tmin </span><span class="si">{</span><span class="nb">min</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">)</span><span class="si">}</span><span class="s1"> tmax </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WF2 tmin </span><span class="si">{</span><span class="nb">min</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)</span><span class="si">}</span><span class="s1"> tmax </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+	<span class="n">delta_t1</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">delta_t2</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+ 
+	<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delta_t</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+
+		<span class="k">if</span> <span class="n">delta_t</span><span class="o">==</span><span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+			<span class="n">delta_t</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">delta_t1</span><span class="p">,</span> <span class="n">delta_t2</span><span class="p">)</span> 
+		<span class="k">elif</span> <span class="n">delta_t</span><span class="o">==</span><span class="s1">&#39;A&#39;</span><span class="p">:</span>
+			<span class="n">delta_t</span> <span class="o">=</span> <span class="n">delta_t1</span>
+		<span class="k">elif</span> <span class="n">delta_t</span><span class="o">==</span><span class="s1">&#39;B&#39;</span><span class="p">:</span>
+			<span class="n">delta_t</span> <span class="o">=</span> <span class="n">delta_t2</span>
+			  
+	<span class="c1"># Plot</span>
+	<span class="c1">#plt.plot(shear_1.time_axis, np.absolute(shear_1.mode(2, 2))/np.amax(shear_1.mode(2, 2)), label=&#39;shear&#39;)</span>
+	<span class="c1">#plt.plot(shear_1.time_axis, np.absolute(wf1_resam)/np.amax(wf1.mode(2, 2)), label=&#39;news&#39;)</span>
+	<span class="c1">#plt.grid()</span>
+	<span class="c1">#plt.legend()</span>
+	<span class="c1">#plt.show()</span>
+
+	<span class="c1">#time_axis = shear_1.time_axis</span>
+	<span class="c1">#waveform1, waveform2, flag = lengtheq(waveform1, waveform2, delta_t=delta_t)</span>
+
+	
+	<span class="n">new_time_axis</span>		<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">min_t</span><span class="p">,</span> <span class="n">max_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+
+	<span class="n">wf1_amp</span><span class="p">,</span> <span class="n">wf1_phase</span>	<span class="o">=</span> <span class="n">xtract_camp_phase</span><span class="p">(</span><span class="n">waveform1</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">waveform1</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+	<span class="n">wf2_amp</span><span class="p">,</span> <span class="n">wf2_phase</span>	<span class="o">=</span> <span class="n">xtract_camp_phase</span><span class="p">(</span><span class="n">waveform2</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">waveform2</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+
+
+	<span class="n">wf1_amp_int_fun</span>		<span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">,</span> <span class="n">wf1_amp</span><span class="p">)</span>
+	<span class="n">wf1_phase_int_fun</span>	<span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">,</span> <span class="n">wf1_phase</span><span class="p">)</span>
+
+	<span class="n">wf1_amp_resam</span>		<span class="o">=</span> <span class="n">wf1_amp_int_fun</span><span class="p">(</span><span class="n">new_time_axis</span><span class="p">)</span>
+	<span class="n">wf1_phase_resam</span>		<span class="o">=</span> <span class="n">wf1_phase_int_fun</span><span class="p">(</span><span class="n">new_time_axis</span><span class="p">)</span>
+	<span class="n">wf1_resam</span>			<span class="o">=</span> <span class="n">wf2_amp_resam</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">wf2_phase_resam</span><span class="p">)</span>
+		
+	<span class="n">wf2_amp_resam</span>		<span class="o">=</span> <span class="n">wf2_amp_int_fun</span><span class="p">(</span><span class="n">new_time_axis</span><span class="p">)</span>
+	<span class="n">wf2_phase_resam</span>		<span class="o">=</span> <span class="n">wf2_phase_int_fun</span><span class="p">(</span><span class="n">new_time_axis</span><span class="p">)</span>
+	<span class="n">wf2_resam</span>			<span class="o">=</span> <span class="n">wf2_amp_resam</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">wf2_phase_resam</span><span class="p">)</span>
+
+
+	<span class="k">return</span> <span class="p">[</span><span class="n">new_time_axis</span><span class="p">,</span> <span class="p">[</span><span class="n">wf1_resam</span><span class="p">,</span> <span class="n">wf2_resam</span><span class="p">]]</span></div>
+	
+
+	
+<div class="viewcode-block" id="match_wfs"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.match_wfs">[docs]</a><span class="k">def</span> <span class="nf">match_wfs</span><span class="p">(</span><span class="n">all_time_axes</span><span class="p">,</span> <span class="n">all_waveforms</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39; Match two waveforms and return the time shift,</span>
+<span class="sd">	phase shift, normalized waveforms and match coefficient.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	time_axes: list</span>
+<span class="sd">			A list containing the time axes</span>
+<span class="sd">			of the two waveforms</span>
+
+<span class="sd">	waveforms: list</span>
+<span class="sd">				A list of two waveforms.</span>
+<span class="sd">				Each is a 1d array.</span>
+<span class="sd">	delta_t: float, string, optional</span>
+<span class="sd">			 The time step of the resampled arrays.</span>
+<span class="sd">			 Can be A, B, auto or any float value.</span>
+<span class="sd">	</span>
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	match_details: dict</span>
+<span class="sd">					A dictionary containing the</span>
+<span class="sd">					i). match coeffient</span>
+<span class="sd">					ii). time_shift</span>
+<span class="sd">					iii). phase shift in radians</span>
+<span class="sd">					iv). normalized, resampled, waveforms and their</span>
+<span class="sd">						 time-axes.</span>
+
+<span class="sd">	Note</span>
+<span class="sd">	----</span>
+<span class="sd">	The shifts give by how much the first waveform has to be shifted to match with the second.</span>
+
+<span class="sd">	&#39;&#39;&#39;</span>
+
+	<span class="n">time_axis1</span><span class="p">,</span> <span class="n">time_axis2</span> <span class="o">=</span> <span class="n">all_time_axes</span>
+
+	<span class="k">if</span> <span class="n">time_axis1</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="n">time_axis2</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+		<span class="n">time_axis</span>  <span class="o">=</span> <span class="n">time_axis1</span>
+		<span class="n">wf1</span><span class="p">,</span> <span class="n">wf2</span> <span class="o">=</span> <span class="n">all_waveforms</span>
+		<span class="n">delta_t</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>		
+
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">time_axis</span><span class="p">,</span> <span class="n">wf1</span><span class="p">,</span> <span class="n">wf2</span> <span class="o">=</span> <span class="n">resample_wfs</span><span class="p">(</span><span class="n">all_time_axes</span><span class="p">,</span> <span class="n">all_waveforms</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+
+	<span class="kn">from</span> <span class="nn">waveformtools.transforms</span> <span class="kn">import</span> <span class="n">compute_fft</span><span class="p">,</span> <span class="n">compute_ifft</span>
+
+	<span class="c1"># The Fspace waveforms</span>
+	<span class="n">faxis</span><span class="p">,</span> <span class="n">wf1_tilde</span>	<span class="o">=</span> <span class="n">compute_fft</span><span class="p">(</span><span class="n">wf1</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">_</span><span class="p">,</span> <span class="n">wf2_tilde</span>		<span class="o">=</span> <span class="n">compute_fft</span><span class="p">(</span><span class="n">wf2</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">delta_f</span> 			<span class="o">=</span> <span class="n">faxis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">faxis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="c1"># Compute the Fspace complex SNR</span>
+	<span class="n">csnr_tilde</span>			<span class="o">=</span> <span class="n">wf1_tilde</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">wf2_tilde</span><span class="p">)</span>
+	<span class="c1"># Tspace CSNR</span>
+	<span class="n">_</span><span class="p">,</span> <span class="n">csnr</span>				<span class="o">=</span> <span class="n">compute_ifft</span><span class="p">(</span><span class="n">csnr_tilde</span><span class="p">,</span> <span class="n">delta_f</span><span class="p">)</span>
+	<span class="c1"># T space CSNR amp and phase</span>
+	<span class="n">Acsnr</span>				<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">csnr</span><span class="p">)</span>
+
+	<span class="c1"># Compute shift quantities for waveform 2 against 1</span>
+	<span class="c1"># Time shift</span>
+	<span class="n">Tshift_rec_index</span>	<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Acsnr</span><span class="p">)</span>
+	<span class="n">max_snr</span>				<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">Acsnr</span><span class="p">)</span>
+	<span class="n">Tshift_rec</span>			<span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span> <span class="o">-</span> <span class="n">Tshift_rec_index</span><span class="p">)</span><span class="o">*</span><span class="n">delta_t</span>
+	<span class="c1"># Phase shift</span>
+	<span class="n">Pshift_rec</span>			<span class="o">=</span> <span class="n">csnr</span><span class="p">[</span><span class="n">Tshift_rec_index</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">csnr</span><span class="p">[</span><span class="n">Tshift_rec_index</span><span class="p">])</span>
+	<span class="n">Pshift_rec_rad</span>		<span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Pshift_rec</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="p">)</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-----------------------------------</span><span class="se">\n</span><span class="s1"> Shift information for waveform 2 against 1 </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Recovered Time shift: </span><span class="si">{</span><span class="n">Tshift_rec</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Recovered Phase shift: </span><span class="si">{</span><span class="n">Pshift_rec</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">Pshift_rec_rad</span><span class="si">}</span><span class="s1"> in radians&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-----------------------------------&#39;</span><span class="p">)</span>
+
+
+	<span class="c1">## Apply the time shift to the second waveform</span>
+
+	<span class="k">if</span> <span class="n">Tshift_rec_index</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">wf2_Trec</span> <span class="o">=</span> <span class="n">roll</span><span class="p">(</span><span class="n">wf2</span><span class="p">,</span> <span class="n">Tshift_rec_index</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">wf2_Trec</span> <span class="o">=</span> <span class="n">wf2</span>
+
+	<span class="k">if</span> <span class="n">Pshift_rec</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">_</span><span class="p">,</span> <span class="n">wf2_Trec_tilde</span> <span class="o">=</span> <span class="n">compute_fft</span><span class="p">(</span><span class="n">wf2_Trec</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+		<span class="n">Pshift2_rad</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">-</span><span class="n">Pshift_rec_rad</span><span class="p">)</span>
+		<span class="n">Pshift2_fac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">Pshift2_rad</span><span class="p">)</span>
+		<span class="n">wf2_TPrec_tilde</span> <span class="o">=</span>  <span class="n">wf2_Trec_tilde</span><span class="o">*</span><span class="n">Pshift2_fac</span>
+
+		<span class="n">_</span><span class="p">,</span> <span class="n">wf2_TPrec</span> <span class="o">=</span> <span class="n">compute_ifft</span><span class="p">(</span><span class="n">wf2_TPrec_tilde</span><span class="p">,</span> <span class="n">delta_f</span><span class="p">)</span>
+
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">wf2_TPrec</span> <span class="o">=</span> <span class="n">wf2_Tshifted</span>
+
+	<span class="n">norm1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">wf1</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">wf1</span><span class="p">)))</span>
+	<span class="n">norm2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">wf2_TPrec</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">wf2_TPrec</span><span class="p">)))</span>
+
+	<span class="n">waveform1_aligned</span><span class="o">=</span> <span class="n">wf1</span><span class="o">/</span><span class="n">norm1</span>
+	<span class="n">waveform2_aligned</span><span class="o">=</span> <span class="n">wf2_TPrec</span><span class="o">/</span><span class="n">norm2</span>
+
+	<span class="n">match_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">waveform1_aligned</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">waveform2_aligned</span><span class="p">))</span> <span class="c1">#max_snr/(norm1*norm2)</span>
+	
+	<span class="n">match_details</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;match_score&#39;</span> <span class="p">:</span> <span class="n">match_score</span><span class="p">,</span>
+					  <span class="s1">&#39;time_shift&#39;</span>	<span class="p">:</span> <span class="n">Tshift_rec</span><span class="p">,</span>
+					  <span class="s1">&#39;phase_shift&#39;</span> <span class="p">:</span> <span class="n">Pshift_rec_rad</span><span class="p">,</span>
+					  <span class="s1">&#39;time&#39;</span>		<span class="p">:</span> <span class="n">time_axis</span><span class="p">,</span>
+					  <span class="s1">&#39;aligned_waveforms&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="n">waveform1_aligned</span><span class="p">,</span> <span class="n">waveform2_aligned</span><span class="p">]</span>
+					<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">match_details</span></div>
+
+<div class="viewcode-block" id="match_wfs_pycbc"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.match_wfs_pycbc">[docs]</a><span class="k">def</span> <span class="nf">match_wfs_pycbc</span><span class="p">(</span><span class="n">all_time_axes</span><span class="p">,</span> <span class="n">all_waveforms</span><span class="p">):</span>
+	<span class="sd">&#39;&#39;&#39; Match two waveforms using pycbc subroutines and return the time shift,</span>
+<span class="sd">	phase shift, normalized waveforms and match coefficient.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	time_axes: list</span>
+<span class="sd">			A list containing the time axes</span>
+<span class="sd">			of the two waveforms</span>
+
+<span class="sd">	waveforms: list</span>
+<span class="sd">				A list of two waveforms.</span>
+<span class="sd">				Each is a 1d array.</span>
+
+<span class="sd">	change: int</span>
+<span class="sd">			Which waveform to change, 1 or 2.</span>
+
+<span class="sd">	Returns</span>
+<span class="sd">	-------</span>
+<span class="sd">	match_details: dict</span>
+<span class="sd">					A dictionary containing the</span>
+<span class="sd">					i). match coeffient</span>
+<span class="sd">					ii). time_shift</span>
+<span class="sd">					iii). phase shift</span>
+<span class="sd">					iv). normalized waveforms and their</span>
+<span class="sd">						 time-axes.</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+
+	<span class="c1"># Step 1: resample</span>
+	<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+
+	<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">match_wfs</span>
+	<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">lengtheq</span>
+
+	<span class="n">waveform1</span><span class="p">,</span> <span class="n">waveform2</span> <span class="o">=</span> <span class="n">all_waveforms</span>
+	<span class="n">time_axis1</span><span class="p">,</span> <span class="n">time_axis2</span> <span class="o">=</span> <span class="n">all_time_axes</span>
+
+	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Taxis limits&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Shear tmin </span><span class="si">{</span><span class="nb">min</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">)</span><span class="si">}</span><span class="s1"> tmax </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;News tmin </span><span class="si">{</span><span class="nb">min</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)</span><span class="si">}</span><span class="s1"> tmax </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+	<span class="n">delta_t_1</span> <span class="o">=</span> <span class="n">time_axis1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">time_axis1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">delta_t</span> <span class="o">=</span> <span class="n">time_axis2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">time_axis2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="c1">#plt.plot(shear_1.time_axis, np.absolute(shear_1.mode(2, 2))/np.amax(shear_1.mode(2, 2)), label=&#39;shear&#39;)</span>
+	<span class="c1">#plt.plot(shear_1.time_axis, np.absolute(wf1_resam)/np.amax(wf1.mode(2, 2)), label=&#39;news&#39;)</span>
+	<span class="c1">#plt.grid()</span>
+	<span class="c1">#plt.legend()</span>
+	<span class="c1">#plt.show()</span>
+
+	<span class="c1">#time_axis = shear_1.time_axis</span>
+	<span class="c1">#waveform1, waveform2, flag = lengtheq(waveform1, waveform2, delta_t=delta_t)</span>
+
+	<span class="n">wf1_amp</span><span class="p">,</span> <span class="n">wf1_phase</span> <span class="o">=</span> <span class="n">xtract_camp_phase</span><span class="p">(</span><span class="n">waveform1</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">waveform1</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+	<span class="n">wf2_amp</span><span class="p">,</span> <span class="n">wf2_phase</span> <span class="o">=</span> <span class="n">xtract_camp_phase</span><span class="p">(</span><span class="n">waveform2</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">waveform2</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+
+	<span class="n">wf1_amp_int_fun</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">,</span> <span class="n">wf1_amp</span><span class="p">)</span>
+	<span class="n">wf1_phase_int_fun</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">time_axis1</span><span class="p">,</span> <span class="n">wf1_phase</span><span class="p">)</span>
+
+	<span class="n">wf1_amp_resam</span> <span class="o">=</span> <span class="n">wf1_amp_int_fun</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)</span>
+	<span class="n">wf1_phase_resam</span> <span class="o">=</span> <span class="n">wf1_phase_int_fun</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)</span>
+
+	<span class="n">delta_phase</span> <span class="o">=</span> <span class="n">wf1_phase_resam</span> <span class="o">-</span> <span class="n">wf2_phase</span>
+
+	<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">roll</span>
+	<span class="n">corrs</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)):</span>
+		<span class="n">rwf2</span> <span class="o">=</span> <span class="n">roll</span><span class="p">(</span><span class="n">wf2_amp</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+		<span class="n">corrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rwf2</span><span class="p">,</span> <span class="n">wf1_amp_resam</span><span class="p">))</span>
+
+	<span class="c1">#maxloc = np.argmax(corrs)</span>
+	<span class="n">shift</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">corrs</span><span class="p">))</span>
+	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The shift units is </span><span class="si">{</span><span class="n">shift</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+	<span class="c1">## ii). apply the time shift to the second waveform</span>
+
+	<span class="k">if</span> <span class="n">shift</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">wf2_amp_shifted</span> <span class="o">=</span> <span class="n">roll</span><span class="p">(</span><span class="n">wf2_amp</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span>
+		<span class="n">wf2_phase_shifted</span> <span class="o">=</span> <span class="n">roll</span><span class="p">(</span><span class="n">wf2_phase</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span>
+		<span class="n">wf2_shifted</span> <span class="o">=</span> <span class="n">roll</span><span class="p">(</span><span class="n">waveform2</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">wf2_amp_shifted</span> <span class="o">=</span> <span class="n">wf2_amp</span>
+		<span class="n">wf2_phase_shifted</span> <span class="o">=</span> <span class="n">wf2_phase</span>
+		<span class="n">wf2_shifted</span> <span class="o">=</span> <span class="n">waveform2</span>
+
+	<span class="n">mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+	<span class="n">phase_shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">delta_phase</span><span class="p">[</span><span class="n">mid</span><span class="o">-</span><span class="mi">100</span><span class="p">:</span><span class="n">mid</span><span class="o">+</span><span class="mi">100</span><span class="p">])</span>
+
+	<span class="kn">from</span> <span class="nn">waveformtools.transforms</span> <span class="kn">import</span> <span class="n">compute_fft</span><span class="p">,</span> <span class="n">compute_ifft</span>
+	<span class="n">faxis0</span><span class="p">,</span> <span class="n">wf1_tilde</span> <span class="o">=</span> <span class="n">compute_fft</span><span class="p">(</span><span class="n">waveform1</span><span class="p">,</span> <span class="n">delta_t_1</span><span class="p">)</span>
+
+	<span class="n">delta_f</span> <span class="o">=</span> <span class="n">faxis0</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">faxis0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="n">wf1_tilde_phase_shifted</span> <span class="o">=</span> <span class="n">wf1_tilde</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phase_shift</span><span class="p">)</span>
+	<span class="n">taxis0</span><span class="p">,</span> <span class="n">wf1_aligned</span> <span class="o">=</span> <span class="n">compute_ifft</span><span class="p">(</span><span class="n">wf1_tilde_phase_shifted</span><span class="p">,</span> <span class="n">delta_f</span><span class="p">)</span>
+
+	<span class="n">maxloc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">wf1_aligned</span><span class="p">))</span>
+	<span class="n">taxis0</span> <span class="o">=</span> <span class="n">taxis0</span> <span class="o">-</span> <span class="n">taxis0</span><span class="p">[</span><span class="n">maxloc</span><span class="p">]</span>
+
+	<span class="n">start_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)</span>
+	<span class="n">end_time</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">time_axis2</span><span class="p">)</span>
+
+	<span class="n">start_ind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">start_time</span> <span class="o">-</span> <span class="n">taxis0</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">delta_t</span><span class="p">)</span>
+	<span class="n">end_ind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">taxis0</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">delta_t</span><span class="p">)</span>
+
+	<span class="n">wf1_aligned_cropped</span> <span class="o">=</span> <span class="n">wf1_aligned</span><span class="p">[</span><span class="n">start_ind</span><span class="p">:</span><span class="n">end_ind</span><span class="p">]</span>
+
+	<span class="n">aligned_time_axis</span> <span class="o">=</span> <span class="n">taxis0</span><span class="p">[</span><span class="n">start_ind</span><span class="p">:</span><span class="n">end_ind</span><span class="p">]</span>
+
+	<span class="n">norm1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">wf1_aligned_cropped</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">wf1_aligned_cropped</span><span class="p">))</span>
+	<span class="n">norm2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">waveform2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">waveform2</span><span class="p">))</span>
+
+
+
+	<span class="n">mlen</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wf1_aligned_cropped</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf2_shifted</span><span class="p">))</span>
+
+	<span class="n">waveform1_aligned</span><span class="o">=</span> <span class="n">wf1_aligned_cropped</span><span class="p">[:</span><span class="n">mlen</span><span class="p">]</span><span class="o">/</span><span class="n">norm1</span>
+	<span class="n">waveform2_aligned</span><span class="o">=</span> <span class="n">wf2_shifted</span><span class="p">[:</span><span class="n">mlen</span><span class="p">]</span><span class="o">/</span><span class="n">norm2</span>
+
+	<span class="n">aligned_time_axis</span> <span class="o">=</span> <span class="n">aligned_time_axis</span><span class="p">[:</span><span class="n">mlen</span><span class="p">]</span>
+	<span class="n">match_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wf1_aligned_cropped</span><span class="p">[:</span><span class="n">mlen</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">wf2_shifted</span><span class="p">[:</span><span class="n">mlen</span><span class="p">]))</span><span class="o">/</span><span class="p">(</span><span class="n">norm1</span><span class="o">*</span><span class="n">norm2</span><span class="p">)</span>
+
+	<span class="n">match_details</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;match_score&#39;</span> <span class="p">:</span> <span class="n">match_score</span><span class="p">,</span>
+					  <span class="s1">&#39;time_shift&#39;</span>	<span class="p">:</span> <span class="n">shift</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">,</span>
+					  <span class="s1">&#39;phase_shift&#39;</span> <span class="p">:</span> <span class="n">phase_shift</span><span class="p">,</span>
+					  <span class="s1">&#39;time&#39;</span>		<span class="p">:</span> <span class="n">aligned_time_axis</span><span class="p">,</span>
+					  <span class="s1">&#39;aligned_waveforms&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="n">waveform1_aligned</span><span class="p">,</span> <span class="n">waveform2_aligned</span><span class="p">]</span>
+					<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">match_details</span></div>
+
+
+<div class="viewcode-block" id="simplematch_wfs_old"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.simplematch_wfs_old">[docs]</a><span class="k">def</span> <span class="nf">simplematch_wfs_old</span><span class="p">(</span><span class="n">waveforms</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Simple match the given waveforms. Does not clip the waveforms at either ends.</span>
 
 <span class="sd">	Procedure</span>
@@ -2446,10 +2776,11 @@
 				<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Waveform is not a pycbc TimeSeries. Please provide the gridspacing delt&quot;</span><span class="p">)</span>
 				<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 		<span class="c1"># Match procedure</span>
-		<span class="n">signaldat</span> <span class="o">=</span> <span class="n">lengtheq</span><span class="p">(</span><span class="n">waveformdat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">waveformdat</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">delta_t</span><span class="p">)</span>
+		<span class="c1">#signaldat = lengtheq(waveformdat[0], waveformdat[1], delta_t)</span>
+		<span class="n">waveform1</span><span class="p">,</span> <span class="n">waveform2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lengtheq</span><span class="p">(</span><span class="n">waveformdat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">waveformdat</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">delta_t</span><span class="p">)</span>
 
-		<span class="n">waveform1</span> <span class="o">=</span> <span class="n">signaldat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-		<span class="n">waveform2</span> <span class="o">=</span> <span class="n">signaldat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="c1">#waveform1 = signaldat[0]</span>
+		<span class="c1">#waveform2 = signaldat[1]</span>
 
 		<span class="c1"># alignedwvs = pycbc.waveform.utils.coalign_waveforms(signaldat,hpa)</span>
 		<span class="c1"># Compute the match to calculate match and shift.</span>
@@ -2565,12 +2896,11 @@
 	<span class="k">return</span> <span class="n">matchdet</span></div>
 
 
-<div class="viewcode-block" id="match_wfs"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.match_wfs">[docs]</a><span class="k">def</span> <span class="nf">match_wfs</span><span class="p">(</span><span class="n">waveforms</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="match_wfs_pycbc_old"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.match_wfs_pycbc_old">[docs]</a><span class="k">def</span> <span class="nf">match_wfs_pycbc_old</span><span class="p">(</span><span class="n">waveforms</span><span class="p">,</span> <span class="n">delt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Match given waveforms. Find the overlap.</span>
 
 <span class="sd">	Procedure</span>
 <span class="sd">	---------</span>
-
 <span class="sd">	1. For each pair of waveforms as a list:</span>
 <span class="sd">																	a. Findout if delt has been specified.</span>
 <span class="sd">																	b. Findout if the object has attribute delta_t to discern whether it is a pycbc timeseries ( not exactly. ). If not then exit.</span>
@@ -2585,24 +2915,18 @@
 
 <span class="sd">	Parameters</span>
 <span class="sd">	----------</span>
-
 <span class="sd">	waveforms:	list</span>
 <span class="sd">													A List of pairs [waveform A, waveform B].</span>
 
-
 <span class="sd">	Notes</span>
 <span class="sd">	-----</span>
-<span class="sd">	Assumes:</span>
-
-<span class="sd">	That the sampling rate is the  same for each pair.</span>
+<span class="sd">	Assumes that the sampling rate is the  same for each pair.</span>
 
 <span class="sd">	Returns</span>
 <span class="sd">	-------</span>
-
 <span class="sd">	match:	a list of dicts</span>
 <span class="sd">									A list of dictionaries in the format {match score (float), shift (number), start_index, end_index}</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">match</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="c1"># Iterate over (signal,template) pairs in waveforms</span>
 	<span class="k">for</span> <span class="n">waveformdat</span> <span class="ow">in</span> <span class="n">waveforms</span><span class="p">:</span>
 		<span class="c1"># Carryout the match</span>
@@ -2613,19 +2937,25 @@
 				<span class="n">message</span><span class="p">(</span><span class="s2">&quot;Waveform is not a pycbc TimeSeries. Please provide the gridspacing delt&quot;</span><span class="p">)</span>
 				<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 		<span class="c1"># Match procedure</span>
-		<span class="n">signaldat</span> <span class="o">=</span> <span class="n">lengtheq</span><span class="p">(</span><span class="n">waveformdat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">waveformdat</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">delt</span><span class="p">)</span>
 
-		<span class="n">waveform1</span> <span class="o">=</span> <span class="n">signaldat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-		<span class="n">waveform2</span> <span class="o">=</span> <span class="n">signaldat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="c1">#signaldat = lengtheq(waveformdat[0], waveformdat[1], delt)</span>
+
+		<span class="c1">#waveform1 = signaldat[0]</span>
+		<span class="c1">#waveform2 = signaldat[1]</span>
+		<span class="n">waveform1</span><span class="p">,</span> <span class="n">waveform2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">lengtheq</span><span class="p">(</span><span class="n">waveformdat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">waveformdat</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">delt</span><span class="p">,</span> <span class="n">is_ts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 		<span class="c1"># alignedwvs = pycbc.waveform.utils.coalign_waveforms(signaldat,hpa)</span>
 		<span class="c1"># Compute the match to calculate match and shift.</span>
 		<span class="c1"># Note: The match function from pycbc returns the match of the</span>
 		<span class="c1"># normalized templates</span>
+
 		<span class="p">(</span><span class="n">match_score</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">matchedfilter</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">waveform1</span><span class="p">,</span> <span class="n">waveform2</span><span class="p">)</span>
+
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Priliminary match&#39;</span><span class="p">,</span> <span class="n">match_score</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span>
 		<span class="c1"># Shift the matched data against the template using the shift obtained</span>
 		<span class="c1"># above</span>
-		<span class="n">waveform1</span> <span class="o">=</span> <span class="n">shiftmatched</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">waveform1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">shift</span><span class="p">),</span> <span class="n">delt</span><span class="p">)</span>
+		<span class="n">waveform1</span> <span class="o">=</span> <span class="n">roll</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">waveform1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">shift</span><span class="p">))</span>
+		<span class="c1">#waveform1 = shiftmatched(np.array(waveform1), int(shift), delt)</span>
 		<span class="c1"># Compute the start and end of the non-zero signal</span>
 		<span class="c1"># First try with absolute startend. Then with approximate startend.</span>
 		<span class="c1"># Note: The criterion that handles.startend() uses is that the signal</span>
@@ -2637,8 +2967,10 @@
 			<span class="n">starti</span><span class="p">,</span> <span class="n">endi</span> <span class="o">=</span> <span class="n">apxstartend</span><span class="p">(</span><span class="n">waveform1</span><span class="p">)</span>
 			<span class="n">message</span><span class="p">(</span><span class="s2">&quot;starti, endi&quot;</span><span class="p">)</span>
 
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The approximate start and end indices are&#39;</span><span class="p">,</span> <span class="n">starti</span><span class="p">,</span> <span class="n">endi</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="n">endi</span><span class="o">-</span><span class="n">starti</span><span class="p">)</span>
 		<span class="c1"># Convert the non-zero portion of the signal and template to</span>
 		<span class="c1"># time-series</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Converting shifted vectors to time series&#39;</span><span class="p">)</span>
 		<span class="n">signal</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">TimeSeries</span><span class="p">(</span>
 			<span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">waveform1</span><span class="p">)[</span><span class="n">starti</span><span class="p">:</span><span class="n">endi</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">waveform1</span><span class="p">)[</span><span class="n">starti</span><span class="p">:</span><span class="n">endi</span><span class="p">]),</span> <span class="n">delt</span>
 		<span class="p">)</span>
@@ -2661,11 +2993,10 @@
 			<span class="n">match_score</span> <span class="o">=</span> <span class="kc">None</span>
 			<span class="n">shift</span> <span class="o">=</span> <span class="kc">None</span>
 
-		<span class="k">match</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;Match score&quot;</span><span class="p">:</span> <span class="n">match_score</span><span class="p">,</span> <span class="s2">&quot;Shift&quot;</span><span class="p">:</span> <span class="n">shift</span><span class="p">,</span> <span class="s2">&quot;Start index&quot;</span><span class="p">:</span> <span class="n">starti</span><span class="p">,</span> <span class="s2">&quot;End index&quot;</span><span class="p">:</span> <span class="n">endi</span><span class="p">})</span>
+		<span class="n">match</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Match score&quot;</span><span class="p">:</span> <span class="n">match_score</span><span class="p">,</span> <span class="s2">&quot;Shift&quot;</span><span class="p">:</span> <span class="n">shift</span><span class="p">,</span> <span class="s2">&quot;Start index&quot;</span><span class="p">:</span> <span class="n">starti</span><span class="p">,</span> <span class="s2">&quot;End index&quot;</span><span class="p">:</span> <span class="n">endi</span><span class="p">}</span>
 	<span class="k">return</span> <span class="n">match</span></div>
 
-
-<div class="viewcode-block" id="roll"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.roll">[docs]</a><span class="k">def</span> <span class="nf">roll</span><span class="p">(</span><span class="n">tsdata</span><span class="p">,</span> <span class="n">i_roll</span><span class="p">):</span>
+<div class="viewcode-block" id="roll"><a class="viewcode-back" href="../../_autosummary/waveformtools.waveformtools.html#waveformtools.waveformtools.roll">[docs]</a><span class="k">def</span> <span class="nf">roll</span><span class="p">(</span><span class="n">tsdata</span><span class="p">,</span> <span class="n">i_roll</span><span class="p">,</span> <span class="n">is_ts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Roll the data circularly. Circular counterpart of shiftmatched function.</span>
 
 <span class="sd">	Parameters</span>
@@ -2683,12 +3014,14 @@
 <span class="sd">											The rolled wavefrom.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="k">try</span><span class="p">:</span>
-		<span class="c1"># Assign the time step.</span>
-		<span class="n">delta_t</span> <span class="o">=</span> <span class="n">tsdata</span><span class="o">.</span><span class="n">delta_t</span>
-		<span class="n">flag</span> <span class="o">=</span> <span class="mi">1</span>
-	<span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
-		<span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">if</span> <span class="n">is_ts</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="c1"># Assign the time step.</span>
+			<span class="n">delta_t</span> <span class="o">=</span> <span class="n">tsdata</span><span class="o">.</span><span class="n">delta_t</span>
+			<span class="n">flag</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+			<span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
 
 	<span class="c1"># Assign the data array</span>
 	<span class="n">tsdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tsdata</span><span class="p">)</span>

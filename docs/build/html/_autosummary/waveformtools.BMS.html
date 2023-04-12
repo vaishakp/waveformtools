@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -22,11 +22,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -35,8 +34,6 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="waveformtools.CoM" href="waveformtools.CoM.html" />
@@ -52,7 +49,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: green" >
+        <div class="wy-side-nav-search"  style="background: blue" >
           
 
           
@@ -90,7 +87,7 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
@@ -105,13 +102,15 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveformtools.html">Waveformtools</a></li>
 </ul>
 
             
@@ -185,31 +184,27 @@
 <p>The implementation of BMS transformations on the waveforms.</p>
 <p class="rubric">Functions</p>
 <table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.BMS.boost_waveform" title="waveformtools.BMS.boost_waveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">boost_waveform</span></code></a>(unboosted_waveform, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.BMS.boost_waveform" title="waveformtools.BMS.boost_waveform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">boost_waveform</span></code></a>(unboosted_waveform, …)</p></td>
 <td><p>Boost the waveform given the unboosted waveform and the boost conformal factor.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.BMS.compute_conformal_k" title="waveformtools.BMS.compute_conformal_k"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_conformal_k</span></code></a>(vec_v, theta, phi[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.BMS.compute_conformal_k" title="waveformtools.BMS.compute_conformal_k"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_conformal_k</span></code></a>(vec_v, theta, phi[, …])</p></td>
 <td><p>Compute the conformal factor for the boost transformation</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.BMS.compute_supertransl_alpha" title="waveformtools.BMS.compute_supertransl_alpha"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_supertransl_alpha</span></code></a>(...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.BMS.compute_supertransl_alpha" title="waveformtools.BMS.compute_supertransl_alpha"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_supertransl_alpha</span></code></a>(…)</p></td>
 <td><p>Compute the spherical Alpha supertranslation variable <span class="math notranslate nohighlight">\(\alpha(\theta, \phi)\)</span> given its modes. This method just multiplies the</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.BMS.boost_waveform">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.BMS.</span></span><span class="sig-name descname"><span class="pre">boost_waveform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unboosted_waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conformal_factor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/BMS.html#boost_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.BMS.boost_waveform" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.BMS.boost_waveform">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.BMS.</span></code><code class="sig-name descname"><span class="pre">boost_waveform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unboosted_waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conformal_factor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/BMS.html#boost_waveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.BMS.boost_waveform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Boost the waveform given the unboosted waveform and the boost conformal factor.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>non_boosted_waveform:           list</strong></dt><dd><p>A list with a single floating point number or a numpy array of the unboosted waveform. The waveform can have angular as well as time dimentions.
-The nesting order should be that, given the list <a href="#id1"><span class="problematic" id="id2">`</span></a>non_boosted_waveform’, each item in the list refers to an array defined on the sphere at a particular
+The nesting order should be that, given the list <a href="#system-message-1"><span class="problematic" id="problematic-1">`</span></a>non_boosted_waveform’, each item in the list refers to an array defined on the sphere at a particular
 time or frequency. The subitem will have dimensions [ntheta, nphi].</p>
 </dd>
 <dt><strong>conformal_factor:               float/array</strong></dt><dd><p>The conformal factor for the Lorentz transformation. It may be a single floating point number or an array on a spherical grid. The array will be of dimensions
@@ -223,26 +218,26 @@ time or frequency. The subitem will have dimensions [ntheta, nphi].</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.BMS.compute_conformal_k">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.BMS.</span></span><span class="sig-name descname"><span class="pre">compute_conformal_k</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec_v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/BMS.html#compute_conformal_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.BMS.compute_conformal_k" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.BMS.compute_conformal_k">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.BMS.</span></code><code class="sig-name descname"><span class="pre">compute_conformal_k</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec_v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/BMS.html#compute_conformal_k"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.BMS.compute_conformal_k" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
-<dt>Compute the conformal factor for the boost transformation</dt><dd><p>:math:<a href="#id3"><span class="problematic" id="id4">`</span></a>k = exp(-2i lambda) gamma^3 (1 - mathbf{v} cdot mathbf{r})^3</p>
+<dt>Compute the conformal factor for the boost transformation</dt><dd><p>:math:<a href="#system-message-2"><span class="problematic" id="problematic-2">`</span></a>k = exp(-2i lambda) gamma^3 (1 - mathbf{v} cdot mathbf{r})^3</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>vec_v: list</strong></dt><dd><p>The velocity vector.</p>
 </dd>
-<dt><strong>theta: float</strong></dt><dd><p>The polar angle :math:<a href="#id5"><span class="problematic" id="id6">`</span></a>theta’ in radians.</p>
+<dt><strong>theta: float</strong></dt><dd><p>The polar angle :math:<a href="#system-message-3"><span class="problematic" id="problematic-3">`</span></a>theta’ in radians.</p>
 </dd>
-<dt><strong>phi: float</strong></dt><dd><p>The azimuthal angle :math:<a href="#id7"><span class="problematic" id="id8">`</span></a>phi’ in radians.</p>
+<dt><strong>phi: float</strong></dt><dd><p>The azimuthal angle :math:<a href="#system-message-4"><span class="problematic" id="problematic-4">`</span></a>phi’ in radians.</p>
 </dd>
-<dt><strong>spin_phase: float, optional</strong></dt><dd><p>The spin phase :math:<a href="#id9"><span class="problematic" id="id10">`</span></a>lambda’. Defaults to 0.</p>
+<dt><strong>spin_phase: float, optional</strong></dt><dd><p>The spin phase :math:<a href="#system-message-5"><span class="problematic" id="problematic-5">`</span></a>lambda’. Defaults to 0.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>conformal_k:    float</dt><dd><p>The conformal factor for the boost transformation as defined above.</p>
 </dd>
@@ -252,24 +247,24 @@ time or frequency. The subitem will have dimensions [ntheta, nphi].</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.BMS.compute_supertransl_alpha">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.BMS.</span></span><span class="sig-name descname"><span class="pre">compute_supertransl_alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">supertransl_alpha_modes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/BMS.html#compute_supertransl_alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.BMS.compute_supertransl_alpha" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.BMS.compute_supertransl_alpha">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.BMS.</span></code><code class="sig-name descname"><span class="pre">compute_supertransl_alpha</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">supertransl_alpha_modes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/BMS.html#compute_supertransl_alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.BMS.compute_supertransl_alpha" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Compute the spherical Alpha supertranslation variable <span class="math notranslate nohighlight">\(\alpha(\theta, \phi)\)</span> given its modes. This method just multiplies the</dt><dd><p>alpha modes with their corresponding spherical harmonic basis functions and returns the summed result.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>supertransl_alpha_modes:        dict</strong></dt><dd><p>A dictionary of lists, each sublist containing the set of super-translation modes corresponding to a particular :math:<a href="#id11"><span class="problematic" id="id12">`</span></a>ell’.</p>
+<dt><strong>supertransl_alpha_modes:        dict</strong></dt><dd><p>A dictionary of lists, each sublist containing the set of super-translation modes corresponding to a particular :math:<a href="#system-message-6"><span class="problematic" id="problematic-6">`</span></a>ell’.</p>
 </dd>
-<dt><strong>theta:          float</strong></dt><dd><p>The polar angle :math:<a href="#id13"><span class="problematic" id="id14">`</span></a>theta’.</p>
+<dt><strong>theta:          float</strong></dt><dd><p>The polar angle :math:<a href="#system-message-7"><span class="problematic" id="problematic-7">`</span></a>theta’.</p>
 </dd>
-<dt><strong>phi:    float</strong></dt><dd><p>The azimuthal angle :math:<a href="#id15"><span class="problematic" id="id16">`</span></a>phi’.</p>
+<dt><strong>phi:    float</strong></dt><dd><p>The azimuthal angle :math:<a href="#system-message-8"><span class="problematic" id="problematic-8">`</span></a>phi’.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>supertransl_alpha_sphere:               func</dt><dd><p>A function on the sphere (arguments <span class="math notranslate nohighlight">\(\theta', math:\)</span>phi’).</p>
 </dd>

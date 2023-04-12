@@ -18,7 +18,7 @@ Welcome to waveformtools' documentation!
    simulations
    transforms
    waveforms
-   wavefotmtools
+   waveformtools
 
 Indices and tables
 ==================

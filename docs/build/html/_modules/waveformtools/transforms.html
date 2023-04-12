@@ -21,7 +21,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
@@ -33,10 +32,10 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/css/my_theme.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,11 +83,13 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveforms.html">Waveforms</a></li>
 </ul>
 
             
@@ -158,8 +159,9 @@
 
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1">#from numba import jit, njit</span>
 
-
+<span class="c1">#@njit(parallel=True)</span>
 <div class="viewcode-block" id="compute_fft"><a class="viewcode-back" href="../../_autosummary/waveformtools.transforms.html#waveformtools.transforms.compute_fft">[docs]</a><span class="k">def</span> <span class="nf">compute_fft</span><span class="p">(</span><span class="n">udata_x</span><span class="p">,</span> <span class="n">delta_x</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Find the FFT of the samples in time-space, and return with the frequencies.</span>
 
@@ -204,7 +206,7 @@
 
 	<span class="k">return</span> <span class="n">freq_axis</span><span class="p">,</span> <span class="n">utilde</span></div>
 
-
+<span class="c1">#@njit(parallel=True)</span>
 <div class="viewcode-block" id="compute_ifft"><a class="viewcode-back" href="../../_autosummary/waveformtools.transforms.html#waveformtools.transforms.compute_ifft">[docs]</a><span class="k">def</span> <span class="nf">compute_ifft</span><span class="p">(</span><span class="n">utilde</span><span class="p">,</span> <span class="n">delta_f</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Find the inverse FFT of the samples in frequency-space, and return with the time axis.</span>
 
@@ -254,7 +256,7 @@
 
 	<span class="k">return</span> <span class="n">time_axis</span><span class="p">,</span> <span class="n">udata_time</span></div>
 
-
+<span class="c1">#@njit(parallel=True)</span>
 <div class="viewcode-block" id="set_fft_conven"><a class="viewcode-back" href="../../_autosummary/waveformtools.transforms.html#waveformtools.transforms.set_fft_conven">[docs]</a><span class="k">def</span> <span class="nf">set_fft_conven</span><span class="p">(</span><span class="n">utilde_orig</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Make a numppy fft consistent with the chosen conventions.</span>
 <span class="sd">		This takes care of the zero mode factor and array position.</span>
@@ -282,7 +284,7 @@
 
 	<span class="k">return</span> <span class="n">utilde_conven</span></div>
 
-
+<span class="c1">#@njit(parallel=True)</span>
 <div class="viewcode-block" id="unset_fft_conven"><a class="viewcode-back" href="../../_autosummary/waveformtools.transforms.html#waveformtools.transforms.unset_fft_conven">[docs]</a><span class="k">def</span> <span class="nf">unset_fft_conven</span><span class="p">(</span><span class="n">utilde_conven</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Make an actual conventional fft consistent with numpy&#39;s conventions.</span>
 <span class="sd">		The inverse of set_conv.</span>

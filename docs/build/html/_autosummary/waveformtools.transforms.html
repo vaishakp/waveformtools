@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -22,7 +22,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -34,11 +33,9 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="waveformtools.waveforms" href="waveformtools.waveforms.html" />
+    <link rel="next" title="waveformtools.waveformtools" href="waveformtools.waveformtools.html" />
     <link rel="prev" title="waveformtools.spherical" href="waveformtools.spherical.html" />
     <link href="../_static/css/my_theme.css" rel="stylesheet" type="text/css">
 
@@ -51,7 +48,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: green" >
+        <div class="wy-side-nav-search"  style="background: blue" >
           
 
           
@@ -89,7 +86,7 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
@@ -104,13 +101,15 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.transforms</a></li>
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveformtools.html">Waveformtools</a></li>
 </ul>
 
             
@@ -184,10 +183,6 @@
 <p>Methods to transform the waveform</p>
 <p class="rubric">Functions</p>
 <table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.transforms.compute_fft" title="waveformtools.transforms.compute_fft"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_fft</span></code></a>(udata_x, delta_x)</p></td>
 <td><p>Find the FFT of the samples in time-space, and return with the frequencies.</p></td>
@@ -199,16 +194,16 @@
 <td><p>Make a numppy fft consistent with the chosen conventions.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.transforms.unset_fft_conven" title="waveformtools.transforms.unset_fft_conven"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unset_fft_conven</span></code></a>(utilde_conven)</p></td>
-<td><p>Make an actual conventional fft consistent with numpy's conventions.</p></td>
+<td><p>Make an actual conventional fft consistent with numpy’s conventions.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.transforms.compute_fft">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.transforms.</span></span><span class="sig-name descname"><span class="pre">compute_fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">udata_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/transforms.html#compute_fft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.transforms.compute_fft" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.transforms.compute_fft">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.transforms.</span></code><code class="sig-name descname"><span class="pre">compute_fft</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">udata_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/transforms.html#compute_fft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.transforms.compute_fft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the FFT of the samples in time-space, and return with the frequencies.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>udata_x:        1d array</strong></dt><dd><p>The samples in time-space.</p>
 </dd>
@@ -216,7 +211,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>freqs:  1d array</dt><dd><p>The frequency axis, shifted approriately.</p>
 </dd>
@@ -228,11 +223,11 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.transforms.compute_ifft">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.transforms.</span></span><span class="sig-name descname"><span class="pre">compute_ifft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utilde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/transforms.html#compute_ifft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.transforms.compute_ifft" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.transforms.compute_ifft">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.transforms.</span></code><code class="sig-name descname"><span class="pre">compute_ifft</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utilde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/transforms.html#compute_ifft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.transforms.compute_ifft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the inverse FFT of the samples in frequency-space, and return with the time axis.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>utilde</strong><span class="classifier">1d array</span></dt><dd><p>The samples in frequency-space.</p>
 </dd>
@@ -240,7 +235,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>time_axis:      1d array</dt><dd><p>The time axis.</p>
 </dd>
@@ -252,21 +247,21 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.transforms.set_fft_conven">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.transforms.</span></span><span class="sig-name descname"><span class="pre">set_fft_conven</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utilde_orig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/transforms.html#set_fft_conven"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.transforms.set_fft_conven" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.transforms.set_fft_conven">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.transforms.</span></code><code class="sig-name descname"><span class="pre">set_fft_conven</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utilde_orig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/transforms.html#set_fft_conven"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.transforms.set_fft_conven" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Make a numppy fft consistent with the chosen conventions.</dt><dd><p>This takes care of the zero mode factor and array position.
 Also, it shifts the negative frequencies using numpy’s fftshift.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>utilde_orig:    1d array</strong></dt><dd><p>The result of a numpy fft.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>utilde_conven:  1d array</dt><dd><p>The fft with set conventions.</p>
 </dd>
@@ -276,20 +271,20 @@ Also, it shifts the negative frequencies using numpy’s fftshift.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.transforms.unset_fft_conven">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.transforms.</span></span><span class="sig-name descname"><span class="pre">unset_fft_conven</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utilde_conven</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/transforms.html#unset_fft_conven"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.transforms.unset_fft_conven" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.transforms.unset_fft_conven">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.transforms.</span></code><code class="sig-name descname"><span class="pre">unset_fft_conven</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utilde_conven</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/transforms.html#unset_fft_conven"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.transforms.unset_fft_conven" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Make an actual conventional fft consistent with numpy’s conventions.</dt><dd><p>The inverse of set_conv.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>utilde_conven:  1d array</strong></dt><dd><p>The conventional fft data vector.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>utilde_np</dt><dd></dd>
 </dl>
@@ -307,7 +302,7 @@ Also, it shifts the negative frequencies using numpy’s fftshift.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="waveformtools.waveforms.html" class="btn btn-neutral float-right" title="waveformtools.waveforms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="waveformtools.waveformtools.html" class="btn btn-neutral float-right" title="waveformtools.waveformtools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="waveformtools.spherical.html" class="btn btn-neutral float-left" title="waveformtools.spherical" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

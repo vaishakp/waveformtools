@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -22,7 +22,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -34,8 +33,6 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link href="../_static/css/my_theme.css" rel="stylesheet" type="text/css">
@@ -49,7 +46,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: green" >
+        <div class="wy-side-nav-search"  style="background: blue" >
           
 
           
@@ -87,11 +84,14 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">Package API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveformtools.html">Waveformtools</a></li>
 </ul>
 
             
@@ -161,15 +161,11 @@
 <p>Tools for differentiating data.</p>
 <p class="rubric">Functions</p>
 <table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.differentiate.Chebyshev_differential" title="waveformtools.differentiate.Chebyshev_differential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Chebyshev_differential</span></code></a>(x_data, y_data[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.differentiate.Chebyshev_differential" title="waveformtools.differentiate.Chebyshev_differential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Chebyshev_differential</span></code></a>(x_data, y_data[, …])</p></td>
 <td><p>Differentiate a function using the Chebyshev expansion.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.differentiate.Fourier_differential" title="waveformtools.differentiate.Fourier_differential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Fourier_differential</span></code></a>(delta_x[, udata_x, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.differentiate.Fourier_differential" title="waveformtools.differentiate.Fourier_differential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Fourier_differential</span></code></a>(delta_x[, udata_x, …])</p></td>
 <td><p>Fixed frequency differentiation, the inverse of the Fixed frequency integration as presented in Reisswig et al.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.differentiate.differentiate" title="waveformtools.differentiate.differentiate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">differentiate</span></code></a>(data, delta_t)</p></td>
@@ -199,11 +195,11 @@
 </tbody>
 </table>
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.Chebyshev_differential">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">Chebyshev_differential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#Chebyshev_differential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.Chebyshev_differential" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.Chebyshev_differential">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">Chebyshev_differential</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#Chebyshev_differential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.Chebyshev_differential" title="Permalink to this definition">¶</a></dt>
 <dd><p>Differentiate a function using the Chebyshev expansion.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>x_data: 1d array</strong></dt><dd><p>The x data.</p>
 </dd>
@@ -215,7 +211,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>dydx_data:      1d array</dt><dd><p>The differentiated data.</p>
 </dd>
@@ -225,14 +221,14 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.Fourier_differential">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">Fourier_differential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">udata_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utilde_conven</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#Fourier_differential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.Fourier_differential" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.Fourier_differential">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">Fourier_differential</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">udata_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utilde_conven</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#Fourier_differential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.Fourier_differential" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Fixed frequency differentiation, the inverse of the Fixed frequency integration as presented in Reisswig et al.</dt><dd><p>This function takes in a function and returns its nth order derivative differential taken in the frequency domain.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>xaxis:  1d array</strong></dt><dd><p>The co-ordinate space axis.</p>
 </dd>
@@ -248,7 +244,7 @@
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>udata_differentiated:   1d array</dt><dd><p>The input waveform in time-space, integrated in frequency space using FFI.</p>
 </dd>
@@ -268,11 +264,11 @@ is real.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.differentiate">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">differentiate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Central difference derivative calculator. Forward/ backward Euler near the boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array</strong></dt><dd><p>The 1d data.</p>
 </dd>
@@ -280,7 +276,7 @@ is real.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>dAdt:   1d array</dt><dd><p>The derivative.</p>
 </dd>
@@ -290,11 +286,11 @@ is real.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate2">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate2" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.differentiate2">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">differentiate2</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Five point difference derivative calculator.  Not accurate near the boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array</strong></dt><dd><p>The 1d data.</p>
 </dd>
@@ -302,7 +298,7 @@ is real.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>dAdt:   1d array</dt><dd><p>The derivative.</p>
 </dd>
@@ -312,11 +308,11 @@ is real.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate3">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate3" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.differentiate3">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">differentiate3</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate3" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seven point difference derivative calculator. Not accurate near the boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array</strong></dt><dd><p>The 1d data.</p>
 </dd>
@@ -324,7 +320,7 @@ is real.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>dAdt:   1d array</dt><dd><p>The derivative.</p>
 </dd>
@@ -334,11 +330,11 @@ is real.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate4">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate4" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.differentiate4">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">differentiate4</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate4" title="Permalink to this definition">¶</a></dt>
 <dd><p>Nine point difference derivative calculator. Not accurate near the boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array</strong></dt><dd><p>The 1d data.</p>
 </dd>
@@ -346,7 +342,7 @@ is real.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>dAdt:   1d array</dt><dd><p>The derivative.</p>
 </dd>
@@ -356,11 +352,11 @@ is real.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate5">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate5" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.differentiate5">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">differentiate5</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate5" title="Permalink to this definition">¶</a></dt>
 <dd><p>Eleven point difference derivative calculator. Not accurate near the boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array</strong></dt><dd><p>The 1d data.</p>
 </dd>
@@ -368,7 +364,7 @@ is real.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>dAdt:   1d array</dt><dd><p>The derivative of the data.</p>
 </dd>
@@ -378,11 +374,11 @@ is real.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate5_vec_nonumba">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate5_vec_nonumba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate5_vec_nonumba"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate5_vec_nonumba" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.differentiate5_vec_nonumba">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">differentiate5_vec_nonumba</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate5_vec_nonumba"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate5_vec_nonumba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Eleven point difference derivative calculator. Not accurate near the boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array</strong></dt><dd><p>The 1d data.</p>
 </dd>
@@ -390,7 +386,7 @@ is real.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>dAdt:   1d array</dt><dd><p>The derivative of the data.</p>
 </dd>
@@ -400,11 +396,11 @@ is real.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate5_vec_numba">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate5_vec_numba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate5_vec_numba"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate5_vec_numba" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.differentiate5_vec_numba">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">differentiate5_vec_numba</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate5_vec_numba"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate5_vec_numba" title="Permalink to this definition">¶</a></dt>
 <dd><p>Eleven point difference derivative calculator. Not accurate near the boundaries.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array</strong></dt><dd><p>The 1d data.</p>
 </dd>
@@ -412,7 +408,7 @@ is real.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>dAdt:   1d array</dt><dd><p>The derivative of the data.</p>
 </dd>
@@ -422,11 +418,11 @@ is real.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.differentiate.differentiate_cwaveform">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></span><span class="sig-name descname"><span class="pre">differentiate_cwaveform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate_cwaveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate_cwaveform" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.differentiate.differentiate_cwaveform">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.differentiate.</span></code><code class="sig-name descname"><span class="pre">differentiate_cwaveform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/differentiate.html#differentiate_cwaveform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.differentiate.differentiate_cwaveform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Differentiate a given waveform by differentiating the Amplitude-Phase form.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>time_axis:      1d array</strong></dt><dd><p>The time axis of the waveform.</p>
 </dd>
@@ -434,7 +430,7 @@ is real.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>differentiated_waveform:        1d array</dt><dd><p>The waveform differentiated in time.</p>
 </dd>

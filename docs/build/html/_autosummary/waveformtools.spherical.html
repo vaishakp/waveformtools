@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -22,7 +22,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -34,8 +33,6 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="waveformtools.transforms" href="waveformtools.transforms.html" />
@@ -51,7 +48,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: green" >
+        <div class="wy-side-nav-search"  style="background: blue" >
           
 
           
@@ -89,7 +86,7 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
@@ -104,13 +101,15 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
-<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveformtools.html">Waveformtools</a></li>
 </ul>
 
             
@@ -184,12 +183,8 @@
 <p>Methods to handle functions on a sphere.</p>
 <p class="rubric">Functions</p>
 <table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.spherical.decompose_in_SWSHs" title="waveformtools.spherical.decompose_in_SWSHs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decompose_in_SWSHs</span></code></a>(waveform, gridinfo[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.spherical.decompose_in_SWSHs" title="waveformtools.spherical.decompose_in_SWSHs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decompose_in_SWSHs</span></code></a>(waveform, gridinfo[, …])</p></td>
 <td><p>Decompose a given function on a sphere in Spin Weighted Spherical Harmonics</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.spherical.quad_on_sphere" title="waveformtools.spherical.quad_on_sphere"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quad_on_sphere</span></code></a>(integrand, gridinfo[, kind])</p></td>
@@ -198,27 +193,27 @@
 </tbody>
 </table>
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.spherical.decompose_in_SWSHs">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.spherical.</span></span><span class="sig-name descname"><span class="pre">decompose_in_SWSHs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gridinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/spherical.html#decompose_in_SWSHs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.spherical.decompose_in_SWSHs" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.spherical.decompose_in_SWSHs">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.spherical.</span></code><code class="sig-name descname"><span class="pre">decompose_in_SWSHs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gridinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/spherical.html#decompose_in_SWSHs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.spherical.decompose_in_SWSHs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decompose a given function on a sphere in Spin Weighted Spherical Harmonics</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>waveform:               list</strong></dt><dd><p>A list that contains as its items the waveform defined on the sphere as an array of shape [ntheta, nphi]. Each item in the list may donote
 an instant of time or frequency.</p>
 </dd>
 <dt><strong>spin_weight:     int, optional</strong></dt><dd><p>The spin weight of the waveform. It defaults to -2 for a gravitational waveform.</p>
 </dd>
-<dt><strong>ell_max:        int, optional</strong></dt><dd><p>The maximum value of the :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>ell’ polar quantum number. Defaults to 6=8.</p>
+<dt><strong>ell_max:        int, optional</strong></dt><dd><p>The maximum value of the :math:<a href="#system-message-1"><span class="problematic" id="problematic-1">`</span></a>ell’ polar quantum number. Defaults to 6=8.</p>
 </dd>
 <dt><strong>gridinfo:               class instance</strong></dt><dd><p>The class instance that contains the properties of the spherical grid.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt>SWSH_coeffs:    list</dt><dd><p>The SWSH coefficients of the waveform. It may be a list composed of a single floating point number or a 1d array (denoting time or frequency dimension).
-The waveform can have angular as well as time dimentions. The nesting order will be that, given the list <a href="#id3"><span class="problematic" id="id4">`</span></a>non_boosted_waveform’, each
+The waveform can have angular as well as time dimentions. The nesting order will be that, given the list <a href="#system-message-2"><span class="problematic" id="problematic-2">`</span></a>non_boosted_waveform’, each
 item refers to a one dimensional array in time/ frequency of SWSH coefficients.</p>
 </dd>
 </dl>
@@ -231,11 +226,11 @@ same as its co-ordinate area.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="waveformtools.spherical.quad_on_sphere">
-<span class="sig-prename descclassname"><span class="pre">waveformtools.spherical.</span></span><span class="sig-name descname"><span class="pre">quad_on_sphere</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">integrand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gridinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'third'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/spherical.html#quad_on_sphere"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.spherical.quad_on_sphere" title="Permalink to this definition">¶</a></dt>
+<dt id="waveformtools.spherical.quad_on_sphere">
+<code class="sig-prename descclassname"><span class="pre">waveformtools.spherical.</span></code><code class="sig-name descname"><span class="pre">quad_on_sphere</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">integrand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gridinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'third'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/spherical.html#quad_on_sphere"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.spherical.quad_on_sphere" title="Permalink to this definition">¶</a></dt>
 <dd><p>Integrate on a sphere using the scipy.quad method</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>integrand:              2d array</strong></dt><dd><p>The two dimensional integrand array defined on the sphere.</p>
 </dd>

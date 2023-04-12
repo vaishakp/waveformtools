@@ -1,4 +1,4 @@
-﻿waveformtools.waveformtools
+waveformtools.waveformtools
 ===========================
 
 .. automodule:: waveformtools.waveformtools
@@ -38,6 +38,8 @@
       low_cut_filter
       massratio
       match_wfs
+      match_wfs_pycbc
+      match_wfs_pycbc_old
       mavg
       message
       mode
@@ -49,11 +51,12 @@
       removeNans
       removezeros
       resample
+      resample_wfs
       roll
       save_obj
       shiftmatched
       shorten
-      simplematch_wfs
+      simplematch_wfs_old
       smoothen
       startend
       taper

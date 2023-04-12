@@ -9,7 +9,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to waveformtools’ documentation! &mdash; waveformtools 2022-05-03 documentation</title>
+  <title>Waveformtools &mdash; waveformtools 2022-05-03 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="README.html" />
+    <link rel="prev" title="Waveforms" href="waveforms.html" />
     <link href="_static/css/my_theme.css" rel="stylesheet" type="text/css">
 
 </head>
@@ -51,7 +51,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> waveformtools
+            <a href="index.html" class="icon icon-home"> waveformtools
           
 
           
@@ -86,13 +86,13 @@
             
             
               <p><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Package API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transforms.html">Transforms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="waveforms.html">Waveforms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="waveformtools.html">Waveformtools</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Waveformtools</a></li>
 </ul>
 
             
@@ -107,7 +107,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">waveformtools</a>
+          <a href="index.html">waveformtools</a>
         
       </nav>
 
@@ -136,15 +136,15 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Welcome to waveformtools’ documentation!</li>
+      <li>Waveformtools</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/waveformtools.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -157,37 +157,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="welcome-to-waveformtools-documentation">
-<h1>Welcome to waveformtools’ documentation!<a class="headerlink" href="#welcome-to-waveformtools-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<p><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="basic_features.html">Basic Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">Package API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="_autosummary/waveformtools.html">waveformtools</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="transforms.html">Transforms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="waveforms.html">Waveforms</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="waveforms.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="waveforms.html#the-modes-array-class">The <cite>modes_array</cite> class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="waveforms.html#the-simple-gen-data-format">The simple “gen” data format</a></li>
-<li class="toctree-l2"><a class="reference internal" href="waveforms.html#spherical-array-class"><cite>spherical_array</cite> class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="waveforms.html#interface-to-waveformtools-waveformtools">Interface to <cite>waveformtools.waveformtools</cite></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="waveformtools.html">Waveformtools</a></li>
-</ul>
-</div>
-</section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
+  <section id="waveformtools">
+<h1>Waveformtools<a class="headerlink" href="#waveformtools" title="Permalink to this headline">¶</a></h1>
+<p>The <cite>waveformtools.waveformtools</cite> module is a toolkit to carryout various transformations of the waveforms. Some of its basic features include:</p>
+<ol class="arabic simple">
+<li><p>Alignment of waveforms in time, phase.</p></li>
+<li><p>Normalization</p></li>
+<li><p>Checking for data repetition</p></li>
+<li><p>Interpolation and resampling</p></li>
+<li><p>Data smootheninig.</p></li>
+<li><p>Tapering.</p></li>
+<li><p>Conversion to <cite>pycbc</cite> timeseties.</p></li>
+<li><p>Check data continuity</p></li>
+<li><p>Extraction of amplitudes and unwrapped phases.</p></li>
+</ol>
 </section>
 
 
@@ -198,8 +181,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="README.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+        <a href="waveforms.html" class="btn btn-neutral float-left" title="Waveforms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

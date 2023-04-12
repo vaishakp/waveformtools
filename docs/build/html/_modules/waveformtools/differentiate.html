@@ -21,7 +21,6 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
@@ -33,10 +32,10 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/css/my_theme.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,11 +83,13 @@
               
             
             
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveforms.html">Waveforms</a></li>
 </ul>
 
             
@@ -164,12 +165,13 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span><span class="p">,</span> <span class="n">njit</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="c1">########################################################</span>
 <span class="c1"># Chebyshev differentiation</span>
 <span class="c1">########################################################</span>
 
 
-<div class="viewcode-block" id="Chebyshev_differential"><a class="viewcode-back" href="../../_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.Chebyshev_differential">[docs]</a><span class="k">def</span> <span class="nf">Chebyshev_differential</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">y_data</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<div class="viewcode-block" id="Chebyshev_differential"><a class="viewcode-back" href="../../_autosummary/waveformtools.differentiate.html#waveformtools.differentiate.Chebyshev_differential">[docs]</a><span class="k">def</span> <span class="nf">Chebyshev_differential</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">y_data</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Differentiate a function using the Chebyshev expansion.</span>
 
 
@@ -200,7 +202,50 @@
 	<span class="c1"># Find the basis coefficients.</span>
 	<span class="kn">from</span> <span class="nn">numpy.polynomial.chebyshev</span> <span class="kn">import</span> <span class="n">chebfit</span><span class="p">,</span> <span class="n">chebder</span><span class="p">,</span> <span class="n">chebval</span>
 
-	<span class="n">cheb_coeffs</span> <span class="o">=</span> <span class="n">chebfit</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">y_data</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="n">degree</span><span class="p">)</span>
+	<span class="c1">#L2errs = []</span>
+	
+	<span class="c1">#p_res = 1e21</span>
+	
+	<span class="c1">#for deg_index in range(degree):</span>
+	<span class="c1">#	cheb_coeffs, result = chebfit(x_data, y_data, deg=deg_index, full=True)</span>
+		
+	<span class="c1">#	res = result[0][0]</span>
+		<span class="c1">#if res%2==0:</span>
+	<span class="c1">#	L2errs.append(res)</span>
+	
+	<span class="n">cheb_coeffs</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">chebfit</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">y_data</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="n">degree</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		
+	<span class="n">res</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="c1">#L2errs = [(a + b)  for a, b in zip(L2errs[::2], L2errs[1::2])]</span>
+	
+	
+	<span class="c1">#best_deg = 2*np.argmin(L2errs)+2</span>
+	<span class="c1">#if best_deg&lt;degree:</span>
+		<span class="c1">#plt.plot(L2errs)</span>
+		<span class="c1">#plt.show()</span>
+
+	<span class="c1">#	print(f&#39;Optimizing degree to {best_deg}&#39;)</span>
+	<span class="c1">#	degree=best_deg</span>
+	<span class="c1">#	cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)</span>
+
+	<span class="c1">#	res = result[0][0]</span>
+	<span class="k">if</span> <span class="n">res</span><span class="o">&gt;=</span><span class="mf">1e-3</span><span class="p">:</span>
+		
+		
+		<span class="k">if</span> <span class="n">res</span><span class="o">&lt;=</span><span class="mf">1e-1</span> <span class="ow">and</span> <span class="n">res</span><span class="o">&gt;=</span><span class="mf">1e-3</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Residue warning </span><span class="si">{</span><span class="n">res</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">res</span><span class="o">&gt;</span><span class="mf">1e-1</span><span class="p">:</span>
+			<span class="kn">import</span> <span class="nn">traceback</span>
+			<span class="n">traceback</span><span class="o">.</span><span class="n">print_stack</span><span class="p">()</span>
+			<span class="n">y_fit_data</span> <span class="o">=</span> <span class="n">chebval</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">cheb_coeffs</span><span class="p">)</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">y_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Input&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;magenta&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">y_fit_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;fit&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+			<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Residue warning </span><span class="si">{</span><span class="n">res</span><span class="si">}</span><span class="s1">: Bad fit!&#39;</span><span class="p">)</span>
 
 	<span class="c1"># compute the derivative</span>
 	<span class="n">cheb_der_coeffs</span> <span class="o">=</span> <span class="n">chebder</span><span class="p">(</span><span class="n">cheb_coeffs</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>

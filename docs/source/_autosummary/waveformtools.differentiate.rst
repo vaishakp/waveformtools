@@ -1,4 +1,4 @@
-﻿waveformtools.differentiate
+waveformtools.differentiate
 ===========================
 
 .. automodule:: waveformtools.differentiate
