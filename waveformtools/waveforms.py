@@ -13,8 +13,12 @@ modes_array: A data-type.
 import numpy as np
 import h5py
 from waveformtools.waveformtools import message
+<<<<<<< HEAD
 from qlmtools import Yslm_vec
 #from waveformtools import dataIO
+=======
+from qlmtools.qlmtools import Yslm_vec
+>>>>>>> 44fba0c (typo rename)
 
 ####################################################################
 # Numba experimentation

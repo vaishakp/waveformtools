@@ -11,13 +11,13 @@ import pickle
 import sys
 import traceback
 from inspect import getframeinfo, stack
-
 import config
 import numpy as np
 
 from numba import njit
 # from scipy import signal
-import pycbc
+
+#import pycbc
 import scipy
 
 # matplotlib.use('Agg')
