@@ -46,23 +46,23 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
 	from numpy.polynomial.chebyshev import chebfit, chebder, chebval
 
 	#L2errs = []
-	
+
 	#p_res = 1e21
-	
+
 	#for deg_index in range(degree):
 	#	cheb_coeffs, result = chebfit(x_data, y_data, deg=deg_index, full=True)
-		
+
 	#	res = result[0][0]
 		#if res%2==0:
 	#	L2errs.append(res)
-	
+	#print(x_data, y_data)
 	cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)
-		
+
 	res = result[0][0]
 
 	#L2errs = [(a + b)  for a, b in zip(L2errs[::2], L2errs[1::2])]
-	
-	
+
+
 	#best_deg = 2*np.argmin(L2errs)+2
 	#if best_deg<degree:
 		#plt.plot(L2errs)
@@ -74,8 +74,8 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
 
 	#	res = result[0][0]
 	if res>=1e-3:
-		
-		
+
+
 		if res<=1e-1 and res>=1e-3:
 			print(f'Residue warning {res}')
 		elif res>1e-1:
