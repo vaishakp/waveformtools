@@ -82,8 +82,8 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
 			import traceback
 			traceback.print_stack()
 			y_fit_data = chebval(x_data, cheb_coeffs)
-			plt.plot(x_data, y_data, label='Input', c='magenta', linestyle='--')
-			plt.scatter(x_data, y_fit_data, label='fit', s=3, c='blue', marker='x')
+			plt.scatter(x_data, y_data, label='Input', s=3, c='magenta', marker='o')
+			plt.scatter(x_data, y_fit_data, label='fit', s=3, c='blue', marker='X')
 			plt.grid()
 			plt.legend()
 			plt.show()
