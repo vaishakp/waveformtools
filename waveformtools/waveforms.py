@@ -13,7 +13,7 @@ modes_array: A data-type.
 import numpy as np
 import h5py
 from waveformtools.waveformtools import message
-from qlmtools import Yslm_vec
+from qlmtools.qlmtools import Yslm_vec
 #from waveformtools import dataIO
 ####################################################################
 # Numba experimentation
@@ -1121,6 +1121,8 @@ class modes_array:
 					crop=False,
 					centre=True,
 					key_ex=None,
+                    save_as_ma=False,
+                    compression_opts=None,
 					r_ext_factor=1):
 		"""Load the waveform mode data from an hdf file.
 
@@ -1248,7 +1250,6 @@ class modes_array:
                                             ell_max,
                                             centre,
                                             modes_list,
-                                            r_ext_factor,
                                             save_as_ma,
                                             resam_type,
                                             interp_kind,
@@ -1263,7 +1264,6 @@ class modes_array:
                                             ell_max,
                                             centre,
                                             modes_list,
-                                            r_ext_factor,
 											save_as_ma,
 											resam_type,
 											interp_kind,
