@@ -1120,24 +1120,26 @@ class modes_array:
 
         return delta_f
 
-    def load_modes(self,
-                    label=None,
-                    data_dir=None,
-                    file_name=None,
-                    ftype='generic',
-                    var_type='Psi4',
-                    resam_type='finest',
-                    interp_kind='cubic',
-                    extrap_order=4,
-                    r_ext=None,
-                    ell_max=None,
-                    pre_key=None,
-                    modes_list=None,
-                    crop=False,
-                    centre=True,
-                    key_ex=None,
-                    r_ext_factor=1):
-        """Load the waveform mode data from an hdf file.
+	def load_modes(self,
+					label=None,
+					data_dir=None,
+					file_name=None,
+					ftype='generic',
+					var_type='Psi4',
+					resam_type='finest',
+					interp_kind='cubic',
+					extrap_order=4,
+					r_ext=None,
+					ell_max=None,
+					pre_key=None,
+					modes_list=None,
+					crop=False,
+					centre=True,
+					key_ex=None,
+                    save_as_ma=False,
+                    compression_opts=None,
+					r_ext_factor=1):
+		"""Load the waveform mode data from an hdf file.
 
         Parameters
         ----------
@@ -1265,7 +1267,6 @@ class modes_array:
                                             ell_max,
                                             centre,
                                             modes_list,
-                                            r_ext_factor,
                                             save_as_ma,
                                             resam_type,
                                             interp_kind,
@@ -1280,11 +1281,10 @@ class modes_array:
                                             ell_max,
                                             centre,
                                             modes_list,
-                                            r_ext_factor,
-                                            save_as_ma,
-                                            resam_type,
-                                            interp_kind,
-                                            compression_opts,
+											save_as_ma,
+											resam_type,
+											interp_kind,
+											compression_opts,
                                             r_ext_factor)
         else:
             message(f"Data {ftype} {var_type} not supported yet!")
