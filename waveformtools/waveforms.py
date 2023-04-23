@@ -26,7 +26,7 @@ c = 3. * 10**8             # m/s^2
 Msun = 1.988500 * 10**30.  # g
 muc = (c**2/(G*Msun))      # g, NR to SI
 tuc = G*Msun/(c**3)        # s, NR to SI
-
+dMpc = 3.0857e16
 
 
 ####################################################################
@@ -1120,26 +1120,26 @@ class modes_array:
 
         return delta_f
 
-	def load_modes(self,
-					label=None,
-					data_dir=None,
-					file_name=None,
-					ftype='generic',
-					var_type='Psi4',
-					resam_type='finest',
-					interp_kind='cubic',
-					extrap_order=4,
-					r_ext=None,
-					ell_max=None,
-					pre_key=None,
-					modes_list=None,
-					crop=False,
-					centre=True,
-					key_ex=None,
+    def load_modes(self,
+                    label=None,
+                    data_dir=None,
+                    file_name=None,
+                    ftype='generic',
+                    var_type='Psi4',
+                    resam_type='finest',
+                    interp_kind='cubic',
+                    extrap_order=4,
+                    r_ext=None,
+                    ell_max=None,
+                    pre_key=None,
+                    modes_list=None,
+                    crop=False,
+                    centre=True,
+                    key_ex=None,
                     save_as_ma=False,
                     compression_opts=None,
-					r_ext_factor=1):
-		"""Load the waveform mode data from an hdf file.
+                    r_ext_factor=1):
+        """Load the waveform mode data from an hdf file.
 
         Parameters
         ----------
@@ -1281,10 +1281,10 @@ class modes_array:
                                             ell_max,
                                             centre,
                                             modes_list,
-											save_as_ma,
-											resam_type,
-											interp_kind,
-											compression_opts,
+                                            save_as_ma,
+                                            resam_type,
+                                            interp_kind,
+                                            compression_opts,
                                             r_ext_factor)
         else:
             message(f"Data {ftype} {var_type} not supported yet!")
@@ -2028,8 +2028,7 @@ class modes_array:
 
         return filtered_modes
 
-    
-    def get_td_waveform(self, Mtotal=1, incl_angle=0, distance=1):
+    def to_td_waveform(self, Mtotal=1, incl_angle=0, distance=1):
         ''' Get the plus and cross polarizations of 
         of the waveform time series by summing the modes.
 
@@ -2048,7 +2047,7 @@ class modes_array:
 
         from qlmtools.qlmtools import Yslm
     
-        th = np.pi-incl_angle
+        th = np.pi/2-incl_angle
         ph = 0
 
         wts = np.zeros(self.data_len, dtype=np.complex128)
@@ -2065,7 +2064,7 @@ class modes_array:
         
         taxis = self.time_axis*tuc*Mtotal
 
-        wts = wts/distance*Msun*Mtotal
+        wts = Mtotal*wts/(distance*dMpc * muc)
 
         return taxis, wts.real, wts.imag
     
@@ -2227,7 +2226,7 @@ def construct_mode_list(ell_max, spin_weight=-2):
     # The modes list.
     modes_list = []
 
-    for ell_index in range(0, ell_max+1):
+    for ell_index in range(abs(spin_weight), ell_max+1):
         # Append all emm modes for each ell mode.
         modes_list.append([ell_index, list(range(-ell_index, ell_index + 1))])
 

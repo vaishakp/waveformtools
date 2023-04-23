@@ -255,7 +255,7 @@ def load_RIT_Psi4_from_disk(wfa=None, data_dir='./', label='RIT_rPsi4inf', ell_m
                 data_len = len(time_axis)
 
                 # Create a modes array object
-                wfa._create_modes_array(ell_max=ell_max, data_len=data_len)
+                wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
 
                 # Assign to it the time axis
                 wfa.time_axis = time_axis
@@ -428,7 +428,7 @@ def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT
                 data_len = len(time_axis)
 
                 # Create a modes array object
-                wfa._create_modes_array(ell_max=ell_max, data_len=data_len)
+                wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
 
                 # Assign to it the time axis
                 wfa.time_axis = time_axis
@@ -724,7 +724,7 @@ def load_gen_data_from_disk(wfa=None, label='generic waveform', data_dir='./', f
                         # Delete the attribute
                         #del self.modes_data
                         # Create an array for the waveform mode object
-                        wfa._create_modes_array(wfa.ell_max, data_len)
+                        wfa.create_modes_array(wfa.ell_max, data_len)
                         # self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)
                         #self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)
 
@@ -947,7 +947,7 @@ def load_SpEC_data_from_disk(wfa=None,
                 data_len = len(time_axis)
                 #print(data_len)
 
-                wfa._create_modes_array(ell_max = ell_max, data_len=data_len)
+                wfa.create_modes_array(ell_max = ell_max, data_len=data_len)
                 #print(wfa.mode(0,0).shape)
                 wfa.time_axis      = time_axis
 
@@ -1142,7 +1142,7 @@ def load_SpECTRE_data_from_disk(wfa=None,
                 data_len = len(time_axis)
                 #print(data_len)
 
-                wfa._create_modes_array(ell_max = ell_max, data_len=data_len)
+                wfa.create_modes_array(ell_max = ell_max, data_len=data_len)
                 #print(wfa.mode(0,0).shape)
                 wfa.time_axis      = time_axis
 
