@@ -80,7 +80,7 @@ def message(
         print(*args, **kwargs)
     if log_verbosity <= message_verbosity:
         now = str(datetime.datetime.now())
-        tstamp = now[:10] + "_" + now[11:16]
+        tstamp = (now[:10] + "_" + now[11:16]).replace(':', '-')
         caller = getframeinfo(stack()[1][0])
         # frameinfo = getframeinfo(currentframe())
         if not os.path.isdir("logs"):
