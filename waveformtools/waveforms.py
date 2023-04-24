@@ -14,7 +14,7 @@ import numpy as np
 import h5py
 from waveformtools.waveformtools import message
 #from waveformtools import dataIO
-from qlmtools.qlmtools import Yslm_vec
+from waveformtools.transforms import Yslm_vec
 
 
 #####################
@@ -1387,9 +1387,6 @@ class modes_array:
 
         '''
 
-        #from qlmtools import Yslm_vec
-
-
         # Create a spherical array.
         waveform_sp = spherical_array(label=self.label, grid_info=grid_info)
 
@@ -2045,7 +2042,7 @@ class modes_array:
                  the polarizations of the waveforms.
         '''
 
-        from qlmtools.qlmtools import Yslm
+        from waveformtools.transforms import Yslm
     
         th = incl_angle
         ph = 0

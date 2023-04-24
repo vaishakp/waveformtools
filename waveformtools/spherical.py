@@ -94,7 +94,7 @@ def decompose_in_SWSHs(waveform, gridinfo, spin_weight=-2, ell_max=8, emm="all")
 
 		darea = sqrt_met_det * gridinfo.dtheta * gridinfo.dphi
 
-		from qlmtools import Yslm_vec
+		from waveformtools.transforms import Yslm_vec
 
 		for ell_index in range(ell_max):
 
