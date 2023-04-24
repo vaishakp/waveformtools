@@ -22,11 +22,11 @@ from qlmtools.qlmtools import Yslm_vec
 #####################
 
 G = 6.67*10**(-11.)
-c = 3. * 10**8             # m/s^2
-Msun = 1.988500 * 10**30.  # g
+c = 3. * 10**8             # m/s
+Msun = 1.988500 * 10**30.  # g, SI
 muc = (c**2/(G*Msun))      # g, NR to SI
 tuc = G*Msun/(c**3)        # s, NR to SI
-dMpc = 3.0857e16
+dMpc = 3.0857 * 10**(22)   # m
 
 
 ####################################################################
@@ -2028,7 +2028,7 @@ class modes_array:
 
         return filtered_modes
 
-    def to_td_waveform(self, Mtotal=1, incl_angle=0, distance=1):
+    def to_td_waveform(self, Mtotal=1, incl_angle=0, distance=1, delta_t=None):
         ''' Get the plus and cross polarizations of 
         of the waveform time series by summing the modes.
 
@@ -2047,7 +2047,7 @@ class modes_array:
 
         from qlmtools.qlmtools import Yslm
     
-        th = np.pi/2-incl_angle
+        th = incl_angle
         ph = 0
 
         wts = np.zeros(self.data_len, dtype=np.complex128)
@@ -2066,6 +2066,15 @@ class modes_array:
 
         wts = Mtotal*wts/(distance*dMpc * muc)
 
+        if isinstance(delta_t, float):
+            # Resample the waveform
+            new_taxis = np.arange(taxis[0], taxis[-1], delta_t)
+            
+            from waveformtools.waveformtools import interp_resam_wfs
+            
+            wts = interp_resam_wfs(wts, taxis, new_taxis)
+
+            taxis = new_taxis
         return taxis, wts.real, wts.imag
     
 #######################################################################################################

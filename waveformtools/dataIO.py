@@ -888,8 +888,9 @@ def load_SpEC_data_from_disk(wfa=None,
 
     flag = None
 
-    for item in modes_list:
-        ell, emm_list = item
+    from scipy.stats import mode 
+
+    for ell, emm_list in modes_list:
         for emm in emm_list:
             #print(ell, emm)
 
@@ -912,12 +913,16 @@ def load_SpEC_data_from_disk(wfa=None,
                 #max_dt = round(max(np.diff(wf_psi4_time)), 2)
                 #dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
                 #dt_auto = int(dt_auto*100)/100
-                from scipy.stats import mode 
-                dt_auto = round(mode(np.diff(time_axis))[0][0], 4)
+                                #dt_auto = round(mode(np.diff(time_axis))[0][0], 4)
+                dt_auto = mode(np.diff(time_axis))[0][0]
+
                 # print(f'Default dt is {dt_auto}')
 
-                min_dt = round(min(np.diff(time_axis)), 2)
-                max_dt = round(max(np.diff(time_axis)), 2)
+                #min_dt = round(min(np.diff(time_axis)), 2)
+                #max_dt = round(max(np.diff(time_axis)), 2)
+
+                min_dt = min(np.diff(time_axis))
+                max_dt = max(np.diff(time_axis))
 
                 print(f'Min dt {min_dt} and Max dt {max_dt}')
 
@@ -1089,8 +1094,9 @@ def load_SpECTRE_data_from_disk(wfa=None,
 
     flag = None
 
-    for item in modes_list:
-        ell, emm_list = item
+    from scipy.stat import mode
+
+    for ell, emm_list in modes_list:
         for emm in emm_list:
             #print(ell, emm)
             wf_data           = wf_file.data[:, wf_file.index(ell, emm)]
@@ -1104,15 +1110,19 @@ def load_SpECTRE_data_from_disk(wfa=None,
                 time_axis = wf_time
                 print('Creating modes data')
 
+                
                 #min_dt = round(min(np.diff(wf_psi4_time)), 2)
                 #max_dt = round(max(np.diff(wf_psi4_time)), 2)
-                dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
-                dt_auto = int(dt_auto*100)/100
-
+                #dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
+                #dt_auto = int(dt_auto*100)/100
+                dt_auto = mode(np.diff(time_axis))
                # print(f'Default dt is {dt_auto}')
 
-                min_dt = round(min(np.diff(time_axis)), 2)
-                max_dt = round(max(np.diff(time_axis)), 2)
+                #min_dt = round(min(np.diff(time_axis)), 2)
+                #max_dt = round(max(np.diff(time_axis)), 2)
+
+                min_dt = min(np.diff(time_axis))
+                max_dt = max(np.diff(time_axis))
 
                 print(f'Min dt {min_dt} and Max dt {max_dt}')
 
