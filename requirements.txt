@@ -6,7 +6,6 @@ matplotlib
 numba
 h5py
 termcolor
-pickle
 datetime
 lalsuite
 ligo-commons
