@@ -202,6 +202,14 @@ def Yslm(spin_weight, ell, emm, theta, phi):
 
             Sum +=  sp.binomial(ell - spin_weight, aar)*sp.binomial(ell + spin_weight, aar + spin_weight-emm)*np.power((-1), (ell - aar - spin_weight))*np.exp(1j* emm * phi)/np.power(np.tan(theta / 2), (2 * aar + spin_weight - emm))
 
+    Sum=complex(Sum)
+    #print(type(m))
+    #print((-1)**int(m))
+    #print(np.sin(th/2)**(2*l))
+    Yslm = (-1)**emm * (np.sqrt(fact(ell + emm) * fact(ell - emm) * (2*ell + 1)/(4 * np.pi * fact(ell + spin_weight) * fact(ell-spin_weight)))*np.sin(theta / 2)**(2 * ell) * Sum)
+
+    return Yslm
+
 def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     ''' Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
 
@@ -263,6 +271,6 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
 
 
     #print(ell+emm, ell+spin_weight, ell-spin_weight)
-    Yslm = float(-1)**emm * (np.sqrt(fact(ell + emm) * fact(ell - emm) * (2*ell + 1)/(4 * np.pi * fact(ell + spin_weight) * fact(ell-spin_weight)))*np.sin(theta_grid / 2)**(2 * ell) * Sum)
+    Yslmv = float(-1)**emm * (np.sqrt(fact(ell + emm) * fact(ell - emm) * (2*ell + 1)/(4 * np.pi * fact(ell + spin_weight) * fact(ell-spin_weight)))*np.sin(theta_grid / 2)**(2 * ell) * Sum)
 
-    return Yslm
+    return Yslmv

@@ -2044,6 +2044,7 @@ class modes_array:
 
         from waveformtools.transforms import Yslm
     
+        #print(Yslm)
         th = incl_angle
         ph = 0
 
@@ -2055,7 +2056,8 @@ class modes_array:
                 Alm = self.mode(ell, emm)
 
                 Y = Yslm(self.spin_weight, ell, emm, th, ph)
-
+                #print(Y)
+                #print(Alm)
                 wts = wts+Alm*Y
 
         
