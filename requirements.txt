@@ -12,3 +12,4 @@ datetime
 lalsuite
 ligo-commons
 pycbc
+sympy
