@@ -8,6 +8,6 @@ h5py
 termcolor
 datetime
 lalsuite
-ligo-commons
+ligo-common
 pycbc
 sympy
