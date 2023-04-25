@@ -825,6 +825,7 @@ def load_SpEC_data_from_disk(wfa=None,
 
 
     gkey = f'Extrapolated_N{extrap_order}.dir'
+
     wf_f0             = h5py.File(full_path)
     wf_file           = wf_f0[gkey]
     all_keys = list(wf_file.keys())
@@ -855,6 +856,9 @@ def load_SpEC_data_from_disk(wfa=None,
         wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
        #wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
 
+    wfa.extrap_order = extrap_order
+    message(f'Using extrap order {extrap_order}')
+    
     if not data_dir:
         data_dir = wfa.data_dir
     else:
