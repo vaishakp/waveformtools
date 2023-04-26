@@ -3,8 +3,7 @@
 [![Documentation Status](https://readthedocs.org/projects/scri/badge/?version=latest)](https://vaishakp.gitlab.io/waveformtools/?badge=latest)
 [![Project landing page](https://sites.google.com/view/waveformtools/home)]
 
-Waveformtools 
-===============
+# Waveformtools 
 
 
 This is a python module for the handling and analysis of waveforms and data from Numerical Relativity codes, and for carrying out gravitational wave data analysis.  
@@ -88,7 +87,7 @@ This package contains implementations of customized algorithms and techniques.  
 
 
 
-## Citing this code
+# Citing this code
 
 Please cite the latest version of this code if used in your work. This code was developed for use in the following works:
 
@@ -98,6 +97,10 @@ Please cite the latest version of this code if used in your work. This code was 
 We request you to also cite these. Thanks!
 
 
+
+
+
+# Installing this module
 
 ## Dependencies
 
@@ -115,13 +118,9 @@ This module has the following dependencies:
     * [`termcolor`](https://pypi.org/project/termcolor/)
 
 
+## Recommended method
 
-## Installing this module
-
-
-### Recommended method
-
-I recommend installing this module using anaconda 3. 
+I recommend installing this module using anaconda with python 3. 
 
 * First, clone this repository:
 
@@ -133,7 +132,7 @@ git clone https://gitlab.com/vaishakp/waveformtools.git
 * Second, create an environment with dependencies resolved, and activate it.
 ```sh
 conda create env -f docs/environment.yml
-conda activate myenv
+conda activate wftools
 ```
 
 
@@ -147,7 +146,7 @@ export PYTHONPATH
 * Alternatively, steps 1-2 can be replaced by a manual environment creation and conda package installation.
 
 
-### Manual method
+## Manual method
 
 This is not recommended. One can also install this using the pip commands on this git repository:
 
@@ -168,11 +167,59 @@ This is not recommended because of various reasons:
     * Avoid dependency issues
 
 
-## Documentation
+# Using this code
+```
+>>> from waveformtools.waveforms import modes_array
+>>> fdir = "<path to data dir>"
+>>> fname = 'ExtrapStrain_RIT-BBH-0001-n100.h5'
+>>> wf1 = modes_array(label='RIT001', spin_weight=-2)
+>>> wf1.file_name = fname
+>>> wf1.data_dir = fdir
+>>> wf1.load_modes(ftype='RIT', var_type='Strain', ell_max='auto', resam_type='auto')
+>>> wf1.get_metadata()
+{'label': 'RIT001',
+ 'data_dir': '/home/vaishakprasad/Downloads/',
+ 'file_name': 'ExtrapStrain_RIT-BBH-0001-n100.h5',
+ 'key_format': None,
+ 'ell_max': 'auto',
+ 'modes_list': None,
+ 'r_ext': 500,
+ 'frequency_axis': None,
+ 'out_file_name': None,
+ 'maxtime': None,
+ 'date': None,
+ 'time': None,
+ 'key_ex': None,
+ 'spin_weight': -2}
+```
+
+To access the individual modes, use the :math:`\ell, m` notation.
+```
+>>> ell = 3
+>>> emm = 1
+>>> wf1.mode(ell, emm)
+```
+
+To plot the modes
+```
+>>> import matplotlib.pyplot as plt
+>>> plt.plot(wf1.time_axis, wf1.mode(ell, emm).real, label='+')
+>>> plt.plot(wf1.time_axis, wf1.mode(ell, emm).imag, label='X')
+>>> plt.legend()
+>>> plt.grid(alpha=0.4)
+>>> plt.xlabel(r'$t/M$')
+>>> plt.ylabel(f'$rh/M$')
+>>> plt.show()
+```
+[RIT-BBH-001](https://gitlab.com/vaishakp/waveformtools/docs/images/RIT-BBH-001.pdf)
+
+# Documentation
 
 The documentation for this module is available at [Link to the Documentation](https://vaishakp.gitlab.io/waveformtools/). This was built automatically using Read the Docs.
 
-## Acknowledgements
+In some case where the repo has run out of gitlab CI minutes, the documentation is not automatically built. In such cases, we request the user to access the documentation through the `index.html` file in `docs` directory.
+
+# Acknowledgements
 
 This project has been hosted, as you can see, on gitlab. Several gitlab tools are used in the deployment of the code, its testing, version control.
 

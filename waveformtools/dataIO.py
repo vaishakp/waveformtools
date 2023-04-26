@@ -121,7 +121,7 @@ def get_ell_max_from_file(data_dir, var_type='Psi4', file_name='*.h5'):
     elif var_type=='Strain':
         #import h5py
 
-        data_file = h5py.File(f'{data_dir}/{file_name}.h5')
+        data_file = h5py.File(f'{data_dir}/{file_name}')
         all_fnames = list(data_file.keys())
         data_file.close()
         #print(all_fnames)
@@ -179,7 +179,7 @@ def load_RIT_Psi4_from_disk(wfa=None, data_dir='./', label='RIT_rPsi4inf', ell_m
 
     # Max available mode l.
     if ell_max == None:
-        ell_max, _ = get_ell_max_RIT(data_dir)
+        ell_max, _ = get_ell_max_from_file(data_dir)
 
     # Construct a modes list
     wf_modes_list = waveforms.construct_mode_list(ell_max = ell_max, spin_weight=spin_weight)
@@ -310,7 +310,19 @@ def load_RIT_Psi4_from_disk(wfa=None, data_dir='./', label='RIT_rPsi4inf', ell_m
 
 
 
-def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT_strain', ell_max=None, save_as_ma=False, spin_weight=-2, resam_type='finest', interp_kind='cubic'):
+def load_RIT_Strain_data_from_disk(wfa=None, 
+                                   data_dir='./', 
+                                   file_name='*', 
+                                   label='RIT_strain', 
+                                   spin_weight=-2,
+                                   ell_max='auto', 
+                                   resam_type='auto', 
+                                   interp_kind='cubic',
+                                   save_as_ma=False,
+                                   modes_list=None,
+                                   crop=False,
+                                   centre=True,
+                                   r_ext_factor=1):
     ''' Load the RIT strain waveforms from the RIT catalogue,
         from hdf5 files from disk.
 
@@ -353,13 +365,21 @@ def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT
     from waveformtools.waveforms import modes_array
 
     # Max available mode l.
-    ell_max_act, keys_list = get_ell_max_RIT(data_dir=data_dir, var_type='Strain', file_name=file_name)
+    ell_max_act, keys_list = get_ell_max_from_file(data_dir=data_dir, var_type='Strain', file_name=file_name)
     if ell_max == None:
+        if wfa.ell_max==None:
+            ell_max = ell_max_act
+    if ell_max=='auto':
         ell_max = ell_max_act
-    #one_key = keys_list[0]
 
+    #one_key = keys_list[0]
+    
+    print(type(spin_weight), spin_weight)
     # Construct a modes list
-    wf_modes_list = waveforms.construct_mode_list(ell_max = ell_max, spin_weight=spin_weight)
+    if not modes_list:
+        wf_modes_list = waveforms.construct_mode_list(ell_max = ell_max, spin_weight=spin_weight)
+    else:
+        wf_modes_list = modes_list
 
     print('The modes list is', wf_modes_list)
 
@@ -374,7 +394,7 @@ def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT
     # Create a modes array
     wfa = modes_array(label=label, data_dir=data_dir, modes_list=wf_modes_list)
 
-    # Enforce only l>2 modes.
+    # Enforce only l>abs(spin_Weight) modes.
     wf_modes_list = [item for item in wf_modes_list if item[0]>=abs(spin_weight)]
 
     tend = []
@@ -383,13 +403,16 @@ def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT
     ##########################################
     # Read in the data
     #########################################
-
+    print(file_name)
     # Get the time axis
     #import h5py
-    data_file = h5py.File(f'{data_dir}/{file_name}.h5')
-
+    data_file = h5py.File(f'{data_dir}/{file_name}')
+    
     time_axis = data_file['NRTimes'][...]
-    dt_auto = time_axis[1]-time_axis[0]
+    #dt_auto = time_axis[1]-time_axis[0]
+    from scipy.stats import mode
+
+    dt_auto = mode(np.diff(time_axis))[0][0]
 
     print('Reading in modes...')
     for ell, emm_list in wf_modes_list:
@@ -423,7 +446,7 @@ def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT
 
 
                     # New (resampled) time axis
-                    time_axis = np.arange(time_axis[0], time_axis[-1]+dt_auto, m_dt)
+                    time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
 
                 # Length of data.
                 data_len = len(time_axis)
@@ -433,7 +456,7 @@ def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT
 
                 # Assign to it the time axis
                 wfa.time_axis = time_axis
-
+                print(wfa.time_axis)
             #print(wfa.time_axis - wf_psi4_time)
             #continue
             ###################################
@@ -475,18 +498,21 @@ def load_RIT_Strain_from_disk(wfa=None, data_dir='./', file_name='*', label='RIT
             # Load the modes data
             ###################################
 
-            wfa.set_mode_data(ell, emm, wfmode)
+            wfa.set_mode_data(ell, emm, r_ext_factor*wfmode)
 
     data_file.close()
     # Trim or recenter
-    wfa.trim(trim_upto_time=0)
+    if centre==True:
+        wfa.trim(trim_upto_time=0)
+    if isinstance(crop, float):
+        wfa.trim(trim_upto_time=trim)
 
     print(wfa.get_metadata())
     if save_as_ma==True:
         # Save the modes array as waveforms hdf file
         wfa.save_modes(out_file_name=f'{label}_resam.h5')
 
-
+    
 
     return wfa
 

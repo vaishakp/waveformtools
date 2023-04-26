@@ -1170,11 +1170,13 @@ class modes_array:
 
         Examples
         --------
-        >>> from waveformtools.waveforms import waveform
-        >>> waveform.set_basedir('./')
-        >>> waveform.set_datadir('data/')
-        >>> mode_numbers = [[2, 2], [3, 3]]
-        >>> waveform.load_data(mode_numbers=mode_numbers)
+        # Note
+        # Update this!
+        #>>> from waveformtools.waveforms import waveform
+        #>>> waveform.set_basedir('./')
+        #>>> waveform.set_datadir('data/')
+        #>>> mode_numbers = [[2, 2], [3, 3]]
+        #>>> waveform.load_data(mode_numbers=mode_numbers)
         """
 
         from waveformtools import dataIO
@@ -1182,7 +1184,8 @@ class modes_array:
         #import dataIO
         from waveformtools import dataIO
 
-
+        if debug==False:
+            wfs_nl=1
         if not data_dir:
             data_dir = self.data_dir
         else:
@@ -1223,37 +1226,33 @@ class modes_array:
                                             r_ext_factor)
         elif ftype=='RIT':
             if var_type=='Psi4':
-                dataIO.load_RIT_Psi4_data_from_disk(self,
-                                            data_dir,
-                                            file_name,
-                                            ftype,
-                                            var_type,
-                                            resam_type,
-                                            interp_kind,
-                                            r_ext,
-                                            ell_max,
-                                            pre_key,
-                                            modes_list,
-                                            crop,
-                                            centre,
-                                            key_ex,
-                                            r_ext_factor)
+                dataIO.load_RIT_Psi4_data_from_disk(wfa=self,
+                                            data_dir=data_dir,
+                                            file_name=file_name,
+                                            resam_type=resam_type,
+                                            interp_kind=interp_kind,
+                                            r_ext=r_ext,
+                                            ell_max=ell_max,
+                                            pre_key=pre_key,
+                                            modes_list=modes_list,
+                                            crop=crop,
+                                            centre=centre,
+                                            key_ex=key_ex,
+                                            r_ext_factor=r_ext_factor)
             elif var_type=='Strain':
-                dataIO.load_RIT_Strain_data_from_disk(self,
-                                            data_dir,
-                                            file_name,
-                                            ftype,
-                                            var_type,
-                                            resam_type,
-                                            interp_kind,
-                                            r_ext,
-                                            ell_max,
-                                            pre_key,
-                                            modes_list,
-                                            crop,
-                                            centre,
-                                            key_ex,
-                                            r_ext_factor)
+                print(file_name)
+                dataIO.load_RIT_Strain_data_from_disk(wfa=self,
+                                            data_dir=data_dir,
+                                            file_name=file_name,
+                                            label=label,
+                                            resam_type=resam_type,
+                                            interp_kind=interp_kind,
+                                            ell_max=ell_max,
+                                            save_as_ma=save_as_ma,
+                                            modes_list=modes_list,
+                                            crop=crop,
+                                            centre=centre,
+                                            r_ext_factor=r_ext_factor)
             else:
                 message(f"Data {ftype} {var_type} not supported yet!")
                 sys.exit(0)
