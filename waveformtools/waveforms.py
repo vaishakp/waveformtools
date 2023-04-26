@@ -909,7 +909,7 @@ class modes_array:
         date=None,
         time=None,
         key_ex=None,
-        spin_weight=None
+        spin_weight=-2
     ):
 
         self.label = label
@@ -1030,7 +1030,7 @@ class modes_array:
                 raise NameError('Please supply data_len')
 
         if self.modes_list is None:
-            self.modes_list = construct_mode_list(ell_max = ell_max)
+            self.modes_list = construct_mode_list(ell_max = ell_max, spin_weight=self.spin_weight)
 
         #self.modes_data = np.zeros([ell_max + 1, 2 * (ell_max + 1) + 1, data_len], dtype=np.complex128)
         self.modes_data = np.zeros((ell_max + 1, 2 * (ell_max + 1) + 1, data_len), dtype=np.complex128)
@@ -1138,7 +1138,8 @@ class modes_array:
                     key_ex=None,
                     save_as_ma=False,
                     compression_opts=None,
-                    r_ext_factor=1):
+                    r_ext_factor=1,
+                    debug=False):
         """Load the waveform mode data from an hdf file.
 
         Parameters
@@ -1258,7 +1259,7 @@ class modes_array:
                 sys.exit(0)
 
         elif ftype=="SpEC":
-            dataIO.load_SpEC_data_from_disk(self,
+            wfs_nl = dataIO.load_SpEC_data_from_disk(self,
                                             label,
                                             data_dir,
                                             file_name,
@@ -1271,7 +1272,8 @@ class modes_array:
                                             resam_type,
                                             interp_kind,
                                             compression_opts,
-                                            r_ext_factor)
+                                            r_ext_factor,
+                                            debug)
         elif ftype=='SpECTRE':
             dataIO.load_SpECTRE_data_from_disk(self,
                                             alias,
@@ -1290,6 +1292,7 @@ class modes_array:
             message(f"Data {ftype} {var_type} not supported yet!")
             sys.exit(0)
 
+        return wfs_nl
 
     def save_modes(
         self,
@@ -1368,7 +1371,7 @@ class modes_array:
         self._modes_data[ell_value, emm_index] = data
 
 
-    def to_spherical_array(self, grid_info, spin_weight=None):
+    def to_spherical_array(self, grid_info, meth_info, spin_weight=None):
         ''' Obtain the spherical array from the modes array.
 
         Parameters
@@ -1377,7 +1380,9 @@ class modes_array:
         grid_info:  cls instance
                     An instance of the "spherical_grid" class
                     to hold the grid info.
-
+        meth_info : cls instance
+                    An instance of the class waveformtools.diagnostics.method_info that 
+                    provides information on what methods to use for integration.
         Returns
         -------
 
@@ -2208,7 +2213,7 @@ def get_iteration_numbers_from_keys(keys_list):
     return iteration_numbers
 
 
-def construct_mode_list(ell_max, spin_weight=-2):
+def construct_mode_list(ell_max, spin_weight):
     """
     Construct a modes list in the form [[ell1, [emm1, emm2, ...], [ell2, [emm..]],..]
     given the :math:`\\ell_{max}.`

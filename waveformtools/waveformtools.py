@@ -1136,6 +1136,62 @@ def shiftmatched(hdat, ind, delta_t=None, is_ts=False):
 
     return shifted_wf
 
+@njit(parallel=True)
+def unwrap_phase(phi0):
+    ''' Unwrap the phase by finding turning points in phi0. 
+    Finding turning points for unwrapping arctan2 function
+    
+    Parameters
+    ----------
+    phi0 : 1darray
+           The wrapped phase which takes values in the 
+           range (0, 2pi).
+    Returns
+    -------
+    phic : 1darray
+           The unwrapped phase.
+
+    '''
+
+    # Bookkeeping for upper (tpu) and lower (tpd) turning points
+    tpu = []
+    tpd = []
+    # j = 0
+    # k = 0
+    # Upper turning point criterion
+    for i in range(0, len(phi0) - 2):
+        if phi0[i] > 5 and phi0[i + 1] < 1:
+            tpu.append(i)
+            # j = j+1
+        # Lower turning point
+        if phi0[i] < 1 and phi0[i + 1] > 5:
+            tpd.append(i)
+        # k = k+1
+
+    # Trim any zeros in the array( Note: Unecessary)
+    # tpu = np.trim_zeros(tpu)
+    # tpd = np.trim_zeros(tpd)
+    # Calculate the timestamp of the turning points
+    # tput = delta_t * np.array(tpu)
+    # tpdelta_t = delta_t * np.array(tpd)
+
+    # Unwrapping the phase: Unwrap using the turning points
+
+    # Variable for unwrapped phase
+    phic = phi0
+    # Iteration varible for turning points
+    j = 0
+
+    # Unwrap the upper turning points by adding 2pi for every 2p
+    for i in range(0, len(tpu)):
+        for j in range(int(tpu[i]) + 1, len(phic)):
+            phic[j] = phic[j] + 2.0 * np.pi
+    # Unwrap lower turning points by subtracting 2*pi for every tp
+    for i in range(0, len(tpd)):
+        for j in range(int(tpd[i]) + 1, len(phic)):
+            phic[j] = phic[j] - 2.0 * np.pi
+
+    return phic
 
 # Complex Phase-Amplitude representation of data
 def xtract_cphase(tsdata_p, tsdata_x, delta_t=None, to_plot=False):
@@ -1177,48 +1233,8 @@ def xtract_cphase(tsdata_p, tsdata_x, delta_t=None, to_plot=False):
     # Calculate the wrapped phase (phi0 -> (0,2Pi))
     phi0 = np.pi + np.arctan2(datax, datap)
 
-    # Unwrapping the phase : find turning points
-
-    # Unwrap the phase by finding turning points in phi0:
-    # Finding turning points for unwrapping arctan2 function
-    # Bookkeeping for upper (tpu) and lower (tpd) turning points
-    tpu = []
-    tpd = []
-    # j = 0
-    # k = 0
-    # Upper turning point criterion
-    for i in range(0, len(phi0) - 2):
-        if phi0[i] > 5 and phi0[i + 1] < 1:
-            tpu.append(i)
-            # j = j+1
-        # Lower turning point
-        if phi0[i] < 1 and phi0[i + 1] > 5:
-            tpd.append(i)
-        # k = k+1
-
-    # Trim any zeros in the array( Note: Unecessary)
-    # tpu = np.trim_zeros(tpu)
-    # tpd = np.trim_zeros(tpd)
-    # Calculate the timestamp of the turning points
-    # tput = delta_t * np.array(tpu)
-    # tpdelta_t = delta_t * np.array(tpd)
-
-    # Unwrapping the phase: Unwrap using the turning points
-
-    # Variable for unwrapped phase
-    phic = phi0
-    # Iteration varible for turning points
-    j = 0
-
-    # Unwrap the upper turning points by adding 2pi for every 2p
-    for i in range(0, len(tpu)):
-        for j in range(int(tpu[i]) + 1, len(phic)):
-            phic[j] = phic[j] + 2.0 * np.pi
-    # Unwrap lower turning points by subtracting 2*pi for every tp
-    for i in range(0, len(tpd)):
-        for j in range(int(tpd[i]) + 1, len(phic)):
-            phic[j] = phic[j] - 2.0 * np.pi
-
+    phic = unwrap_phase(phi0)
+    #phic = np.unwrap(phi0)
     # Plots.
     # Phase vs time.
     if to_plot:
@@ -1812,7 +1828,8 @@ def taper(data, delta_t=1, zeros=150):
     Notes
     -----
     See `taper_timeseries` from pycbc.waveform.utils for more details."""
-
+    
+    import pycbc
     # Check if data is pycbc timeseries:
     if not isinstance(data, pycbc.types.timeseries.TimeSeries):
         # flag = 1
@@ -2281,9 +2298,9 @@ def resample_wfs(both_time_axes, both_waveforms, delta_t='auto'):
     '''
 
     from waveformtools.waveformtools import lengtheq
-
-    waveform1, waveform2 = all_waveforms
-    time_axis1, time_axis2 = all_time_axes
+    from scipy.interpolate import interp1d
+    waveform1, waveform2 = both_waveforms
+    time_axis1, time_axis2 = both_time_axes
     
     min_t = max(min(time_axis1), min(time_axis2))
     max_t = min(max(time_axis1), max(time_axis2))
@@ -2315,25 +2332,33 @@ def resample_wfs(both_time_axes, both_waveforms, delta_t='auto'):
     #waveform1, waveform2, flag = lengtheq(waveform1, waveform2, delta_t=delta_t)
 
     
-    new_time_axis       = np.linspace(min_t, max_t, delta_t)
+    new_time_axis       = np.arange(min_t, max_t, delta_t)
 
     wf1_amp, wf1_phase  = xtract_camp_phase(waveform1.real, waveform1.imag)
     wf2_amp, wf2_phase  = xtract_camp_phase(waveform2.real, waveform2.imag)
 
 
-    wf1_amp_int_fun     = interp1d(time_axis1, wf1_amp)
-    wf1_phase_int_fun   = interp1d(time_axis1, wf1_phase)
+    #wf1_amp_int_fun     = interp1d(time_axis1, wf1_amp, kind='cubic')
+    #wf1_phase_int_fun   = interp1d(time_axis1, wf1_phase, kind='cubic')
 
-    wf1_amp_resam       = wf1_amp_int_fun(new_time_axis)
-    wf1_phase_resam     = wf1_phase_int_fun(new_time_axis)
-    wf1_resam           = wf2_amp_resam*np.exp(1j*wf2_phase_resam)
-        
-    wf2_amp_resam       = wf2_amp_int_fun(new_time_axis)
-    wf2_phase_resam     = wf2_phase_int_fun(new_time_axis)
+    #wf1_amp_resam       = wf1_amp_int_fun(new_time_axis)
+    #wf1_phase_resam     = wf1_phase_int_fun(new_time_axis)
+    
+    wf1_amp_resam       = interp_resam_wfs(wf1_amp, time_axis1, new_time_axis)
+    wf1_phase_resam     = interp_resam_wfs(wf1_phase, time_axis1, new_time_axis)
+
+    wf1_resam           = wf1_amp_resam*np.exp(1j*wf1_phase_resam)
+     
+    wf2_amp_resam       = interp_resam_wfs(wf2_amp, time_axis2, new_time_axis)
+    wf2_phase_resam     = interp_resam_wfs(wf2_phase, time_axis2, new_time_axis)
+
+    #wf2_amp_resam       = wf2_amp_int_fun(new_time_axis)
+    #wf2_phase_resam     = wf2_phase_int_fun(new_time_axis)
+    
     wf2_resam           = wf2_amp_resam*np.exp(1j*wf2_phase_resam)
 
 
-    return [new_time_axis, [wf1_resam, wf2_resam]]
+    return new_time_axis, wf1_resam, wf2_resam
     
 
     
@@ -2372,11 +2397,40 @@ def match_wfs(all_time_axes, all_waveforms, delta_t='auto'):
 
     time_axis1, time_axis2 = all_time_axes
 
-    if time_axis1.all() == time_axis2.all():
-        time_axis  = time_axis1
-        wf1, wf2 = all_waveforms
-        delta_t = sorted(time_axis1)[0] - sorted(time_axis1)[1]     
+    
+    delta_t_A = sorted(time_axis1)[1] - sorted(time_axis1)[0]
+    delta_t_B = sorted(time_axis2)[1] - sorted(time_axis2)[0]
 
+    if isinstance(delta_t, str):
+        if delta_t=='auto':
+            from scipy.stats import mode
+            #tsorted = sorted(time_axis1)
+            #delta_t = tsorted[0] - tsorted[1]
+
+            delta_t = mode(np.diff(sorted(time_axis1)))[0][0]
+        
+            #delta_t = min(delta_t_A, delta_t_B)
+        elif delta_t=='A':
+            delta_t = delta_t_A
+        elif delta_t=='B':
+            delta_t = delta_t_B
+        else:
+            raise ValueError(f'Did not understand speification for delta_t {delta_t}')
+
+    #print(type(time_axis1), type(time_axis2))
+    #print(time_axis1-time_axis2)
+    #print(time_axis1==time_axis2)
+
+    if len(time_axis1)==len(time_axis2):
+        if (time_axis1==time_axis2).all():
+            time_axis  = time_axis1
+            wf1, wf2 = all_waveforms
+
+            #from scipy.stat import mode
+            #tsorted = sorted(time_axis1)
+            #delta_t = tsorted[0] - tsorted[1]
+
+            #delta_t = mode(np.diff(time_axis1))
     else:
         time_axis, wf1, wf2 = resample_wfs(all_time_axes, all_waveforms, delta_t)
 

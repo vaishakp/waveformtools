@@ -11,6 +11,7 @@ import h5py
 import json
 import waveformtools
 from waveformtools.waveforms import modes_array
+from waveformtools.waveformtools import xtract_camp_phase, interp_resam_wfs
 
 ##########################
 # RIT data
@@ -762,7 +763,7 @@ def load_gen_data_from_disk(wfa=None, label='generic waveform', data_dir='./', f
         return wfa
 
 ########################################################################################################################
-# SpECTRE
+# SpEC
 ########################################################################################################################
 
 def load_SpEC_data_from_disk(wfa=None,
@@ -779,6 +780,7 @@ def load_SpEC_data_from_disk(wfa=None,
                             interp_kind='cubic',
                             compression_opts=0,
                             r_ext_factor=1,
+                            debug=False,
                             ):
     ''' Load the SpEC waveform to modes_array,from hdf5 files from disk.
 
@@ -823,7 +825,7 @@ def load_SpEC_data_from_disk(wfa=None,
 
     full_path = f"{data_dir}/{file_name}"
 
-
+    # Key pattern
     gkey = f'Extrapolated_N{extrap_order}.dir'
 
     wf_f0             = h5py.File(full_path)
@@ -833,6 +835,11 @@ def load_SpEC_data_from_disk(wfa=None,
     # Max available mode l.
     ell_max_act = get_ell_max_from_keys(all_keys)
     #print(ell_max_act)
+
+    ####################################
+    # Set variables with priorities
+    # Note: rework this in dictionaries
+    ####################################
 
     if ell_max=='auto':
         ell_max = ell_max_act
@@ -855,6 +862,8 @@ def load_SpEC_data_from_disk(wfa=None,
         # Create a modes array
         wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
        #wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
+    if debug==True:
+        wf_nl = modes_array(label=label+'_nl', ell_max=ell_max, modes_list=modes_list)
 
     wfa.extrap_order = extrap_order
     message(f'Using extrap order {extrap_order}')
@@ -874,12 +883,13 @@ def load_SpEC_data_from_disk(wfa=None,
     else:
         wfa.ell_max = ell_max
 
+    
     #ell_max        = 12
     if not modes_list:
         if not wfa.modes_list:
             print('Constructing the modes list')
             #sys.exit(0)
-            modes_list     = waveformtools.waveforms.construct_mode_list(ell_max=ell_max)
+            modes_list     = waveformtools.waveforms.construct_mode_list(ell_max=ell_max, spin_weight=wfa.spin_weight)
         else:
             modes_list = wfa.modes_list
     else:
@@ -887,25 +897,32 @@ def load_SpEC_data_from_disk(wfa=None,
 
     # Filter
     modes_list = [item for item in modes_list if item[0]>=2]
+    ############################################################
 
+    # interpolating method
     from scipy.interpolate import interp1d
 
+    # create flag
     flag = None
 
+    # get auto dt
     from scipy.stats import mode 
 
+
+    # Load modes
     for ell, emm_list in modes_list:
         for emm in emm_list:
             #print(ell, emm)
 
             this_key = f'Y_l{ell}_m{emm}.dat'
 
-
+            # Input waveform from disk
             wf_data           = wf_file[this_key]
             wf_time           = wf_data[:, 0]
             wf_data_re        = wf_data[:, 1]
             wf_data_im        = wf_data[:, 2]
-
+            
+            #wf_amp, wf_phase  = xtract_camp_phase(wf_data_re, wf_data_im)
 
             #print(type(wfa.modes_data))
             if wfa.modes_data.all()==np.array(None):
@@ -948,7 +965,7 @@ def load_SpEC_data_from_disk(wfa=None,
                     m_dt = dt_auto
                     print('Resampling at the default timestep', m_dt)
 
-                print(resam_type)
+                message('Chosen resampling fineness:', resam_type)
                 # New (resampled) time axis
                 time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
 
@@ -960,6 +977,15 @@ def load_SpEC_data_from_disk(wfa=None,
                 #print(wfa.mode(0,0).shape)
                 wfa.time_axis      = time_axis
 
+            # Interpolate and resamplea
+            # Note
+            # Interpolating in amplitude and phase is better 
+            # and has lower interpolation errors
+            # but is slower due to unwrapping of phases.
+
+            #amp_int = interp_resam_wfs(wf_amp, wf_time, time_axis)
+            #phase_int = interp_resam_wfs(wf_phase, wf_time, time_axis)
+
             re_int = interp1d(wf_time, wf_data_re)
             #print(wf_time[0], wf_time[-1], time_axis[0], time_axis[-1])
             re_dat = re_int(time_axis)
@@ -968,6 +994,28 @@ def load_SpEC_data_from_disk(wfa=None,
             im_dat = im_int(time_axis)
 
             wfa.set_mode_data(ell, emm, data=re_dat + 1j*im_dat)
+            #wfa.set_mode_data(ell, emm, data=amp_int*np.exp(1j*phase_int))
+
+ 
+
+    if debug==True:
+        for ell, emm_list in modes_list:
+            for emm in emm_list:
+
+                this_key = f'Y_l{ell}_m{emm}.dat'
+
+                # Input waveform from disk
+                wf_data           = wf_file[this_key]
+                wf_time           = wf_data[:, 0]
+                wf_data_re        = wf_data[:, 1]
+                wf_data_im        = wf_data[:, 2]
+
+                if wf_nl.modes_data.all()==np.array(None):
+                    wf_nl.create_modes_array(ell_max = ell_max, data_len=len(wf_time))
+                    wf_nl.time_axis = wf_time
+                    wf_nl.data_len = len(wf_time)
+
+                wf_nl.set_mode_data(ell, emm, data=wf_data_re + 1j*wf_data_im)
 
     if centre:
         wfa.trim(trim_upto_time=0)
@@ -978,8 +1026,15 @@ def load_SpEC_data_from_disk(wfa=None,
 
     wf_f0.close()
 
-    return wfa
+    if debug==True:
+        return wfa, wf_nl
+    else:
+        return wfa
 
+
+########################################################################################################################
+# SpECTRE
+########################################################################################################################
 
 def load_SpECTRE_data_from_disk(wfa=None,
                             label='SpECTRE Strain',
@@ -1062,7 +1117,7 @@ def load_SpECTRE_data_from_disk(wfa=None,
     if not wfa:
         # Create a modes array
         wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
-
+    
     if not data_dir:
         data_dir = wfa.data_dir
     else:
