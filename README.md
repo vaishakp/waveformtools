@@ -181,23 +181,29 @@ This is not recommended because of various reasons:
  'data_dir': '/home/vaishakprasad/Downloads/',
  'file_name': 'ExtrapStrain_RIT-BBH-0001-n100.h5',
  'key_format': None,
- 'ell_max': 'auto',
- 'modes_list': None,
+ 'ell_max': 4,
+ 'modes_list': [[2, [-2, -1, 0, 1, 2]],
+  [3, [-3, -2, -1, 0, 1, 2, 3]],
+  [4, [-4, -3, -2, -1, 0, 1, 2, 3, 4]]],
  'r_ext': 500,
  'frequency_axis': None,
  'out_file_name': None,
  'maxtime': None,
- 'date': None,
- 'time': None,
+ 'date': '2023-04-26',
+ 'time': '17:37:20',
  'key_ex': None,
  'spin_weight': -2}
 ```
 
 To access the individual modes, use the :math:`\ell, m` notation.
 ```
->>> ell = 3
->>> emm = 1
+>>> ell = 2
+>>> emm = 2
 >>> wf1.mode(ell, emm)
+array([-5.82188926e-17-2.09534621e-18j, -5.96136537e-17-2.06759459e-18j,
+       -6.10007697e-17-2.04743540e-18j, ...,
+       -7.23538504e-18+4.65415462e-33j, -3.62788145e-18-4.11078069e-33j,
+        0.00000000e+00+0.00000000e+00j])
 ```
 
 To plot the modes

@@ -322,7 +322,8 @@ def load_RIT_Strain_data_from_disk(wfa=None,
                                    modes_list=None,
                                    crop=False,
                                    centre=True,
-                                   r_ext_factor=1):
+                                   r_ext_factor=1,
+                                   debug=False):
     ''' Load the RIT strain waveforms from the RIT catalogue,
         from hdf5 files from disk.
 
@@ -366,36 +367,75 @@ def load_RIT_Strain_data_from_disk(wfa=None,
 
     # Max available mode l.
     ell_max_act, keys_list = get_ell_max_from_file(data_dir=data_dir, var_type='Strain', file_name=file_name)
-    if ell_max == None:
-        if wfa.ell_max==None:
-            ell_max = ell_max_act
+
+
+
+    ####################################
+    # Set variables with priorities
+    # Note: rework this in dictionaries
+    ####################################
+
     if ell_max=='auto':
         ell_max = ell_max_act
+    if ell_max is None:
+        print('ell_max not provided.')
+        if wfa is not None:
+            wfa_ell_max = wfa.ell_max
+        else:
+            wfa_ell_max=None
 
-    #one_key = keys_list[0]
-    
-    print(type(spin_weight), spin_weight)
-    # Construct a modes list
-    if not modes_list:
-        wf_modes_list = waveforms.construct_mode_list(ell_max = ell_max, spin_weight=spin_weight)
+        if wfa_ell_max==None:
+            print('modes array not provided. Setting ell_max from file...')
+            ell_max = ell_max_act
+        else:
+            print('Setting ell_max from given modes_array')
+            ell_max = wfa.ell_max
+    print('Chosen ell max', ell_max, 'Available ell_max', ell_max_act)
+
+    if not wfa:
+        # Create a modes array
+        wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
+       #wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
+    if debug==True:
+        wf_nl = modes_array(label=label+'_nl', ell_max=ell_max, modes_list=modes_list)
+
+    if not data_dir:
+        data_dir = wfa.data_dir
     else:
-        wf_modes_list = modes_list
+        wfa.data_dir = data_dir
 
-    print('The modes list is', wf_modes_list)
+    if not file_name:
+        file_name = wfa.file_name
+    else:
+        wfa.file_name = file_name
 
+    if not ell_max:
+        ell_max = wfa.ell_max
+    else:
+        wfa.ell_max = ell_max
 
+    
+    #ell_max        = 12
+    if not modes_list:
+        if not wfa.modes_list:
+            print('Constructing the modes list')
+            #sys.exit(0)
+            modes_list     = waveformtools.waveforms.construct_mode_list(ell_max=ell_max, spin_weight=wfa.spin_weight)
+        else:
+            modes_list = wfa.modes_list
+    else:
+        wfa.modes_list = modes_list
 
     # For interpolation
     from scipy.interpolate import interp1d
 
     # Alias of the modes_array
     #label = 'q1a0_a'
-
-    # Create a modes array
-    wfa = modes_array(label=label, data_dir=data_dir, modes_list=wf_modes_list)
+    
 
     # Enforce only l>abs(spin_Weight) modes.
-    wf_modes_list = [item for item in wf_modes_list if item[0]>=abs(spin_weight)]
+    #wf_modes_list = [item for item in wf_modes_list if item[0]>=abs(spin_weight)]
+
 
     tend = []
     tstart = []
@@ -403,7 +443,7 @@ def load_RIT_Strain_data_from_disk(wfa=None,
     ##########################################
     # Read in the data
     #########################################
-    print(file_name)
+    #print(file_name)
     # Get the time axis
     #import h5py
     data_file = h5py.File(f'{data_dir}/{file_name}')
@@ -415,7 +455,7 @@ def load_RIT_Strain_data_from_disk(wfa=None,
     dt_auto = mode(np.diff(time_axis))[0][0]
 
     print('Reading in modes...')
-    for ell, emm_list in wf_modes_list:
+    for ell, emm_list in modes_list:
         for emm in emm_list:
 
             this_amp_key = f'amp_l{ell}_m{emm}'
@@ -508,6 +548,9 @@ def load_RIT_Strain_data_from_disk(wfa=None,
         wfa.trim(trim_upto_time=trim)
 
     print(wfa.get_metadata())
+    print(wfa.time_axis)
+    print(wfa.mode(2, 2))
+
     if save_as_ma==True:
         # Save the modes array as waveforms hdf file
         wfa.save_modes(out_file_name=f'{label}_resam.h5')

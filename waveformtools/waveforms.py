@@ -1240,8 +1240,8 @@ class modes_array:
                                             key_ex=key_ex,
                                             r_ext_factor=r_ext_factor)
             elif var_type=='Strain':
-                print(file_name)
-                dataIO.load_RIT_Strain_data_from_disk(wfa=self,
+                #print(file_name)
+                dataIO.load_RIT_Strain_data_from_disk(self,
                                             data_dir=data_dir,
                                             file_name=file_name,
                                             label=label,
@@ -1252,7 +1252,8 @@ class modes_array:
                                             modes_list=modes_list,
                                             crop=crop,
                                             centre=centre,
-                                            r_ext_factor=r_ext_factor)
+                                            r_ext_factor=r_ext_factor,
+                                            debug=debug)
             else:
                 message(f"Data {ftype} {var_type} not supported yet!")
                 sys.exit(0)
