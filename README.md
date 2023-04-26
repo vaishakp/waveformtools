@@ -217,7 +217,7 @@ To plot the modes
 >>> plt.ylabel(f'$rh/M$')
 >>> plt.show()
 ```
-![RIT-BBH-001](https://gitlab.com/vaishakp/waveformtools/docs/images/RIT-BBH-001.pdf)
+![RIT-BBH-001](https://gitlab.com/vaishakp/waveformtools/docs/images/RIT-BBH-001.png)
 
 # Documentation
 
