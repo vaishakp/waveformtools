@@ -1136,7 +1136,7 @@ def shiftmatched(hdat, ind, delta_t=None, is_ts=False):
 
     return shifted_wf
 
-@njit(parallel=True)
+@njit
 def unwrap_phase(phi0):
     ''' Unwrap the phase by finding turning points in phi0. 
     Finding turning points for unwrapping arctan2 function
@@ -2421,18 +2421,23 @@ def match_wfs(all_time_axes, all_waveforms, delta_t='auto'):
     #print(time_axis1-time_axis2)
     #print(time_axis1==time_axis2)
 
+    # Don't interpolate if the time axis are identical
+    Interp=True
     if len(time_axis1)==len(time_axis2):
         if (time_axis1==time_axis2).all():
+            Interp=False
             time_axis  = time_axis1
             wf1, wf2 = all_waveforms
-
+            message('waveforms have a common time axis')
             #from scipy.stat import mode
             #tsorted = sorted(time_axis1)
             #delta_t = tsorted[0] - tsorted[1]
 
             #delta_t = mode(np.diff(time_axis1))
-    else:
+    if Interp==True:
+        message('Interpolating time axis')
         time_axis, wf1, wf2 = resample_wfs(all_time_axes, all_waveforms, delta_t)
+        #print(time_axis, wf1, wf2)
 
     from waveformtools.transforms import compute_fft, compute_ifft
 
