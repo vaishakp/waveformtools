@@ -2,275 +2,302 @@
 
 
 import numpy as np
-#from numba import jit, njit
 
-#@njit(parallel=True)
+# from numba import jit, njit
+
+
+# @njit(parallel=True)
 def compute_fft(udata_x, delta_x):
-	""" Find the FFT of the samples in time-space, and return with the frequencies.
+    """Find the FFT of the samples in time-space, and return with the frequencies.
 
-	Parameters
-	----------
+    Parameters
+    ----------
 
-	udata_x:	1d array
-				The samples in time-space.
+    udata_x:	1d array
+                            The samples in time-space.
 
-	delta_x:	float
-				The stepping delta_x
+    delta_x:	float
+                            The stepping delta_x
 
-	Returns
-	-------
+    Returns
+    -------
 
-	freqs:	1d array
-			The frequency axis, shifted approriately.
-	utilde:	1d array
-				The samples in frequency space, with conventions applied.
+    freqs:	1d array
+                    The frequency axis, shifted approriately.
+    utilde:	1d array
+                            The samples in frequency space, with conventions applied.
 
-	"""
+    """
 
-	# import necessary libraries.
-	from numpy.fft import fft
+    # import necessary libraries.
+    from numpy.fft import fft
 
-	# FFT
-	utilde_orig = fft(udata_x)
+    # FFT
+    utilde_orig = fft(udata_x)
 
-	# Apply conventions.
-	utilde = set_fft_conven(utilde_orig)
+    # Apply conventions.
+    utilde = set_fft_conven(utilde_orig)
 
-	# Get frequency axes.
-	Nlen = len(utilde)
-	# print(Nlen)
-	# Naxis			= np.arange(Nlen)
-	# freq_orig		= fftfreq(Nlen)
-	# freq_axis		= fftshift(freq_orig)*Nlen
-	# delta_x		 = xdata[1] - xdata[0]
+    # Get frequency axes.
+    Nlen = len(utilde)
+    # print(Nlen)
+    # Naxis			= np.arange(Nlen)
+    # freq_orig		= fftfreq(Nlen)
+    # freq_axis		= fftshift(freq_orig)*Nlen
+    # delta_x		 = xdata[1] - xdata[0]
 
-	# Naxis			 = np.arange(Nlen)
-	freq_axis = np.linspace(-0.5 / delta_x, 0.5 / delta_x, Nlen)
+    # Naxis			 = np.arange(Nlen)
+    freq_axis = np.linspace(-0.5 / delta_x, 0.5 / delta_x, Nlen)
 
-	return freq_axis, utilde
+    return freq_axis, utilde
 
-#@njit(parallel=True)
+
+# @njit(parallel=True)
 def compute_ifft(utilde, delta_f):
-	""" Find the inverse FFT of the samples in frequency-space, and return with the time axis.
+    """Find the inverse FFT of the samples in frequency-space, and return with the time axis.
 
-	Parameters
-	----------
+    Parameters
+    ----------
 
-	utilde	:	1d array
-				The samples in frequency-space.
+    utilde	:	1d array
+                            The samples in frequency-space.
 
-	delta_f:	float
-				The frequency stepping
+    delta_f:	float
+                            The frequency stepping
 
-	Returns
-	-------
+    Returns
+    -------
 
-	time_axis:	1d array
-				The time axis.
+    time_axis:	1d array
+                            The time axis.
 
-	udata_time:	1d array
-					The samples in time domain.
+    udata_time:	1d array
+                                    The samples in time domain.
 
-	"""
+    """
 
-	# import necessary libraries.
-	from numpy.fft import ifft
+    # import necessary libraries.
+    from numpy.fft import ifft
 
-	# FFT
-	utilde_orig = unset_fft_conven(utilde)
+    # FFT
+    utilde_orig = unset_fft_conven(utilde)
 
-	# Inverse transform
-	udata_time = ifft(utilde_orig)
+    # Inverse transform
+    udata_time = ifft(utilde_orig)
 
-	# Get frequency axes.
-	Nlen = len(udata_time)
-	# print(Nlen)
-	# Naxis			= np.arange(Nlen)
-	# freq_orig		= fftfreq(Nlen)
-	# freq_axis		= fftshift(freq_orig)*Nlen
-	# delta_x		 = xdata[1] - xdata[0]
+    # Get frequency axes.
+    Nlen = len(udata_time)
+    # print(Nlen)
+    # Naxis			= np.arange(Nlen)
+    # freq_orig		= fftfreq(Nlen)
+    # freq_axis		= fftshift(freq_orig)*Nlen
+    # delta_x		 = xdata[1] - xdata[0]
 
-	# Naxis			 = np.arange(Nlen)
-	delta_t = 1.0 / (delta_f * Nlen)
-	# Dt				= Nlen * delta_f/2
+    # Naxis			 = np.arange(Nlen)
+    delta_t = 1.0 / (delta_f * Nlen)
+    # Dt				= Nlen * delta_f/2
+
+    time_axis = np.linspace(0, delta_t * Nlen, Nlen)
+
+    return time_axis, udata_time
 
 
-	time_axis = np.linspace(0, delta_t * Nlen, Nlen)
-
-	return time_axis, udata_time
-
-#@njit(parallel=True)
+# @njit(parallel=True)
 def set_fft_conven(utilde_orig):
-	""" Make a numppy fft consistent with the chosen conventions.
-		This takes care of the zero mode factor and array position.
-		Also, it shifts the negative frequencies using numpy's fftshift.
+    """Make a numppy fft consistent with the chosen conventions.
+            This takes care of the zero mode factor and array position.
+            Also, it shifts the negative frequencies using numpy's fftshift.
 
-	Parameters
-	----------
+    Parameters
+    ----------
 
-	utilde_orig:	1d array
-					The result of a numpy fft.
+    utilde_orig:	1d array
+                                    The result of a numpy fft.
 
-	Returns
-	-------
+    Returns
+    -------
 
-	utilde_conven:	1d array
-					The fft with set conventions.
- """
+    utilde_conven:	1d array
+                                    The fft with set conventions.
+    """
 
-	# Multiply by 2, take conjugate.
-	utilde_conven = 2 * np.conj(utilde_orig) / len(utilde_orig)
-	# Restore the zero mode.
-	utilde_conven[0] = utilde_conven[0] / 2
-	# Shift the frequency axis.
-	utilde_conven = np.fft.fftshift(utilde_conven)
+    # Multiply by 2, take conjugate.
+    utilde_conven = 2 * np.conj(utilde_orig) / len(utilde_orig)
+    # Restore the zero mode.
+    utilde_conven[0] = utilde_conven[0] / 2
+    # Shift the frequency axis.
+    utilde_conven = np.fft.fftshift(utilde_conven)
 
-	return utilde_conven
+    return utilde_conven
 
-#@njit(parallel=True)
+
+# @njit(parallel=True)
 def unset_fft_conven(utilde_conven):
-	""" Make an actual conventional fft consistent with numpy's conventions.
-		The inverse of set_conv.
+    """Make an actual conventional fft consistent with numpy's conventions.
+            The inverse of set_conv.
 
 
-	Parameters
-	----------
+    Parameters
+    ----------
 
-	utilde_conven:	1d array
-					The conventional fft data vector.
+    utilde_conven:	1d array
+                                    The conventional fft data vector.
 
-	Returns
-	-------
+    Returns
+    -------
 
-	utilde_np
-	 """
+    utilde_np
+    """
 
-	utilde_np = np.fft.ifftshift(utilde_conven)
+    utilde_np = np.fft.ifftshift(utilde_conven)
 
-	utilde_np = len(utilde_np) * np.conj(utilde_np) / 2
-	# print(utilde_original[0])
-	utilde_np[0] *= 2
-	# print(utilde_original[0])
+    utilde_np = len(utilde_np) * np.conj(utilde_np) / 2
+    # print(utilde_original[0])
+    utilde_np[0] *= 2
+    # print(utilde_original[0])
 
-	return utilde_np
+    return utilde_np
 
 
 def Yslm(spin_weight, ell, emm, theta, phi):
-    ''' Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
+    """Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
 
-        Inputs
-        -----------
+    Inputs
+    -----------
 
-        spin_weight :   int
-                        The Spin weight.
-        ell :   int
-                The mode number :math:`\\ell'.
-        emm :   int
-                The azimuthal mode number :math:`m'.
-        theta : float
-                The polar angle  :math:`\\theta` in radians,
-        phi :   float
-                The aximuthal angle :math:`\\phi' in radians.
+    spin_weight :   int
+                    The Spin weight.
+    ell :   int
+            The mode number :math:`\\ell'.
+    emm :   int
+            The azimuthal mode number :math:`m'.
+    theta : float
+            The polar angle  :math:`\\theta` in radians,
+    phi :   float
+            The aximuthal angle :math:`\\phi' in radians.
 
-        Returns
-        --------
-        Yslm :  float
-                The value of Yslm at :math:`\\theta, phi'.
+    Returns
+    --------
+    Yslm :  float
+            The value of Yslm at :math:`\\theta, phi'.
 
-    '''
+    """
     import sympy as sp
-    #theta, phi = sp.symbols('theta phi')
+
+    # theta, phi = sp.symbols('theta phi')
 
     fact = np.math.factorial
 
     Sum = 0
-    for aar in range(ell-spin_weight + 1):
-
-        if (aar + spin_weight-emm)<0 or (ell - aar - spin_weight)<0:
-            #print('Continuing')
+    for aar in range(ell - spin_weight + 1):
+        if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
+            # print('Continuing')
             continue
         else:
-            #print('r, l, s, m', r, l, s, m)
-            a1 =    sp.binomial(ell-spin_weight, aar)
-            #print(a1)
-            a2 =   sp.binomial(ell+spin_weight, aar+spin_weight-emm)
-            #print(a2)
-            a3 =   np.exp(1j*emm*phi)
-            #print(a3)
-            a4 =   np.tan(theta/2)
-            #print(a4)
+            # print('r, l, s, m', r, l, s, m)
+            # a1 = sp.binomial(ell - spin_weight, aar)
+            # print(a1)
+            # a2 = sp.binomial(ell + spin_weight, aar + spin_weight - emm)
+            # print(a2)
+            # a3 = np.exp(1j * emm * phi)
+            # print(a3)
+            # a4 = np.tan(theta / 2)
+            # print(a4)
 
-            Sum +=  sp.binomial(ell - spin_weight, aar)*sp.binomial(ell + spin_weight, aar + spin_weight-emm)*np.power((-1), (ell - aar - spin_weight))*np.exp(1j* emm * phi)/np.power(np.tan(theta / 2), (2 * aar + spin_weight - emm))
+            Sum += (
+                sp.binomial(ell - spin_weight, aar)
+                * sp.binomial(ell + spin_weight, aar + spin_weight - emm)
+                * np.power((-1), (ell - aar - spin_weight))
+                * np.exp(1j * emm * phi)
+                / np.power(np.tan(theta / 2), (2 * aar + spin_weight - emm))
+            )
 
-    Sum=complex(Sum)
-    #print(type(m))
-    #print((-1)**int(m))
-    #print(np.sin(th/2)**(2*l))
-    Yslm = (-1)**emm * (np.sqrt(fact(ell + emm) * fact(ell - emm) * (2*ell + 1)/(4 * np.pi * fact(ell + spin_weight) * fact(ell-spin_weight)))*np.sin(theta / 2)**(2 * ell) * Sum)
+    Sum = complex(Sum)
+    # print(type(m))
+    # print((-1)**int(m))
+    # print(np.sin(th/2)**(2*l))
+    Yslm = (-1) ** emm * (
+        np.sqrt(
+            fact(ell + emm)
+            * fact(ell - emm)
+            * (2 * ell + 1)
+            / (4 * np.pi * fact(ell + spin_weight) * fact(ell - spin_weight))
+        )
+        * np.sin(theta / 2) ** (2 * ell)
+        * Sum
+    )
 
     return Yslm
 
+
 def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
-    ''' Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
+    """Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
 
-        Inputs
-        -----------
+    Inputs
+    -----------
 
-        spin_weight :   int
-                        The Spin weight.
-        ell :   int
-                The mode number :math:`\\ell'.
-        emm :   int
-                The azimuthal mode number :math:`m'.
-        theta : float
-                The polar angle  :math:`\\theta` in radians,
-        phi :   float
-                The aximuthal angle :math:`\\phi' in radians.
+    spin_weight :   int
+                    The Spin weight.
+    ell :   int
+            The mode number :math:`\\ell'.
+    emm :   int
+            The azimuthal mode number :math:`m'.
+    theta : float
+            The polar angle  :math:`\\theta` in radians,
+    phi :   float
+            The aximuthal angle :math:`\\phi' in radians.
 
-        Returns
-        --------
-        Yslm :  float
-                The value of Yslm at :math:`\\theta, phi'.
+    Returns
+    --------
+    Yslm :  float
+            The value of Yslm at :math:`\\theta, phi'.
 
-    '''
+    """
 
-    #spin_weight = abs(spin_weight)
-    #theta, phi = sp.symbols('theta phi')
+    # spin_weight = abs(spin_weight)
+    # theta, phi = sp.symbols('theta phi')
     from math import comb
-    #import sympy as sp
+
+    # import sympy as sp
     fact = np.math.factorial
 
     theta_grid = np.array(theta_grid)
     phi_grid = np.array(phi_grid)
 
-
-    Sum = 0 + 1j*0
-    for aar in range(0, ell-spin_weight + 1):
-
-        #print('aar', aar)
+    Sum = 0 + 1j * 0
+    for aar in range(0, ell - spin_weight + 1):
+        # print('aar', aar)
         subterm = 0
 
-        if  (aar + spin_weight-emm)<0 or (ell - aar - spin_weight)<0:
-            #print('Continuing')
+        if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
+            # print('Continuing')
             continue
         else:
-            #print(aar + spin_weight-emm)
+            # print(aar + spin_weight-emm)
 
             term1 = comb(ell - spin_weight, aar)
-            term2 = comb(ell + spin_weight, aar + spin_weight-emm)
-            term3 =  np.power(float(-1), (ell - aar - spin_weight))
-            #term3 = (-1)**(ell-aar-spin_weight)
+            term2 = comb(ell + spin_weight, aar + spin_weight - emm)
+            term3 = np.power(float(-1), (ell - aar - spin_weight))
+            # term3 = (-1)**(ell-aar-spin_weight)
             term4 = np.exp(1j * emm * phi_grid)
             term5 = np.power(np.tan(theta_grid / 2), (-2 * aar - spin_weight + emm))
-            subterm = term1* term2 * term3* term4 * term5
+            subterm = term1 * term2 * term3 * term4 * term5
 
-            #print(term1, term2, term3, term4)
+            # print(term1, term2, term3, term4)
 
-            Sum +=  subterm
-            #print('arr, subterm', aar, subterm)
+            Sum += subterm
+            # print('arr, subterm', aar, subterm)
 
-
-    #print(ell+emm, ell+spin_weight, ell-spin_weight)
-    Yslmv = float(-1)**emm * (np.sqrt(fact(ell + emm) * fact(ell - emm) * (2*ell + 1)/(4 * np.pi * fact(ell + spin_weight) * fact(ell-spin_weight)))*np.sin(theta_grid / 2)**(2 * ell) * Sum)
+    # print(ell+emm, ell+spin_weight, ell-spin_weight)
+    Yslmv = float(-1) ** emm * (
+        np.sqrt(
+            fact(ell + emm)
+            * fact(ell - emm)
+            * (2 * ell + 1)
+            / (4 * np.pi * fact(ell + spin_weight) * fact(ell - spin_weight))
+        )
+        * np.sin(theta_grid / 2) ** (2 * ell)
+        * Sum
+    )
 
     return Yslmv
