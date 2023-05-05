@@ -2,6 +2,7 @@
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main/LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/scri/badge/?version=latest)](https://vaishakp.gitlab.io/waveformtools/?badge=latest)
 [![Project landing page](https://sites.google.com/view/waveformtools/home)]
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # Waveformtools 
 
