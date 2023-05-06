@@ -13,7 +13,7 @@ stages:
   - deploy
 
 isort:
-  stage: linting
+  stage: linting tests
   image: registry.gitlab.com/mafda/python-linting
   script:
     - isort .
@@ -22,7 +22,7 @@ isort:
   #- main
 
 black:
-  stage: linting
+  stage: linting tests
   image: registry.gitlab.com/mafda/python-linting
   script:
     - black .
@@ -31,7 +31,7 @@ black:
     #- main
 
 flake8:
-  stage: linting
+  stage: linting tests
   allow_failure: True 
   image: registry.gitlab.com/mafda/python-linting
   script:
@@ -41,13 +41,14 @@ flake8:
     #- main
 
 pylint:
-  stage: linting
+  stage: linting tests
   allow_failure: True 
   image: registry.gitlab.com/mafda/python-linting
   script:
     - find . -type f -iname "*.py" | xargs pylint
   only:
     - merge_requests
+
 pages:
   stage: deploy
   image: continuumio/miniconda3:latest
@@ -55,39 +56,18 @@ pages:
   script:
   # image: python:3.9-alpine
   # Note: only 3.9 works with rinohtype
-  #image: python:3.7-alpine3.9
-  # Change pip's cache directory to be inside the project directory since we can
-  # only cache local items.
-  #variables:
-  #  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-
-  # Pip's cache doesn't store the python packages
-  # https://pip.pypa.io/en/stable/topics/caching/
-  #
-  # If you want to also cache the installed packages, you have to install
-  # them in a virtualenv and cache it as well.
-  #cache:
-  #  paths:
-  #    - .cache/pip
-  #    - venv/
-
-  #job_name: build_pages
-  #  variables:
-  #    CI_DEBUG_TRACE: "true"
+  # Alternate image: python:3.7-alpine3.9
     - uname -a
     - python --version  # For debugging
     - which python
-    - pip install virtualenv
-    - virtualenv venv
-  #- dnf install -y make
     #- apk update
     #- apk add make
     #- apk add git
     #- apk add gcc 
-  #  - source venv/bin/activate
+  #  Install Git
     - apt-get update -q -y
     - apt-get install -y build-essential git
+  #   Setup conda environment
     - conda update -y -n base conda
     - conda update -y --all
     - conda create -n test python=3.9 -y
@@ -101,9 +81,9 @@ pages:
     - which conda
     - conda --version
     - python --version
-
-  # - which pip
-  # - pip --version
+    - which pip
+    - pip --version
+  #   Diagnostic
     - git show -s --format=%ci >> date.txt
     - pwd
     - ls -l
@@ -112,7 +92,6 @@ pages:
     - echo $PYTHONPATH
   # - pip install pylint flake8
   # - conda install pylint flake8
-
     #- pip install -U sphinx sphinx-rtd-theme rinohtype numpydoc
     #- pip install rinohtype numpydoc
     #- pip install -r requirements.txt
@@ -124,7 +103,7 @@ pages:
     - cd docs
     - make html
     #- sphinx-build -b html source ../build/html
-    # - mv build/html ../public/
+    - mv build/html ../public/
     
   artifacts:
     paths:
