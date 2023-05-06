@@ -5,7 +5,7 @@ from datetime import date
 
 source_directory = os.path.dirname(os.path.abspath(__file__))
 
-print(source_directory)
+#print(source_directory)
 
 def write_git_version():
     """Write the latest version number based on the last commit date
@@ -28,8 +28,8 @@ def write_git_version():
     #with open(package_directory + "/../public/date.txt", "r") as vers_file:
         #vers = vers_file.read()[:10]
 
-    ee = os.popen(f"sed -i '/version/c\__version__ = \"{vers}\"' {source_directory}/setup.py")
-
+    ee = os.popen(f"sed -i '/version/c\ \tversion=\"{vers}\",' {source_directory}/setup.py")
+    print('Version', vers)
     return vers
 
 
