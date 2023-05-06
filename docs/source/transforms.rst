@@ -21,7 +21,7 @@ For changing the representation between the coordinate space and SWSH basis, one
 Computation of SWSH basis functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two choised for computing the SWSH basis functions required in the transformations. One using numpy implementation and the other using sympy. In the former method, the computations are only accurate upto about 12 decimals for :math:`\ell \leq 20` but they are fast. In the latter, the SWSH can be computed to any precision required at the cost of speed.
+There are two choised for computing the SWSH basis functions required in the transformations. One using numpy implementation and the other using sympy. In the former method, the computations are only accurate upto about 12 decimals for :math:`\\ell \\leq 20` but they are fast. In the latter, the SWSH can be computed to any precision required at the cost of speed.
 
 
 
