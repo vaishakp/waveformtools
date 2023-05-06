@@ -29,8 +29,8 @@ from recommonmark.parser import CommonMarkParser
 dvers = os.popen('git log -1 --date=short | grep Date').read()
 print('Date fetched', dvers)
 print('Version string', dvers[8:-1])
+proj_vers = dvers
 print('Parsed version:', proj_vers)
-aproj_vers = dvers
 waveformtools_version = proj_vers#get_version()
 
 # -- Project information -----------------------------------------------------
