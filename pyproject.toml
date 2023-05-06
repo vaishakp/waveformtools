@@ -11,3 +11,7 @@ disable= "W0311"
 [tool.flake8]
 max-line-length = 125
 ignore = ['E203']
+
+[build-system]
+requires = ["hatching"]
+build-backend = "hatching.build"
