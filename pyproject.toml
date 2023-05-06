@@ -16,9 +16,11 @@ ignore = ['E203']
 requires = ["hatching"]
 build-backend = "hatching.build"
 
+[tool.setuptools-git-versioning]
+enabled = true
+
 [project]
 name = "waveformtools"
-version = "2023.05.06"
 authors = [{ name="Vaishak Prasad", email="vaishakprasad@gmail.com"}, ]
 description = " Tools for working with numerical relativity and waveforms data "
 readme = "README.md"
