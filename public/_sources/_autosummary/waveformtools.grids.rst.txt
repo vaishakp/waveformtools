@@ -1,4 +1,4 @@
-﻿waveformtools.grids
+waveformtools.grids
 ===================
 
 .. automodule:: waveformtools.grids
@@ -17,6 +17,7 @@
 
    .. autosummary::
    
+      gl_grid
       spherical_grid
    
    

@@ -29,7 +29,7 @@ waveformtools.waveformtools
       get_starting_angular_frequency
       get_waveform_angular_frequency
       integrate_first_order
-      interpolate_resample_wfs
+      interp_resam_wfs
       interpolate_wfs
       iscontinuous
       iscontinuous_old
@@ -38,8 +38,10 @@ waveformtools.waveformtools
       low_cut_filter
       massratio
       match_wfs
+      match_wfs_pycbc
       mavg
       message
+      mode
       norm
       olap
       plot
@@ -48,17 +50,19 @@ waveformtools.waveformtools
       removeNans
       removezeros
       resample
+      resample_wfs
       roll
       save_obj
       shiftmatched
       shorten
-      simplematch_wfs
+      simplematch_wfs_old
       smoothen
       startend
       taper
       taper_tanh
       taperlengtheq
       totalmass
+      unwrap_phase
       xtract_camp
       xtract_camp_phase
       xtract_cphase

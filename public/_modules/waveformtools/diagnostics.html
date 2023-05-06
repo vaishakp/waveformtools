@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>waveformtools.diagnostics &mdash; waveformtools 2022-05-03 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/css/my_theme.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: blue" >
+            <a href="../../index.html" class="icon icon-home"> waveformtools
+          </a>
+              <div class="version">
+                2022-05-03
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveformtools.html">Waveformtools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: blue" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">waveformtools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../waveformtools.html">waveformtools</a></li>
+      <li class="breadcrumb-item active">waveformtools.diagnostics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for waveformtools.diagnostics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Diagnostic tools &quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="method_info"><a class="viewcode-back" href="../../_autosummary/waveformtools.diagnostics.html#waveformtools.diagnostics.method_info">[docs]</a><span class="k">class</span> <span class="nc">method_info</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The methods for integration ,differential to be passed on</span>
+<span class="sd">    for operations.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">int_method</span><span class="o">=</span><span class="s2">&quot;MP&quot;</span><span class="p">,</span> <span class="n">diff_method</span><span class="o">=</span><span class="s2">&quot;SH&quot;</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">reg</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">int_method</span> <span class="o">=</span> <span class="n">int_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diff_method</span> <span class="o">=</span> <span class="n">diff_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span></div>
+
+
+<div class="viewcode-block" id="RMSerrs"><a class="viewcode-back" href="../../_autosummary/waveformtools.diagnostics.html#waveformtools.diagnostics.RMSerrs">[docs]</a><span class="k">def</span> <span class="nf">RMSerrs</span><span class="p">(</span><span class="n">func1</span><span class="p">,</span> <span class="n">func2</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute and return the RMS error between two arrays</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func1, func2 : ndarray</span>
+<span class="sd">                   Arrays of same shape to compare with.</span>
+<span class="sd">    info : sphericalarray</span>
+<span class="sd">           Grid info</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    RMS : float</span>
+<span class="sd">          The RMS error</span>
+<span class="sd">    Amax : float</span>
+<span class="sd">           The max diff</span>
+<span class="sd">    Amin : float the min diff</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">func1</span> <span class="o">-</span> <span class="n">func2</span>
+
+    <span class="n">Amax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+    <span class="n">Amin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+
+    <span class="n">RMS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">info</span><span class="o">.</span><span class="n">npix_act</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">RMS</span><span class="p">,</span> <span class="n">Amin</span><span class="p">,</span> <span class="n">Amax</span></div>
+
+
+<div class="viewcode-block" id="IsModesEqual"><a class="viewcode-back" href="../../_autosummary/waveformtools.diagnostics.html#waveformtools.diagnostics.IsModesEqual">[docs]</a><span class="k">def</span> <span class="nf">IsModesEqual</span><span class="p">(</span><span class="n">modes1</span><span class="p">,</span> <span class="n">modes2</span><span class="p">,</span> <span class="n">modes_list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the mode amplitudes are equal</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    modes1, modes2 : dict</span>
+<span class="sd">                   A dictionary of modes. For each mode, the data could be an array.</span>
+
+<span class="sd">    modes_list : list</span>
+<span class="sd">                 A list of list of mode numbers</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    modes_err : float</span>
+<span class="sd">                The error of each mode as a dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">modes_err</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">ell</span><span class="p">,</span> <span class="n">emm_list</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">emm</span> <span class="ow">in</span> <span class="n">emm_list</span><span class="p">:</span>
+            <span class="n">A1</span> <span class="o">=</span> <span class="n">modes1</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+            <span class="n">A2</span> <span class="o">=</span> <span class="n">modes2</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">A1</span> <span class="o">-</span> <span class="n">A2</span>
+
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="n">modes_err</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">label</span><span class="p">:</span> <span class="n">delta</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">modes_err</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Vaishak Prasad.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XXXXXXXXXX', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>waveformtools.dataIO &mdash; waveformtools 2022-05-03 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/css/my_theme.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: blue" >
+            <a href="../../index.html" class="icon icon-home"> waveformtools
+          </a>
+              <div class="version">
+                2022-05-03
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveformtools.html">Waveformtools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: blue" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">waveformtools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../waveformtools.html">waveformtools</a></li>
+      <li class="breadcrumb-item active">waveformtools.dataIO</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for waveformtools.dataIO</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Functions for handling data IO operations from waveforms class</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#########################</span>
+<span class="c1"># Imports</span>
+<span class="c1">#########################</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">waveformtools</span>
+<span class="kn">from</span> <span class="nn">waveformtools.waveforms</span> <span class="kn">import</span> <span class="n">modes_array</span>
+<span class="kn">from</span> <span class="nn">waveformtools.waveformtools</span> <span class="kn">import</span> <span class="n">xtract_camp_phase</span><span class="p">,</span> <span class="n">interp_resam_wfs</span><span class="p">,</span> <span class="n">message</span>
+<span class="kn">from</span> <span class="nn">waveformtools.waveforms</span> <span class="kn">import</span> <span class="n">_get_modes_list_from_keys</span><span class="p">,</span> <span class="n">construct_mode_list</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1">##########################</span>
+<span class="c1"># RIT data</span>
+<span class="c1">##########################</span>
+
+
+<span class="k">def</span> <span class="nf">_key_gen</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates strings to be used as keys for</span>
+<span class="sd">    managing h5 datasets.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ell:    int</span>
+<span class="sd">                    The polar angular mode number</span>
+<span class="sd">                    :math:`\\ell`.</span>
+<span class="sd">    emm : int</span>
+<span class="sd">              The aximuthal angular mode number</span>
+<span class="sd">              :math:`m`.</span>
+<span class="sd">    extras: str</span>
+<span class="sd">                Any extra string to be appended</span>
+<span class="sd">                to the end of the key.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    key:     str</span>
+<span class="sd">                     A string key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">_m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">extras</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">extras</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="c1"># print(&#39;adding rext&#39;)</span>
+
+    <span class="k">return</span> <span class="n">key</span>
+
+
+<div class="viewcode-block" id="get_ell_max_from_keys"><a class="viewcode-back" href="../../_autosummary/waveformtools.dataIO.html#waveformtools.dataIO.get_ell_max_from_keys">[docs]</a><span class="k">def</span> <span class="nf">get_ell_max_from_keys</span><span class="p">(</span><span class="n">all_keys</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get ell max from a list of keys.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    all_keys :  list</span>
+<span class="sd">            A list of strings string containing the modes keys.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ell_max : int</span>
+<span class="sd">              The maximum available ell.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># available mode numbers</span>
+    <span class="n">all_ell_modes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">({})</span>
+
+    <span class="c1"># Get mode numbers</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
+        <span class="n">this_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;\_l\d\_&quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">this_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># print(f&#39;Skipped file {item}&#39;)</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># print(&#39;Match found&#39;, this_match.string)</span>
+        <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="o">=</span> <span class="n">this_match</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+        <span class="n">this_ell</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">this_match</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="n">s1</span> <span class="o">+</span> <span class="mi">2</span> <span class="p">:</span> <span class="n">s2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># print(this_ell)</span>
+
+        <span class="n">all_ell_modes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">this_ell</span><span class="p">)</span>
+
+    <span class="n">ell_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">all_ell_modes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ell_max</span></div>
+
+
+<div class="viewcode-block" id="get_ell_max_from_file"><a class="viewcode-back" href="../../_autosummary/waveformtools.dataIO.html#waveformtools.dataIO.get_ell_max_from_file">[docs]</a><span class="k">def</span> <span class="nf">get_ell_max_from_file</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">var_type</span><span class="o">=</span><span class="s2">&quot;Psi4&quot;</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;*.h5&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the largest available mode number from available data in files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_dir :  string</span>
+<span class="sd">                A string containing the directory path where the mode files can be found.</span>
+<span class="sd">    var_type: string, optional</span>
+<span class="sd">            A string that denotes the variable that is being loaded. Options are Psi4 and strain.</span>
+<span class="sd">            The former is the default.</span>
+<span class="sd">    file_name : string, optional</span>
+<span class="sd">              The h5 file that contains the modes data. It defaults to the only file in the directory.</span>
+<span class="sd">              If there are multiple files, it throws an error.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ell_max : int</span>
+<span class="sd">              The maximum available ell.</span>
+<span class="sd">    keys_list : list</span>
+<span class="sd">                A list of data access keys.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Reads in various ASCII dat files for RIT Psi4, h5 files for RIT strain and gen strain.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s2">&quot;Psi4&quot;</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+
+        <span class="c1"># Get files</span>
+        <span class="n">all_fnames</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+        <span class="c1"># Get only files</span>
+        <span class="n">all_fnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">all_fnames</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)]</span>
+
+    <span class="k">elif</span> <span class="n">var_type</span> <span class="o">==</span> <span class="s2">&quot;Strain&quot;</span><span class="p">:</span>
+        <span class="c1"># import h5py</span>
+
+        <span class="n">data_file</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">all_fnames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_file</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">data_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># print(all_fnames)</span>
+
+    <span class="c1"># Parse ell values</span>
+    <span class="c1"># Filter the keys.</span>
+    <span class="n">all_fnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">all_fnames</span> <span class="k">if</span> <span class="s2">&quot;_l&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+
+    <span class="c1"># print(all_fnames)</span>
+
+    <span class="n">ell_max</span> <span class="o">=</span> <span class="n">get_ell_max_from_keys</span><span class="p">(</span><span class="n">all_fnames</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ell_max</span><span class="p">,</span> <span class="n">all_fnames</span></div>
+
+
+<div class="viewcode-block" id="load_RIT_Psi4_from_disk"><a class="viewcode-back" href="../../_autosummary/waveformtools.dataIO.html#waveformtools.dataIO.load_RIT_Psi4_from_disk">[docs]</a><span class="k">def</span> <span class="nf">load_RIT_Psi4_from_disk</span><span class="p">(</span>
+    <span class="n">wfa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;RIT_rPsi4inf&quot;</span><span class="p">,</span>
+    <span class="n">ell_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">save_as_ma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">spin_weight</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">resam_type</span><span class="o">=</span><span class="s2">&quot;finest&quot;</span><span class="p">,</span>
+    <span class="n">interp_kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the Psi4 waveforms from the RIT catalogue</span>
+<span class="sd">    from ASCII files from disk.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wfa  :  waveforms</span>
+<span class="sd">            An instance of the waveforms class. Updates this instance if provided, else creates a new instance.</span>
+<span class="sd">    data_dir :  string</span>
+<span class="sd">            A string containing the directory path where the mode files can be found.</span>
+<span class="sd">    label : string, optional</span>
+<span class="sd">            The label of the modes_array object.</span>
+<span class="sd">    ell_max : int, optional</span>
+<span class="sd">                The maximum mode number to load. If not specified,</span>
+<span class="sd">                then all available modes are loaded.</span>
+<span class="sd">    save_as_ma : bool, optional</span>
+<span class="sd">                 Save to disk again as a modes_array h5 file?</span>
+<span class="sd">    spin_weight : int, optional</span>
+<span class="sd">                  The spin weight of the object. Used for filtering modes.</span>
+<span class="sd">                  Defaults to -2.</span>
+<span class="sd">    resam_type : string, float, optional</span>
+<span class="sd">                 The type of resampling to do. Options are finest and coarsest, and user input float.</span>
+<span class="sd">    interp_kind : string, optional</span>
+<span class="sd">                  The interpolation type to use. Default is cubic.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    rit_modes_array : modes_array</span>
+<span class="sd">                        A modes_array instance containing the loaded modes.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about</span>
+<span class="sd">    choosing the time domain. This may change in future.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">waveformtools</span> <span class="kn">import</span> <span class="n">waveforms</span>
+    <span class="kn">from</span> <span class="nn">waveformtools.waveforms</span> <span class="kn">import</span> <span class="n">modes_array</span>
+
+    <span class="c1"># Max available mode l.</span>
+    <span class="k">if</span> <span class="n">ell_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ell_max</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_ell_max_from_file</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+
+    <span class="c1"># Construct a modes list</span>
+    <span class="n">wf_modes_list</span> <span class="o">=</span> <span class="n">waveforms</span><span class="o">.</span><span class="n">construct_mode_list</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=</span><span class="n">spin_weight</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The modes list is&quot;</span><span class="p">,</span> <span class="n">wf_modes_list</span><span class="p">)</span>
+
+    <span class="c1"># For interpolation</span>
+    <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+
+    <span class="c1"># Alias of the modes_array</span>
+    <span class="c1"># label = &#39;q1a0_a&#39;</span>
+
+    <span class="c1"># Create a modes array</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">wfa</span><span class="p">:</span>
+        <span class="n">wfa</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="n">wf_modes_list</span><span class="p">)</span>
+
+    <span class="c1"># Enforce only l&gt;2 modes.</span>
+    <span class="n">wf_modes_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">wf_modes_list</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">spin_weight</span><span class="p">)]</span>
+
+    <span class="c1"># tend = []</span>
+    <span class="c1"># tstart = []</span>
+
+    <span class="c1">##########################################</span>
+    <span class="c1"># Read in the data</span>
+    <span class="c1">#########################################</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading in modes...&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ell</span><span class="p">,</span> <span class="n">emm_list</span> <span class="ow">in</span> <span class="n">wf_modes_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">emm</span> <span class="ow">in</span> <span class="n">emm_list</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading&quot;</span><span class="p">,</span> <span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">)</span>
+            <span class="c1"># Construct file path</span>
+            <span class="n">wf_psi4_file_path</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/rPsi4_l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">_m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">_rInf.asc&quot;</span>
+            <span class="c1"># Read in the data</span>
+            <span class="n">wf_psi4_file</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">wf_psi4_file_path</span><span class="p">)</span>
+
+            <span class="c1"># Get time axis</span>
+            <span class="n">wf_psi4_time</span> <span class="o">=</span> <span class="n">wf_psi4_file</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># tend.append(len(wf_psi4_time))</span>
+            <span class="c1"># tstart.append(wf_psi4_time[0])</span>
+            <span class="c1"># tend.append(wf_psi4_time[-1])</span>
+
+            <span class="c1"># print(f&#39;Tmin {wf_psi4_time[0]}, tmax{wf_psi4_time[-1]}&#39;)</span>
+            <span class="c1"># Create modes_array on first run</span>
+
+            <span class="c1"># print(wfa.modes_data)</span>
+            <span class="k">if</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_data</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating modes data&quot;</span><span class="p">)</span>
+
+                <span class="n">min_dt</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wf_psi4_time</span><span class="p">)),</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">max_dt</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wf_psi4_time</span><span class="p">)),</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Min dt </span><span class="si">{</span><span class="n">min_dt</span><span class="si">}</span><span class="s2"> and Max dt </span><span class="si">{</span><span class="n">max_dt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">resam_type</span> <span class="o">==</span> <span class="s2">&quot;finest&quot;</span><span class="p">:</span>
+                    <span class="c1"># Choose finest available timestep</span>
+                    <span class="c1"># for upto 3 decimal digits.</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">min_dt</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at the finest timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">resam_type</span> <span class="o">==</span> <span class="s2">&quot;coarsest&quot;</span><span class="p">:</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">max_dt</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at the coarsest timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resam_type</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">resam_type</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at user defined timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="c1"># New (resampled) time axis</span>
+                <span class="n">time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">wf_psi4_time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wf_psi4_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">m_dt</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="c1"># Length of data.</span>
+                <span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+
+                <span class="c1"># Create a modes array object</span>
+                <span class="n">wfa</span><span class="o">.</span><span class="n">create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="n">data_len</span><span class="p">)</span>
+
+                <span class="c1"># Assign to it the time axis</span>
+                <span class="n">wfa</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="n">time_axis</span>
+
+            <span class="c1"># print(wfa.time_axis - wf_psi4_time)</span>
+            <span class="c1"># continue</span>
+            <span class="c1">###################################</span>
+            <span class="c1"># Uniform sampling</span>
+            <span class="c1">###################################</span>
+            <span class="c1"># print(&#39;Wfa time axis&#39;, wfa.time_axis)</span>
+
+            <span class="c1">###############################</span>
+            <span class="c1"># Load the phase data</span>
+            <span class="c1">##############################</span>
+
+            <span class="n">Yphase</span> <span class="o">=</span> <span class="n">wf_psi4_file</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span>
+            <span class="n">Yphase_interp_fun</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">wf_psi4_time</span><span class="p">,</span> <span class="n">Yphase</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">interp_kind</span><span class="p">)</span>
+
+            <span class="c1"># Resample</span>
+
+            <span class="n">Yphase_resam</span> <span class="o">=</span> <span class="n">Yphase_interp_fun</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+
+            <span class="c1">###########################</span>
+            <span class="c1"># Load the amplitude data</span>
+            <span class="c1">###########################</span>
+            <span class="n">Yamp</span> <span class="o">=</span> <span class="n">wf_psi4_file</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
+            <span class="n">Yamp_interp_fun</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">wf_psi4_time</span><span class="p">,</span> <span class="n">Yamp</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">interp_kind</span><span class="p">)</span>
+
+            <span class="c1"># Resample</span>
+            <span class="n">Yamp_resam</span> <span class="o">=</span> <span class="n">Yamp_interp_fun</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+            <span class="n">wfmode</span> <span class="o">=</span> <span class="n">Yamp_resam</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Yphase_resam</span><span class="p">)</span>
+
+            <span class="c1">###################################</span>
+            <span class="c1"># Load the modes data</span>
+            <span class="c1">###################################</span>
+
+            <span class="n">wfa</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">,</span> <span class="n">wfmode</span><span class="p">)</span>
+
+    <span class="c1"># Trim or recenter</span>
+    <span class="n">wfa</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">trim_upto_time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save_as_ma</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Save the modes array as waveforms hdf file</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">save_modes</span><span class="p">(</span><span class="n">out_file_name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{label}</span><span class="s2">_resam.h5&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wfa</span></div>
+
+
+<div class="viewcode-block" id="load_RIT_Strain_data_from_disk"><a class="viewcode-back" href="../../_autosummary/waveformtools.dataIO.html#waveformtools.dataIO.load_RIT_Strain_data_from_disk">[docs]</a><span class="k">def</span> <span class="nf">load_RIT_Strain_data_from_disk</span><span class="p">(</span>
+    <span class="n">wfa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;RIT_strain&quot;</span><span class="p">,</span>
+    <span class="n">spin_weight</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">ell_max</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">resam_type</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">interp_kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+    <span class="n">save_as_ma</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">modes_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">crop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">centre</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">r_ext_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the RIT strain waveforms from the RIT catalogue,</span>
+<span class="sd">    from hdf5 files from disk.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wfa  : waveforms</span>
+<span class="sd">           An instance of the waveforms class. Creates a new one if not provided.</span>
+<span class="sd">    data_dir :  string</span>
+<span class="sd">            A string containing the directory path where the mode files can be found.</span>
+<span class="sd">    label : string, optional</span>
+<span class="sd">            The label of the modes_array object.</span>
+<span class="sd">    ell_max : int, optional</span>
+<span class="sd">                The maximum mode number to load. If not specified,</span>
+<span class="sd">                then all available modes are loaded.</span>
+<span class="sd">    save_as_ma : bool, optional</span>
+<span class="sd">                 Save to disk again as a modes_array h5 file?</span>
+<span class="sd">    spin_weight : int, optional</span>
+<span class="sd">                  The spin weight of the object. Used for filtering modes.</span>
+<span class="sd">                  Defaults to -2.</span>
+<span class="sd">    resam_type : string, float, optional</span>
+<span class="sd">                 The type of resampling to do. Options are finest and coarsest, and user input float.</span>
+<span class="sd">    interp_kind : string, optional</span>
+<span class="sd">                  The interpolation type to use. Default is cubic.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    rit_modes_array : modes_array</span>
+<span class="sd">                        A modes_array instance containing the loaded modes.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about</span>
+<span class="sd">    choosing the time domain. This may change in future.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Max available mode l.</span>
+    <span class="n">ell_max_act</span><span class="p">,</span> <span class="n">keys_list</span> <span class="o">=</span> <span class="n">get_ell_max_from_file</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">var_type</span><span class="o">=</span><span class="s2">&quot;Strain&quot;</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+
+    <span class="c1">####################################</span>
+    <span class="c1"># Set variables with priorities</span>
+    <span class="c1"># Note: rework this in dictionaries</span>
+    <span class="c1">####################################</span>
+
+    <span class="k">if</span> <span class="n">ell_max</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max_act</span>
+    <span class="k">if</span> <span class="n">ell_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ell_max not provided.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">wfa</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wfa_ell_max</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wfa_ell_max</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">wfa_ell_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;modes array not provided. Setting ell_max from file...&quot;</span><span class="p">)</span>
+            <span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max_act</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting ell_max from given modes_array&quot;</span><span class="p">)</span>
+            <span class="n">ell_max</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chosen ell max&quot;</span><span class="p">,</span> <span class="n">ell_max</span><span class="p">,</span> <span class="s2">&quot;Available ell_max&quot;</span><span class="p">,</span> <span class="n">ell_max_act</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">wfa</span><span class="p">:</span>
+        <span class="c1"># Create a modes array</span>
+        <span class="n">wfa</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="n">modes_list</span><span class="p">)</span>
+    <span class="c1"># wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)</span>
+    <span class="k">if</span> <span class="n">debug</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">wf_nl</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;_nl&quot;</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="n">modes_list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data_dir</span><span class="p">:</span>
+        <span class="n">data_dir</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">data_dir</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">file_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ell_max</span><span class="p">:</span>
+        <span class="n">ell_max</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max</span>
+
+    <span class="c1"># ell_max        = 12</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">modes_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constructing the modes list&quot;</span><span class="p">)</span>
+            <span class="n">modes_list</span> <span class="o">=</span> <span class="n">waveformtools</span><span class="o">.</span><span class="n">waveforms</span><span class="o">.</span><span class="n">construct_mode_list</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=</span><span class="n">wfa</span><span class="o">.</span><span class="n">spin_weight</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">modes_list</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span> <span class="o">=</span> <span class="n">modes_list</span>
+
+    <span class="c1"># For interpolation</span>
+    <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+
+    <span class="c1"># Alias of the modes_array</span>
+    <span class="c1"># label = &#39;q1a0_a&#39;</span>
+
+    <span class="c1"># Enforce only l&gt;abs(spin_Weight) modes.</span>
+    <span class="c1"># wf_modes_list = [item for item in wf_modes_list if item[0]&gt;=abs(spin_weight)]</span>
+
+    <span class="c1"># tend = []</span>
+    <span class="c1"># tstart = []</span>
+
+    <span class="c1">##########################################</span>
+    <span class="c1"># Read in the data</span>
+    <span class="c1">#########################################</span>
+    <span class="c1"># print(file_name)</span>
+    <span class="c1"># Get the time axis</span>
+    <span class="c1"># import h5py</span>
+    <span class="n">data_file</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">time_axis</span> <span class="o">=</span> <span class="n">data_file</span><span class="p">[</span><span class="s2">&quot;NRTimes&quot;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span>
+    <span class="c1"># dt_auto = time_axis[1]-time_axis[0]</span>
+    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">mode</span>
+
+    <span class="n">dt_auto</span> <span class="o">=</span> <span class="n">mode</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time_axis</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading in modes...&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ell</span><span class="p">,</span> <span class="n">emm_list</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">emm</span> <span class="ow">in</span> <span class="n">emm_list</span><span class="p">:</span>
+            <span class="n">this_amp_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;amp_l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">_m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">this_phase_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;phase_l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">_m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading&quot;</span><span class="p">,</span> <span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">)</span>
+            <span class="c1"># Construct file path</span>
+
+            <span class="c1"># Create modes_array on first run</span>
+
+            <span class="c1"># print(wfa.modes_data)</span>
+            <span class="k">if</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_data</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating modes data&quot;</span><span class="p">)</span>
+
+                <span class="c1"># min_dt = round(min(np.diff(wf_psi4_time)), 2)</span>
+                <span class="c1"># max_dt = round(max(np.diff(wf_psi4_time)), 2)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Default dt is </span><span class="si">{</span><span class="n">dt_auto</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">resam_type</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+                    <span class="c1"># Choose finest available timestep</span>
+                    <span class="c1"># for upto 3 decimal digits.</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">dt_auto</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sampling at the default timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resam_type</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">resam_type</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at user defined timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                    <span class="c1"># New (resampled) time axis</span>
+                    <span class="n">time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">time_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="c1"># Length of data.</span>
+                <span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+
+                <span class="c1"># Create a modes array object</span>
+                <span class="n">wfa</span><span class="o">.</span><span class="n">create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="n">data_len</span><span class="p">)</span>
+
+                <span class="c1"># Assign to it the time axis</span>
+                <span class="n">wfa</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="n">time_axis</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">wfa</span><span class="o">.</span><span class="n">time_axis</span><span class="p">)</span>
+            <span class="c1"># print(wfa.time_axis - wf_psi4_time)</span>
+            <span class="c1"># continue</span>
+            <span class="c1">###################################</span>
+            <span class="c1"># Uniform sampling</span>
+            <span class="c1">###################################</span>
+            <span class="c1"># print(&#39;Wfa time axis&#39;, wfa.time_axis)</span>
+
+            <span class="c1">###############################</span>
+            <span class="c1"># Load the phase data</span>
+            <span class="c1">##############################</span>
+            <span class="n">Tphase</span> <span class="o">=</span> <span class="n">data_file</span><span class="p">[</span><span class="n">this_phase_key</span><span class="p">][</span><span class="s2">&quot;X&quot;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span>
+
+            <span class="n">Yphase</span> <span class="o">=</span> <span class="n">data_file</span><span class="p">[</span><span class="n">this_phase_key</span><span class="p">][</span><span class="s2">&quot;Y&quot;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span>
+
+            <span class="n">Yphase_interp_fun</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">Tphase</span><span class="p">,</span> <span class="n">Yphase</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">interp_kind</span><span class="p">)</span>
+
+            <span class="c1"># Resample</span>
+
+            <span class="n">Yphase_resam</span> <span class="o">=</span> <span class="n">Yphase_interp_fun</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+
+            <span class="c1">###########################</span>
+            <span class="c1"># Load the amplitude data</span>
+            <span class="c1">###########################</span>
+            <span class="n">Tamp</span> <span class="o">=</span> <span class="n">data_file</span><span class="p">[</span><span class="n">this_amp_key</span><span class="p">][</span><span class="s2">&quot;X&quot;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span>
+
+            <span class="n">Yamp</span> <span class="o">=</span> <span class="n">data_file</span><span class="p">[</span><span class="n">this_amp_key</span><span class="p">][</span><span class="s2">&quot;Y&quot;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span>
+
+            <span class="n">Yamp_interp_fun</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">Tamp</span><span class="p">,</span> <span class="n">Yamp</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">interp_kind</span><span class="p">)</span>
+
+            <span class="c1"># Resample</span>
+
+            <span class="n">Yamp_resam</span> <span class="o">=</span> <span class="n">Yamp_interp_fun</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+
+            <span class="n">wfmode</span> <span class="o">=</span> <span class="n">Yamp_resam</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">Yphase_resam</span><span class="p">)</span>
+
+            <span class="c1">###################################</span>
+            <span class="c1"># Load the modes data</span>
+            <span class="c1">###################################</span>
+
+            <span class="n">wfa</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">,</span> <span class="n">r_ext_factor</span> <span class="o">*</span> <span class="n">wfmode</span><span class="p">)</span>
+
+    <span class="n">data_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c1"># Trim or recenter</span>
+    <span class="k">if</span> <span class="n">centre</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">trim_upto_time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">crop</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">trim_upto_time</span><span class="o">=</span><span class="n">crop</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">wfa</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">wfa</span><span class="o">.</span><span class="n">time_axis</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">wfa</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">save_as_ma</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Save the modes array as waveforms hdf file</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">save_modes</span><span class="p">(</span><span class="n">out_file_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">_resam.h5&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">debug</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wfa</span><span class="p">,</span> <span class="n">wf_nl</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wfa</span></div>
+
+
+<span class="c1">#################################################################</span>
+<span class="c1"># Generic data type</span>
+<span class="c1">#################################################################</span>
+
+
+<div class="viewcode-block" id="load_gen_data_from_disk"><a class="viewcode-back" href="../../_autosummary/waveformtools.dataIO.html#waveformtools.dataIO.load_gen_data_from_disk">[docs]</a><span class="k">def</span> <span class="nf">load_gen_data_from_disk</span><span class="p">(</span>
+    <span class="n">wfa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;generic waveform&quot;</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;*.h5&quot;</span><span class="p">,</span>
+    <span class="n">r_ext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ell_max</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">pre_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">modes_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">crop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">centre</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">key_ex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">r_ext_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the RIT strain waveforms from the RIT catalogue,</span>
+<span class="sd">    from hdf5 files from disk.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_dir :  string</span>
+<span class="sd">            A string containing the directory path where the mode files can be found.</span>
+<span class="sd">    label : string, optional</span>
+<span class="sd">            The label of the modes_array object.</span>
+<span class="sd">    ell_max : int, optional</span>
+<span class="sd">                The maximum mode number to load. If not specified,</span>
+<span class="sd">                then all available modes are loaded.</span>
+<span class="sd">    save_as_ma : bool, optional</span>
+<span class="sd">                 Save to disk again as a modes_array h5 file?</span>
+<span class="sd">    spin_weight : int, optional</span>
+<span class="sd">                  The spin weight of the object. Used for filtering modes.</span>
+<span class="sd">                  Defaults to -2.</span>
+<span class="sd">    resam_type : string, float, optional</span>
+<span class="sd">                 The type of resampling to do. Options are finest and coarsest, and user input float.</span>
+<span class="sd">    interp_kind : string, optional</span>
+<span class="sd">                  The interpolation type to use. Default is cubic.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    rit_modes_array : modes_array</span>
+<span class="sd">                        A modes_array instance containing the loaded modes.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about</span>
+<span class="sd">    choosing the time domain. This may change in future.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Max available mode l.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">wfa</span><span class="p">:</span>
+        <span class="c1"># Create a modes array</span>
+        <span class="n">wfa</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="n">modes_list</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">)</span>
+
+    <span class="c1"># if not data_dir:</span>
+    <span class="c1">#   data_dir = wfa.data_dir</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#   wfa.data_dir = data_dir</span>
+
+    <span class="c1"># if not file_name:</span>
+    <span class="c1">#   file_name = wfa.file_name</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#   wfa.file_name = file_name</span>
+
+    <span class="c1"># if not ell_max:</span>
+    <span class="c1">#   ell_max = wfa.ell_max</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#   wfa.ell_max = ell_max</span>
+
+    <span class="c1"># if not label:</span>
+    <span class="c1">#   label = wfa.label</span>
+    <span class="c1"># ell_max        = 12</span>
+    <span class="c1"># Max available mode l.</span>
+
+    <span class="n">full_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading data from </span><span class="si">{</span><span class="n">full_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Enforce only l&gt;2 modes.</span>
+    <span class="c1"># wf_modes_list = [item for item in wf_modes_list if item[0]&gt;=abs(spin_weight)]</span>
+
+    <span class="c1"># Open the modes file.</span>
+    <span class="c1"># import h5py, json</span>
+    <span class="n">full_path</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">wfa</span><span class="o">.</span><span class="n">file_name</span>
+
+    <span class="c1"># print(wfa.file_name)</span>
+    <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wfile</span><span class="p">:</span>
+        <span class="c1">#################################</span>
+        <span class="c1"># Get metadata</span>
+        <span class="c1">###############################</span>
+
+        <span class="c1"># Load metadata if present.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># if 1:</span>
+            <span class="n">metadata_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">void</span><span class="p">(</span><span class="n">wfile</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]))</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">metadata_bytes</span><span class="p">)</span>
+            <span class="c1"># print(metadata)</span>
+            <span class="c1"># Import the metadata.</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">wfa</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span><span class="p">})</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Metadata loaded&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Waveform meta data:&quot;</span><span class="p">,</span> <span class="n">wfa</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">())</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="c1"># If no metadata found, pass empty dict for updation.</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No metadata found!&quot;</span><span class="p">,</span> <span class="n">ex</span><span class="p">)</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">pass</span>
+        <span class="c1"># print(wfa.file_name)</span>
+        <span class="c1"># data = np.array(wfile[&#39;l0_m0_r500.00&#39;])</span>
+        <span class="c1"># print(data)</span>
+        <span class="c1"># Get the list of keys.</span>
+        <span class="n">modes_keys_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">wfile</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="c1"># print(&#39;Keys &#39;, modes_keys_list)</span>
+        <span class="c1"># print(wfa.get_metadata())</span>
+        <span class="c1"># Check and filter for particular key string pattern</span>
+
+        <span class="k">if</span> <span class="n">key_ex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Filter the keys according to key_ex if specified.</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Filtering as per&quot;</span><span class="p">,</span> <span class="n">key_ex</span><span class="p">)</span>
+            <span class="n">wfa</span><span class="o">.</span><span class="n">key_ex</span> <span class="o">=</span> <span class="n">key_ex</span>
+            <span class="n">modes_keys_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modes_keys_list</span> <span class="k">if</span> <span class="n">key_ex</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+            <span class="c1"># print(modes_keys_list)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;key_ex is not specified. Proceeding without filtering..&quot;</span><span class="p">)</span>
+
+        <span class="n">modes_keys_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">modes_keys_list</span><span class="p">)</span>
+
+        <span class="c1"># print(&#39;Modes keys&#39;, modes_keys_list)</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">mode_keys_list</span> <span class="o">=</span> <span class="n">modes_keys_list</span>
+
+        <span class="c1"># Construct the list of modes if it doesnt exist.</span>
+
+        <span class="c1">##########################</span>
+        <span class="c1"># Construct modes list</span>
+        <span class="c1">##########################</span>
+        <span class="k">if</span> <span class="n">r_ext</span><span class="p">:</span>
+            <span class="n">wfa</span><span class="o">.</span><span class="n">r_ext</span> <span class="o">=</span> <span class="n">r_ext</span>
+        <span class="k">elif</span> <span class="n">wfa</span><span class="o">.</span><span class="n">r_ext</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">r_ext</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">r_ext</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Unable to parse extraction radius!&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">modes_list</span><span class="p">:</span>
+            <span class="c1"># Check if modes list is given for which mode to load.</span>
+            <span class="c1"># If the list of modes is not given then construct the list of modes.</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ell_max</span><span class="p">:</span>
+                <span class="c1"># If ell max is also not specified,</span>
+                <span class="c1"># construct the list of modes using</span>
+                <span class="c1"># the list of modes h5 file keys.</span>
+                <span class="n">modes_list</span> <span class="o">=</span> <span class="n">_get_modes_list_from_keys</span><span class="p">(</span><span class="n">modes_keys_list</span><span class="p">,</span> <span class="n">r_ext</span><span class="p">)</span>
+                <span class="c1"># print(modes_list)</span>
+                <span class="c1"># Get the ell max</span>
+                <span class="n">ell_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">])</span>
+
+                <span class="c1"># metadata.update({ell_max : ell_max })</span>
+                <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># self.ell_max = ell_max</span>
+                <span class="c1"># If ell max is given, construct the</span>
+                <span class="c1"># list of modes directly.</span>
+                <span class="n">modes_list</span> <span class="o">=</span> <span class="n">construct_mode_list</span><span class="p">(</span><span class="n">ell_max</span><span class="p">)</span>
+
+                <span class="c1"># set the modes list attr.</span>
+                <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span> <span class="o">=</span> <span class="n">modes_list</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># self.modes_list = modes_list</span>
+            <span class="c1"># If modes list is given, get ell_max from it.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ell_max</span><span class="p">:</span>
+                <span class="c1"># Get the ell max</span>
+                <span class="n">ell_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">])</span>
+
+        <span class="c1"># Set the ell_max attribute if not already.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span><span class="p">:</span>
+            <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max</span>
+
+        <span class="c1">#################################################</span>
+        <span class="c1"># Load modes</span>
+        <span class="c1">#################################################</span>
+        <span class="c1"># Modes array created flag</span>
+        <span class="n">cflag</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Load the modes listed in mode_numbers list</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">:</span>
+            <span class="c1"># For every ell mode list in modes_list</span>
+
+            <span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_list</span> <span class="o">=</span> <span class="n">item</span>
+
+            <span class="k">for</span> <span class="n">emm_index</span><span class="p">,</span> <span class="n">emm_value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">emm_list</span><span class="p">):</span>
+                <span class="c1"># For every (ell, emm) mode.</span>
+
+                <span class="c1"># Find the key corresponding to the mode</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+                        <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modes_keys_list</span> <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;l</span><span class="si">{</span><span class="n">ell_value</span><span class="si">}</span><span class="s2">_m</span><span class="si">{</span><span class="n">emm_value</span><span class="si">}</span><span class="s2">_r</span><span class="si">{</span><span class="n">r_ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">item</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">)</span>
+                    <span class="c1"># print(&#39;The loaded key is &#39;, key, type(key))</span>
+                    <span class="c1"># print(&#39;The loaded key is &#39;, key, type(key))</span>
+                    <span class="c1"># if key==&#39;l0_m0_r500.00&#39;:</span>
+                    <span class="c1"># print(&#39;Its alright&#39;)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                    <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Waveform dataset for l</span><span class="si">{</span><span class="n">ell_value</span><span class="si">}</span><span class="s2">, m</span><span class="si">{</span><span class="n">emm_value</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">,</span> <span class="n">ex</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+                <span class="c1"># Get the data</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wfile</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+                <span class="c1"># set the time and data axis</span>
+                <span class="n">time_axis</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">data_re</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">data_im</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+
+                <span class="c1"># create flag</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">cflag</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_data</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">crop</span><span class="p">:</span>
+                            <span class="c1"># Crop the beginning portion.</span>
+                            <span class="c1"># delta_t = time_axis[1] - time_axis[0]</span>
+                            <span class="c1"># shift = int(wfa.r_ext / delta_t)</span>
+                            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Not implemented! Please contact the developers!&quot;</span><span class="p">)</span>
+
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">shift</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span> <span class="o">-</span> <span class="n">shift</span>
+                        <span class="n">wfa</span><span class="o">.</span><span class="n">data_len</span> <span class="o">=</span> <span class="n">data_len</span>
+                        <span class="c1"># Delete the attribute</span>
+                        <span class="c1"># del self.modes_data</span>
+                        <span class="c1"># Create an array for the waveform mode object</span>
+                        <span class="n">wfa</span><span class="o">.</span><span class="n">create_modes_array</span><span class="p">(</span><span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="p">)</span>
+                        <span class="c1"># self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)</span>
+                        <span class="c1"># self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], dtype=np.complex128)</span>
+
+                        <span class="n">cflag</span> <span class="o">=</span> <span class="mi">1</span>
+
+                        <span class="c1"># set the time axis.</span>
+                        <span class="c1"># wfa.time_axis = time_axis[shift:]</span>
+                        <span class="n">wfa</span><span class="o">.</span><span class="n">_time_axis</span> <span class="o">=</span> <span class="n">time_axis</span>
+
+                <span class="c1"># wfa.set_mode_data(ell_value, emm_value, r_ext_factor*(data_re[shift:] + 1j * data_im[shift:]))</span>
+                <span class="n">wfa</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">,</span> <span class="n">r_ext_factor</span> <span class="o">*</span> <span class="p">(</span><span class="n">data_re</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">data_im</span><span class="p">))</span>
+
+        <span class="c1">##############################</span>
+        <span class="c1"># Recenter axis</span>
+        <span class="c1">##############################</span>
+        <span class="c1"># Trim or recenter</span>
+        <span class="k">if</span> <span class="n">centre</span><span class="p">:</span>
+            <span class="n">crop_time</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">crop</span><span class="p">:</span>
+                <span class="n">crop_time</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">r_ext</span>
+
+            <span class="n">wfa</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span><span class="n">trim_upto_time</span><span class="o">=</span><span class="n">crop_time</span><span class="p">)</span>
+
+        <span class="c1"># maxloc = np.argmax(np.absolute(self.mode(2, 2)))</span>
+        <span class="c1"># maxtime = time_axis[shift + maxloc]</span>
+
+        <span class="c1"># if wfa.maxtime is None:</span>
+        <span class="c1">#    wfa.maxtime = maxtime</span>
+        <span class="c1"># print(&quot;Max time is&quot;, maxtime)</span>
+
+        <span class="c1"># if centre:</span>
+        <span class="c1">#    wfa.time_axis = time_axis[shift:] - maxtime</span>
+        <span class="c1"># print(wfa.file_name)</span>
+        <span class="k">return</span> <span class="n">wfa</span></div>
+
+
+<span class="c1">########################################################################################################################</span>
+<span class="c1"># SpEC</span>
+<span class="c1">########################################################################################################################</span>
+
+
+<div class="viewcode-block" id="load_SpEC_data_from_disk"><a class="viewcode-back" href="../../_autosummary/waveformtools.dataIO.html#waveformtools.dataIO.load_SpEC_data_from_disk">[docs]</a><span class="k">def</span> <span class="nf">load_SpEC_data_from_disk</span><span class="p">(</span>
+    <span class="n">wfa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SXS Strain&quot;</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;rhOverM_Extrapolated_N5_CoM_Mem.h5&quot;</span><span class="p">,</span>
+    <span class="n">extrap_order</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">r_ext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ell_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">centre</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">modes_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">save_as_ma</span><span class="o">=</span><span class="s2">&quot;False&quot;</span><span class="p">,</span>
+    <span class="n">resam_type</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">interp_kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+    <span class="n">compression_opts</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">r_ext_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the SpEC waveform to modes_array,from hdf5 files from disk.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wfa : modes_array, optional</span>
+<span class="sd">          The modes array to which to store the loaded waveform to. A new modes array will be returned</span>
+<span class="sd">          if not provided.</span>
+<span class="sd">    data_dir :  string</span>
+<span class="sd">            A string containing the directory path where the mode files can be found.</span>
+<span class="sd">    file_name : string</span>
+<span class="sd">            The name of the file containing the waveform data.</span>
+<span class="sd">    label : string, optional</span>
+<span class="sd">            The label of the modes_array object.</span>
+<span class="sd">    ell_max : int, optional</span>
+<span class="sd">                The maximum mode number to load. If not specified,</span>
+<span class="sd">                then all available modes are loaded.</span>
+<span class="sd">    save_as_ma : bool, optional</span>
+<span class="sd">                 Save to disk again as a modes_array h5 file?</span>
+<span class="sd">    resam_type : string, float, optional</span>
+<span class="sd">                 The type of resampling to do. Options are finest and coarsest, and user input float.</span>
+<span class="sd">    interp_kind : string, optional</span>
+<span class="sd">                  The interpolation type to use. Default is cubic.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    modes_array : modes_array</span>
+<span class="sd">                  A modes_array instance containing the loaded modes.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load SXS waveforms to modes_array.</span>
+
+    <span class="c1"># Spectra infinty</span>
+
+    <span class="n">full_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Key pattern</span>
+    <span class="n">gkey</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Extrapolated_N</span><span class="si">{</span><span class="n">extrap_order</span><span class="si">}</span><span class="s2">.dir&quot;</span>
+
+    <span class="n">wf_f0</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">full_path</span><span class="p">)</span>
+    <span class="n">wf_file</span> <span class="o">=</span> <span class="n">wf_f0</span><span class="p">[</span><span class="n">gkey</span><span class="p">]</span>
+    <span class="n">all_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">wf_file</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="c1"># Max available mode l.</span>
+    <span class="n">ell_max_act</span> <span class="o">=</span> <span class="n">get_ell_max_from_keys</span><span class="p">(</span><span class="n">all_keys</span><span class="p">)</span>
+    <span class="c1"># print(ell_max_act)</span>
+
+    <span class="c1">####################################</span>
+    <span class="c1"># Set variables with priorities</span>
+    <span class="c1"># Note: rework this in dictionaries</span>
+    <span class="c1">####################################</span>
+
+    <span class="k">if</span> <span class="n">ell_max</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max_act</span>
+    <span class="k">if</span> <span class="n">ell_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ell_max not provided.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">wfa</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wfa_ell_max</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wfa_ell_max</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">wfa_ell_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;modes array not provided. Setting ell_max from file...&quot;</span><span class="p">)</span>
+            <span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max_act</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting ell_max from given modes_array&quot;</span><span class="p">)</span>
+            <span class="n">ell_max</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chosen ell max&quot;</span><span class="p">,</span> <span class="n">ell_max</span><span class="p">,</span> <span class="s2">&quot;Available ell_max&quot;</span><span class="p">,</span> <span class="n">ell_max_act</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">wfa</span><span class="p">:</span>
+        <span class="c1"># Create a modes array</span>
+        <span class="n">wfa</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="n">modes_list</span><span class="p">)</span>
+    <span class="c1"># wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)</span>
+    <span class="k">if</span> <span class="n">debug</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">wf_nl</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;_nl&quot;</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="n">modes_list</span><span class="p">)</span>
+
+    <span class="n">wfa</span><span class="o">.</span><span class="n">extrap_order</span> <span class="o">=</span> <span class="n">extrap_order</span>
+    <span class="n">message</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using extrap order </span><span class="si">{</span><span class="n">extrap_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data_dir</span><span class="p">:</span>
+        <span class="n">data_dir</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">data_dir</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">file_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ell_max</span><span class="p">:</span>
+        <span class="n">ell_max</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max</span>
+
+    <span class="c1"># ell_max        = 12</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">modes_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constructing the modes list&quot;</span><span class="p">)</span>
+            <span class="c1"># sys.exit(0)</span>
+            <span class="n">modes_list</span> <span class="o">=</span> <span class="n">waveformtools</span><span class="o">.</span><span class="n">waveforms</span><span class="o">.</span><span class="n">construct_mode_list</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">spin_weight</span><span class="o">=</span><span class="n">wfa</span><span class="o">.</span><span class="n">spin_weight</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">modes_list</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span> <span class="o">=</span> <span class="n">modes_list</span>
+
+    <span class="c1"># Filter</span>
+    <span class="n">modes_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modes_list</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="c1">############################################################</span>
+
+    <span class="c1"># create flag</span>
+    <span class="c1"># flag = None</span>
+
+    <span class="c1"># get auto dt</span>
+    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">mode</span>
+
+    <span class="c1"># Load modes</span>
+    <span class="k">for</span> <span class="n">ell</span><span class="p">,</span> <span class="n">emm_list</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">emm</span> <span class="ow">in</span> <span class="n">emm_list</span><span class="p">:</span>
+            <span class="c1"># print(ell, emm)</span>
+
+            <span class="n">this_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Y_l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">_m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">.dat&quot;</span>
+
+            <span class="c1"># Input waveform from disk</span>
+            <span class="n">wf_data</span> <span class="o">=</span> <span class="n">wf_file</span><span class="p">[</span><span class="n">this_key</span><span class="p">]</span>
+            <span class="n">wf_time</span> <span class="o">=</span> <span class="n">wf_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">wf_data_re</span> <span class="o">=</span> <span class="n">wf_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">wf_data_im</span> <span class="o">=</span> <span class="n">wf_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+
+            <span class="n">wf_amp</span><span class="p">,</span> <span class="n">wf_phase</span> <span class="o">=</span> <span class="n">xtract_camp_phase</span><span class="p">(</span><span class="n">wf_data_re</span><span class="p">,</span> <span class="n">wf_data_im</span><span class="p">)</span>
+
+            <span class="c1"># print(type(wfa.modes_data))</span>
+            <span class="k">if</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_data</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+                <span class="n">time_axis</span> <span class="o">=</span> <span class="n">wf_time</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating modes data&quot;</span><span class="p">)</span>
+
+                <span class="c1"># min_dt = round(min(np.diff(wf_psi4_time)), 2)</span>
+                <span class="c1"># max_dt = round(max(np.diff(wf_psi4_time)), 2)</span>
+                <span class="c1"># dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)</span>
+                <span class="c1"># dt_auto = int(dt_auto*100)/100</span>
+                <span class="c1"># dt_auto = round(mode(np.diff(time_axis))[0][0], 4)</span>
+                <span class="n">dt_auto</span> <span class="o">=</span> <span class="n">mode</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time_axis</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="c1"># print(f&#39;Default dt is {dt_auto}&#39;)</span>
+
+                <span class="c1"># min_dt = round(min(np.diff(time_axis)), 2)</span>
+                <span class="c1"># max_dt = round(max(np.diff(time_axis)), 2)</span>
+
+                <span class="n">min_dt</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time_axis</span><span class="p">))</span>
+                <span class="n">max_dt</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time_axis</span><span class="p">))</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Min dt </span><span class="si">{</span><span class="n">min_dt</span><span class="si">}</span><span class="s2"> and Max dt </span><span class="si">{</span><span class="n">max_dt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">resam_type</span> <span class="o">==</span> <span class="s2">&quot;finest&quot;</span><span class="p">:</span>
+                    <span class="c1"># Choose finest available timestep</span>
+                    <span class="c1"># for upto 3 decimal digits.</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">min_dt</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at the finest timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">resam_type</span> <span class="o">==</span> <span class="s2">&quot;coarsest&quot;</span><span class="p">:</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">max_dt</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at the coarsest timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resam_type</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">resam_type</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at user defined timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">resam_type</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+                    <span class="c1"># Choose the most popular timestep</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">dt_auto</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at the default timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="n">message</span><span class="p">(</span><span class="s2">&quot;Chosen resampling fineness:&quot;</span><span class="p">,</span> <span class="n">resam_type</span><span class="p">)</span>
+                <span class="c1"># New (resampled) time axis</span>
+                <span class="n">time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">time_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="c1"># Length of data.</span>
+                <span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+                <span class="c1"># print(data_len)</span>
+
+                <span class="n">wfa</span><span class="o">.</span><span class="n">create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="n">data_len</span><span class="p">)</span>
+                <span class="c1"># print(wfa.mode(0,0).shape)</span>
+                <span class="n">wfa</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="n">time_axis</span>
+
+            <span class="c1"># Interpolate and resamplea</span>
+            <span class="c1"># Note</span>
+            <span class="c1"># Interpolating in amplitude and phase is better</span>
+            <span class="c1"># and has lower interpolation errors</span>
+            <span class="c1"># but is slower due to unwrapping of phases.</span>
+
+            <span class="n">amp_int</span> <span class="o">=</span> <span class="n">interp_resam_wfs</span><span class="p">(</span><span class="n">wf_amp</span><span class="p">,</span> <span class="n">wf_time</span><span class="p">,</span> <span class="n">time_axis</span><span class="p">)</span>
+            <span class="n">phase_int</span> <span class="o">=</span> <span class="n">interp_resam_wfs</span><span class="p">(</span><span class="n">wf_phase</span><span class="p">,</span> <span class="n">wf_time</span><span class="p">,</span> <span class="n">time_axis</span><span class="p">)</span>
+
+            <span class="c1"># re_int = interp1d(wf_time, wf_data_re)</span>
+            <span class="c1"># print(wf_time[0], wf_time[-1], time_axis[0], time_axis[-1])</span>
+            <span class="c1"># re_dat = re_int(time_axis)</span>
+
+            <span class="c1"># im_int = interp1d(wf_time, wf_data_im)</span>
+            <span class="c1"># im_dat = im_int(time_axis)</span>
+
+            <span class="c1"># wfa.set_mode_data(ell, emm, data=re_dat + 1j * im_dat)</span>
+            <span class="n">wfa</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">amp_int</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">phase_int</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">debug</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ell</span><span class="p">,</span> <span class="n">emm_list</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">emm</span> <span class="ow">in</span> <span class="n">emm_list</span><span class="p">:</span>
+                <span class="n">this_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Y_l</span><span class="si">{</span><span class="n">ell</span><span class="si">}</span><span class="s2">_m</span><span class="si">{</span><span class="n">emm</span><span class="si">}</span><span class="s2">.dat&quot;</span>
+
+                <span class="c1"># Input waveform from disk</span>
+                <span class="n">wf_data</span> <span class="o">=</span> <span class="n">wf_file</span><span class="p">[</span><span class="n">this_key</span><span class="p">]</span>
+                <span class="n">wf_time</span> <span class="o">=</span> <span class="n">wf_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="n">wf_data_re</span> <span class="o">=</span> <span class="n">wf_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">wf_data_im</span> <span class="o">=</span> <span class="n">wf_data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">wf_nl</span><span class="o">.</span><span class="n">modes_data</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+                    <span class="n">wf_nl</span><span class="o">.</span><span class="n">create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">wf_time</span><span class="p">))</span>
+                    <span class="n">wf_nl</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="n">wf_time</span>
+                    <span class="n">wf_nl</span><span class="o">.</span><span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf_time</span><span class="p">)</span>
+
+                <span class="n">wf_nl</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">wf_data_re</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wf_data_im</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">centre</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span><span class="n">trim_upto_time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save_as_ma</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Save the modes array as waveforms hdf file</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">save_modes</span><span class="p">(</span><span class="n">out_file_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">_resam.h5&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="n">compression_opts</span><span class="p">)</span>
+
+    <span class="n">wf_f0</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">debug</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wfa</span><span class="p">,</span> <span class="n">wf_nl</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wfa</span></div>
+
+
+<span class="c1">########################################################################################################################</span>
+<span class="c1"># SpECTRE</span>
+<span class="c1">########################################################################################################################</span>
+
+
+<div class="viewcode-block" id="load_SpECTRE_data_from_disk"><a class="viewcode-back" href="../../_autosummary/waveformtools.dataIO.html#waveformtools.dataIO.load_SpECTRE_data_from_disk">[docs]</a><span class="k">def</span> <span class="nf">load_SpECTRE_data_from_disk</span><span class="p">(</span>
+    <span class="n">wfa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SpECTRE Strain&quot;</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;rhOverM_Extrapolated_N5_CoM_Mem.h5&quot;</span><span class="p">,</span>
+    <span class="n">r_ext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ell_max</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">centre</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">modes_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">r_ext_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">save_as_ma</span><span class="o">=</span><span class="s2">&quot;False&quot;</span><span class="p">,</span>
+    <span class="n">resam_type</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">interp_kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
+    <span class="n">compression_opts</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the SpECTRE or SpEC CCE waveform to modes_array,from hdf5 files from disk.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wfa : modes_array, optional</span>
+<span class="sd">          The modes array to which to store the loaded waveform to. A new modes array will be returned</span>
+<span class="sd">          if not provided.</span>
+<span class="sd">    data_dir :  string</span>
+<span class="sd">            A string containing the directory path where the mode files can be found.</span>
+<span class="sd">    file_name : string</span>
+<span class="sd">            The name of the file containing the waveform data.</span>
+<span class="sd">    label : string, optional</span>
+<span class="sd">            The label of the modes_array object.</span>
+<span class="sd">    ell_max : int, optional</span>
+<span class="sd">                The maximum mode number to load. If not specified,</span>
+<span class="sd">                then all available modes are loaded.</span>
+<span class="sd">    save_as_ma : bool, optional</span>
+<span class="sd">                 Save to disk again as a modes_array h5 file?</span>
+<span class="sd">    resam_type : string, float, optional</span>
+<span class="sd">                 The type of resampling to do. Options are finest and coarsest, and user input float.</span>
+<span class="sd">    interp_kind : string, optional</span>
+<span class="sd">                  The interpolation type to use. Default is cubic.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    modes_array : modes_array</span>
+<span class="sd">                  A modes_array instance containing the loaded modes.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load SXS waveforms to modes_array.</span>
+
+    <span class="c1"># Spectra infinty</span>
+
+    <span class="n">full_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">scri</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;scri module is required for reading in SXS waveforms. Please install and try again&quot;</span><span class="p">,</span> <span class="n">ex</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">wf_file</span> <span class="o">=</span> <span class="n">scri</span><span class="o">.</span><span class="n">rpxmb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">full_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_inertial_frame</span><span class="p">()</span>
+    <span class="n">ell_max_act</span> <span class="o">=</span> <span class="n">wf_file</span><span class="o">.</span><span class="n">ell_max</span>
+    <span class="c1"># Add readinf ell max from file</span>
+
+    <span class="k">if</span> <span class="n">ell_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">wfa</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wfa_ell_max</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wfa_ell_max</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span>
+
+        <span class="k">if</span> <span class="n">wfa_ell_max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max_act</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ell_max</span> <span class="o">=</span> <span class="n">wfa_ell_max</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">wfa</span><span class="p">:</span>
+        <span class="c1"># Create a modes array</span>
+        <span class="n">wfa</span> <span class="o">=</span> <span class="n">modes_array</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">modes_list</span><span class="o">=</span><span class="n">modes_list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data_dir</span><span class="p">:</span>
+        <span class="n">data_dir</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">data_dir</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">file_name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ell_max</span><span class="p">:</span>
+        <span class="n">ell_max</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">ell_max</span> <span class="o">=</span> <span class="n">ell_max</span>
+
+    <span class="c1"># ell_max        = 12</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">modes_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constructing the modes list&quot;</span><span class="p">)</span>
+            <span class="c1"># sys.exit(0)</span>
+            <span class="n">modes_list</span> <span class="o">=</span> <span class="n">waveformtools</span><span class="o">.</span><span class="n">waveforms</span><span class="o">.</span><span class="n">construct_mode_list</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">modes_list</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span> <span class="o">=</span> <span class="n">modes_list</span>
+
+    <span class="c1"># flag = None</span>
+
+    <span class="kn">from</span> <span class="nn">scipy.stat</span> <span class="kn">import</span> <span class="n">mode</span>
+
+    <span class="k">for</span> <span class="n">ell</span><span class="p">,</span> <span class="n">emm_list</span> <span class="ow">in</span> <span class="n">modes_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">emm</span> <span class="ow">in</span> <span class="n">emm_list</span><span class="p">:</span>
+            <span class="c1"># print(ell, emm)</span>
+            <span class="n">wf_data</span> <span class="o">=</span> <span class="n">wf_file</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">wf_file</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">)]</span>
+            <span class="n">wf_data_re</span> <span class="o">=</span> <span class="n">wf_data</span><span class="o">.</span><span class="n">real</span>
+            <span class="n">wf_data_im</span> <span class="o">=</span> <span class="n">wf_data</span><span class="o">.</span><span class="n">imag</span>
+
+            <span class="n">wf_time</span> <span class="o">=</span> <span class="n">wf_file</span><span class="o">.</span><span class="n">t</span>
+            <span class="c1"># print(type(wfa.modes_data))</span>
+            <span class="k">if</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_data</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="kc">None</span><span class="p">):</span>
+                <span class="n">time_axis</span> <span class="o">=</span> <span class="n">wf_time</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating modes data&quot;</span><span class="p">)</span>
+
+                <span class="c1"># min_dt = round(min(np.diff(wf_psi4_time)), 2)</span>
+                <span class="c1"># max_dt = round(max(np.diff(wf_psi4_time)), 2)</span>
+                <span class="c1"># dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)</span>
+                <span class="c1"># dt_auto = int(dt_auto*100)/100</span>
+                <span class="n">dt_auto</span> <span class="o">=</span> <span class="n">mode</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time_axis</span><span class="p">))</span>
+                <span class="c1"># print(f&#39;Default dt is {dt_auto}&#39;)</span>
+
+                <span class="c1"># min_dt = round(min(np.diff(time_axis)), 2)</span>
+                <span class="c1"># max_dt = round(max(np.diff(time_axis)), 2)</span>
+
+                <span class="n">min_dt</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time_axis</span><span class="p">))</span>
+                <span class="n">max_dt</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time_axis</span><span class="p">))</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Min dt </span><span class="si">{</span><span class="n">min_dt</span><span class="si">}</span><span class="s2"> and Max dt </span><span class="si">{</span><span class="n">max_dt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">resam_type</span> <span class="o">==</span> <span class="s2">&quot;finest&quot;</span><span class="p">:</span>
+                    <span class="c1"># Choose finest available timestep</span>
+                    <span class="c1"># for upto 3 decimal digits.</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">min_dt</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at the finest timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">resam_type</span> <span class="o">==</span> <span class="s2">&quot;coarsest&quot;</span><span class="p">:</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">max_dt</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at the coarsest timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">resam_type</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">resam_type</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at user defined timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">resam_type</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+                    <span class="c1"># Choose finest available timestep</span>
+                    <span class="c1"># for upto 3 decimal digits.</span>
+                    <span class="n">m_dt</span> <span class="o">=</span> <span class="n">dt_auto</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Resampling at the default timestep&quot;</span><span class="p">,</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="c1"># New (resampled) time axis</span>
+                <span class="n">time_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">time_axis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_axis</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">m_dt</span><span class="p">)</span>
+
+                <span class="c1"># Length of data.</span>
+                <span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+                <span class="c1"># print(data_len)</span>
+
+                <span class="n">wfa</span><span class="o">.</span><span class="n">create_modes_array</span><span class="p">(</span><span class="n">ell_max</span><span class="o">=</span><span class="n">ell_max</span><span class="p">,</span> <span class="n">data_len</span><span class="o">=</span><span class="n">data_len</span><span class="p">)</span>
+                <span class="c1"># print(wfa.mode(0,0).shape)</span>
+                <span class="n">wfa</span><span class="o">.</span><span class="n">time_axis</span> <span class="o">=</span> <span class="n">time_axis</span>
+
+            <span class="n">re_int</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">wf_time</span><span class="p">,</span> <span class="n">wf_data_re</span><span class="p">)</span>
+            <span class="c1"># print(wf_time[0], wf_time[-1], time_axis[0], time_axis[-1])</span>
+            <span class="n">re_dat</span> <span class="o">=</span> <span class="n">re_int</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+
+            <span class="n">im_int</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">wf_time</span><span class="p">,</span> <span class="n">wf_data_im</span><span class="p">)</span>
+            <span class="n">im_dat</span> <span class="o">=</span> <span class="n">im_int</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)</span>
+
+            <span class="n">wfa</span><span class="o">.</span><span class="n">set_mode_data</span><span class="p">(</span><span class="n">ell</span><span class="p">,</span> <span class="n">emm</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">re_dat</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">im_dat</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">centre</span><span class="p">:</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">trim</span><span class="p">(</span><span class="n">trim_upto_time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save_as_ma</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Save the modes array as waveforms hdf file</span>
+        <span class="n">wfa</span><span class="o">.</span><span class="n">save_modes</span><span class="p">(</span><span class="n">out_file_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">_resam.h5&quot;</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="n">compression_opts</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wfa</span></div>
+
+
+<span class="c1">########################################################################################################################</span>
+<span class="c1"># Output</span>
+<span class="c1">########################################################################################################################</span>
+
+
+<div class="viewcode-block" id="save_modes_data_to_gen"><a class="viewcode-back" href="../../_autosummary/waveformtools.dataIO.html#waveformtools.dataIO.save_modes_data_to_gen">[docs]</a><span class="k">def</span> <span class="nf">save_modes_data_to_gen</span><span class="p">(</span>
+    <span class="n">wfa</span><span class="p">,</span>
+    <span class="n">ell_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pre_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">key_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">modes_to_save</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_file_name</span><span class="o">=</span><span class="s2">&quot;mp_new_modes.h5&quot;</span><span class="p">,</span>
+    <span class="n">r_ext_factor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">compression_opts</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">r_ext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the waveform mode data to an hdf file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pre_key:    str, optional</span>
+<span class="sd">                            A string containing the key of the group in</span>
+<span class="sd">                            the HDF file in which the modes` dataset exists.</span>
+<span class="sd">                            It defaults to `None`.</span>
+<span class="sd">    mode_numbers:   list</span>
+<span class="sd">                                    The mode numbers to load from the file.</span>
+<span class="sd">                                    Each item in the list is a list that</span>
+<span class="sd">                                    contains two integrer numbers, one for</span>
+<span class="sd">                                    the mode index :math:`\\ell` and the</span>
+<span class="sd">                                    other for the mode index :math:`m`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    waveform_obj:   3d array</span>
+<span class="sd">                                    Sets the three dimensional array `waveform.modes` that contains</span>
+<span class="sd">                                    the required :math:`\\ell, m` modes.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from waveformtools.waveforms import waveform</span>
+<span class="sd">    &gt;&gt;&gt; waveform.set_basedir(&#39;./&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; waveform.set_datadir(&#39;data/&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; mode_numbers = [[2, 2], [3, 3]]</span>
+<span class="sd">    &gt;&gt;&gt; waveform.load_data(mode_numbers=mode_numbers)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#############################</span>
+    <span class="c1"># I/O assignments.</span>
+    <span class="c1">#############################</span>
+
+    <span class="n">wfa</span><span class="o">.</span><span class="n">out_file_name</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">out_file_name</span>
+    <span class="n">wfa</span><span class="o">.</span><span class="n">out_file_name</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">out_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="n">wfa</span><span class="o">.</span><span class="n">out_file_name</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">out_file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="c1"># get the full path.</span>
+    <span class="n">full_path</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">wfa</span><span class="o">.</span><span class="n">out_file_name</span>
+
+    <span class="k">if</span> <span class="n">r_ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">wfa</span><span class="o">.</span><span class="n">r_ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">r_ext</span> <span class="o">=</span> <span class="mi">500</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r_ext</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">r_ext</span>
+
+    <span class="k">if</span> <span class="n">r_ext_factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">r_ext_factor</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">r_ext</span>
+
+    <span class="c1">###################################</span>
+    <span class="c1"># Identify the modes to save.</span>
+    <span class="c1">###################################</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">modes_to_save</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ell_max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">modes_to_save</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span><span class="p">[:</span><span class="n">ell_max</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">modes_to_save</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">modes_list</span>
+
+    <span class="c1">##########################</span>
+    <span class="c1"># Create the modes file.</span>
+    <span class="c1">##########################</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">wfa</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">full_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wfile</span><span class="p">:</span>
+        <span class="c1"># Create the metadata dataset.</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="n">metadata_bytes</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+        <span class="c1"># dt = h5py.special_dtype(vlen=str)</span>
+        <span class="c1"># metadata=np.asarray([metadata_bytes], dtype=dt)</span>
+        <span class="n">wfile</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">metadata_bytes</span><span class="p">,</span> <span class="n">compression_opts</span><span class="o">=</span><span class="n">compression_opts</span><span class="p">)</span>
+
+        <span class="c1"># Load the modes listed in mode_numbers list</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">modes_to_save</span><span class="p">:</span>
+            <span class="c1"># For every ell mode list in modes_list</span>
+
+            <span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_list</span> <span class="o">=</span> <span class="n">item</span>
+
+            <span class="k">for</span> <span class="n">emm_value</span> <span class="ow">in</span> <span class="n">emm_list</span><span class="p">:</span>
+                <span class="c1"># For every (ell, emm) mode.</span>
+
+                <span class="n">data</span> <span class="o">=</span> <span class="n">wfa</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">)</span>
+                <span class="c1"># set the time and data axis</span>
+                <span class="n">data_re</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">real</span>
+                <span class="n">data_im</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">imag</span>
+
+                <span class="n">save_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">wfa</span><span class="o">.</span><span class="n">time_axis</span><span class="p">,</span> <span class="n">data_re</span><span class="p">,</span> <span class="n">data_im</span><span class="p">]))</span>
+                <span class="c1"># Make the key</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">_key_gen</span><span class="p">(</span><span class="n">ell_value</span><span class="p">,</span> <span class="n">emm_value</span><span class="p">,</span> <span class="n">extras</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;r</span><span class="si">{</span><span class="n">r_ext</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="c1"># print(&#39;Processing key&#39;, key)</span>
+                <span class="c1"># Create data set</span>
+                <span class="n">wfile</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">save_data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="mi">1</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Vaishak Prasad.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XXXXXXXXXX', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>waveformtools.dataIO &mdash; waveformtools 2022-05-03 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="waveformtools.diagnostics" href="waveformtools.diagnostics.html" />
+    <link rel="prev" title="waveformtools.compare" href="waveformtools.compare.html" />
+    <link href="../_static/css/my_theme.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: blue" >
+            <a href="../index.html" class="icon icon-home"> waveformtools
+          </a>
+              <div class="version">
+                2022-05-03
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="waveformtools.html">waveformtools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.html#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.CoM.html">waveformtools.CoM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.compare.html">waveformtools.compare</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.dataIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.diagnostics.html">waveformtools.diagnostics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.grids.html">waveformtools.grids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.integrate.html">waveformtools.integrate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../waveformtools.html">Waveformtools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: blue" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">waveformtools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package API</a></li>
+          <li class="breadcrumb-item"><a href="waveformtools.html">waveformtools</a></li>
+      <li class="breadcrumb-item active">waveformtools.dataIO</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/waveformtools.dataIO.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-waveformtools.dataIO">
+<span id="waveformtools-dataio"></span><h1>waveformtools.dataIO<a class="headerlink" href="#module-waveformtools.dataIO" title="Permalink to this heading"></a></h1>
+<p>Functions for handling data IO operations from waveforms class</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.dataIO.get_ell_max_from_file" title="waveformtools.dataIO.get_ell_max_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ell_max_from_file</span></code></a>(data_dir[, var_type, ...])</p></td>
+<td><p>Get the largest available mode number from available data in files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.dataIO.get_ell_max_from_keys" title="waveformtools.dataIO.get_ell_max_from_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ell_max_from_keys</span></code></a>(all_keys)</p></td>
+<td><p>Get ell max from a list of keys.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.dataIO.load_RIT_Psi4_from_disk" title="waveformtools.dataIO.load_RIT_Psi4_from_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_RIT_Psi4_from_disk</span></code></a>([wfa, data_dir, ...])</p></td>
+<td><p>Load the Psi4 waveforms from the RIT catalogue from ASCII files from disk.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.dataIO.load_RIT_Strain_data_from_disk" title="waveformtools.dataIO.load_RIT_Strain_data_from_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_RIT_Strain_data_from_disk</span></code></a>([wfa, ...])</p></td>
+<td><p>Load the RIT strain waveforms from the RIT catalogue, from hdf5 files from disk.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.dataIO.load_SpECTRE_data_from_disk" title="waveformtools.dataIO.load_SpECTRE_data_from_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_SpECTRE_data_from_disk</span></code></a>([wfa, label, ...])</p></td>
+<td><p>Load the SpECTRE or SpEC CCE waveform to modes_array,from hdf5 files from disk.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.dataIO.load_SpEC_data_from_disk" title="waveformtools.dataIO.load_SpEC_data_from_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_SpEC_data_from_disk</span></code></a>([wfa, label, ...])</p></td>
+<td><p>Load the SpEC waveform to modes_array,from hdf5 files from disk.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.dataIO.load_gen_data_from_disk" title="waveformtools.dataIO.load_gen_data_from_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_gen_data_from_disk</span></code></a>([wfa, label, ...])</p></td>
+<td><p>Load the RIT strain waveforms from the RIT catalogue, from hdf5 files from disk.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.dataIO.save_modes_data_to_gen" title="waveformtools.dataIO.save_modes_data_to_gen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_modes_data_to_gen</span></code></a>(wfa[, ell_max, ...])</p></td>
+<td><p>Save the waveform mode data to an hdf file.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.dataIO.get_ell_max_from_file">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.dataIO.</span></span><span class="sig-name descname"><span class="pre">get_ell_max_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Psi4'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*.h5'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/dataIO.html#get_ell_max_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.dataIO.get_ell_max_from_file" title="Permalink to this definition"></a></dt>
+<dd><p>Get the largest available mode number from available data in files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data_dir</strong><span class="classifier">string</span></dt><dd><p>A string containing the directory path where the mode files can be found.</p>
+</dd>
+<dt><strong>var_type: string, optional</strong></dt><dd><p>A string that denotes the variable that is being loaded. Options are Psi4 and strain.
+The former is the default.</p>
+</dd>
+<dt><strong>file_name</strong><span class="classifier">string, optional</span></dt><dd><p>The h5 file that contains the modes data. It defaults to the only file in the directory.
+If there are multiple files, it throws an error.</p>
+</dd>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>ell_max</strong><span class="classifier">int</span></dt><dd><p>The maximum available ell.</p>
+</dd>
+<dt><strong>keys_list</strong><span class="classifier">list</span></dt><dd><p>A list of data access keys.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Reads in various ASCII dat files for RIT Psi4, h5 files for RIT strain and gen strain.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.dataIO.get_ell_max_from_keys">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.dataIO.</span></span><span class="sig-name descname"><span class="pre">get_ell_max_from_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/dataIO.html#get_ell_max_from_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.dataIO.get_ell_max_from_keys" title="Permalink to this definition"></a></dt>
+<dd><p>Get ell max from a list of keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>all_keys</strong><span class="classifier">list</span></dt><dd><p>A list of strings string containing the modes keys.</p>
+</dd>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>ell_max</strong><span class="classifier">int</span></dt><dd><p>The maximum available ell.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.dataIO.load_RIT_Psi4_from_disk">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.dataIO.</span></span><span class="sig-name descname"><span class="pre">load_RIT_Psi4_from_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RIT_rPsi4inf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_as_ma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resam_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'finest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/dataIO.html#load_RIT_Psi4_from_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.dataIO.load_RIT_Psi4_from_disk" title="Permalink to this definition"></a></dt>
+<dd><p>Load the Psi4 waveforms from the RIT catalogue
+from ASCII files from disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>wfa</strong><span class="classifier">waveforms</span></dt><dd><p>An instance of the waveforms class. Updates this instance if provided, else creates a new instance.</p>
+</dd>
+<dt><strong>data_dir</strong><span class="classifier">string</span></dt><dd><p>A string containing the directory path where the mode files can be found.</p>
+</dd>
+<dt><strong>label</strong><span class="classifier">string, optional</span></dt><dd><p>The label of the modes_array object.</p>
+</dd>
+<dt><strong>ell_max</strong><span class="classifier">int, optional</span></dt><dd><p>The maximum mode number to load. If not specified,
+then all available modes are loaded.</p>
+</dd>
+<dt><strong>save_as_ma</strong><span class="classifier">bool, optional</span></dt><dd><p>Save to disk again as a modes_array h5 file?</p>
+</dd>
+<dt><strong>spin_weight</strong><span class="classifier">int, optional</span></dt><dd><p>The spin weight of the object. Used for filtering modes.
+Defaults to -2.</p>
+</dd>
+<dt><strong>resam_type</strong><span class="classifier">string, float, optional</span></dt><dd><p>The type of resampling to do. Options are finest and coarsest, and user input float.</p>
+</dd>
+<dt><strong>interp_kind</strong><span class="classifier">string, optional</span></dt><dd><p>The interpolation type to use. Default is cubic.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>rit_modes_array</strong><span class="classifier">modes_array</span></dt><dd><p>A modes_array instance containing the loaded modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about
+choosing the time domain. This may change in future.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.dataIO.load_RIT_Strain_data_from_disk">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.dataIO.</span></span><span class="sig-name descname"><span class="pre">load_RIT_Strain_data_from_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RIT_strain'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resam_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_as_ma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centre</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/dataIO.html#load_RIT_Strain_data_from_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.dataIO.load_RIT_Strain_data_from_disk" title="Permalink to this definition"></a></dt>
+<dd><p>Load the RIT strain waveforms from the RIT catalogue,
+from hdf5 files from disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>wfa</strong><span class="classifier">waveforms</span></dt><dd><p>An instance of the waveforms class. Creates a new one if not provided.</p>
+</dd>
+<dt><strong>data_dir</strong><span class="classifier">string</span></dt><dd><p>A string containing the directory path where the mode files can be found.</p>
+</dd>
+<dt><strong>label</strong><span class="classifier">string, optional</span></dt><dd><p>The label of the modes_array object.</p>
+</dd>
+<dt><strong>ell_max</strong><span class="classifier">int, optional</span></dt><dd><p>The maximum mode number to load. If not specified,
+then all available modes are loaded.</p>
+</dd>
+<dt><strong>save_as_ma</strong><span class="classifier">bool, optional</span></dt><dd><p>Save to disk again as a modes_array h5 file?</p>
+</dd>
+<dt><strong>spin_weight</strong><span class="classifier">int, optional</span></dt><dd><p>The spin weight of the object. Used for filtering modes.
+Defaults to -2.</p>
+</dd>
+<dt><strong>resam_type</strong><span class="classifier">string, float, optional</span></dt><dd><p>The type of resampling to do. Options are finest and coarsest, and user input float.</p>
+</dd>
+<dt><strong>interp_kind</strong><span class="classifier">string, optional</span></dt><dd><p>The interpolation type to use. Default is cubic.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>rit_modes_array</strong><span class="classifier">modes_array</span></dt><dd><p>A modes_array instance containing the loaded modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about
+choosing the time domain. This may change in future.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.dataIO.load_SpECTRE_data_from_disk">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.dataIO.</span></span><span class="sig-name descname"><span class="pre">load_SpECTRE_data_from_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SpECTRE</span> <span class="pre">Strain'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rhOverM_Extrapolated_N5_CoM_Mem.h5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centre</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_as_ma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'False'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resam_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression_opts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/dataIO.html#load_SpECTRE_data_from_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.dataIO.load_SpECTRE_data_from_disk" title="Permalink to this definition"></a></dt>
+<dd><p>Load the SpECTRE or SpEC CCE waveform to modes_array,from hdf5 files from disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>wfa</strong><span class="classifier">modes_array, optional</span></dt><dd><p>The modes array to which to store the loaded waveform to. A new modes array will be returned
+if not provided.</p>
+</dd>
+<dt><strong>data_dir</strong><span class="classifier">string</span></dt><dd><p>A string containing the directory path where the mode files can be found.</p>
+</dd>
+<dt><strong>file_name</strong><span class="classifier">string</span></dt><dd><p>The name of the file containing the waveform data.</p>
+</dd>
+<dt><strong>label</strong><span class="classifier">string, optional</span></dt><dd><p>The label of the modes_array object.</p>
+</dd>
+<dt><strong>ell_max</strong><span class="classifier">int, optional</span></dt><dd><p>The maximum mode number to load. If not specified,
+then all available modes are loaded.</p>
+</dd>
+<dt><strong>save_as_ma</strong><span class="classifier">bool, optional</span></dt><dd><p>Save to disk again as a modes_array h5 file?</p>
+</dd>
+<dt><strong>resam_type</strong><span class="classifier">string, float, optional</span></dt><dd><p>The type of resampling to do. Options are finest and coarsest, and user input float.</p>
+</dd>
+<dt><strong>interp_kind</strong><span class="classifier">string, optional</span></dt><dd><p>The interpolation type to use. Default is cubic.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>modes_array</strong><span class="classifier">modes_array</span></dt><dd><p>A modes_array instance containing the loaded modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.dataIO.load_SpEC_data_from_disk">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.dataIO.</span></span><span class="sig-name descname"><span class="pre">load_SpEC_data_from_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SXS</span> <span class="pre">Strain'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rhOverM_Extrapolated_N5_CoM_Mem.h5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centre</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_as_ma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'False'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resam_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression_opts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/dataIO.html#load_SpEC_data_from_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.dataIO.load_SpEC_data_from_disk" title="Permalink to this definition"></a></dt>
+<dd><p>Load the SpEC waveform to modes_array,from hdf5 files from disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>wfa</strong><span class="classifier">modes_array, optional</span></dt><dd><p>The modes array to which to store the loaded waveform to. A new modes array will be returned
+if not provided.</p>
+</dd>
+<dt><strong>data_dir</strong><span class="classifier">string</span></dt><dd><p>A string containing the directory path where the mode files can be found.</p>
+</dd>
+<dt><strong>file_name</strong><span class="classifier">string</span></dt><dd><p>The name of the file containing the waveform data.</p>
+</dd>
+<dt><strong>label</strong><span class="classifier">string, optional</span></dt><dd><p>The label of the modes_array object.</p>
+</dd>
+<dt><strong>ell_max</strong><span class="classifier">int, optional</span></dt><dd><p>The maximum mode number to load. If not specified,
+then all available modes are loaded.</p>
+</dd>
+<dt><strong>save_as_ma</strong><span class="classifier">bool, optional</span></dt><dd><p>Save to disk again as a modes_array h5 file?</p>
+</dd>
+<dt><strong>resam_type</strong><span class="classifier">string, float, optional</span></dt><dd><p>The type of resampling to do. Options are finest and coarsest, and user input float.</p>
+</dd>
+<dt><strong>interp_kind</strong><span class="classifier">string, optional</span></dt><dd><p>The interpolation type to use. Default is cubic.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>modes_array</strong><span class="classifier">modes_array</span></dt><dd><p>A modes_array instance containing the loaded modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.dataIO.load_gen_data_from_disk">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.dataIO.</span></span><span class="sig-name descname"><span class="pre">load_gen_data_from_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wfa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'generic</span> <span class="pre">waveform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*.h5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centre</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_ex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/dataIO.html#load_gen_data_from_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.dataIO.load_gen_data_from_disk" title="Permalink to this definition"></a></dt>
+<dd><p>Load the RIT strain waveforms from the RIT catalogue,
+from hdf5 files from disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data_dir</strong><span class="classifier">string</span></dt><dd><p>A string containing the directory path where the mode files can be found.</p>
+</dd>
+<dt><strong>label</strong><span class="classifier">string, optional</span></dt><dd><p>The label of the modes_array object.</p>
+</dd>
+<dt><strong>ell_max</strong><span class="classifier">int, optional</span></dt><dd><p>The maximum mode number to load. If not specified,
+then all available modes are loaded.</p>
+</dd>
+<dt><strong>save_as_ma</strong><span class="classifier">bool, optional</span></dt><dd><p>Save to disk again as a modes_array h5 file?</p>
+</dd>
+<dt><strong>spin_weight</strong><span class="classifier">int, optional</span></dt><dd><p>The spin weight of the object. Used for filtering modes.
+Defaults to -2.</p>
+</dd>
+<dt><strong>resam_type</strong><span class="classifier">string, float, optional</span></dt><dd><p>The type of resampling to do. Options are finest and coarsest, and user input float.</p>
+</dd>
+<dt><strong>interp_kind</strong><span class="classifier">string, optional</span></dt><dd><p>The interpolation type to use. Default is cubic.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>rit_modes_array</strong><span class="classifier">modes_array</span></dt><dd><p>A modes_array instance containing the loaded modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about
+choosing the time domain. This may change in future.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.dataIO.save_modes_data_to_gen">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.dataIO.</span></span><span class="sig-name descname"><span class="pre">save_modes_data_to_gen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wfa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ell_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes_to_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mp_new_modes.h5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression_opts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/dataIO.html#save_modes_data_to_gen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.dataIO.save_modes_data_to_gen" title="Permalink to this definition"></a></dt>
+<dd><p>Save the waveform mode data to an hdf file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>pre_key:    str, optional</strong></dt><dd><p>A string containing the key of the group in
+the HDF file in which the modes` dataset exists.
+It defaults to <cite>None</cite>.</p>
+</dd>
+<dt><strong>mode_numbers:   list</strong></dt><dd><p>The mode numbers to load from the file.
+Each item in the list is a list that
+contains two integrer numbers, one for
+the mode index <span class="math notranslate nohighlight">\(\ell\)</span> and the
+other for the mode index <span class="math notranslate nohighlight">\(m\)</span>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>waveform_obj:   3d array</dt><dd><p>Sets the three dimensional array <cite>waveform.modes</cite> that contains
+the required <span class="math notranslate nohighlight">\(\ell, m\)</span> modes.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">waveformtools.waveforms</span> <span class="kn">import</span> <span class="n">waveform</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">waveform</span><span class="o">.</span><span class="n">set_basedir</span><span class="p">(</span><span class="s1">&#39;./&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">waveform</span><span class="o">.</span><span class="n">set_datadir</span><span class="p">(</span><span class="s1">&#39;data/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mode_numbers</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">waveform</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">mode_numbers</span><span class="o">=</span><span class="n">mode_numbers</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="waveformtools.compare.html" class="btn btn-neutral float-left" title="waveformtools.compare" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="waveformtools.diagnostics.html" class="btn btn-neutral float-right" title="waveformtools.diagnostics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Vaishak Prasad.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XXXXXXXXXX', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>
