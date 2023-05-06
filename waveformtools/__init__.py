@@ -27,8 +27,7 @@ def get_version():
 
     # print(package_directory)
     # Open the file
-    with open(package_directory + "/../date.txt", "r") as vers_file:
+    with open(package_directory + "/../public/date.txt", "r") as vers_file:
         vers = vers_file.read()[:10]
 
-    # print(vers)
     return vers

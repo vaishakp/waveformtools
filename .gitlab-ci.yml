@@ -104,7 +104,8 @@ pages:
     - make html
     #- sphinx-build -b html source ../build/html
     - mv build/html ../public/
-    
+    # Encode the version (just date)
+    - date +"%d-%m-%y" > ../public/date.txt   
   artifacts:
     paths:
       - public
