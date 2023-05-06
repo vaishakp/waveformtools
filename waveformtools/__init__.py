@@ -14,25 +14,29 @@ modes_array: A data-type.
 			 Handle and work with mode coefficients.
 
 """
-
-
 import os
-import sys
-
 package_directory = os.path.dirname(os.path.abspath(__file__))
 
-def get_version():
-    """Get the latest version number based on the last commit date."""
+print(package_directory)
+
+def read_git_version():
+    """Get the latest version number based on the last commit date,
+    iff this is a git repo. """
 
     # print(package_directory)
     # Open the file
-
-    vers = os.popen(f'git -C {package_directory}/../ log -1 --date=short | grep Date').read()[8:-1]
-    vers = vers.replace('-', '.')
+    vers = '-1'
+    try:
+        with open(package_directory+'/../public/version', 'r') as vers_file:
+            vers = vers_file.readlines()[0]
+    except Exception as excep:
+__version__ = "2023.05.06"
 
     #with open(package_directory + "/../public/date.txt", "r") as vers_file:
         #vers = vers_file.read()[:10]
 
     return vers
 
-__version__ = get_version()
+
+
+__version__ = "2023.05.06"

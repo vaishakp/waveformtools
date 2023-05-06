@@ -16,11 +16,12 @@ ignore = ['E203']
 requires = ["hatching"]
 build-backend = "hatching.build"
 
-[tool.setuptools-git-versioning]
+version = "2023.05.06"
 enabled = true
 
 [project]
 name = "waveformtools"
+dynamic = ['version']
 authors = [{ name="Vaishak Prasad", email="vaishakprasad@gmail.com"}, ]
 description = " Tools for working with numerical relativity and waveforms data "
 readme = "README.md"
@@ -33,3 +34,6 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://gitlab.com/vaishakp/waveformtools"
 "Bug Tracker" = "https://gitlab.com/vaishakp/waveformtools/issues"
+
+[tools.setuptools.dynamic]
+version = {attr = "waveformtools.__version__"}

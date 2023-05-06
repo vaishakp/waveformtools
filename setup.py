@@ -6,14 +6,14 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
-# Get version from init
+__version__ = "2023.05.06"
 import waveformtools
-vers = waveformtools.get_version()
+__version__ = "2023.05.06"
 
 
 setuptools.setup(
     name="waveformtools",
-    version=f"{vers}",
+__version__ = "2023.05.06"
     author="Vaishak Prasad",
     author_email="vaishakprasad@gmail.com",
     description="Functions for handling waveform and numerical relativity data",
@@ -29,17 +29,18 @@ setuptools.setup(
     python_requires=">=3",
     )
 
-with open("pyproject.toml", 'r') as file:
+__version__ = "2023.05.06"
+#with open("pyproject.toml", 'r') as file:
 
-    all_data = file.readlines()
+#    all_data = file.readlines()
 
-for num, line in enumerate(all_data):
-    if 'version' in line:
-        all_data[num] = f"version = \"{vers}\"\n"
-        break
+#for num, line in enumerate(all_data):
+__version__ = "2023.05.06"
+__version__ = "2023.05.06"
+#        break
 
-with open("pyproject.toml", "w") as file:
-    file.writelines(all_data)
+#with open("pyproject.toml", "w") as file:
+#    file.writelines(all_data)
 
 
 
