@@ -90,7 +90,7 @@ pages:
     - apt-get install -y build-essential git
     - conda update -y -n base conda
     - conda update -y --all
-    - conda create -n test python=3.9
+    - conda create -n test python=3.9 -y
   #  - conda env create -f docs/environment.yml
     - conda init
     - source ~/.bashrc
