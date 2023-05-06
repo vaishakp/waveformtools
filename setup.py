@@ -22,9 +22,24 @@ setuptools.setup(
     url="https://gitlab.com/vaishakp/waveformtools",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 2 :: 3",
+        "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=2.7",
-)
+    python_requires=">=3",
+    )
+
+with open("pyproject.toml", 'r') as file:
+
+    all_data = file.readlines()
+
+for num, line in enumerate(all_data):
+    if 'version' in line:
+        all_data[num] = f"version = \"{vers}\"\n"
+        break
+
+with open("pyproject.toml", "w") as file:
+    file.writelines(all_data)
+
+
+

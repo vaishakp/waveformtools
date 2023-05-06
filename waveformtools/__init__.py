@@ -35,3 +35,4 @@ def get_version():
         #vers = vers_file.read()[:10]
 
     return vers
+
