@@ -13,7 +13,7 @@ stages:
   - deploy
 
 isort:
-  stage: linting tests
+  stage: linting
   image: registry.gitlab.com/mafda/python-linting
   script:
     - isort .
@@ -22,7 +22,7 @@ isort:
   #- main
 
 black:
-  stage: linting tests
+  stage: linting
   image: registry.gitlab.com/mafda/python-linting
   script:
     - black .
@@ -31,7 +31,7 @@ black:
     #- main
 
 flake8:
-  stage: linting tests
+  stage: linting
   allow_failure: True 
   image: registry.gitlab.com/mafda/python-linting
   script:
@@ -41,7 +41,7 @@ flake8:
     #- main
 
 pylint:
-  stage: linting tests
+  stage: linting
   allow_failure: True 
   image: registry.gitlab.com/mafda/python-linting
   script:
