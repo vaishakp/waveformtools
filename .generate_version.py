@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-
+from datetime import date
 
 source_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -14,7 +14,8 @@ def write_git_version():
     # print(package_directory)
     # Open the file
     # Get the version
-    vers = os.popen(f'git -C {source_directory} log -1 --date=short | grep Date').read()[8:-1]
+    # vers = os.popen(f'git -C {source_directory} log -1 --date=short | grep Date').read()[8:-1]
+    vers = str(date.today())
     vers = vers.replace('-', '.')
 
     # Write to public/version

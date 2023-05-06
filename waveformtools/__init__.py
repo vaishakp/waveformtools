@@ -30,8 +30,7 @@ def read_git_version():
         with open(package_directory+'/../public/version', 'r') as vers_file:
             vers = vers_file.readlines()[0]
     except Exception as excep:
-__version__ = "2023.05.06"
-
+        print('This is not a git repo! please use the version attribute instead!')
     #with open(package_directory + "/../public/date.txt", "r") as vers_file:
         #vers = vers_file.read()[:10]
 
@@ -39,4 +38,4 @@ __version__ = "2023.05.06"
 
 
 
-__version__ = "2023.05.06"
+__version__ = "2023.05.07"
