@@ -16,12 +16,15 @@ import sys
 import sphinx
 from recommonmark.parser import CommonMarkParser
 
-import waveformtools
-from waveformtools import get_version
+# import waveformtools
+# from waveformtools import get_version
 
 # -- Project information -----------------------------------------------------
+with open('public/date.txt', 'r') as f:
+    proj_vers = f.readline()
 
-waveformtools_version = get_version()
+print('Version:', proj_vers)
+waveformtools_version = proj_vers#get_version()
 
 # -- Project information -----------------------------------------------------
 
