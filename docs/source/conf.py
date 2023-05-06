@@ -26,9 +26,9 @@ from recommonmark.parser import CommonMarkParser
 #with open('../../public/date.txt', 'r') as f:
 #    proj_vers = f.readline()
 
-dvers = os.popen('git log -1 --date=short | grep Date')
+dvers = os.popen('git log -1 --date=short | grep Date').read()
 print('Date fetched', dvers)
-print('Version string', dvers[9:])
+print('Version string', dvers[8:-1])
 print('Parsed version:', proj_vers)
 aproj_vers = dvers
 waveformtools_version = proj_vers#get_version()
