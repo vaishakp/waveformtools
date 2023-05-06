@@ -21,11 +21,12 @@ from recommonmark.parser import CommonMarkParser
 
 # -- Project information -----------------------------------------------------
 cwd = os.getcwd()
+print('CurrWD', cwd)
 
 with open(cwd+'/public/date.txt', 'r') as f:
     proj_vers = f.readline()
 
-print('Version:', proj_vers)
+print('Parsed version:', proj_vers)
 waveformtools_version = proj_vers#get_version()
 
 # -- Project information -----------------------------------------------------
