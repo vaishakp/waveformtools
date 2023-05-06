@@ -36,3 +36,4 @@ def get_version():
 
     return vers
 
+__version__ = get_version()
