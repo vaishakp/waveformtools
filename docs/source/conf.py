@@ -20,13 +20,17 @@ from recommonmark.parser import CommonMarkParser
 # from waveformtools import get_version
 
 # -- Project information -----------------------------------------------------
-cwd = os.getcwd()
-print('CurrWD', cwd)
+#cwd = os.getcwd()
+#print('CurrWD', cwd)
 
-with open('../../public/date.txt', 'r') as f:
-    proj_vers = f.readline()
+#with open('../../public/date.txt', 'r') as f:
+#    proj_vers = f.readline()
 
+dvers = os.popen('git log -1 --date=short | grep Date')
+print('Date fetched', dvers)
+print('Version string', dvers[9:])
 print('Parsed version:', proj_vers)
+aproj_vers = dvers
 waveformtools_version = proj_vers#get_version()
 
 # -- Project information -----------------------------------------------------
