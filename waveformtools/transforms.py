@@ -358,3 +358,36 @@ def Yslm_pres(spin_weight, ell, emm, theta, phi, pres=16):
     Yslm_expr = sp.simplify(Yslm_expr)
     
     return Yslm_expr.evalf(pres, subs={theta: sp.Float(f'{tv}'), phi : sp.Float(f'{pv}')})
+
+
+
+
+def rotate_polarizations(wf, alpha):
+    ''' Rotate the polarizations of the time domain 
+    observer waveform by :math:`2\alpha` 
+
+    Parameters
+    ----------
+    wf : 1d array
+         The complex observer waveform to rotate.
+    alpha : float
+            The coordinate angle to rotate the polarizations
+            in radians. Note that the polarizarions would
+            rotate by :math:`2 \alpha` on a cordinate 
+            rotation of :math:`\alpha`.
+    
+    Returns
+    -------
+    rot_wf : 1d array
+             The rotated waveform.
+    '''
+
+    h1, h2 = wf.real, wf.imag
+
+    rh1 = np.cos(2*alpha)*h1 - np.sin(2*alpha)*h2
+    rh2 = np.sin(2*alpha)*h1 + np.cos(2*alpha)*h1
+
+    return rh1+1j*rh2
+
+
+

@@ -1895,24 +1895,49 @@ class modes_array:
 
         return filtered_modes
 
-    def to_td_waveform(self, Mtotal=1, incl_angle=0, distance=1, delta_t=None):
+    def to_td_waveform(self, Mtotal=1, theta=0, phi = 0, distance=1, delta_t=None, method='precise'):
         """Get the plus and cross polarizations of
         of the waveform time series by summing the modes.
 
         Parameters
         ----------
-        incl_angle : float
-                     The inclination angle.
+        theta, phi : float
+                The inclination and the azimuthal
+                angular position of the observer
+                in the NR coodinate system.
+                
         distance : float
-
+        
+        method : str
+                 The method to use to generate
+                 the SWSH basis. This can be 
+                 `precise` or `fast`.
         Returns
         -------
         taxis, hp, hc : 1d arrays
                  The 1d arrays of the time axis and
                  the polarizations of the waveforms.
+
+        Notes
+        -----
+
+        This does not rotate the polarizations. The rotation
+        must be done separately using the `rotate_polarizations`
+        function of `waveformtools.transforms`
+
+        For precessing systems and to obtain the waveform
+        in the LAL convention, one should use the 
+        nrcatalogtools package to obtain the correct 
+        angles first.
+
         """
 
-        from waveformtools.transforms import Yslm
+        if method == 'fast':
+            from waveformtools.transforms import Yslm
+        elif method == 'precise':
+            from waveformtools.transforms import Yslm_prec as Yslm
+        else:
+            raise NotImplementedError(f'Unknown method {method}')
 
         # print(Yslm)
         th = incl_angle

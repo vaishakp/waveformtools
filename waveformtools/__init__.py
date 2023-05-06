@@ -29,6 +29,7 @@ def get_version():
     # Open the file
 
     vers = os.popen('git log -1 --date=short | grep Date').read()[8:-1]
+    vers = vers.replace('-', '.')
 
     #with open(package_directory + "/../public/date.txt", "r") as vers_file:
         #vers = vers_file.read()[:10]

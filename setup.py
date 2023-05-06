@@ -5,12 +5,18 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+
+# Get version from init
+import waveformtools
+vers = waveformtools.get_version()
+
+
 setuptools.setup(
-    name="waveformtools",  # Replace with your own username
-    version="0.0.1",
+    name="waveformtools",
+    version=f"{vers}",
     author="Vaishak Prasad",
-    author_email="vaishak@iucaa.in",
-    description="Functions for handling waveform data",
+    author_email="vaishakprasad@gmail.com",
+    description="Functions for handling waveform and numerical relativity data",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://gitlab.com/vaishakp/waveformtools",
