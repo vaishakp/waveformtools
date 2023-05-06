@@ -13,6 +13,9 @@ waveformtools.transforms
 
    .. autosummary::
    
+      Yslm
+      Yslm_pres
+      Yslm_vec
       compute_fft
       compute_ifft
       set_fft_conven

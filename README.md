@@ -1,7 +1,7 @@
+[![Project landing page](https://sites.google.com/view/waveformtools/home)]
 [![pipeline status](https://gitlab.com/vaishakp/waveformtools/badges/main/pipeline.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main/LICENSE)
-[![Documentation Status](https://readthedocs.org/projects/scri/badge/?version=latest)](https://vaishakp.gitlab.io/waveformtools/?badge=latest)
-[![Project landing page](https://sites.google.com/view/waveformtools/home)]
+[![Documentation Status](https://readthedocs.org/projects/waveformtools/badge/?version=latest)](https://vaishakp.gitlab.io/waveformtools/?badge=latest)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # Waveformtools 
@@ -14,7 +14,6 @@ waveformtools is a numerical relativity data handling package that was written t
 This package contains implementations of customized algorithms and techniques.  Some of these contain the usage of existing python based library functions from pycbc, scipy, etc but effort has been made to keep these to a minimum.
 
  
-
 * Handling of numerical relativity data, and retreiving specific information about the physical system.
 
     The class container and methods "sim" can load NR data into convenient lists and dictionaries, which can be used to     retrieve specific data/ information about the numerical simulation. 

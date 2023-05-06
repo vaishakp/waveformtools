@@ -29,7 +29,7 @@ waveformtools.waveformtools
       get_starting_angular_frequency
       get_waveform_angular_frequency
       integrate_first_order
-      interpolate_resample_wfs
+      interp_resam_wfs
       interpolate_wfs
       iscontinuous
       iscontinuous_old
@@ -39,7 +39,6 @@ waveformtools.waveformtools
       massratio
       match_wfs
       match_wfs_pycbc
-      match_wfs_pycbc_old
       mavg
       message
       mode
@@ -63,6 +62,7 @@ waveformtools.waveformtools
       taper_tanh
       taperlengtheq
       totalmass
+      unwrap_phase
       xtract_camp
       xtract_camp_phase
       xtract_cphase

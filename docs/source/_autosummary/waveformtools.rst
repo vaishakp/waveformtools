@@ -37,10 +37,12 @@
    waveformtools.CoM
    waveformtools.compare
    waveformtools.dataIO
+   waveformtools.diagnostics
    waveformtools.differentiate
    waveformtools.extrapolate
    waveformtools.grids
    waveformtools.integrate
+   waveformtools.legacy
    waveformtools.simulations
    waveformtools.spherical
    waveformtools.transforms

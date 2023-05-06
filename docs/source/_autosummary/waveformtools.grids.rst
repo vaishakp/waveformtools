@@ -17,6 +17,7 @@ waveformtools.grids
 
    .. autosummary::
    
+      gl_grid
       spherical_grid
    
    

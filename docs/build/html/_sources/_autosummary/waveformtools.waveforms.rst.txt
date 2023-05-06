@@ -14,6 +14,8 @@ waveformtools.waveforms
    .. autosummary::
    
       construct_mode_list
+      get_iteration_numbers_from_keys
+      sort_keys
    
    
 

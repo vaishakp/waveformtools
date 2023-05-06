@@ -1,74 +1,41 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>waveformtools.waveformtools &mdash; waveformtools 2022-05-03 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Simulations" href="../simulations.html" />
-    <link rel="prev" title="waveformtools.transforms" href="waveformtools.transforms.html" />
+    <link rel="prev" title="waveformtools.waveforms" href="waveformtools.waveforms.html" />
     <link href="../_static/css/my_theme.css" rel="stylesheet" type="text/css">
 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: blue" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> waveformtools
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022-05-03
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -76,18 +43,8 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p><span class="caption-text">Contents:</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
@@ -96,12 +53,15 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.CoM.html">waveformtools.CoM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.compare.html">waveformtools.compare</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.dataIO.html">waveformtools.dataIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.diagnostics.html">waveformtools.diagnostics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.grids.html">waveformtools.grids</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.integrate.html">waveformtools.integrate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">waveformtools.waveformtools</a></li>
 </ul>
 </li>
@@ -113,77 +73,37 @@
 <li class="toctree-l1"><a class="reference internal" href="../waveformtools.html">Waveformtools</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: blue" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">waveformtools</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="../api.html">Package API</a> &raquo;</li>
-        
-          <li><a href="waveformtools.html">waveformtools</a> &raquo;</li>
-        
-      <li>waveformtools.waveformtools</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package API</a></li>
+          <li class="breadcrumb-item"><a href="waveformtools.html">waveformtools</a></li>
+      <li class="breadcrumb-item active">waveformtools.waveformtools</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../_sources/_autosummary/waveformtools.waveformtools.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="module-waveformtools.waveformtools">
-<span id="waveformtools-waveformtools"></span><h1>waveformtools.waveformtools<a class="headerlink" href="#module-waveformtools.waveformtools" title="Permalink to this headline">¶</a></h1>
+<span id="waveformtools-waveformtools"></span><h1>waveformtools.waveformtools<a class="headerlink" href="#module-waveformtools.waveformtools" title="Permalink to this heading"></a></h1>
 <p>This module contains a set of tools to handle data from numerical relativity simulations and gravitational waves.</p>
 <p class="rubric">Functions</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.addzeros" title="waveformtools.waveformtools.addzeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addzeros</span></code></a>(data, zeros)</p></td>
 <td><p>Append zeros to an array without tapering.</p></td>
@@ -213,16 +133,16 @@
 <td><p>Compute the chirpmass from a2, the coefficient of time of the Finn-Chernoff waform model.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.compute_frequencies" title="waveformtools.waveformtools.compute_frequencies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_frequencies</span></code></a>(t_coal, t_val, chirp_mass)</p></td>
-<td><p>Compute the Newtonian instantaneous frequency of strain waveform from coalescence time and chirp mass, from the Finn Chernoff model.</p></td>
+<td><p>Compute the Newtonian instantaneous frequency of strain waveform from coalescence time and chirp mass, from the Finn-Chernoff model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.differentiate" title="waveformtools.waveformtools.differentiate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">differentiate</span></code></a>(data[, delta_t])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.differentiate" title="waveformtools.waveformtools.differentiate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">differentiate</span></code></a>(data[, delta_t, TS])</p></td>
 <td><p>Differentiate a timeseries in time domain using the Simple Euler method</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.flatten" title="waveformtools.waveformtools.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a>(nflist)</p></td>
-<td><p>Flatten a list of list of lists. i.e. a three tier list [[[],[]], [[],[]] —&gt; []. This is useful e.g. when combining the</p></td>
+<td><p>Flatten a (3rd order) list of list of lists.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.get_centered_taxis" title="waveformtools.waveformtools.get_centered_taxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_centered_taxis</span></code></a>(time_ax, amps)</p></td>
-<td><p>Get the time axis of the waveform centered at its maximum absolute amplitude.</p></td>
+<td><p>Get the time axis of the waveform centered</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.get_starting_angular_frequency" title="waveformtools.waveformtools.get_starting_angular_frequency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_starting_angular_frequency</span></code></a>(waveform, delta_t)</p></td>
 <td><p>Get the approximate starting frequency of the input data by averaging over the first <cite>npoints</cite> number of points.</p></td>
@@ -230,10 +150,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.get_waveform_angular_frequency" title="waveformtools.waveformtools.get_waveform_angular_frequency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_waveform_angular_frequency</span></code></a>(waveform, delta_t)</p></td>
 <td><p>Get the angular frequency of the waveform given the complex waveform time step.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.integrate_first_order" title="waveformtools.waveformtools.integrate_first_order"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integrate_first_order</span></code></a>(data[, t_start, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.integrate_first_order" title="waveformtools.waveformtools.integrate_first_order"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integrate_first_order</span></code></a>(data[, t_start, ...])</p></td>
 <td><p>Integrate a timeseries using first order method.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.interpolate_resample_wfs" title="waveformtools.waveformtools.interpolate_resample_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_resample_wfs</span></code></a>(ts_data, …[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.interp_resam_wfs" title="waveformtools.waveformtools.interp_resam_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interp_resam_wfs</span></code></a>(wavf_data, old_taxis, new_taxis)</p></td>
 <td><p>Wrapper function for interpolation and resampling.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.interpolate_wfs" title="waveformtools.waveformtools.interpolate_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_wfs</span></code></a>(ts_data, interp_func[, delta_t])</p></td>
@@ -257,83 +177,83 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.massratio" title="waveformtools.waveformtools.massratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">massratio</span></code></a>(chirp_mass)</p></td>
 <td><p>Compute the mass ratio from chirpmass.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.match_wfs" title="waveformtools.waveformtools.match_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_wfs</span></code></a>(all_time_axes, all_waveforms[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.match_wfs" title="waveformtools.waveformtools.match_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_wfs</span></code></a>(all_time_axes, all_waveforms[, ...])</p></td>
 <td><p>Match two waveforms and return the time shift, phase shift, normalized waveforms and match coefficient.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.match_wfs_pycbc" title="waveformtools.waveformtools.match_wfs_pycbc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_wfs_pycbc</span></code></a>(all_time_axes, all_waveforms)</p></td>
 <td><p>Match two waveforms using pycbc subroutines and return the time shift, phase shift, normalized waveforms and match coefficient.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.match_wfs_pycbc_old" title="waveformtools.waveformtools.match_wfs_pycbc_old"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_wfs_pycbc_old</span></code></a>(waveforms[, delt])</p></td>
-<td><p>Match given waveforms.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.mavg" title="waveformtools.waveformtools.mavg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mavg</span></code></a>(func_x, width)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.mavg" title="waveformtools.waveformtools.mavg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mavg</span></code></a>(func_x, width)</p></td>
 <td><p>Function to smoothen data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.message" title="waveformtools.waveformtools.message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">message</span></code></a>(*args[, message_verbosity, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.message" title="waveformtools.waveformtools.message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">message</span></code></a>(*args[, message_verbosity, ...])</p></td>
 <td><p>The print function with verbosity levels and logging facility.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.mode" title="waveformtools.waveformtools.mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code></a>(a_list)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.mode" title="waveformtools.waveformtools.mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mode</span></code></a>(a_list)</p></td>
 <td><p>Find the mode of a list</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.norm" title="waveformtools.waveformtools.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a>(hdat[, psd])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.norm" title="waveformtools.waveformtools.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a>(hdat[, psd])</p></td>
 <td><p>Calculate the norm of a vector.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.olap" title="waveformtools.waveformtools.olap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">olap</span></code></a>(data1, data2[, psd])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.olap" title="waveformtools.waveformtools.olap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">olap</span></code></a>(data1, data2[, psd])</p></td>
 <td><p>Calcuate the overlap between two data vectors weighted by the given psd.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.plot" title="waveformtools.waveformtools.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(xdata, func_x[, save])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.plot" title="waveformtools.waveformtools.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>(xdata, func_x[, save])</p></td>
 <td><p>A Basic plotting function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.pmmatch_wfs" title="waveformtools.waveformtools.pmmatch_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmmatch_wfs</span></code></a>(waveforms[, offset, crop])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.pmmatch_wfs" title="waveformtools.waveformtools.pmmatch_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pmmatch_wfs</span></code></a>(waveforms[, offset, crop])</p></td>
 <td><p>Match function for post merger waveforms.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.progressbar" title="waveformtools.waveformtools.progressbar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">progressbar</span></code></a>(present_count, total_counts[, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.progressbar" title="waveformtools.waveformtools.progressbar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">progressbar</span></code></a>(present_count, total_counts[, ...])</p></td>
 <td><p>Display the progress bar to std out from present_count and total_count.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.removeNans" title="waveformtools.waveformtools.removeNans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeNans</span></code></a>(xdata, ydata)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.removeNans" title="waveformtools.waveformtools.removeNans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeNans</span></code></a>(xdata, ydata)</p></td>
 <td><p>Remove Nans from (xdata,ydata) data pair.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.removezeros" title="waveformtools.waveformtools.removezeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removezeros</span></code></a>(data, delta_t)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.removezeros" title="waveformtools.waveformtools.removezeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removezeros</span></code></a>(data, delta_t)</p></td>
 <td><p>Remove zeros from the input waveform from either sides.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.resample" title="waveformtools.waveformtools.resample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample</span></code></a>(interp_data, new_delta_t, epoch, length)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.resample" title="waveformtools.waveformtools.resample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample</span></code></a>(interp_data, new_delta_t, epoch, length)</p></td>
 <td><p>Function to generate timeseries out of the given interpolated data function, epoch,sampling frequency, length(duration).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.resample_wfs" title="waveformtools.waveformtools.resample_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_wfs</span></code></a>(both_time_axes, both_waveforms)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.resample_wfs" title="waveformtools.waveformtools.resample_wfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_wfs</span></code></a>(both_time_axes, both_waveforms)</p></td>
 <td><p>Resample the waveform pairs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.roll" title="waveformtools.waveformtools.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a>(tsdata, i_roll[, is_ts])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.roll" title="waveformtools.waveformtools.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a>(tsdata, i_roll[, is_ts])</p></td>
 <td><p>Roll the data circularly.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.save_obj" title="waveformtools.waveformtools.save_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_obj</span></code></a>(obj, name[, obj_dir, protocol])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.save_obj" title="waveformtools.waveformtools.save_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_obj</span></code></a>(obj, name[, obj_dir, protocol])</p></td>
 <td><p>A function to save python objects to disk using pickle.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.shiftmatched" title="waveformtools.waveformtools.shiftmatched"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shiftmatched</span></code></a>(hdat, ind[, delta_t, is_ts])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.shiftmatched" title="waveformtools.waveformtools.shiftmatched"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shiftmatched</span></code></a>(hdat, ind[, delta_t, is_ts])</p></td>
 <td><p>Timeshift an array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.shorten" title="waveformtools.waveformtools.shorten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shorten</span></code></a>(tsdata, start, end[, delta_t])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.shorten" title="waveformtools.waveformtools.shorten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shorten</span></code></a>(tsdata, start, end[, delta_t])</p></td>
 <td><p>Shorten an array given the start and end points.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.simplematch_wfs_old" title="waveformtools.waveformtools.simplematch_wfs_old"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplematch_wfs_old</span></code></a>(waveforms[, delta_t])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.simplematch_wfs_old" title="waveformtools.waveformtools.simplematch_wfs_old"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplematch_wfs_old</span></code></a>(waveforms[, delta_t])</p></td>
 <td><p>Simple match the given waveforms.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.smoothen" title="waveformtools.waveformtools.smoothen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smoothen</span></code></a>(func_x, win, order[, xdata, to_plot])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.smoothen" title="waveformtools.waveformtools.smoothen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">smoothen</span></code></a>(func_x, win, order[, xdata, to_plot])</p></td>
 <td><p>Use the Savitzky-Golay Filter to smoothen the data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.startend" title="waveformtools.waveformtools.startend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startend</span></code></a>(data)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.startend" title="waveformtools.waveformtools.startend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startend</span></code></a>(data)</p></td>
 <td><p>Identify the start and endpoints of the data.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taper" title="waveformtools.waveformtools.taper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taper</span></code></a>(data[, delta_t, zeros])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taper" title="waveformtools.waveformtools.taper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taper</span></code></a>(data[, delta_t, zeros])</p></td>
 <td><p>A method to taper and append additional zeros at either ends, using the <cite>taper</cite> function of the pycbc TimeSeries object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taper_tanh" title="waveformtools.waveformtools.taper_tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taper_tanh</span></code></a>(waveform[, time_axis, delta_t, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taper_tanh" title="waveformtools.waveformtools.taper_tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taper_tanh</span></code></a>(waveform[, time_axis, delta_t, ...])</p></td>
 <td><p>Taper a waveform with a <span class="math notranslate nohighlight">\(tanh\)</span> function at either ends</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taperlengtheq" title="waveformtools.waveformtools.taperlengtheq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taperlengtheq</span></code></a>(data_a, data_b[, delta_t])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.taperlengtheq" title="waveformtools.waveformtools.taperlengtheq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taperlengtheq</span></code></a>(data_a, data_b[, delta_t])</p></td>
 <td><p>Taper and equalize the lengths of two arrays.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.totalmass" title="waveformtools.waveformtools.totalmass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">totalmass</span></code></a>(mass_ratio, chirp_mass)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.totalmass" title="waveformtools.waveformtools.totalmass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">totalmass</span></code></a>(mass_ratio, chirp_mass)</p></td>
 <td><p>Find total mass from mass ratio and chirpmass.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.unwrap_phase" title="waveformtools.waveformtools.unwrap_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unwrap_phase</span></code></a>(phi0)</p></td>
+<td><p>Unwrap the phase by finding turning points in phi0.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_camp" title="waveformtools.waveformtools.xtract_camp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_camp</span></code></a>(tsdata_p, tsdata_x[, to_plot])</p></td>
 <td><p>Given real and imaginary parts of a complex timeseries, extract the amplitude of the complex data vector : (tsdata_p + i * tsdata_x)</p></td>
@@ -341,14 +261,14 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_camp_phase" title="waveformtools.waveformtools.xtract_camp_phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_camp_phase</span></code></a>(tsdata_1, tsdata_2)</p></td>
 <td><p>Wrapper for extracting the amplitude and the phase of the complex vector.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_cphase" title="waveformtools.waveformtools.xtract_cphase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_cphase</span></code></a>(tsdata_p, tsdata_x[, delta_t, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.waveformtools.xtract_cphase" title="waveformtools.waveformtools.xtract_cphase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xtract_cphase</span></code></a>(tsdata_p, tsdata_x[, delta_t, ...])</p></td>
 <td><p>Given real and imaginary parts of a complex timeseries, extract the phase of the waveform :arctan_(Img(data)/Re(data))</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
-<dt id="waveformtools.waveformtools.addzeros">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">addzeros</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeros</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#addzeros"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.addzeros" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.addzeros">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">addzeros</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeros</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#addzeros"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.addzeros" title="Permalink to this definition"></a></dt>
 <dd><p>Append zeros to an array without tapering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -368,30 +288,40 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.apxstartend">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">apxstartend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#apxstartend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.apxstartend" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.apxstartend">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">apxstartend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#apxstartend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.apxstartend" title="Permalink to this definition"></a></dt>
 <dd><p>Identify the Approximate start and endpoints of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>data:   1d array or a pycbc TimeSeries object</strong></dt><dd><p>The input waveform whose start and end points need to be identified based on a given tolerance value.</p>
+<dt><strong>data:   1d array or a pycbc TimeSeries object</strong></dt><dd><p>The input waveform whose start and
+end points need to be identified based
+on a given tolerance value.</p>
 </dd>
-<dt><strong>tol:    float</strong></dt><dd><p>The tolerance value below which the signal is assumed to be absent.</p>
+<dt><strong>tol:    float</strong></dt><dd><p>The tolerance value below which
+the signal is assumed to be absent.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>loc_pair:       int (2)</dt><dd><p>The pair of indices denoting the start and end points of an array</p>
+<dt>loc_pair:   int (2)</dt><dd><p>The pair of indices denoting
+the start and end points of an array</p>
 </dd>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The starting and ending index of the peak
+tol (default 1e-5)  part of the data is
+the identification criterion. Requires
+the data to fall off to tol*peak absolute
+value outside a certain range.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.bintp">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">bintp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#bintp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.bintp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.bintp">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">bintp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#bintp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.bintp" title="Permalink to this definition"></a></dt>
 <dd><p>Function to bin the data and interpolate it at specified width and order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -404,13 +334,14 @@
 </dd>
 <dt><strong>order:  int</strong></dt><dd><p>Order of the polynomial used for interpolation.</p>
 </dd>
-<dt><strong>to_plot:        bool</strong></dt><dd><p>True or False. To plot or not plot the results.</p>
+<dt><strong>to_plot:    bool</strong></dt><dd><p>True or False. To plot or not plot the results.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>hist:   a list</dt><dd><p>[binloc, yvals], The location of the bins and the y values associated with the bins.</p>
+<dt>hist:   a list</dt><dd><p>[binloc, yvals], The location of the bins and
+the y values associated with the bins.</p>
 </dd>
 </dl>
 </dd>
@@ -418,16 +349,18 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.center">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">center</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wvc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.center" title="Permalink to this definition">¶</a></dt>
-<dd><p>Center a waveform (wvp, wvc) at the peak of the complex modulous sqrt(wvp**2 + wvc**2).</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.center">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wvc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.center" title="Permalink to this definition"></a></dt>
+<dd><p>Center a waveform (wvp, wvc) at the peak
+of the complex modulous sqrt(wvp**2 + wvc**2).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>wvp:    1d array or a pycbc TimeSeries object</strong></dt><dd></dd>
-<dt><strong>wvc:    1d array or a pycbc TimeSeries object</strong></dt><dd><p>The one/two components of the waveforms as 1d list or numpy arrays or pycbc timeseries.</p>
+<dt><strong>wvc:    1d array or a pycbc TimeSeries object</strong></dt><dd><p>The one/two components of the waveforms
+as 1d list or numpy arrays or pycbc timeseries.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The timestepping delta_t.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The timestepping delta_t.</p>
 </dd>
 </dl>
 </dd>
@@ -441,23 +374,26 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.cleandata">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">cleandata</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toldt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bridge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#cleandata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.cleandata" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.cleandata">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">cleandata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toldt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bridge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#cleandata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.cleandata" title="Permalink to this definition"></a></dt>
 <dd><p>Check the data (time,datar,datai) for repetetive rows and remove them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>data:   list</strong></dt><dd><p>Input as a list of 1d arrays [time, data1, data2, …]. All the data share the common time axis <cite>time</cite></p>
+<dt><strong>data:   list</strong></dt><dd><p>Input as a list of 1d arrays [time, data1, data2, …].
+All the data share the common time axis <cite>time</cite></p>
 </dd>
 <dt><strong>toldt</strong><span class="classifier">float</span></dt><dd><p>The tolerance for error in checking. defaluts to toldt=1e-3.</p>
 </dd>
-<dt><strong>bridge</strong><span class="classifier">bool</span></dt><dd><p>A bridge flag to decide whether or not to interpolate and resample to fill in jump discontinuities.</p>
+<dt><strong>bridge</strong><span class="classifier">bool</span></dt><dd><p>A bridge flag to decide whether or not to interpolate and
+resample to fill in jump discontinuities.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>cleaned_data:   list</dt><dd><p>The cleaned data array with repetitive rows and gaps (if bridge=True) removed.</p>
+<dt>cleaned_data:   list</dt><dd><p>The cleaned data array with repetitive
+rows and gaps (if bridge=True) removed.</p>
 </dd>
 </dl>
 </dd>
@@ -465,13 +401,14 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.cleandata_old">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">cleandata_old</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#cleandata_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.cleandata_old" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.cleandata_old">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">cleandata_old</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#cleandata_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.cleandata_old" title="Permalink to this definition"></a></dt>
 <dd><p>Old version. Check the data (time,datar,datai) for repetetive rows and remove them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>data:   list</strong></dt><dd><p>Input as a list of 1d arrays [time, data1, data2, …]. All the data share the common time axis <cite>time</cite></p>
+<dt><strong>data:   list</strong></dt><dd><p>Input as a list of 1d arrays [time, data1, data2, …].
+All the data share the common time axis <cite>time</cite></p>
 </dd>
 <dt><strong>verbose</strong><span class="classifier">bool</span></dt><dd><p>A verbosity flag.</p>
 </dd>
@@ -479,7 +416,8 @@
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>cleaned_data:   nd array</dt><dd><p>The cleaned data array with repetitive rows and gaps (if bridge=True) removed</p>
+<dt>cleaned_data:   nd array</dt><dd><p>The cleaned data array with repetitive
+rows and gaps (if bridge=True) removed</p>
 </dd>
 </dl>
 </dd>
@@ -487,23 +425,29 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.coalignwfs">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">coalignwfs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#coalignwfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.coalignwfs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Coalign two timeseries. Wrapper and modification around pycbc functions.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.coalignwfs">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">coalignwfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#coalignwfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.coalignwfs" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Coalign two timeseries.</dt><dd><p>Wrapper and modification around pycbc functions
+with some additional functionalities.</p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>tsdata1:        list, 1d array or a pycbc TimeSeries</strong></dt><dd></dd>
-<dt><strong>tsdata2:        list, 1d array or a pycbc TimeSeries</strong></dt><dd><p>The two data vectors as 1d lists or numpy arrays or pycbc TimeSeries</p>
+<dt><strong>tsdata1:    list, 1d array or a pycbc TimeSeries</strong></dt><dd></dd>
+<dt><strong>tsdata2:    list, 1d array or a pycbc TimeSeries</strong></dt><dd><p>The two data vectors as 1d lists or
+numpy arrays or pycbc TimeSeries</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The time stepping.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The time stepping.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>ctsdata1:       a pycbc TimeSeries</dt><dd></dd>
-<dt>tsdata2:        a pycbc TimeSeries</dt><dd><p>A pair of pycbc TimeSeries objects; the aligned first waveform and the second.</p>
+<dt>ctsdata1:   a pycbc TimeSeries</dt><dd></dd>
+<dt>tsdata2:    a pycbc TimeSeries</dt><dd><p>A pair of pycbc TimeSeries objects;
+the aligned first waveform and the second.</p>
 </dd>
 </dl>
 </dd>
@@ -511,44 +455,57 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.coalignwfs2">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">coalignwfs2</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#coalignwfs2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.coalignwfs2" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.coalignwfs2">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">coalignwfs2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#coalignwfs2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.coalignwfs2" title="Permalink to this definition"></a></dt>
 <dd><p>Coalign two waveforms function 2.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>tsdata1:        1d array or a pycbc TimeSeries</strong></dt><dd></dd>
-<dt><strong>tsdata2:        1d array or a pycbc TimeSeries</strong></dt><dd><p>two data vectors as 1d lists or numpy arrays or pycbc timeseries.</p>
+<dt><strong>tsdata1:    1d array or a pycbc TimeSeries</strong></dt><dd></dd>
+<dt><strong>tsdata2:    1d array or a pycbc TimeSeries</strong></dt><dd><p>two data vectors as 1d lists or
+numpy arrays or pycbc timeseries.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>aligned_waveforms:       list</dt><dd><p>Tthe aligned waveforms in the format [aligned_wf1, aligned_wf2, [norm1, norm2, location of maximum]].</p>
+<dt>aligned_waveforms:   list</dt><dd><p>The aligned waveforms in the format
+[aligned_wf1,
+aligned_wf2,
+[norm1, norm2, location of maximum]].</p>
 </dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>See coalignwfs for description. This algorithm does not use the builtin coalign function from pycbc.
-This involves normalization of the data vectors explicitly and identifiies the timeshift by computing
+<p>Procedure:</p>
+<ol class="arabic simple">
+<li><p>Adjust length of either waveforms if needed</p></li>
+<li><p>Normalize the two timeseries</p></li>
+<li><p>Compute The complex SNR</p></li>
+<li><p>Shift and roll the first</p></li>
+<li><p>Returns normalized waveforms</p></li>
+</ol>
+<p>See coalignwfs for description. This algorithm does not use
+the builtin coalign function from pycbc. This involves normalization
+of the data vectors explicitly and identifiies the timeshift by computing
 the complex SNR and finding the maximum element.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.compute_chirp_mass">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">compute_chirp_mass</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a2_param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#compute_chirp_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.compute_chirp_mass" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.compute_chirp_mass">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">compute_chirp_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a2_param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#compute_chirp_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.compute_chirp_mass" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the chirpmass from a2, the coefficient of time of the Finn-Chernoff waform model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>a2_param:       1d array float</strong></dt><dd><p>The a2 parameter in the Finn Chernoff model.</p>
+<dt><strong>a2_param:   1d array float</strong></dt><dd><p>The a2 parameter in the Finn Chernoff model.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>chirp_mass:     float</dt><dd><p>The chirp mass</p>
+<dt>chirp_mass: float</dt><dd><p>The chirp mass</p>
 </dd>
 </dl>
 </dd>
@@ -556,9 +513,11 @@ the complex SNR and finding the maximum element.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.compute_frequencies">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">compute_frequencies</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_coal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chirp_mass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#compute_frequencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.compute_frequencies" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the Newtonian instantaneous frequency of strain waveform from coalescence time and chirp mass, from the Finn Chernoff model.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.compute_frequencies">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">compute_frequencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_coal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chirp_mass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#compute_frequencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.compute_frequencies" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the Newtonian instantaneous frequency
+of strain waveform from coalescence time and
+chirp mass, from the Finn-Chernoff model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -566,7 +525,7 @@ the complex SNR and finding the maximum element.</p>
 </dd>
 <dt><strong>t_val:  1d array</strong></dt><dd><p>The time,</p>
 </dd>
-<dt><strong>chirp_mass:     float</strong></dt><dd><p>The chirpmass.</p>
+<dt><strong>chirp_mass: float</strong></dt><dd><p>The chirpmass.</p>
 </dd>
 </dl>
 </dd>
@@ -580,21 +539,24 @@ the complex SNR and finding the maximum element.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.differentiate">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">differentiate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#differentiate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.differentiate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.differentiate">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">differentiate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#differentiate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.differentiate" title="Permalink to this definition"></a></dt>
 <dd><p>Differentiate a timeseries in time domain using the Simple Euler method</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array a pycbc TimeSeries object</strong></dt><dd><p>The time series to be differentiated.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The grid spacing delta_t. Supplying delta_t overrides the delta_t attribute of TimeSeries.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The grid spacing delta_t.
+Supplying delta_t overrides
+the delta_t attribute of TimeSeries.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>ddt_data:       pycbc TimeSeries object</dt><dd><p>The differentiated 1d data as pycbc TimeSeries</p>
+<dt>ddt_data:   pycbc TimeSeries object</dt><dd><p>The differentiated 1d data
+as pycbc TimeSeries</p>
 </dd>
 </dl>
 </dd>
@@ -602,12 +564,12 @@ the complex SNR and finding the maximum element.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.flatten">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">flatten</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nflist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#flatten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.flatten" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Flatten a list of list of lists. i.e. a three tier list [[[],[]], [[],[]] —&gt; []. This is useful e.g. when combining the</dt><dd><p>data from the list output of multiple MPI ranks.</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.flatten">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">flatten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nflist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#flatten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.flatten" title="Permalink to this definition"></a></dt>
+<dd><p>Flatten a (3rd order) list of list of lists.
+i.e. a three tier list [[[],[]], [[],[]] —&gt; [].
+This is useful e.g. when combining the data from
+the list output of multiple MPI ranks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -625,13 +587,17 @@ the complex SNR and finding the maximum element.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.get_centered_taxis">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">get_centered_taxis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#get_centered_taxis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.get_centered_taxis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the time axis of the waveform centered at its maximum absolute amplitude.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.get_centered_taxis">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">get_centered_taxis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#get_centered_taxis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.get_centered_taxis" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Get the time axis of the waveform centered</dt><dd><p>at its maximum absolute amplitude.</p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>time_ax:        1d array</strong></dt><dd><p>The 1d array containg the original (uncentered)time axis of the wveform.</p>
+<dt><strong>time_ax:    1d array</strong></dt><dd><p>The 1d array containg
+the original (uncentered)time axis of the wveform.</p>
 </dd>
 <dt><strong>amps</strong><span class="classifier">1d array</span></dt><dd><p>The amplitude of the waveform.</p>
 </dd>
@@ -639,7 +605,8 @@ the complex SNR and finding the maximum element.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>time_centered:  1d array</dt><dd><p>The centered time axis of the waveform. The maximum amplitude timestap will be at <span class="math notranslate nohighlight">\(t=0\)</span>.</p>
+<dt>time_centered:  1d array</dt><dd><p>The centered time axis of the waveform.
+The maximum amplitude timestap will be at <span class="math notranslate nohighlight">\(t=0\)</span>.</p>
 </dd>
 </dl>
 </dd>
@@ -647,19 +614,19 @@ the complex SNR and finding the maximum element.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.get_starting_angular_frequency">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">get_starting_angular_frequency</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#get_starting_angular_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.get_starting_angular_frequency" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.get_starting_angular_frequency">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">get_starting_angular_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#get_starting_angular_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.get_starting_angular_frequency" title="Permalink to this definition"></a></dt>
 <dd><p>Get the approximate starting frequency of the
 input data by averaging over the first <cite>npoints</cite> number of points.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>waveform:               1d array</strong></dt><dd><p>The 1d complex array of the input
+<dt><strong>waveform:       1d array</strong></dt><dd><p>The 1d complex array of the input
 waveform.</p>
 </dd>
-<dt><strong>delta_t:         float</strong></dt><dd><p>The time step.</p>
+<dt><strong>delta_t:     float</strong></dt><dd><p>The time step.</p>
 </dd>
-<dt><strong>npoints:         int</strong></dt><dd><p>The number of points to average over.</p>
+<dt><strong>npoints:     int</strong></dt><dd><p>The number of points to average over.</p>
 </dd>
 </dl>
 </dd>
@@ -676,8 +643,8 @@ and not tapered.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.get_waveform_angular_frequency">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">get_waveform_angular_frequency</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FD'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#get_waveform_angular_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.get_waveform_angular_frequency" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.get_waveform_angular_frequency">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">get_waveform_angular_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeaxis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FD'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#get_waveform_angular_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.get_waveform_angular_frequency" title="Permalink to this definition"></a></dt>
 <dd><p>Get the angular frequency of the waveform given
 the complex waveform time step. The phase is
 extracted and is differentiated using one of
@@ -686,12 +653,12 @@ frequency.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>waveform:               1d array</strong></dt><dd><p>The 1d complex array of the input
+<dt><strong>waveform:       1d array</strong></dt><dd><p>The 1d complex array of the input
 waveform.</p>
 </dd>
-<dt><strong>delta_t:         float</strong></dt><dd><p>The time step.</p>
+<dt><strong>delta_t:     float</strong></dt><dd><p>The time step.</p>
 </dd>
-<dt><strong>timeaxis:        1d array, optional</strong></dt><dd><p>The time axis of the waveform.
+<dt><strong>timeaxis:    1d array, optional</strong></dt><dd><p>The time axis of the waveform.
 Recommended especially when the sampling
 is non-uniform and Chebyshev method
 is chosen.</p>
@@ -704,7 +671,7 @@ information.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>omega:          1d array</dt><dd><p>The real instantaneous frequency of the waveform.</p>
+<dt>omega:      1d array</dt><dd><p>The real instantaneous frequency of the waveform.</p>
 </dd>
 </dl>
 </dd>
@@ -712,7 +679,7 @@ information.</p>
 <p class="rubric">Notes</p>
 <p>Available methods</p>
 <dl class="simple">
-<dt>Chebyshev series (<cite>CS</cite>):        The phase is expanded in</dt><dd><p>a Chebyshev series and
+<dt>Chebyshev series (<cite>CS</cite>):    The phase is expanded in</dt><dd><p>a Chebyshev series and
 then the differentiated.</p>
 </dd>
 <dt>Finite Differencing (<cite>FD</cite>)<span class="classifier">A 11 point finite difference</span></dt><dd><p>scheme is used to differentiate
@@ -723,23 +690,24 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.integrate_first_order">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">integrate_first_order</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_taper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#integrate_first_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.integrate_first_order" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.integrate_first_order">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">integrate_first_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_taper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#integrate_first_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.integrate_first_order" title="Permalink to this definition"></a></dt>
 <dd><p>Integrate a timeseries using first order method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array or a pycbc TimeSeries object</strong></dt><dd><p>The input function to be integrated.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The grid spacing delta_t,</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The grid spacing delta_t,</p>
 </dd>
-<dt><strong>to_taper:       bool</strong></dt><dd><p>True or False. Whether or not to taper the input series.</p>
+<dt><strong>to_taper:   bool</strong></dt><dd><p>True or False. Whether or not
+to taper the input series.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>int_data:       a pycbc TimeSeries object</dt><dd><p>TimeSeries of the time integrated data</p>
+<dt>int_data:   a pycbc TimeSeries object</dt><dd><p>TimeSeries of the time integrated data</p>
 </dd>
 </dl>
 </dd>
@@ -750,24 +718,21 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.interpolate_resample_wfs">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">interpolate_resample_wfs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#interpolate_resample_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.interpolate_resample_wfs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.interp_resam_wfs">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">interp_resam_wfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wavf_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_taxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_taxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resam_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cubic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#interp_resam_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.interp_resam_wfs" title="Permalink to this definition"></a></dt>
 <dd><p>Wrapper function for interpolation and resampling.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>interp_data:    1d array</strong></dt><dd><p>The yaxis to be interpolated,</p>
+<dt><strong>wavf_data:  1d array</strong></dt><dd><p>The yaxis to be interpolated,</p>
 </dd>
-<dt><strong>epoch:  float</strong></dt><dd><p>The starting point in time.</p>
-</dd>
-<dt><strong>old_delta_t:    float</strong></dt><dd></dd>
-<dt><strong>new_delta_t:    float</strong></dt><dd><p>Old and New grid spacing to be sampled at. length(int). The duration of x axis.</p>
+<dt><strong>old_taxis, new_taxis:   1darray</strong></dt><dd><p>Old and New time axis.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>resampled_wf:   1d array</dt><dd><p>Interpolated and resampled data.</p>
+<dt>resam_wf_data:  1d array</dt><dd><p>Interpolated and resampled data.</p>
 </dd>
 </dl>
 </dd>
@@ -775,17 +740,20 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.interpolate_wfs">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">interpolate_wfs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#interpolate_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.interpolate_wfs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to interpolate a list of timeseries data using the user specified interp_func function and the keyword arguments.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.interpolate_wfs">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">interpolate_wfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#interpolate_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.interpolate_wfs" title="Permalink to this definition"></a></dt>
+<dd><p>Function to interpolate a list of timeseries data using
+the user specified interp_func function and the keyword arguments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>ts_data:        list</strong></dt><dd><p>The 1d data. A list of waveforms as list or numpy array or pycbc TimeSeries.</p>
+<dt><strong>ts_data:    list</strong></dt><dd><p>The 1d data. A list of waveforms
+as a list or numpy array or
+pycbc TimeSeries.</p>
 </dd>
-<dt><strong>interp_fun:     function</strong></dt><dd><p>An interpolating function.</p>
+<dt><strong>interp_fun: function</strong></dt><dd><p>An interpolating function.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>Timestep.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>Timestep.</p>
 </dd>
 <dt><strong>``**kwargs``:   keyword arguments</strong></dt><dd><p>additional arguments to the user specified interp_func.</p>
 </dd>
@@ -801,33 +769,35 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.iscontinuous">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">iscontinuous</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toldt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#iscontinuous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.iscontinuous" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.iscontinuous">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">iscontinuous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toldt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#iscontinuous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.iscontinuous" title="Permalink to this definition"></a></dt>
 <dd><p>Check if the data has discontinuities. This checks for repetitive time rows and jumps.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>data:   list</strong></dt><dd><p>Input as a list of 1d arrays [time, data1, data2, …]. All the data share the common time axis <cite>time</cite></p>
+<dt><strong>data:   list</strong></dt><dd><p>Input as a list of 1d arrays [time, data1, data2, …].
+All the data share the common time axis <cite>time</cite></p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The time stepping.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The time stepping.</p>
 </dd>
 <dt><strong>toldt</strong><span class="classifier">float</span></dt><dd><p>The tolerance for error in checking. defaluts to toldt=1e-3.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>discontinuity_details:  a list.</dt><dd><dl class="simple">
-<dt>It contains:</dt><dd><ol class="arabic simple">
-<li><p>A list. details of discontinuity:  index location of original array, the corresponding discinbtinuity type.</p></li>
+<dd class="field-even"><dl>
+<dt>discontinuity_details:  a list.</dt><dd><p>It contains:
+1. A list. details of discontinuity:  index location of original array,</p>
+<blockquote>
+<div><p>the corresponding discinbtinuity type.</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
 <li><p>A float. the global discontinuity type.</p></li>
 </ol>
 </dd>
 </dl>
 </dd>
 </dl>
-</dd>
-</dl>
 <p class="rubric">Notes</p>
 <p>Types of discontunuities</p>
 <p>0: Continuous.
@@ -836,23 +806,29 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.iscontinuous_old">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">iscontinuous_old</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeaxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#iscontinuous_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.iscontinuous_old" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.iscontinuous_old">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">iscontinuous_old</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeaxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#iscontinuous_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.iscontinuous_old" title="Permalink to this definition"></a></dt>
 <dd><p>Check if the data has discontinuities. This checks for repetitive time rows and jumps.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>timeaxis:       list</strong></dt><dd><p>Input as a single 1d time axis or a list of 1d arrays [time, data1, data2, …]. All the data share the common time axis <cite>time</cite></p>
+<dt><strong>timeaxis:   list</strong></dt><dd><p>Input as a single 1d time axis
+or a list of 1d arrays [time, data1, data2, …].
+All the data share the common time axis <cite>time</cite></p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The time stepping.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The time stepping.</p>
 </dd>
-<dt><strong>toldt</strong><span class="classifier">float</span></dt><dd><p>The tolerance for error in checking. defaluts to toldt=1e-3.</p>
+<dt><strong>toldt</strong><span class="classifier">float</span></dt><dd><p>The tolerance for error in checking.
+Defaluts to toldt=1e-3.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>discontinuity_details</strong><span class="classifier">a list.</span></dt><dd><p>It contains: [ the actual location of discontinuity along the time axis, value of time location of original array,      the type of discontinuity].</p>
+<dt><strong>discontinuity_details</strong><span class="classifier">a list.</span></dt><dd><p>It contains: [ the actual location of discontinuity along
+the time axis,
+value of time location of original array,
+the type of discontinuity].</p>
 </dd>
 </dl>
 </dd>
@@ -865,9 +841,10 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.lengtheq">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">lengtheq</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#lengtheq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.lengtheq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Equalize the length of two timeseries/array by appending zeros at the end of the array. No tapering.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.lengtheq">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">lengtheq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#lengtheq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.lengtheq" title="Permalink to this definition"></a></dt>
+<dd><p>Equalize the length of two timeseries/array by
+appending zeros at the end of the array. No tapering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -875,13 +852,15 @@ using the Savgol filter.</p>
 </dd>
 <dt><strong>data_b: list</strong></dt><dd><p>The input waveform B.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The time steping. Defaults to <cite>None</cite>.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The time steping. Defaults to <cite>None</cite>.</p>
 </dd>
-<dt><strong>is_ts:  bool</strong></dt><dd><p>True or False. To determine whether the given data is a pycbc TimeSeries.</p>
+<dt><strong>is_ts:  bool</strong></dt><dd><p>To determine whether the given data
+is a pycbc TimeSeries.</p>
 </dd>
 <dt><strong>Returns</strong></dt><dd></dd>
 <dt><strong>——-</strong></dt><dd></dd>
-<dt><strong>equalized_signals</strong><span class="classifier">list</span></dt><dd><p>The Tapered, length equalized waveforms data_a and data_b, and a flag denoting which waveform was changed, <cite>a</cite> or <cite>b</cite>.</p>
+<dt><strong>equalized_signals</strong><span class="classifier">list</span></dt><dd><p>The Tapered, length equalized waveforms data_a and data_b,
+and a flag denoting which waveform was changed, <cite>a</cite> or <cite>b</cite>.</p>
 </dd>
 </dl>
 </dd>
@@ -892,8 +871,8 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.load_obj">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">load_obj</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#load_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.load_obj" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.load_obj">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">load_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#load_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.load_obj" title="Permalink to this definition"></a></dt>
 <dd><p>A function to load python objects from the disk using pickle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -914,8 +893,8 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.low_cut_filter">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">low_cut_filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utilde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.03</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#low_cut_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.low_cut_filter" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.low_cut_filter">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">low_cut_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">utilde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.03</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#low_cut_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.low_cut_filter" title="Permalink to this definition"></a></dt>
 <dd><p>Apply low frequency cut filter using a butterworth filter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -932,7 +911,7 @@ using the Savgol filter.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>utilde_lc:        1d array</dt><dd><p>The filtered data.</p>
+<dt>utilde_lc:    1d array</dt><dd><p>The filtered data.</p>
 </dd>
 </dl>
 </dd>
@@ -940,8 +919,8 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.massratio">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">massratio</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chirp_mass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#massratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.massratio" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.massratio">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">massratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chirp_mass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#massratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.massratio" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the mass ratio from chirpmass. Assumes total mass to be 1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -952,7 +931,7 @@ using the Savgol filter.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>mass_ratio:     float</dt><dd><p>The Mass ratio of the system</p>
+<dt>mass_ratio: float</dt><dd><p>The Mass ratio of the system</p>
 </dd>
 </dl>
 </dd>
@@ -960,8 +939,8 @@ using the Savgol filter.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.match_wfs">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">match_wfs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_time_axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#match_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.match_wfs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.match_wfs">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">match_wfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_time_axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#match_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.match_wfs" title="Permalink to this definition"></a></dt>
 <dd><p>Match two waveforms and return the time shift,
 phase shift, normalized waveforms and match coefficient.</p>
 <dl class="field-list">
@@ -995,8 +974,8 @@ iv). normalized, resampled, waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.match_wfs_pycbc">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">match_wfs_pycbc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_time_axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_waveforms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#match_wfs_pycbc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.match_wfs_pycbc" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.match_wfs_pycbc">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">match_wfs_pycbc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_time_axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_waveforms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#match_wfs_pycbc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.match_wfs_pycbc" title="Permalink to this definition"></a></dt>
 <dd><p>Match two waveforms using pycbc subroutines and return the time shift,
 phase shift, normalized waveforms and match coefficient.</p>
 <dl class="field-list">
@@ -1029,30 +1008,8 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.match_wfs_pycbc_old">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">match_wfs_pycbc_old</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#match_wfs_pycbc_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.match_wfs_pycbc_old" title="Permalink to this definition">¶</a></dt>
-<dd><p>Match given waveforms. Find the overlap.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>waveforms:      list</strong></dt><dd><p>A List of pairs [waveform A, waveform B].</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt>match:  a list of dicts</dt><dd><p>A list of dictionaries in the format {match score (float), shift (number), start_index, end_index}</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Assumes that the sampling rate is the  same for each pair.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="waveformtools.waveformtools.mavg">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">mavg</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#mavg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.mavg" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.mavg">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">mavg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#mavg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.mavg" title="Permalink to this definition"></a></dt>
 <dd><p>Function to smoothen data. Moving average over the window width.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1073,8 +1030,8 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.message">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">message</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.message" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.message">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.message" title="Permalink to this definition"></a></dt>
 <dd><p>The print function with verbosity levels and logging facility.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1090,7 +1047,8 @@ iv). normalized waveforms and their</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>1</strong><span class="classifier">int</span></dt><dd><p>messages to stdout and logging of messages, while the function returns 1.</p>
+<dt><strong>1</strong><span class="classifier">int</span></dt><dd><p>messages to stdout and logging of messages,
+while the function returns 1.</p>
 </dd>
 </dl>
 </dd>
@@ -1098,9 +1056,13 @@ iv). normalized waveforms and their</p>
 <p class="rubric">Notes</p>
 <p>Verbosity choices:</p>
 <blockquote>
-<div><p>message_verbosity       :       Each message carries with it a verbosity level. More the verbosity more the priority. Default value is 2</p>
-<p>print_verbosity         :       prints all messages above this level of verbosity.</p>
-<p>log_verbosity           :       logs all messages above this level of verbosity.</p>
+<div><dl class="simple">
+<dt>message_verbosity<span class="classifier">Each message carries with it a verbosity level.</span></dt><dd><p>More the verbosity less the priority.
+Default value is 2 i.e. informational.</p>
+</dd>
+</dl>
+<p>print_verbosity     :   prints all messages above this level of verbosity.</p>
+<p>log_verbosity       :   logs all messages above this level of verbosity.</p>
 </div></blockquote>
 <p>Verbosity  levels:</p>
 <blockquote>
@@ -1111,8 +1073,8 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.mode">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">mode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.mode" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.mode">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.mode" title="Permalink to this definition"></a></dt>
 <dd><p>Find the mode of a list</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1123,7 +1085,7 @@ iv). normalized waveforms and their</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>list_mode:      float</dt><dd><p>The mode of the list.</p>
+<dt>list_mode:  float</dt><dd><p>The mode of the list.</p>
 </dd>
 </dl>
 </dd>
@@ -1131,8 +1093,8 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.norm">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">norm</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.norm" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.norm">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#norm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.norm" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the norm of a vector.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1153,8 +1115,8 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.olap">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">olap</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#olap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.olap" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.olap">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">olap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#olap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.olap" title="Permalink to this definition"></a></dt>
 <dd><p>Calcuate the overlap between two data vectors weighted by the given psd.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1168,7 +1130,7 @@ iv). normalized waveforms and their</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>overlap:        float</dt><dd><p>The overlap divided by the psd.</p>
+<dt>overlap:    float</dt><dd><p>The overlap divided by the psd.</p>
 </dd>
 </dl>
 </dd>
@@ -1176,8 +1138,8 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.plot">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">plot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.plot" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.plot">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'no'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.plot" title="Permalink to this definition"></a></dt>
 <dd><p>A Basic plotting function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1192,7 +1154,7 @@ iv). normalized waveforms and their</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>1:      (int)</dt><dd></dd>
+<dt>1:  (int)</dt><dd></dd>
 <dt>plots:  figures to stdout and disk</dt><dd><p>Displays the plot, and Saves with the filename provided.</p>
 </dd>
 </dl>
@@ -1201,23 +1163,30 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.pmmatch_wfs">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">pmmatch_wfs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#pmmatch_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.pmmatch_wfs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.pmmatch_wfs">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">pmmatch_wfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#pmmatch_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.pmmatch_wfs" title="Permalink to this definition"></a></dt>
 <dd><p>Match function for post merger waveforms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>waveforms:      a list of pairs</strong></dt><dd><p>The pairs of waveforms to match in the format [[wf1_pair1, wf2_pair2], [wf1_pair_2, wf2_pair2], …].</p>
+<dt><strong>waveforms:  a list of pairs</strong></dt><dd><p>The pairs of waveforms to match
+in the format
+[[wf1_pair1, wf2_pair2], [wf1_pair_2, wf2_pair2], …].</p>
 </dd>
 <dt><strong>offset: int</strong></dt><dd><p>Number of indices to shift the data.</p>
 </dd>
-<dt><strong>crop:   string</strong></dt><dd><p>A string to decide how to crop the waveforms. The available Options are 1. <cite>signal</cite> 2. <cite>template</cite> 3. <cite>both</cite>.</p>
+<dt><strong>crop:   string</strong></dt><dd><p>A string to decide how to crop the waveforms.
+The available Options are 1. <cite>signal</cite> 2. <cite>template</cite> 3. <cite>both</cite>.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>matchdet:       a list of dicts</dt><dd><p>A list of dictionaries. Each contains 1. the waveform pair, 2. the match score, 3. the shift index. to maximize the match.</p>
+<dt>matchdet:   a list of dicts</dt><dd><p>A list of dictionaries.
+Each contains
+1. the waveform pair,
+2. the match score,
+3. the shift index. to maximize the match.</p>
 </dd>
 </dl>
 </dd>
@@ -1225,8 +1194,8 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.progressbar">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">progressbar</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">present_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'yes'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#progressbar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.progressbar" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.progressbar">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">progressbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">present_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'yes'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#progressbar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.progressbar" title="Permalink to this definition"></a></dt>
 <dd><p>Display the progress bar to std out from present_count and total_count.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1247,9 +1216,11 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.removeNans">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">removeNans</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#removeNans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.removeNans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove Nans from (xdata,ydata) data pair. Removes Nans in xdata and ydata and the corresponding y and x entries.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.removeNans">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">removeNans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#removeNans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.removeNans" title="Permalink to this definition"></a></dt>
+<dd><p>Remove Nans from (xdata,ydata) data pair.
+Removes Nans in xdata and ydata and the
+corresponding y and x entries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1261,8 +1232,8 @@ iv). normalized waveforms and their</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>x_no_nan:       1d array</dt><dd></dd>
-<dt>y_no_nan:       1d,array</dt><dd><p>The data pair x,y with Nans removed.</p>
+<dt>x_no_nan:   1d array</dt><dd></dd>
+<dt>y_no_nan:   1d,array</dt><dd><p>The data pair x,y with Nans removed.</p>
 </dd>
 </dl>
 </dd>
@@ -1270,21 +1241,23 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.removezeros">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">removezeros</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#removezeros"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.removezeros" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove zeros from the input waveform from either sides. Similar to startend but return the truncated array.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.removezeros">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">removezeros</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#removezeros"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.removezeros" title="Permalink to this definition"></a></dt>
+<dd><p>Remove zeros from the input waveform from either sides.
+Similar to startend but return the truncated array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>data:   1d array or a pycbc TimeSeries</strong></dt><dd><p>The input waveform.</p>
 </dd>
-<dt><strong>delta_t:        float, optional</strong></dt><dd><p>The time stepping.</p>
+<dt><strong>delta_t:    float, optional</strong></dt><dd><p>The time stepping.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>short_ts:       a list</dt><dd><p>A list containing  waveforms with zeros removed on either sides, the start and end indices in the format [short_ts, [start_index, end_index]]</p>
+<dt>short_ts:   a list</dt><dd><p>A list containing  waveforms with zeros removed on either sides,
+the start and end indices in the format [short_ts, [start_index, end_index]]</p>
 </dd>
 </dl>
 </dd>
@@ -1292,9 +1265,10 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.resample">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">resample</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interp_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.resample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to generate timeseries out of the given interpolated data function, epoch,sampling frequency, length(duration).</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.resample">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">resample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interp_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#resample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.resample" title="Permalink to this definition"></a></dt>
+<dd><p>Function to generate timeseries out of the given interpolated data
+function, epoch,sampling frequency, length(duration).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1302,7 +1276,7 @@ iv). normalized waveforms and their</p>
 </dd>
 <dt><strong>epoch:  float</strong></dt><dd><p>The starting point in time.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>New grid spacing to be sampled at.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>New grid spacing to be sampled at.</p>
 </dd>
 <dt><strong>length: int</strong></dt><dd><p>The duration of x axis.</p>
 </dd>
@@ -1318,8 +1292,8 @@ iv). normalized waveforms and their</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.resample_wfs">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">resample_wfs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">both_time_axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">both_waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#resample_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.resample_wfs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.resample_wfs">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">resample_wfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">both_time_axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">both_waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#resample_wfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.resample_wfs" title="Permalink to this definition"></a></dt>
 <dd><p>Resample the waveform pairs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1345,8 +1319,8 @@ A float value can be provided by the user as well.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.roll">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">roll</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_roll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#roll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.roll" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.roll">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">roll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_roll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#roll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.roll" title="Permalink to this definition"></a></dt>
 <dd><p>Roll the data circularly. Circular counterpart of shiftmatched function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1359,7 +1333,7 @@ A float value can be provided by the user as well.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>rolled_waveform:        1d array or(pycbc TimeSeries object</dt><dd><p>The rolled wavefrom.</p>
+<dt>rolled_waveform:    1d array or(pycbc TimeSeries object</dt><dd><p>The rolled wavefrom.</p>
 </dd>
 </dl>
 </dd>
@@ -1367,8 +1341,8 @@ A float value can be provided by the user as well.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.save_obj">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">save_obj</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#save_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.save_obj" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.save_obj">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">save_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#save_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.save_obj" title="Permalink to this definition"></a></dt>
 <dd><p>A function to save python objects to disk using pickle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1391,16 +1365,18 @@ A float value can be provided by the user as well.</p>
 </dl>
 <p class="rubric">Notes</p>
 <p>Protocols:</p>
-<p>0                                               : Text
-5                                               : Binary</p>
+<p>0                       : Text
+5                       : Binary</p>
 <p>See the man page of pickle for more details.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.shiftmatched">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">shiftmatched</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#shiftmatched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.shiftmatched" title="Permalink to this definition">¶</a></dt>
-<dd><p>Timeshift an array. IMP: After timeshifting, the original length of the array is retained by clipping last(first) when ind &gt; 0(ind &lt;0) <cite>ind</cite> number of points!!.
-Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) initially at the end.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.shiftmatched">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">shiftmatched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hdat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#shiftmatched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.shiftmatched" title="Permalink to this definition"></a></dt>
+<dd><p>Timeshift an array. IMP: After timeshifting, the original
+length of the array is retained by clipping last(first) when
+ind &gt; 0(ind &lt;0) <cite>ind</cite> number of points!!. Make sure the input array
+already has number of zeros z &gt; ind (z&lt;ind) initially at the end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1408,13 +1384,14 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd>
 <dt><strong>ind:    int</strong></dt><dd><p>The numper of places to shift the input waveform.</p>
 </dd>
-<dt><strong>delta_t:        int</strong></dt><dd><p>the grid spacing in time.</p>
+<dt><strong>delta_t:    int</strong></dt><dd><p>the grid spacing in time.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>shifted_wf:     a pycbc TimeSeries object</dt><dd><p>The waveform array of same length timeshifted by <cite>ind</cite> units by prepending zeros.</p>
+<dt>shifted_wf: a pycbc TimeSeries object</dt><dd><p>The waveform array of same length timeshifted by
+<cite>ind</cite> units by prepending zeros.</p>
 </dd>
 </dl>
 </dd>
@@ -1422,8 +1399,8 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.shorten">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">shorten</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#shorten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.shorten" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.shorten">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">shorten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#shorten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.shorten" title="Permalink to this definition"></a></dt>
 <dd><p>Shorten an array given the start and end points.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1434,13 +1411,13 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd>
 <dt><strong>end:    int</strong></dt><dd><p>The end index of the data.</p>
 </dd>
-<dt><strong>delta_t:        float, optional</strong></dt><dd><p>The time stepping.</p>
+<dt><strong>delta_t:    float, optional</strong></dt><dd><p>The time stepping.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>short_ts:       a pycbc TimeSeries object</dt><dd><p>The shortened data, clipped before start and after end.</p>
+<dt>short_ts:   a pycbc TimeSeries object</dt><dd><p>The shortened data, clipped before start and after end.</p>
 </dd>
 </dl>
 </dd>
@@ -1448,21 +1425,24 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.simplematch_wfs_old">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">simplematch_wfs_old</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#simplematch_wfs_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.simplematch_wfs_old" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.simplematch_wfs_old">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">simplematch_wfs_old</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#simplematch_wfs_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.simplematch_wfs_old" title="Permalink to this definition"></a></dt>
 <dd><p>Simple match the given waveforms. Does not clip the waveforms at either ends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>waveforms:      list</strong></dt><dd><p>A list of pairs [waveform A, waveform B] of waveforms.</p>
+<dt><strong>waveforms:  list</strong></dt><dd><p>A list of pairs [waveform A, waveform B] of waveforms.</p>
 </dd>
-<dt><strong>delta_t:        float, optional</strong></dt><dd><p>The time stepping.</p>
+<dt><strong>delta_t:    float, optional</strong></dt><dd><p>The time stepping.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>match:  list</dt><dd><p>A list of dicts [{ Aligned waveforms} , {match score (float), shift (number)}] containing the match information for all the input waveform pairs.</p>
+<dt>match:  list</dt><dd><p>A list of dicts [{ Aligned waveforms} ,
+{match score (float), shift (number)}]
+containing the match information for all
+the input waveform pairs.</p>
 </dd>
 </dl>
 </dd>
@@ -1472,9 +1452,10 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.smoothen">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">smoothen</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xdata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#smoothen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.smoothen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use the Savitzky-Golay Filter to smoothen the data. Show the plots if plot=`yes`.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.smoothen">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">smoothen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xdata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#smoothen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.smoothen" title="Permalink to this definition"></a></dt>
+<dd><p>Use the Savitzky-Golay Filter to smoothen the data.
+Show the plots if plot=`yes`.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
@@ -1484,9 +1465,11 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd>
 <dt><strong>order:  int</strong></dt><dd><p>The order of the polynomial used for interpolation.</p>
 </dd>
-<dt><strong>x:      1d array, optional.</strong></dt><dd><p>The 1D list or numpy array, to plot the smoothened function. Only required if to_plot=True.</p>
+<dt><strong>x:  1d array, optional.</strong></dt><dd><p>The 1D list or numpy array, to plot
+the smoothened function. Only required
+if to_plot=True.</p>
 </dd>
-<dt><strong>to_plot:        bool</strong></dt><dd><p>True or False. Whether or not to display the plot.</p>
+<dt><strong>to_plot:    bool</strong></dt><dd><p>True or False. Whether or not to display the plot.</p>
 </dd>
 </dl>
 </dd>
@@ -1500,8 +1483,8 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.startend">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">startend</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#startend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.startend" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.startend">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">startend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#startend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.startend" title="Permalink to this definition"></a></dt>
 <dd><p>Identify the start and endpoints of the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1512,23 +1495,32 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>start_index, end_index: int (2)</dt><dd><p>The pair of indices denoting the start and end points of an array</p>
+<dt>start_index, end_index: int (2)</dt><dd><p>The pair of indices denoting
+the start and end points of an array</p>
 </dd>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The starting and ending index of the non-zero part
+of the data is the identification criterion.
+Requires the data to be exactly zero outside
+a certain domain.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.taper">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">taper</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">150</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#taper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.taper" title="Permalink to this definition">¶</a></dt>
-<dd><p>A method to taper and append additional zeros at either ends, using the <cite>taper</cite> function of the pycbc TimeSeries object.</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.taper">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">taper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">150</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#taper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.taper" title="Permalink to this definition"></a></dt>
+<dd><p>A method to taper and append additional zeros
+at either ends, using the <cite>taper</cite> function of
+the pycbc TimeSeries object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>data:   1d array or a pycbc TimeSeries</strong></dt><dd><p>The waveform data as list or numpy array or pycbc timeseries.</p>
+<dt><strong>data:   1d array or a pycbc TimeSeries</strong></dt><dd><p>The waveform data as list or numpy
+array or pycbc timeseries.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The timestepping.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The timestepping.</p>
 </dd>
 <dt><strong>zeros:  int</strong></dt><dd><p>The number of zeros to be added.</p>
 </dd>
@@ -1536,7 +1528,8 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>tapered_data:   1d array or a pycbc TimeSeries object</dt><dd><p>The waveform data tapered and zero padded. Returns a pycbc TimeSeries object.</p>
+<dt>tapered_data:   1d array or a pycbc TimeSeries object</dt><dd><p>The waveform data tapered and zero padded.
+Returns a pycbc TimeSeries object.</p>
 </dd>
 </dl>
 </dd>
@@ -1546,23 +1539,23 @@ Make sure the input array already has number of zeros z &gt; ind (z&lt;ind) init
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.taper_tanh">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">taper_tanh</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#taper_tanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.taper_tanh" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.taper_tanh">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">taper_tanh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waveform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#taper_tanh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.taper_tanh" title="Permalink to this definition"></a></dt>
 <dd><p>Taper a waveform with a <span class="math notranslate nohighlight">\(tanh\)</span> function
 at either ends</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>waveform:        1d array</strong></dt><dd><p>A 1d array of waveform data.</p>
+<dt><strong>waveform:    1d array</strong></dt><dd><p>A 1d array of waveform data.</p>
 </dd>
-<dt><strong>delta_t:         float, optional</strong></dt><dd><p>The time stepping <cite>delta_t</cite>.
+<dt><strong>delta_t:     float, optional</strong></dt><dd><p>The time stepping <cite>delta_t</cite>.
 Optional if <cite>time_axis</cite> is given.</p>
 </dd>
-<dt><strong>percent:         int, optional</strong></dt><dd><p>The percent of data to taper. This
+<dt><strong>percent:     int, optional</strong></dt><dd><p>The percent of data to taper. This
 is equally distributed on either
 sides of the array. Defaults to 10.</p>
 </dd>
-<dt><strong>sides:           str</strong></dt><dd><blockquote>
+<dt><strong>sides:       str</strong></dt><dd><blockquote>
 <div><p>A string indicating which sides to taper.
 <cite>beg</cite> tapers the beginning, <cite>end</cite> tapers the end</p>
 </div></blockquote>
@@ -1579,8 +1572,8 @@ of the tapered waveform.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.taperlengtheq">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">taperlengtheq</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#taperlengtheq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.taperlengtheq" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.taperlengtheq">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">taperlengtheq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#taperlengtheq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.taperlengtheq" title="Permalink to this definition"></a></dt>
 <dd><p>Taper and equalize the lengths of two arrays.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1589,13 +1582,15 @@ of the tapered waveform.</p>
 </dd>
 <dt><strong>data_b: list</strong></dt><dd><p>The input waveform B.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The time steping.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The time steping.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>equalized_signals:      list</dt><dd><p>The Tapered, length equalized waveforms data_a and data_b, and a flag denoting which waveform was changed, <cite>a</cite> or <cite>b</cite>.</p>
+<dt>equalized_signals:  list</dt><dd><p>The Tapered, length equalized waveforms
+data_a and data_b, and a flag denoting
+which waveform was changed, <cite>a</cite> or <cite>b</cite>.</p>
 </dd>
 </dl>
 </dd>
@@ -1603,13 +1598,13 @@ of the tapered waveform.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.totalmass">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">totalmass</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chirp_mass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#totalmass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.totalmass" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.totalmass">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">totalmass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chirp_mass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#totalmass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.totalmass" title="Permalink to this definition"></a></dt>
 <dd><p>Find total mass from mass ratio and chirpmass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>mass_ratio:     float</strong></dt><dd><p>The mass ratio of the system.</p>
+<dt><strong>mass_ratio: float</strong></dt><dd><p>The mass ratio of the system.</p>
 </dd>
 <dt><strong>mchirp: float</strong></dt><dd><p>The chirp mass of the system.</p>
 </dd>
@@ -1617,7 +1612,7 @@ of the tapered waveform.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>total_mass:     float</dt><dd><p>The total mass of the system.</p>
+<dt>total_mass: float</dt><dd><p>The total mass of the system.</p>
 </dd>
 </dl>
 </dd>
@@ -1625,16 +1620,38 @@ of the tapered waveform.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.xtract_camp">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">xtract_camp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata_p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#xtract_camp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.xtract_camp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given real and imaginary parts of a complex timeseries, extract the amplitude of the complex data vector : (tsdata_p + i * tsdata_x)</p>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.unwrap_phase">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">unwrap_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phi0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#unwrap_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.unwrap_phase" title="Permalink to this definition"></a></dt>
+<dd><p>Unwrap the phase by finding turning points in phi0.
+Finding turning points for unwrapping arctan2 function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>tsdata_p:       1d array / a pycbc TimeSeries</strong></dt><dd></dd>
-<dt><strong>tsdata_x:       1d array / a pycbc TimeSeries</strong></dt><dd><p>The plus and cross polarized components of the waveforms.</p>
+<dt><strong>phi0</strong><span class="classifier">1darray</span></dt><dd><p>The wrapped phase which takes values in the
+range (0, 2pi).</p>
 </dd>
-<dt><strong>to_plot:        bool</strong></dt><dd><p>True or False. Whether to plot the data or not</p>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>phic</strong><span class="classifier">1darray</span></dt><dd><p>The unwrapped phase.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="waveformtools.waveformtools.xtract_camp">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">xtract_camp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata_p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#xtract_camp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.xtract_camp" title="Permalink to this definition"></a></dt>
+<dd><p>Given real and imaginary parts of a complex timeseries,
+extract the amplitude of the complex
+data vector : (tsdata_p + i * tsdata_x)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>tsdata_p:   1d array / a pycbc TimeSeries</strong></dt><dd></dd>
+<dt><strong>tsdata_x:   1d array / a pycbc TimeSeries</strong></dt><dd><p>The plus and cross polarized components of the waveforms.</p>
+</dd>
+<dt><strong>to_plot:    bool</strong></dt><dd><p>True or False. Whether to plot the data or not</p>
 </dd>
 </dl>
 </dd>
@@ -1648,22 +1665,25 @@ of the tapered waveform.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.xtract_camp_phase">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">xtract_camp_phase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#xtract_camp_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.xtract_camp_phase" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.xtract_camp_phase">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">xtract_camp_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata_2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#xtract_camp_phase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.xtract_camp_phase" title="Permalink to this definition"></a></dt>
 <dd><p>Wrapper for extracting the amplitude and the phase of the complex vector.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>tsdata_1:       1d array or pycbc TimeSeries object</strong></dt><dd></dd>
-<dt><strong>tsdata_2:       1d array or pycbc TimeSeries object</strong></dt><dd><p>The two input waveforms as timeseries vectors, the plus and cross polarized components.</p>
+<dt><strong>tsdata_1:   1d array or pycbc TimeSeries object</strong></dt><dd></dd>
+<dt><strong>tsdata_2:   1d array or pycbc TimeSeries object</strong></dt><dd><p>The two input waveforms as timeseries
+vectors, the plus and cross polarized
+components.</p>
 </dd>
-<dt><strong>delta_t:        float</strong></dt><dd><p>The timestepping delta_t.</p>
+<dt><strong>delta_t:    float</strong></dt><dd><p>The timestepping delta_t.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt>amplitude:      1d array</dt><dd><p>A list containing complex amplitude (list) and phase (list).</p>
+<dt>amplitude:  1d array</dt><dd><p>A list containing complex amplitude
+(list) and phase (list).</p>
 </dd>
 </dl>
 </dd>
@@ -1671,18 +1691,18 @@ of the tapered waveform.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="waveformtools.waveformtools.xtract_cphase">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></code><code class="sig-name descname"><span class="pre">xtract_cphase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata_p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#xtract_cphase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.xtract_cphase" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.waveformtools.xtract_cphase">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.waveformtools.</span></span><span class="sig-name descname"><span class="pre">xtract_cphase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsdata_p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tsdata_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools/waveformtools.html#xtract_cphase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.waveformtools.xtract_cphase" title="Permalink to this definition"></a></dt>
 <dd><p>Given real and imaginary parts of a complex timeseries, extract the phase of the waveform :arctan_(Img(data)/Re(data))</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>tsdata_p:       1d array / a pycbc TimeSeries</strong></dt><dd></dd>
-<dt><strong>tsdata_x:       1d array / a pycbc TimeSeries</strong></dt><dd><p>The plus and cross polarized components of the waveforms.</p>
+<dt><strong>tsdata_p:   1d array / a pycbc TimeSeries</strong></dt><dd></dd>
+<dt><strong>tsdata_x:   1d array / a pycbc TimeSeries</strong></dt><dd><p>The plus and cross polarized components of the waveforms.</p>
 </dd>
-<dt><strong>delta_t:        float, optional</strong></dt><dd><p>The time step. Overrides the timestep from pycbc TS object if given.</p>
+<dt><strong>delta_t:    float, optional</strong></dt><dd><p>The time step. Overrides the timestep from pycbc TS object if given.</p>
 </dd>
-<dt><strong>to_plot:        bool, optional</strong></dt><dd><p>True or False. Whether to plot the data or not</p>
+<dt><strong>to_plot:    bool, optional</strong></dt><dd><p>True or False. Whether to plot the data or not</p>
 </dd>
 </dl>
 </dd>
@@ -1699,63 +1719,44 @@ of the tapered waveform.</p>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../simulations.html" class="btn btn-neutral float-right" title="Simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="waveformtools.transforms.html" class="btn btn-neutral float-left" title="waveformtools.transforms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="waveformtools.waveforms.html" class="btn btn-neutral float-left" title="waveformtools.waveforms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../simulations.html" class="btn btn-neutral float-right" title="Simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2020, Vaishak Prasad
-
-    </p>
+    <p>&#169; Copyright 2020, Vaishak Prasad.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
     <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    ga('create', 'G-XXXXXXXXXX', 'auto');
-    ga('send', 'pageview');
-    </script>
-
-    
-   
+      gtag('config', 'G-XXXXXXXXXX', {
+          'anonymize_ip': false,
+      });
+    </script> 
 
 </body>
 </html>

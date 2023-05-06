@@ -1,70 +1,37 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>waveformtools.extrapolate &mdash; waveformtools 2022-05-03 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link href="../../_static/css/my_theme.css" rel="stylesheet" type="text/css">
 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search"  style="background: green" >
-          
-
-          
+        <div class="wy-side-nav-search"  style="background: blue" >
             <a href="../../index.html" class="icon icon-home"> waveformtools
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022-05-03
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -72,88 +39,42 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p><span class="caption-text">Contents:</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Package API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../transforms.html">Transforms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../waveforms.html">Waveforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../waveformtools.html">Waveformtools</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: blue" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">waveformtools</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-        
-          <li><a href="../waveformtools.html">waveformtools</a> &raquo;</li>
-        
-      <li>waveformtools.extrapolate</li>
-    
-    
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../waveformtools.html">waveformtools</a></li>
+      <li class="breadcrumb-item active">waveformtools.extrapolate</li>
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for waveformtools.extrapolate</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Methods for waveform extrapolation. &quot;&quot;&quot;</span>
 
@@ -163,54 +84,55 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">waveformtools</span>
+
 <span class="c1">###############################################</span>
 <span class="c1"># Basic utilities</span>
 <span class="c1">###############################################</span>
 
 
 <div class="viewcode-block" id="r_to_ra_conversion"><a class="viewcode-back" href="../../_autosummary/waveformtools.extrapolate.html#waveformtools.extrapolate.r_to_ra_conversion">[docs]</a><span class="k">def</span> <span class="nf">r_to_ra_conversion</span><span class="p">(</span><span class="n">coord_radius</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">spin</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Convert the isotropic co-ordinate radius parameter `r` in the ETK simulations</span>
-<span class="sd">		into the approximate areal radius.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the isotropic co-ordinate radius parameter `r` in the ETK simulations</span>
+<span class="sd">            into the approximate areal radius.</span>
 
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 
-<span class="sd">	coord_radius:	float</span>
-<span class="sd">					The coordinate radius in the Einstein toolkit</span>
+<span class="sd">    coord_radius:	float</span>
+<span class="sd">                                    The coordinate radius in the Einstein toolkit</span>
 
-<span class="sd">	mass:	float, optional</span>
-<span class="sd">			The sum of the quasi-local horizon (Christodolou) masses of the black holes.</span>
-<span class="sd">			Defaults to 1.</span>
+<span class="sd">    mass:	float, optional</span>
+<span class="sd">                    The sum of the quasi-local horizon (Christodolou) masses of the black holes.</span>
+<span class="sd">                    Defaults to 1.</span>
 
-<span class="sd">	spin:	float, optional</span>
-<span class="sd">			The magnitude of the spin of the system, as approximated by a single Kerr black hole</span>
-<span class="sd">			far away from the system. Defaults to 0.</span>
-
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-
-<span class="sd">	areal_radius:	float</span>
-<span class="sd">					The appriximate areal radius of the sphere.</span>
+<span class="sd">    spin:	float, optional</span>
+<span class="sd">                    The magnitude of the spin of the system, as approximated by a single Kerr black hole</span>
+<span class="sd">                    far away from the system. Defaults to 0.</span>
 
 
-<span class="sd">	Notes</span>
-<span class="sd">	-----</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 
-<span class="sd">	Assumes that the system interoir to the sphere at co-ordinate radius `r_coord` is well approximated by a</span>
-<span class="sd">	Kerr black hole.</span>
+<span class="sd">    areal_radius:	float</span>
+<span class="sd">                                    The appriximate areal radius of the sphere.</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    Assumes that the system interoir to the sphere at co-ordinate radius `r_coord` is well approximated by a</span>
+<span class="sd">    Kerr black hole.</span>
 
 
 
-<span class="sd">	References</span>
-<span class="sd">	----------</span>
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
 
-<span class="sd">	Nakano et al., (2015),	Phys. Rev. D 91, 104022, in-text below Eq.[30].</span>
-<span class="sd">	&quot;&quot;&quot;</span>
+<span class="sd">    Nakano et al., (2015),	Phys. Rev. D 91, 104022, in-text below Eq.[30].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-	<span class="n">areal_radius</span> <span class="o">=</span> <span class="n">coord_radius</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">mass</span> <span class="o">+</span> <span class="n">spin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">coord_radius</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">mass</span> <span class="o">-</span> <span class="n">spin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">coord_radius</span><span class="p">))</span>
+    <span class="n">areal_radius</span> <span class="o">=</span> <span class="n">coord_radius</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">mass</span> <span class="o">+</span> <span class="n">spin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">coord_radius</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">mass</span> <span class="o">-</span> <span class="n">spin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">coord_radius</span><span class="p">))</span>
 
-	<span class="k">return</span> <span class="n">areal_radius</span></div>
+    <span class="k">return</span> <span class="n">areal_radius</span></div>
 
 
 <span class="c1">############################################################################</span>
@@ -219,294 +141,273 @@
 
 
 <div class="viewcode-block" id="waveextract_to_inf_perturbative_twop5_order"><a class="viewcode-back" href="../../_autosummary/waveformtools.extrapolate.html#waveformtools.extrapolate.waveextract_to_inf_perturbative_twop5_order">[docs]</a><span class="k">def</span> <span class="nf">waveextract_to_inf_perturbative_twop5_order</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">areal_radius</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">spin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ell</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">emm</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Extract a numerical waveform to null infinity using perturbative techniques. This is :</span>
-<span class="sd">		* accurate to second order in :math:`1/r`.</span>
-<span class="sd">		* accurate to first order in Kerr mass and spin.</span>
-<span class="sd">		* corrects for spheroidal harmonics</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract a numerical waveform to null infinity using perturbative techniques. This is :</span>
+<span class="sd">            * accurate to second order in :math:`1/r`.</span>
+<span class="sd">            * accurate to first order in Kerr mass and spin.</span>
+<span class="sd">            * corrects for spheroidal harmonics</span>
 
 
 
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 
-<span class="sd">	rPsi4_rlm:	1d array</span>
-<span class="sd">				The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array</span>
+<span class="sd">    rPsi4_rlm:	1d array</span>
+<span class="sd">                            The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array</span>
 
-<span class="sd">	delta_t:	float</span>
-<span class="sd">				The time stepping.</span>
-
-
-<span class="sd">	areal_radius:	1d array</span>
-<span class="sd">					The areal radius of the extraction sphere.</span>
+<span class="sd">    delta_t:	float</span>
+<span class="sd">                            The time stepping.</span>
 
 
-<span class="sd">	mass:	float</span>
-<span class="sd">			The total horizon mass of the system.</span>
-
-<span class="sd">	spin:	float, optional</span>
-<span class="sd">			The effective spin of the spacetime. Defaults to 0.</span>
-
-<span class="sd">	ell:	int</span>
-<span class="sd">			The polar quantum number :math:`\\ell`.</span>
-
-<span class="sd">	emm:	int</span>
-<span class="sd">			The azimuthal quantum number :math:`m`.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-
-<span class="sd">	rPsi4_inflm:	1d array</span>
-<span class="sd">				The waveform extracted to null infninity :math:`\\mathcal{I}^+`</span>
+<span class="sd">    areal_radius:	1d array</span>
+<span class="sd">                                    The areal radius of the extraction sphere.</span>
 
 
-<span class="sd">	References</span>
-<span class="sd">	----------</span>
+<span class="sd">    mass:	float</span>
+<span class="sd">                    The total horizon mass of the system.</span>
 
-<span class="sd">	This implements the definition in Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].</span>
+<span class="sd">    spin:	float, optional</span>
+<span class="sd">                    The effective spin of the spacetime. Defaults to 0.</span>
+
+<span class="sd">    ell:	int</span>
+<span class="sd">                    The polar quantum number :math:`\\ell`.</span>
+
+<span class="sd">    emm:	int</span>
+<span class="sd">                    The azimuthal quantum number :math:`m`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    rPsi4_inflm:	1d array</span>
+<span class="sd">                            The waveform extracted to null infninity :math:`\\mathcal{I}^+`</span>
 
 
-<span class="sd">	&quot;&quot;&quot;</span>
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
 
-	<span class="kn">from</span> <span class="nn">waveformtools.integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
-	<span class="kn">from</span> <span class="nn">waveformtools.differentiate</span> <span class="kn">import</span> <span class="n">differentiate_cwaveform</span>
-	<span class="c1"># Timeaxis</span>
+<span class="sd">    This implements the definition in Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].</span>
 
-	<span class="n">timeaxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
-	<span class="c1"># Assigning the terms. Each set of subterms in a pair of paranthesis is a term.</span>
-	<span class="n">term_1_prefac</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">/</span> <span class="n">areal_radius</span>
-	<span class="n">subterm_1_1</span> <span class="o">=</span> <span class="n">rPsi4_rlm</span>
-	<span class="n">subterm_1_2_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="p">)</span>
-	<span class="n">subterm_1_2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fixed_frequency_integrator</span><span class="p">(</span>
-		<span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mf">0.015</span>
-	<span class="p">)</span>  <span class="c1"># Integral_rPsi4_rlm</span>
-	<span class="n">subterm_1_3_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ell</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">areal_radius</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-	<span class="n">subterm_1_3</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fixed_frequency_integrator</span><span class="p">(</span>
-		<span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mf">0.015</span>
-	<span class="p">)</span>  <span class="c1"># Double_integral_rPsi4_rlm</span>
 
-	<span class="n">term_1</span> <span class="o">=</span> <span class="n">term_1_prefac</span> <span class="o">*</span> <span class="p">(</span><span class="n">subterm_1_1</span> <span class="o">+</span> <span class="n">subterm_1_2_prefac</span> <span class="o">*</span> <span class="n">subterm_1_2</span> <span class="o">+</span> <span class="n">subterm_1_3_prefac</span> <span class="o">*</span> <span class="n">subterm_1_3</span><span class="p">)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-	<span class="n">term_2_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">spin</span> <span class="o">/</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-		<span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="n">emm</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="n">emm</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ell</span> <span class="o">+</span> <span class="mi">3</span><span class="p">))</span>
-	<span class="p">)</span>
-	<span class="n">subterm_2_1</span> <span class="o">=</span> <span class="n">differentiate_cwaveform</span><span class="p">(</span><span class="n">timeaxis</span><span class="p">,</span> <span class="n">rPsi4_rlm</span><span class="p">)</span>	<span class="c1"># Differential of waveform</span>
-	<span class="n">subterm_2_2_prefac</span> <span class="o">=</span> <span class="o">-</span><span class="n">ell</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="n">areal_radius</span>
-	<span class="n">subterm_2_2</span> <span class="o">=</span> <span class="n">subterm_1_1</span>
+    <span class="kn">from</span> <span class="nn">waveformtools.integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
+    <span class="kn">from</span> <span class="nn">waveformtools.differentiate</span> <span class="kn">import</span> <span class="n">differentiate_cwaveform</span>
 
-	<span class="n">term_2</span> <span class="o">=</span> <span class="n">term_2_prefac</span> <span class="o">*</span> <span class="p">(</span><span class="n">subterm_2_1</span> <span class="o">+</span> <span class="n">subterm_2_2_prefac</span> <span class="o">*</span> <span class="n">subterm_2_2</span><span class="p">)</span>
+    <span class="c1"># Timeaxis</span>
 
-	<span class="n">term_3_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">spin</span> <span class="o">/</span> <span class="n">ell</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-		<span class="p">((</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="n">emm</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span><span class="n">emm</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-	<span class="p">)</span>
-	<span class="n">subterm_3_1</span> <span class="o">=</span> <span class="n">subterm_2_1</span>
-	<span class="n">subterm_3_2_prefac</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">areal_radius</span>
-	<span class="n">subterm_3_2</span> <span class="o">=</span> <span class="n">subterm_1_1</span>
+    <span class="n">timeaxis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">)</span>
+    <span class="c1"># Assigning the terms. Each set of subterms in a pair of paranthesis is a term.</span>
+    <span class="n">term_1_prefac</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">/</span> <span class="n">areal_radius</span>
+    <span class="n">subterm_1_1</span> <span class="o">=</span> <span class="n">rPsi4_rlm</span>
+    <span class="n">subterm_1_2_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="p">)</span>
+    <span class="n">subterm_1_2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fixed_frequency_integrator</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mf">0.015</span><span class="p">)</span>  <span class="c1"># Integral_rPsi4_rlm</span>
+    <span class="n">subterm_1_3_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ell</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">subterm_1_3</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fixed_frequency_integrator</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mf">0.015</span><span class="p">)</span>  <span class="c1"># Double_integral_rPsi4_rlm</span>
 
-	<span class="n">term_3</span> <span class="o">=</span> <span class="n">term_3_prefac</span> <span class="o">*</span> <span class="p">(</span><span class="n">subterm_3_1</span> <span class="o">+</span> <span class="n">subterm_3_2_prefac</span> <span class="o">*</span> <span class="n">subterm_3_2</span><span class="p">)</span>
+    <span class="n">term_1</span> <span class="o">=</span> <span class="n">term_1_prefac</span> <span class="o">*</span> <span class="p">(</span><span class="n">subterm_1_1</span> <span class="o">+</span> <span class="n">subterm_1_2_prefac</span> <span class="o">*</span> <span class="n">subterm_1_2</span> <span class="o">+</span> <span class="n">subterm_1_3_prefac</span> <span class="o">*</span> <span class="n">subterm_1_3</span><span class="p">)</span>
 
-	<span class="n">rPsi4_inflm</span> <span class="o">=</span> <span class="n">term_1</span> <span class="o">+</span> <span class="n">term_2</span> <span class="o">+</span> <span class="n">term_3</span>
+    <span class="n">term_2_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">spin</span> <span class="o">/</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="n">emm</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="n">emm</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ell</span> <span class="o">+</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">subterm_2_1</span> <span class="o">=</span> <span class="n">differentiate_cwaveform</span><span class="p">(</span><span class="n">timeaxis</span><span class="p">,</span> <span class="n">rPsi4_rlm</span><span class="p">)</span>  <span class="c1"># Differential of waveform</span>
+    <span class="n">subterm_2_2_prefac</span> <span class="o">=</span> <span class="o">-</span><span class="n">ell</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="n">areal_radius</span>
+    <span class="n">subterm_2_2</span> <span class="o">=</span> <span class="n">subterm_1_1</span>
 
-	<span class="k">return</span> <span class="n">rPsi4_inflm</span></div>
+    <span class="n">term_2</span> <span class="o">=</span> <span class="n">term_2_prefac</span> <span class="o">*</span> <span class="p">(</span><span class="n">subterm_2_1</span> <span class="o">+</span> <span class="n">subterm_2_2_prefac</span> <span class="o">*</span> <span class="n">subterm_2_2</span><span class="p">)</span>
+
+    <span class="n">term_3_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">spin</span> <span class="o">/</span> <span class="n">ell</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="p">((</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="n">emm</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="n">emm</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">subterm_3_1</span> <span class="o">=</span> <span class="n">subterm_2_1</span>
+    <span class="n">subterm_3_2_prefac</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">areal_radius</span>
+    <span class="n">subterm_3_2</span> <span class="o">=</span> <span class="n">subterm_1_1</span>
+
+    <span class="n">term_3</span> <span class="o">=</span> <span class="n">term_3_prefac</span> <span class="o">*</span> <span class="p">(</span><span class="n">subterm_3_1</span> <span class="o">+</span> <span class="n">subterm_3_2_prefac</span> <span class="o">*</span> <span class="n">subterm_3_2</span><span class="p">)</span>
+
+    <span class="n">rPsi4_inflm</span> <span class="o">=</span> <span class="n">term_1</span> <span class="o">+</span> <span class="n">term_2</span> <span class="o">+</span> <span class="n">term_3</span>
+
+    <span class="k">return</span> <span class="n">rPsi4_inflm</span></div>
 
 
 <div class="viewcode-block" id="waveextract_to_inf_perturbative_two_order"><a class="viewcode-back" href="../../_autosummary/waveformtools.extrapolate.html#waveformtools.extrapolate.waveextract_to_inf_perturbative_two_order">[docs]</a><span class="k">def</span> <span class="nf">waveextract_to_inf_perturbative_two_order</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">areal_radius</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ell</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Extract a numerical waveform to null infinity using perturbative techniques. This is :</span>
-<span class="sd">		* accurate to second order in :math:`1/r`.</span>
-<span class="sd">		* accurate to first order in Kerr mass and spin.</span>
-<span class="sd">		* corrects for spheroidal harmonics</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract a numerical waveform to null infinity using perturbative techniques. This is :</span>
+<span class="sd">            * accurate to second order in :math:`1/r`.</span>
+<span class="sd">            * accurate to first order in Kerr mass and spin.</span>
+<span class="sd">            * corrects for spheroidal harmonics</span>
 
 
 
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 
-<span class="sd">	rPsi4_rlm:	1d array</span>
-<span class="sd">				The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array.</span>
+<span class="sd">    rPsi4_rlm:	1d array</span>
+<span class="sd">                            The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array.</span>
 
-<span class="sd">	delta_t:	float</span>
-<span class="sd">				The time stepping.</span>
+<span class="sd">    delta_t:	float</span>
+<span class="sd">                            The time stepping.</span>
 
-<span class="sd">	areal_radius:	1d array</span>
-<span class="sd">					The areal radius of the extraction sphere.</span>
-
-
-<span class="sd">	mass:	float</span>
-<span class="sd">			The total horizon mass of the system.</span>
-
-<span class="sd">	spin:	float, optional</span>
-<span class="sd">			The effective spin of the spacetime. Defaults to 0.</span>
-
-<span class="sd">	ell:	int</span>
-<span class="sd">			The polar quantum number :math:`\\ell`.</span>
-
-<span class="sd">	emm:	int</span>
-<span class="sd">			The azimuthal quantum number :math:`m`.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-
-<span class="sd">	rPsi4_inflm:	1d array</span>
-<span class="sd">				The waveform extracted to null infninity :math:`\\mathcal{I}^+`</span>
+<span class="sd">    areal_radius:	1d array</span>
+<span class="sd">                                    The areal radius of the extraction sphere.</span>
 
 
-<span class="sd">	References</span>
-<span class="sd">	----------</span>
+<span class="sd">    mass:	float</span>
+<span class="sd">                    The total horizon mass of the system.</span>
 
-<span class="sd">	This implements the definition in Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].</span>
+<span class="sd">    spin:	float, optional</span>
+<span class="sd">                    The effective spin of the spacetime. Defaults to 0.</span>
+
+<span class="sd">    ell:	int</span>
+<span class="sd">                    The polar quantum number :math:`\\ell`.</span>
+
+<span class="sd">    emm:	int</span>
+<span class="sd">                    The azimuthal quantum number :math:`m`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    rPsi4_inflm:	1d array</span>
+<span class="sd">                            The waveform extracted to null infninity :math:`\\mathcal{I}^+`</span>
 
 
-<span class="sd">	&quot;&quot;&quot;</span>
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
 
-	<span class="kn">from</span> <span class="nn">integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
+<span class="sd">    This implements the definition in Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].</span>
 
-	<span class="c1"># Assigning the terms. Each set of subterms in a pair of paranthesis is a term.</span>
-	<span class="n">term_1</span> <span class="o">=</span> <span class="n">rPsi4_rlm</span>
 
-	<span class="n">term_2_prefac</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="p">)</span>
-	<span class="n">subterm_2_1</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fixed_frequency_integrator</span><span class="p">(</span>
-		<span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mf">0.015</span>
-	<span class="p">)</span>  <span class="c1"># Integral_rPsi4_rlm</span>
-	<span class="n">term_2</span> <span class="o">=</span> <span class="n">term_2_prefac</span> <span class="o">*</span> <span class="n">subterm_2_1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-	<span class="n">term_3_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">ell</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">areal_radius</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-	<span class="n">subterm_3_1</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fixed_frequency_integrator</span><span class="p">(</span>
-		<span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mf">0.015</span>
-	<span class="p">)</span>  <span class="c1"># Double_Integral_rPsi4_rlm</span>
-	<span class="n">term_3</span> <span class="o">=</span> <span class="n">term_3_prefac</span> <span class="o">*</span> <span class="n">subterm_3_1</span>
+    <span class="kn">from</span> <span class="nn">integrate</span> <span class="kn">import</span> <span class="n">fixed_frequency_integrator</span>
 
-	<span class="n">term_4_prefac</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">areal_radius</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-	<span class="n">subterm_4_1</span> <span class="o">=</span> <span class="n">subterm_2_1</span>
-	<span class="n">term_4</span> <span class="o">=</span> <span class="n">term_4_prefac</span> <span class="o">*</span> <span class="n">subterm_4_1</span>
+    <span class="c1"># Assigning the terms. Each set of subterms in a pair of paranthesis is a term.</span>
+    <span class="n">term_1</span> <span class="o">=</span> <span class="n">rPsi4_rlm</span>
 
-	<span class="n">rPsi4_inflm</span> <span class="o">=</span> <span class="n">term_1</span> <span class="o">+</span> <span class="n">term_2</span> <span class="o">+</span> <span class="n">term_3</span> <span class="o">+</span> <span class="n">term_4</span>
+    <span class="n">term_2_prefac</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="p">)</span>
+    <span class="n">subterm_2_1</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fixed_frequency_integrator</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mf">0.015</span><span class="p">)</span>  <span class="c1"># Integral_rPsi4_rlm</span>
+    <span class="n">term_2</span> <span class="o">=</span> <span class="n">term_2_prefac</span> <span class="o">*</span> <span class="n">subterm_2_1</span>
 
-	<span class="k">return</span> <span class="n">rPsi4_inflm</span></div>
+    <span class="n">term_3_prefac</span> <span class="o">=</span> <span class="p">(</span><span class="n">ell</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ell</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">subterm_3_1</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fixed_frequency_integrator</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">omega0</span><span class="o">=</span><span class="mf">0.015</span><span class="p">)</span>  <span class="c1"># Double_Integral_rPsi4_rlm</span>
+    <span class="n">term_3</span> <span class="o">=</span> <span class="n">term_3_prefac</span> <span class="o">*</span> <span class="n">subterm_3_1</span>
+
+    <span class="n">term_4_prefac</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">subterm_4_1</span> <span class="o">=</span> <span class="n">subterm_2_1</span>
+    <span class="n">term_4</span> <span class="o">=</span> <span class="n">term_4_prefac</span> <span class="o">*</span> <span class="n">subterm_4_1</span>
+
+    <span class="n">rPsi4_inflm</span> <span class="o">=</span> <span class="n">term_1</span> <span class="o">+</span> <span class="n">term_2</span> <span class="o">+</span> <span class="n">term_3</span> <span class="o">+</span> <span class="n">term_4</span>
+
+    <span class="k">return</span> <span class="n">rPsi4_inflm</span></div>
 
 
 <div class="viewcode-block" id="waveextract_to_inf_perturbative_one_order"><a class="viewcode-back" href="../../_autosummary/waveformtools.extrapolate.html#waveformtools.extrapolate.waveextract_to_inf_perturbative_one_order">[docs]</a><span class="k">def</span> <span class="nf">waveextract_to_inf_perturbative_one_order</span><span class="p">(</span><span class="n">u_ret</span><span class="p">,</span> <span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">areal_radius</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ell</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Extract a numerical waveform to null infinity using perturbative techniques. This is :</span>
-<span class="sd">		* accurate to second order in :math:`1/r`.</span>
-<span class="sd">		* accurate to first order in Kerr mass and spin.</span>
-<span class="sd">		* corrects for spheroidal harmonics</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract a numerical waveform to null infinity using perturbative techniques. This is :</span>
+<span class="sd">            * accurate to second order in :math:`1/r`.</span>
+<span class="sd">            * accurate to first order in Kerr mass and spin.</span>
+<span class="sd">            * corrects for spheroidal harmonics</span>
 
 
 
-<span class="sd">	Parameters</span>
-<span class="sd">	----------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 
-<span class="sd">	u_ret:	1d array</span>
-<span class="sd">			The retarted time array at the location r = areal_radius.</span>
+<span class="sd">    u_ret:	1d array</span>
+<span class="sd">                    The retarted time array at the location r = areal_radius.</span>
 
-<span class="sd">	rPsi4_rlm:	1d array</span>
-<span class="sd">				The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array</span>
+<span class="sd">    rPsi4_rlm:	1d array</span>
+<span class="sd">                            The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array</span>
 
-<span class="sd">	areal_radius:	1d array</span>
-<span class="sd">					The areal radius of the extraction sphere.</span>
-
-
-<span class="sd">	mass:	float</span>
-<span class="sd">			The total horizon mass of the system.</span>
-
-<span class="sd">	ell:	int</span>
-<span class="sd">			The polar quantum number :math:`\\ell`.</span>
-
-<span class="sd">	emm:	int</span>
-<span class="sd">			The azimuthal quantum number :math:`m`.</span>
-
-<span class="sd">	Returns</span>
-<span class="sd">	-------</span>
-
-<span class="sd">	rPsi4_inflm:	1d array</span>
-<span class="sd">				The waveform extracted to null infninity :math:`\\mathcal{I}^+`</span>
+<span class="sd">    areal_radius:	1d array</span>
+<span class="sd">                                    The areal radius of the extraction sphere.</span>
 
 
-<span class="sd">	References</span>
-<span class="sd">	----------</span>
+<span class="sd">    mass:	float</span>
+<span class="sd">                    The total horizon mass of the system.</span>
 
-<span class="sd">	This implements the definition in Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].</span>
+<span class="sd">    ell:	int</span>
+<span class="sd">                    The polar quantum number :math:`\\ell`.</span>
+
+<span class="sd">    emm:	int</span>
+<span class="sd">                    The azimuthal quantum number :math:`m`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    rPsi4_inflm:	1d array</span>
+<span class="sd">                            The waveform extracted to null infninity :math:`\\mathcal{I}^+`</span>
 
 
-<span class="sd">	&quot;&quot;&quot;</span>
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    This implements the definition in Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].</span>
 
 
-	<span class="c1"># Get the amplitude and phase</span>
-	<span class="n">A_lm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">waveformtools</span><span class="o">.</span><span class="n">xtract_camp_phase</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">rPsi4_rlm</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-	<span class="c1"># Get the time stepping</span>
-	<span class="n">delta_t</span> <span class="o">=</span> <span class="n">u_ret</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">u_ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Get the amplitude and phase</span>
+    <span class="n">A_lm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">waveformtools</span><span class="o">.</span><span class="n">xtract_camp_phase</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">rPsi4_rlm</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
 
-	<span class="c1"># Get the waveform instantaneous frequency</span>
-	<span class="n">omega_lm</span> <span class="o">=</span> <span class="n">waveformtools</span><span class="o">.</span><span class="n">get_waveform_angular_frequency</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">timeaxis</span><span class="o">=</span><span class="n">u_ret</span><span class="p">)</span>
+    <span class="c1"># Get the time stepping</span>
+    <span class="n">delta_t</span> <span class="o">=</span> <span class="n">u_ret</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">u_ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-	<span class="c1"># Assigning the terms. Each set of subterms in a pair of paranthesis is a term.</span>
+    <span class="c1"># Get the waveform instantaneous frequency</span>
+    <span class="n">omega_lm</span> <span class="o">=</span> <span class="n">waveformtools</span><span class="o">.</span><span class="n">get_waveform_angular_frequency</span><span class="p">(</span><span class="n">rPsi4_rlm</span><span class="p">,</span> <span class="n">delta_t</span><span class="o">=</span><span class="n">delta_t</span><span class="p">,</span> <span class="n">timeaxis</span><span class="o">=</span><span class="n">u_ret</span><span class="p">)</span>
 
-	<span class="c1"># The amplitude correction factor</span>
-	<span class="n">A_lm_correction</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(((</span><span class="n">ell</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">omega_lm</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="p">))),</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Assigning the terms. Each set of subterms in a pair of paranthesis is a term.</span>
 
-	<span class="c1"># The phase correction factor.</span>
-	<span class="n">sin_Phase_correction</span> <span class="o">=</span> <span class="n">ell</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">omega_lm</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="p">)</span>
-	<span class="n">cos_Phase_correction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">sin_Phase_correction</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-	<span class="n">Phase_correction</span> <span class="o">=</span> <span class="n">cos_Phase_correction</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">sin_Phase_correction</span>
+    <span class="c1"># The amplitude correction factor</span>
+    <span class="n">A_lm_correction</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(((</span><span class="n">ell</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">omega_lm</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="p">))),</span> <span class="mi">2</span><span class="p">)</span>
 
-	<span class="c1"># The extrapolated waveform</span>
+    <span class="c1"># The phase correction factor.</span>
+    <span class="n">sin_Phase_correction</span> <span class="o">=</span> <span class="n">ell</span> <span class="o">*</span> <span class="p">(</span><span class="n">ell</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">omega_lm</span> <span class="o">*</span> <span class="n">areal_radius</span><span class="p">)</span>
+    <span class="n">cos_Phase_correction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">sin_Phase_correction</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">Phase_correction</span> <span class="o">=</span> <span class="n">cos_Phase_correction</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">sin_Phase_correction</span>
 
-	<span class="n">A_lm_corrected</span> <span class="o">=</span> <span class="n">A_lm</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">A_lm_correction</span><span class="p">)</span>
-	<span class="n">Phi_lm_corrected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega_lm</span> <span class="o">*</span> <span class="n">u_ret</span><span class="p">)</span> <span class="o">*</span> <span class="n">Phase_correction</span>
+    <span class="c1"># The extrapolated waveform</span>
 
-	<span class="n">rPsi4_inflm</span> <span class="o">=</span> <span class="n">A_lm_corrected</span> <span class="o">*</span> <span class="n">Phi_lm_corrected</span>
+    <span class="n">A_lm_corrected</span> <span class="o">=</span> <span class="n">A_lm</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">A_lm_correction</span><span class="p">)</span>
+    <span class="n">Phi_lm_corrected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega_lm</span> <span class="o">*</span> <span class="n">u_ret</span><span class="p">)</span> <span class="o">*</span> <span class="n">Phase_correction</span>
 
-	<span class="k">return</span> <span class="n">rPsi4_inflm</span></div>
+    <span class="n">rPsi4_inflm</span> <span class="o">=</span> <span class="n">A_lm_corrected</span> <span class="o">*</span> <span class="n">Phi_lm_corrected</span>
+
+    <span class="k">return</span> <span class="n">rPsi4_inflm</span></div>
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2020, Vaishak Prasad
-
-    </p>
+    <p>&#169; Copyright 2020, Vaishak Prasad.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
     <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    ga('create', 'G-XXXXXXXXXX', 'auto');
-    ga('send', 'pageview');
-    </script>
-
-    
-   
+      gtag('config', 'G-XXXXXXXXXX', {
+          'anonymize_ip': false,
+      });
+    </script> 
 
 </body>
 </html>

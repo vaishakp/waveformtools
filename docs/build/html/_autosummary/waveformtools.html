@@ -1,38 +1,22 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>waveformtools &mdash; waveformtools 2022-05-03 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="waveformtools.BMS" href="waveformtools.BMS.html" />
@@ -41,33 +25,16 @@
 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search"  style="background: blue" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> waveformtools
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 2022-05-03
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -75,18 +42,8 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p><span class="caption-text">Contents:</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_features.html">Basic Features</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">Package API</a><ul class="current">
@@ -95,12 +52,15 @@
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.BMS.html">waveformtools.BMS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.CoM.html">waveformtools.CoM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.compare.html">waveformtools.compare</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.dataIO.html">waveformtools.dataIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.diagnostics.html">waveformtools.diagnostics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.extrapolate.html">waveformtools.extrapolate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.grids.html">waveformtools.grids</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.integrate.html">waveformtools.integrate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.simulations.html">waveformtools.simulations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.spherical.html">waveformtools.spherical</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.transforms.html">waveformtools.transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="waveformtools.waveforms.html">waveformtools.waveforms</a></li>
 <li class="toctree-l3"><a class="reference internal" href="waveformtools.waveformtools.html">waveformtools.waveformtools</a></li>
 </ul>
 </li>
@@ -112,75 +72,36 @@
 <li class="toctree-l1"><a class="reference internal" href="../waveformtools.html">Waveformtools</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: blue" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">waveformtools</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="../api.html">Package API</a> &raquo;</li>
-        
-      <li>waveformtools</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">Package API</a></li>
+      <li class="breadcrumb-item active">waveformtools</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="../_sources/_autosummary/waveformtools.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="module-waveformtools">
-<span id="waveformtools"></span><h1>waveformtools<a class="headerlink" href="#module-waveformtools" title="Permalink to this headline">¶</a></h1>
+<span id="waveformtools"></span><h1>waveformtools<a class="headerlink" href="#module-waveformtools" title="Permalink to this heading"></a></h1>
 <p>Module for the analysis and handling of numerical relativity and gravitational waveform data.</p>
 <section id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h2>
 <dl class="simple">
 <dt>sim: Base class for NR simulations data.</dt><dd><p>This is needed to retrieve and handle Numerical Relativity data.</p>
 </dd>
@@ -190,7 +111,7 @@
 </dd>
 </dl>
 <p class="rubric">Functions</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#waveformtools.get_version" title="waveformtools.get_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_version</span></code></a>()</p></td>
 <td><p>Get the latest version number based on the last commit date.</p></td>
@@ -198,14 +119,14 @@
 </tbody>
 </table>
 <dl class="py function">
-<dt id="waveformtools.get_version">
-<code class="sig-prename descclassname"><span class="pre">waveformtools.</span></code><code class="sig-name descname"><span class="pre">get_version</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools.html#get_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.get_version" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="waveformtools.get_version">
+<span class="sig-prename descclassname"><span class="pre">waveformtools.</span></span><span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/waveformtools.html#get_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#waveformtools.get_version" title="Permalink to this definition"></a></dt>
 <dd><p>Get the latest version number based on the last commit date.</p>
 </dd></dl>
 
 </section>
 <p class="rubric">Modules</p>
-<table class="longtable docutils align-default">
+<table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.BMS.html#module-waveformtools.BMS" title="waveformtools.BMS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.BMS</span></code></a></p></td>
 <td><p>The implementation of BMS transformations on the waveforms.</p></td>
@@ -216,7 +137,13 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.compare.html#module-waveformtools.compare" title="waveformtools.compare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.compare</span></code></a></p></td>
 <td><p>Compare the waveforms and modes</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate" title="waveformtools.waveformtools.differentiate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.differentiate</span></code></a>(data[, delta_t])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.dataIO.html#module-waveformtools.dataIO" title="waveformtools.dataIO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.dataIO</span></code></a></p></td>
+<td><p>Functions for handling data IO operations from waveforms class</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.diagnostics.html#module-waveformtools.diagnostics" title="waveformtools.diagnostics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.diagnostics</span></code></a></p></td>
+<td><p>Diagnostic tools</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#waveformtools.waveformtools.differentiate" title="waveformtools.waveformtools.differentiate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.differentiate</span></code></a>(data[, delta_t, TS])</p></td>
 <td><p>Differentiate a timeseries in time domain using the Simple Euler method</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.extrapolate.html#module-waveformtools.extrapolate" title="waveformtools.extrapolate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.extrapolate</span></code></a></p></td>
@@ -237,7 +164,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="waveformtools.transforms.html#module-waveformtools.transforms" title="waveformtools.transforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.transforms</span></code></a></p></td>
 <td><p>Methods to transform the waveform</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#module-waveformtools.waveformtools" title="waveformtools.waveformtools"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveformtools</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="waveformtools.waveforms.html#module-waveformtools.waveforms" title="waveformtools.waveforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveforms</span></code></a></p></td>
+<td><p>Classes for handling the waveform modes or data defined on spheres.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="waveformtools.waveformtools.html#module-waveformtools.waveformtools" title="waveformtools.waveformtools"><code class="xref py py-obj docutils literal notranslate"><span class="pre">waveformtools.waveformtools</span></code></a></p></td>
 <td><p>This module contains a set of tools to handle data from numerical relativity simulations and gravitational waves.</p></td>
 </tr>
 </tbody>
@@ -246,63 +176,44 @@
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="waveformtools.BMS.html" class="btn btn-neutral float-right" title="waveformtools.BMS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../api.html" class="btn btn-neutral float-left" title="Package API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api.html" class="btn btn-neutral float-left" title="Package API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="waveformtools.BMS.html" class="btn btn-neutral float-right" title="waveformtools.BMS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2020, Vaishak Prasad
-
-    </p>
+    <p>&#169; Copyright 2020, Vaishak Prasad.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
-
-  
-  
-    
     <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-    ga('create', 'G-XXXXXXXXXX', 'auto');
-    ga('send', 'pageview');
-    </script>
-
-    
-   
+      gtag('config', 'G-XXXXXXXXXX', {
+          'anonymize_ip': false,
+      });
+    </script> 
 
 </body>
 </html>
