@@ -17,7 +17,7 @@ requires = ["hatching"]
 build-backend = "hatching.build"
 
 [project]
-name = "vaishakprasad"
+name = "waveformtools"
 version = "2023.05.06"
 authors = [{ name="Vaishak Prasad", email="vaishakprasad@gmail.com"}, ]
 description = " Tools for working with numerical relativity and waveforms data "

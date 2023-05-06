@@ -21,14 +21,13 @@ import sys
 
 package_directory = os.path.dirname(os.path.abspath(__file__))
 
-
 def get_version():
     """Get the latest version number based on the last commit date."""
 
     # print(package_directory)
     # Open the file
 
-    vers = os.popen('git log -1 --date=short | grep Date').read()[8:-1]
+    vers = os.popen(f'git -C {package_directory}/../ log -1 --date=short | grep Date').read()[8:-1]
     vers = vers.replace('-', '.')
 
     #with open(package_directory + "/../public/date.txt", "r") as vers_file:
