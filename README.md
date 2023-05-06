@@ -100,7 +100,7 @@ We request you to also cite these. Thanks!
 
 
 
-# Installing this module
+# Installing this package
 
 ## Dependencies
 
@@ -151,7 +151,7 @@ export PYTHONPATH
 This is not recommended. One can also install this using the pip commands on this git repository:
 
 ```sh
-pip install git+git://gitlab.com/vaishakp/waveformtools.git
+pip install git+https://gitlab.com/vaishakp/waveformtools.git
 ```
 or by running python setup file on the cloned repository:
 
