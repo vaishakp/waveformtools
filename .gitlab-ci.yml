@@ -48,70 +48,6 @@ pylint:
     - find . -type f -iname "*.py" | xargs pylint
   only:
     - merge_requests
-    #- main
-#test:
-#  stage: linting
-#  allow_failure: True 
-#  script:
-# Lint code   
- #   - pylint waveformtools
-  #  - flake8 waveformtools --statistics --count
-# Test code    
-#    - pytest
-
-#test:
-#  stage: test
-  #image: continuumio/miniconda3:latest
-#  script:
-  # Note: only 3.9 works with rinohtype
-  
-  # Change pip's cache directory to be inside the project directory since we can
-  # only cache local items.
-  #variables:
-  #  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-
-  # Pip's cache doesn't store the python packages
-  # https://pip.pypa.io/en/stable/topics/caching/
-  #
-  # If you want to also cache the installed packages, you have to install
-  # them in a virtualenv and cache it as well.
-  #cache:
-  #  paths:
-  #    - .cache/pip
-  #    - venv/
-
-
-  #  variables:
-  #    CI_DEBUG_TRACE: "true"
-    #- uname -a
-    #- python --version  # For debugging
-    #- which python
-    #- apt-get update -q -y
-    #- apt-get install -y build-essential git
-    #- conda env create -f docs/environment.yml
-    #- conda init
-    #- source ~/.bashrc
-    #- conda activate myenv
-    #- which python
-    #- which conda
-    #- conda --version
-    #- python --version
-  # - which pip
-  # - pip --version
-    #- git show -s --format=%ci >> date.txt
-    #- pwd
-    #- ls -l
-    #- echo $PYTHONPATH
-    #- export PYTHONPATH=$PYTHONPATH:"/builds/vaishakp/waveformtools/"
-    #- echo $PYTHONPATH
-  # - pip install pylint flake8
-  # - conda install pylint flake8
-#  only:
-#    - main
-
-
-
 pages:
   stage: deploy
   image: continuumio/miniconda3:latest
@@ -154,9 +90,11 @@ pages:
     - apt-get install -y build-essential git
     - conda update -y -n base conda
     - conda update -y --all
+    - conda create -n test python=3.9
   #  - conda env create -f docs/environment.yml
     - conda init
     - source ~/.bashrc
+    - conda activate test
     - pip install -r requirements.txt
     - conda info --env
     - which python
