@@ -23,7 +23,7 @@ from recommonmark.parser import CommonMarkParser
 cwd = os.getcwd()
 print('CurrWD', cwd)
 
-with open(cwd+'/public/date.txt', 'r') as f:
+with open('../../public/date.txt', 'r') as f:
     proj_vers = f.readline()
 
 print('Parsed version:', proj_vers)
