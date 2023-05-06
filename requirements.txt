@@ -11,3 +11,4 @@ lalsuite
 ligo-common
 pycbc
 sympy
+numpydoc
