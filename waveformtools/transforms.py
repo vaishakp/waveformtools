@@ -187,7 +187,7 @@ def Yslm(spin_weight, ell, emm, theta, phi):
     # theta, phi = sp.symbols('theta phi')
 
     fact = np.math.factorial
-
+    #fact = sp.factorial
     Sum = 0
     for aar in range(ell - spin_weight + 1):
         if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
@@ -301,3 +301,60 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     )
 
     return Yslmv
+
+
+def Yslm_pres(spin_weight, ell, emm, theta, phi, pres=16):
+    ''' Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
+
+        Inputs
+        -----------
+
+        spin_weight :   int
+                        The Spin weight.
+        ell :   int
+                The mode number :math:`\\ell'.
+        emm :   int
+                The azimuthal mode number :math:`m'.
+        theta : float
+                The polar angle  :math:`\\theta` in radians,
+        phi :   float
+                The aximuthal angle :math:`\\phi' in radians.
+        pres : int, optional
+               The precision i.e. number of digits to compute
+               upto. Default value is 16.
+        Returns
+        --------
+        Yslm :  float
+                The value of Yslm at :math:`\\theta, phi'.
+
+    '''
+    import sympy as sp
+    tv, pv = theta, phi
+    theta, phi = sp.symbols('theta phi')
+
+    #fact = np.math.factorial
+    fact = sp.factorial
+    Sum = 0
+    for aar in range(ell-spin_weight + 1):
+
+        if (aar + spin_weight-emm)<0 or (ell - aar - spin_weight)<0:
+            #print('Continuing')
+            continue
+        else:
+            #print('r, l, s, m', r, l, s, m)
+            a1 =    sp.binomial(ell-spin_weight, aar)
+            #print(a1)
+            a2 =   sp.binomial(ell+spin_weight, aar+spin_weight-emm)
+            #print(a2)
+            a3 =   sp.exp(1j*emm*phi)
+            #print(a3)
+            a4 =   sp.tan(theta/2)
+            #print(a4)
+
+            Sum +=  sp.binomial(ell - spin_weight, aar)*sp.binomial(ell + spin_weight, aar + spin_weight-emm)*sp.Pow((-1), (ell - aar - spin_weight))*sp.exp(1j* emm * phi)/sp.Pow(sp.tan(theta / 2), (2 * aar + spin_weight - emm))
+
+    Yslm_expr = sp.Pow(-1, emm) * (sp.sqrt(fact(ell + emm) * fact(ell - emm) * (2*ell + 1)/(4 * sp.pi * fact(ell + spin_weight) * fact(ell-spin_weight)))*sp.Pow(sp.sin(theta / 2), (2 * ell)) * Sum)
+
+    Yslm_expr = sp.simplify(Yslm_expr)
+    
+    return Yslm_expr.evalf(pres, subs={theta: sp.Float(f'{tv}'), phi : sp.Float(f'{pv}')})
