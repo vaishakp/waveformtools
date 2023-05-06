@@ -20,6 +20,8 @@ from recommonmark.parser import CommonMarkParser
 # from waveformtools import get_version
 
 # -- Project information -----------------------------------------------------
+
+# Load the package into pythonpath
 cwd = os.getcwd()
 print('CurrWD', cwd)
 
@@ -30,7 +32,9 @@ print('Pythonpath:', sys.path)
 #with open('../../public/date.txt', 'r') as f:
 #    proj_vers = f.readline()
 
+# Fetch the latest commit version
 dvers = os.popen('git log -1 --date=short | grep Date').read()
+
 print('Date fetched', dvers)
 print('Version string', dvers[8:-1])
 proj_vers = dvers

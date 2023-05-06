@@ -1,7 +1,7 @@
 [![Project landing page](https://sites.google.com/view/waveformtools/home)]
 [![pipeline status](https://gitlab.com/vaishakp/waveformtools/badges/main/pipeline.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main/LICENSE)
-[![Documentation Status](https://vaishakp.gitlab.io/waveformtools/?badge=latest)]
+[![Documentation Status](https://readthedocs.org/projects/waveformtools/badge/?version=latest)](https://waveformtools.readthedocs.io/en/latest/?badge=latest)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # Waveformtools 
@@ -221,7 +221,7 @@ To plot the modes
 
 # Documentation
 
-The documentation for this module is available at [Link to the Documentation](https://vaishakp.gitlab.io/waveformtools/). This was built automatically using Read the Docs.
+The documentation for this module is available at [Link to the Documentation](https://waveformtools.readthedocs.io/en/latest/). This was built automatically using Read the Docs.
 
 In some case where the repo has run out of gitlab CI minutes, the documentation is not automatically built. In such cases, we request the user to access the documentation through the `index.html` file in `docs` directory.
 
