@@ -20,7 +20,9 @@ from recommonmark.parser import CommonMarkParser
 # from waveformtools import get_version
 
 # -- Project information -----------------------------------------------------
-with open('public/date.txt', 'r') as f:
+cwd = os.getcwd()
+
+with open(cwd+'/public/date.txt', 'r') as f:
     proj_vers = f.readline()
 
 print('Version:', proj_vers)
