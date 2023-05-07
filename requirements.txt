@@ -12,3 +12,4 @@ ligo-common
 pycbc
 sympy
 numpydoc
+requests
