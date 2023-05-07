@@ -6,9 +6,6 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 
-import waveformtools
-
-
 setuptools.setup(
     name="waveformtools",
  	version="2023.05.07",
@@ -27,6 +24,7 @@ setuptools.setup(
     python_requires=">=3",
     )
 
+# Alternate preparation of pyproject
 #with open("pyproject.toml", 'r') as file:
 
 #    all_data = file.readlines()
