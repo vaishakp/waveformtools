@@ -14,7 +14,6 @@ import h5py
 import numpy as np
 from scipy.interpolate import interp1d
 
-
 from waveformtools.waveformtools import interp_resam_wfs, message, xtract_camp_phase
 
 ##########################
