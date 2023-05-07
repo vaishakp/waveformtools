@@ -6,16 +6,16 @@
 # Imports
 #########################
 
-import numpy as np
-import h5py
 import json
-import waveformtools
-from waveformtools.waveforms import modes_array
-from waveformtools.waveformtools import xtract_camp_phase, interp_resam_wfs, message
-from waveformtools.waveforms import _get_modes_list_from_keys, construct_mode_list
-from scipy.interpolate import interp1d
-import sys
 import re
+import sys
+
+import h5py
+import numpy as np
+from scipy.interpolate import interp1d
+
+
+from waveformtools.waveformtools import interp_resam_wfs, message, xtract_camp_phase
 
 ##########################
 # RIT data
@@ -139,6 +139,194 @@ def get_ell_max_from_file(data_dir, var_type="Psi4", file_name="*.h5"):
 
     return ell_max, all_fnames
 
+def _get_modes_list_from_keys(keys_list, r_ext):
+    """Get the modes list from the keys list
+    of an hdf file.
+
+    Parameters
+    ----------
+    keys_list:      list
+                    The list containing all the keys
+    r_ext:      float
+                The extraction radius of the data.
+
+    Returns
+    -------
+    modes_list: list
+                    The list of modes.
+    """
+
+    # Sort the keys to ensure a nice
+    # modes list structure.
+    keys_list_orig = sorted(keys_list)
+
+    if r_ext != -1:
+        keys_list = [item for item in keys_list_orig if f"r{r_ext}" in item]
+
+        if keys_list == []:
+            print("Got an empty list. Searching for r_ext value in key string")
+            keys_list = [item for item in keys_list_orig if f"{r_ext}" in item]
+
+    # print('List of keys received', keys_list)
+    # The list of modes.
+    modes_list = []
+
+    # Initialize the emm modes sublist.
+    emm_modes_for_ell = []
+
+    # Present ell value to
+    # initialize the mode concatenation.
+    ell_old = 0
+
+    for key in keys_list:
+        # print(key)
+        # Get the ell value
+        ell_value, emm_value = _get_ell_emm_from_key(key)
+
+        if ell_value != ell_old:
+            # If the ell value has changed,
+            # update the modes list before moving
+            # onto the next ell value.
+            modes_list.append([ell_old, emm_modes_for_ell])
+            # The present ell value is the old
+            # ell value.
+            ell_old = ell_value
+
+            # Reset the ell_mode list.
+            emm_modes_for_ell = []
+
+        # Update it with the new emm mode.
+        emm_modes_for_ell.append(emm_value)
+
+    modes_list.append([ell_value, emm_modes_for_ell])
+
+    return modes_list
+
+
+def _get_ell_emm_from_key(key):
+    """Get the :math:`\\ell` and :math:`m` values
+    from a given key string of an hdf file.
+
+    Parameters
+    ----------
+    key:    str
+            The input key string
+
+    Returns
+    -------
+    ell_value:      int
+                    The :math:`\\ell` value
+    emm_value:      int
+                    The :math:`m` value.
+
+    Notes
+    -----
+
+    Assumes that the input string has :math:`\\ell` and :math:`m` values
+    in the form `l{int}m{int}`.
+
+    """
+
+    import re
+
+    str_match = re.search("l\d*", key)
+    ell_str_start = str_match.start()
+    ell_str_end = str_match.end()
+    ell_value = int(key[ell_str_start + 1 : ell_str_end])
+
+    str_match = re.search("m-*\d*", key)
+    emm_str_start = str_match.start()
+    emm_str_end = str_match.end()
+    emm_value = int(key[emm_str_start + 1 : emm_str_end])
+
+    return ell_value, emm_value
+
+
+def get_iteration_numbers_from_keys(keys_list):
+    """Get the iteration number from keys.
+
+    Parameters
+    ----------
+    keys_list: list
+               The list of keys.
+
+    Returns
+    -------
+    iteration_numbers: list
+                        The list containing the iteration
+                        numbers.
+    """
+    import re
+
+    iteration_numbers = []
+
+    for key in keys_list:
+        str_match = re.search(" it=\d* ", key)
+        it_str_start = str_match.start()
+        it_str_end = str_match.end()
+        it_value = int(key[it_str_start + 4 : it_str_end])
+        iteration_numbers.append(it_value)
+
+    return iteration_numbers
+
+
+def construct_mode_list(ell_max, spin_weight):
+    """
+    Construct a modes list in the form [[ell1, [emm1, emm2, ...], [ell2, [emm..]],..]
+    given the :math:`\\ell_{max}.`
+
+    Parameters
+    ----------
+    spin_weight : int
+                The spin weight of the modes.
+    ell_max : int
+              The :math:`\\ell_{max}` of the modes list.
+
+    Returns
+    -------
+
+    modes_list : list
+                 A list containg the mode indices lists.
+
+    Notes
+    -----
+    The modes list is the form which the `waveform` object understands.
+    """
+
+    # The modes list.
+    modes_list = []
+
+    for ell_index in range(abs(spin_weight), ell_max + 1):
+        # Append all emm modes for each ell mode.
+        modes_list.append([ell_index, list(range(-ell_index, ell_index + 1))])
+
+    return modes_list
+
+
+def sort_keys(modes_keys_list):
+    """Sort the keys in a list based on
+        its iteration number
+
+    Parameters
+    ----------
+    modes_keys_list: str
+                     The list of keys.
+
+    Returns
+    -------
+    sorted_modes_keys_list: str
+                            The sorted list.
+    """
+
+    iteration_numbers = get_iteration_numbers_from_keys(modes_keys_list)
+
+    sargs = np.argsort(iteration_numbers)
+
+    sorted_modes_keys_list = np.array(modes_keys_list)[sargs]
+
+    return sorted_modes_keys_list
+    
+    
 
 def load_RIT_Psi4_from_disk(
     wfa=None,
@@ -185,7 +373,6 @@ def load_RIT_Psi4_from_disk(
     It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about
     choosing the time domain. This may change in future.
     """
-    from waveformtools import waveforms
     from waveformtools.waveforms import modes_array
 
     # Max available mode l.
@@ -202,7 +389,6 @@ def load_RIT_Psi4_from_disk(
 
     # Alias of the modes_array
     # label = 'q1a0_a'
-
     # Create a modes array
     if not wfa:
         wfa = modes_array(label=label, data_dir=data_dir, modes_list=wf_modes_list)
@@ -364,6 +550,9 @@ def load_RIT_Strain_data_from_disk(
     choosing the time domain. This may change in future.
     """
 
+    
+    from waveformtools.waveforms import modes_array
+
     # Max available mode l.
     ell_max_act, keys_list = get_ell_max_from_file(data_dir=data_dir, var_type="Strain", file_name=file_name)
 
@@ -428,13 +617,10 @@ def load_RIT_Strain_data_from_disk(
 
     # Alias of the modes_array
     # label = 'q1a0_a'
-
     # Enforce only l>abs(spin_Weight) modes.
     # wf_modes_list = [item for item in wf_modes_list if item[0]>=abs(spin_weight)]
-
     # tend = []
     # tstart = []
-
     ##########################################
     # Read in the data
     #########################################
@@ -607,6 +793,7 @@ def load_gen_data_from_disk(
     choosing the time domain. This may change in future.
 
     """
+    from waveformtools.waveforms import modes_array
 
     # Max available mode l.
     if not wfa:
@@ -879,6 +1066,8 @@ def load_SpEC_data_from_disk(
 
 
     """
+    from waveformtools.waveforms import modes_array
+
     # Load SXS waveforms to modes_array.
 
     # Spectra infinty
@@ -1136,6 +1325,8 @@ def load_SpECTRE_data_from_disk(
 
 
     """
+    from waveformtools.waveforms import modes_array
+
     # Load SXS waveforms to modes_array.
 
     # Spectra infinty
@@ -1313,12 +1504,15 @@ def save_modes_data_to_gen(
 
     Examples
     --------
-    >>> from waveformtools.waveforms import waveform
-    >>> waveform.set_basedir('./')
-    >>> waveform.set_datadir('data/')
-    >>> mode_numbers = [[2, 2], [3, 3]]
-    >>> waveform.load_data(mode_numbers=mode_numbers)
+    >>> from waveformtools.waveforms import modes_array
+    >>> wf = modes_array()
+    >>> wf.data_dir = './'
+    >>> wf.filename = 'data_file.h5'
+    >>> wf.modes_list = [[2, 2], [3, 3]]
+    >>> wf.load_gen_data()
     """
+
+    from waveformtools.waveforms import modes_array
 
     #############################
     # I/O assignments.

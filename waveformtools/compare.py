@@ -1,8 +1,8 @@
 """ Compare the waveforms and modes """
 
-import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Plot settings
 fontsize = 16

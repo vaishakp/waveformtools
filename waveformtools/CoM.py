@@ -273,7 +273,6 @@ def boost_waveform(unboosted_waveform, conformal_factor):
     # Compute the meshgrid for theta and phi.
     # theta, phi = unboosted_waveform.gridinfo.meshgrid
     # 	= unboosted_waveform.gridinfo.phi
-
     # A list to store the boosted waveform.
     boosted_waveform_data = []
 

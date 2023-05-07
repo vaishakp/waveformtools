@@ -12,9 +12,9 @@ import pickle
 import sys
 import traceback
 from inspect import getframeinfo, stack
+
 import config
 import numpy as np
-
 from numba import njit
 
 # from scipy import signal
@@ -1442,6 +1442,7 @@ def get_waveform_angular_frequency(waveform, delta_t, timeaxis=None, method="FD"
     if method == "FD":
         # Finite differencing method
         from scipy.signal import savgol_filter
+
         from waveformtools.differentiate import differentiate5
 
         # Compute the derivative

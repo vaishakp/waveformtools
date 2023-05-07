@@ -7,6 +7,7 @@
 
 
 import numpy as np
+
 from waveformtools.waveformtools import message
 
 ##################################################
@@ -56,10 +57,10 @@ def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None, omega0=0
     if not utilde_conven:
         # Compute the FFT of data
         from numpy.fft import ifft
+
         from waveformtools.transforms import compute_fft, unset_fft_conven
 
         # from waveformtools import taper
-
         # udata_x_re = taper(u_time.real, delta_t=delta_t)
         # udata_x_im = taper(u_time.imag, delta_t=delta_t)
         # udata_x	   = np.array(udata_x_re) + 1j * np.array(udata_x_im)

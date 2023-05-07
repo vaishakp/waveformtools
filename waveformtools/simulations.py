@@ -4,9 +4,10 @@
 # Imports
 ##############################################
 
-import numpy as np
-from waveformtools.waveformtools import message, cleandata
 import config
+import numpy as np
+
+from waveformtools.waveformtools import cleandata, message
 
 # import waveformtools
 
@@ -1140,7 +1141,7 @@ class sim:
 
     def calc_amp_phase(self):
         """Extract the amplitude and the phase from strain data."""
-        from waveformtools.waveformtools import xtract_cphase, xtract_camp
+        from waveformtools.waveformtools import xtract_camp, xtract_cphase
 
         for alias in self.aliases:
             # Loop over simulations.

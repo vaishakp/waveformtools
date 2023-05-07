@@ -10,14 +10,20 @@ modes_array: A data-type.
 """
 
 import sys
-import numpy as np
-import h5py
-from waveformtools.waveformtools import message
 
-# from waveformtools import dataIO
-from waveformtools.transforms import Yslm_vec
-from waveformtools.grids import spherical_grid
+import h5py
+import numpy as np
+
 from waveformtools import dataIO
+from waveformtools.dataIO import (
+    _get_modes_list_from_keys,
+    construct_mode_list
+)
+
+from waveformtools.grids import spherical_grid
+
+from waveformtools.transforms import Yslm_vec
+from waveformtools.waveformtools import message
 
 #####################
 # Units
@@ -865,8 +871,8 @@ class modes_array:
         self.modes_array:        modes_array
                                                          sets the `self.modes_array` attribute.
         """
-        import time
         import datetime
+        import time
 
         # Check ell_max
         if ell_max is None:
@@ -1427,7 +1433,9 @@ class modes_array:
 
         # Prepare the extrapolating method.
         if method == "SIO":
-            from waveformtools.extrapolate import waveextract_to_inf_perturbative_twop5_order
+            from waveformtools.extrapolate import (
+                waveextract_to_inf_perturbative_twop5_order,
+            )
 
             extrap_method = partial(
                 waveextract_to_inf_perturbative_twop5_order,
@@ -1438,7 +1446,9 @@ class modes_array:
             )
 
         if method == "SO":
-            from waveformtools.extrapolate import waveextract_to_inf_perturbative_two_order
+            from waveformtools.extrapolate import (
+                waveextract_to_inf_perturbative_two_order,
+            )
 
             extrap_method = partial(
                 waveextract_to_inf_perturbative_two_order,
@@ -1449,7 +1459,9 @@ class modes_array:
             )
 
         if method == "FO":
-            from waveformtools.extrapolate import waveextract_to_inf_perturbative_one_order
+            from waveformtools.extrapolate import (
+                waveextract_to_inf_perturbative_one_order,
+            )
 
             extrap_method = partial(
                 waveextract_to_inf_perturbative_one_order, u_ret=self.time_axis, areal_radius=self.r_ext, mass=mass
@@ -1971,189 +1983,4 @@ class modes_array:
 
 
 #######################################################################################################
-def _get_modes_list_from_keys(keys_list, r_ext):
-    """Get the modes list from the keys list
-    of an hdf file.
 
-    Parameters
-    ----------
-    keys_list:      list
-                    The list containing all the keys
-    r_ext:      float
-                The extraction radius of the data.
-
-    Returns
-    -------
-    modes_list: list
-                    The list of modes.
-    """
-
-    # Sort the keys to ensure a nice
-    # modes list structure.
-    keys_list_orig = sorted(keys_list)
-
-    if r_ext != -1:
-        keys_list = [item for item in keys_list_orig if f"r{r_ext}" in item]
-
-        if keys_list == []:
-            print("Got an empty list. Searching for r_ext value in key string")
-            keys_list = [item for item in keys_list_orig if f"{r_ext}" in item]
-
-    # print('List of keys received', keys_list)
-    # The list of modes.
-    modes_list = []
-
-    # Initialize the emm modes sublist.
-    emm_modes_for_ell = []
-
-    # Present ell value to
-    # initialize the mode concatenation.
-    ell_old = 0
-
-    for key in keys_list:
-        # print(key)
-        # Get the ell value
-        ell_value, emm_value = _get_ell_emm_from_key(key)
-
-        if ell_value != ell_old:
-            # If the ell value has changed,
-            # update the modes list before moving
-            # onto the next ell value.
-            modes_list.append([ell_old, emm_modes_for_ell])
-            # The present ell value is the old
-            # ell value.
-            ell_old = ell_value
-
-            # Reset the ell_mode list.
-            emm_modes_for_ell = []
-
-        # Update it with the new emm mode.
-        emm_modes_for_ell.append(emm_value)
-
-    modes_list.append([ell_value, emm_modes_for_ell])
-
-    return modes_list
-
-
-def _get_ell_emm_from_key(key):
-    """Get the :math:`\\ell` and :math:`m` values
-    from a given key string of an hdf file.
-
-    Parameters
-    ----------
-    key:    str
-            The input key string
-
-    Returns
-    -------
-    ell_value:      int
-                    The :math:`\\ell` value
-    emm_value:      int
-                    The :math:`m` value.
-
-    Notes
-    -----
-
-    Assumes that the input string has :math:`\\ell` and :math:`m` values
-    in the form `l{int}m{int}`.
-
-    """
-
-    import re
-
-    str_match = re.search("l\d*", key)
-    ell_str_start = str_match.start()
-    ell_str_end = str_match.end()
-    ell_value = int(key[ell_str_start + 1 : ell_str_end])
-
-    str_match = re.search("m-*\d*", key)
-    emm_str_start = str_match.start()
-    emm_str_end = str_match.end()
-    emm_value = int(key[emm_str_start + 1 : emm_str_end])
-
-    return ell_value, emm_value
-
-
-def get_iteration_numbers_from_keys(keys_list):
-    """Get the iteration number from keys.
-
-    Parameters
-    ----------
-    keys_list: list
-               The list of keys.
-
-    Returns
-    -------
-    iteration_numbers: list
-                        The list containing the iteration
-                        numbers.
-    """
-    import re
-
-    iteration_numbers = []
-
-    for key in keys_list:
-        str_match = re.search(" it=\d* ", key)
-        it_str_start = str_match.start()
-        it_str_end = str_match.end()
-        it_value = int(key[it_str_start + 4 : it_str_end])
-        iteration_numbers.append(it_value)
-
-    return iteration_numbers
-
-
-def construct_mode_list(ell_max, spin_weight):
-    """
-    Construct a modes list in the form [[ell1, [emm1, emm2, ...], [ell2, [emm..]],..]
-    given the :math:`\\ell_{max}.`
-
-    Parameters
-    ----------
-    spin_weight : int
-                The spin weight of the modes.
-    ell_max : int
-              The :math:`\\ell_{max}` of the modes list.
-
-    Returns
-    -------
-
-    modes_list : list
-                 A list containg the mode indices lists.
-
-    Notes
-    -----
-    The modes list is the form which the `waveform` object understands.
-    """
-
-    # The modes list.
-    modes_list = []
-
-    for ell_index in range(abs(spin_weight), ell_max + 1):
-        # Append all emm modes for each ell mode.
-        modes_list.append([ell_index, list(range(-ell_index, ell_index + 1))])
-
-    return modes_list
-
-
-def sort_keys(modes_keys_list):
-    """Sort the keys in a list based on
-        its iteration number
-
-    Parameters
-    ----------
-    modes_keys_list: str
-                     The list of keys.
-
-    Returns
-    -------
-    sorted_modes_keys_list: str
-                            The sorted list.
-    """
-
-    iteration_numbers = get_iteration_numbers_from_keys(modes_keys_list)
-
-    sargs = np.argsort(iteration_numbers)
-
-    sorted_modes_keys_list = np.array(modes_keys_list)[sargs]
-
-    return sorted_modes_keys_list

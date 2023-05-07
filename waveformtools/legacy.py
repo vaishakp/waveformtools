@@ -1,8 +1,17 @@
 """ Old codes and methods """
-from waveformtools.waveformtools import lengtheq, message, shiftmatched, roll, startend, apxstartend
 import sys
+
 import numpy as np
 import pycbc
+
+from waveformtools.waveformtools import (
+    apxstartend,
+    lengtheq,
+    message,
+    roll,
+    shiftmatched,
+    startend,
+)
 
 
 def coalignwfs(tsdata1, tsdata2):

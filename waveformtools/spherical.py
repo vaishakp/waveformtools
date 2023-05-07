@@ -175,8 +175,8 @@ def quad_on_sphere(integrand, gridinfo, kind="third"):
     phi_1d = gridinfo.phi_1d
 
     # imports
-    from scipy.interpolate import interp1d
     from scipy.integrate import quad
+    from scipy.interpolate import interp1d
 
     theta_first_integral_vals = []
     theta_first_integral_errs = []

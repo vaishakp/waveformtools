@@ -6,10 +6,10 @@ Tools for differentiating data.
 # Imports
 #######################################################
 
-import numpy as np
-
-from numba import jit, njit
 import matplotlib.pyplot as plt
+import numpy as np
+from numba import jit, njit
+
 from waveformtools.waveformtools import message
 
 ########################################################
@@ -46,15 +46,12 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
     """
 
     # Find the basis coefficients.
-    from numpy.polynomial.chebyshev import chebfit, chebder, chebval
+    from numpy.polynomial.chebyshev import chebder, chebfit, chebval
 
     # L2errs = []
-
     # p_res = 1e21
-
     # for deg_index in range(degree):
     # 	cheb_coeffs, result = chebfit(x_data, y_data, deg=deg_index, full=True)
-
     # 	res = result[0][0]
     # if res%2==0:
     # 	L2errs.append(res)
@@ -164,6 +161,7 @@ def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.in
         # Compute the FFT of data
         from numpy.fft import ifft
         from transforms import compute_fft, unset_fft_conven
+
         from waveformtools import taper
 
         udata_x = taper(udata_x, delta_t=delta_x)
