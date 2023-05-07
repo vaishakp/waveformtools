@@ -605,7 +605,7 @@ def load_RIT_Strain_data_from_disk(
     if not modes_list:
         if not wfa.modes_list:
             print("Constructing the modes list")
-            modes_list = waveformtools.waveforms.construct_mode_list(ell_max=ell_max, spin_weight=wfa.spin_weight)
+            modes_list = construct_mode_list(ell_max=ell_max, spin_weight=wfa.spin_weight)
         else:
             modes_list = wfa.modes_list
     else:
@@ -1138,7 +1138,7 @@ def load_SpEC_data_from_disk(
         if not wfa.modes_list:
             print("Constructing the modes list")
             # sys.exit(0)
-            modes_list = waveformtools.waveforms.construct_mode_list(ell_max=ell_max, spin_weight=wfa.spin_weight)
+            modes_list = construct_mode_list(ell_max=ell_max, spin_weight=wfa.spin_weight)
         else:
             modes_list = wfa.modes_list
     else:
@@ -1377,7 +1377,7 @@ def load_SpECTRE_data_from_disk(
         if not wfa.modes_list:
             print("Constructing the modes list")
             # sys.exit(0)
-            modes_list = waveformtools.waveforms.construct_mode_list(ell_max=ell_max)
+            modes_list = construct_mode_list(ell_max=ell_max)
         else:
             modes_list = wfa.modes_list
     else:
