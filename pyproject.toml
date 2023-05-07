@@ -13,8 +13,9 @@ max-line-length = 125
 ignore = ['E203']
 
 [build-system]
-requires = ["hatching"]
-build-backend = "hatching.build"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 
 version = "2023.05.06"
 enabled = true
