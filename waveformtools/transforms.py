@@ -189,6 +189,9 @@ def Yslm(spin_weight, ell, emm, theta, phi):
     fact = np.math.factorial
     #fact = sp.factorial
     Sum = 0
+
+    spin_weight=abs(spin_weight)
+
     for aar in range(ell - spin_weight + 1):
         if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
             # print('Continuing')
@@ -265,6 +268,9 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     phi_grid = np.array(phi_grid)
 
     Sum = 0 + 1j * 0
+
+    spin_weight = abs(spin_weight)
+
     for aar in range(0, ell - spin_weight + 1):
         # print('aar', aar)
         subterm = 0
@@ -302,7 +308,6 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
 
     return Yslmv
 
-
 def Yslm_pres(spin_weight, ell, emm, theta, phi, pres=16):
     ''' Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
 
@@ -335,6 +340,9 @@ def Yslm_pres(spin_weight, ell, emm, theta, phi, pres=16):
     #fact = np.math.factorial
     fact = sp.factorial
     Sum = 0
+
+    spin_weight = abs(spin_weight)
+
     for aar in range(ell-spin_weight + 1):
 
         if (aar + spin_weight-emm)<0 or (ell - aar - spin_weight)<0:

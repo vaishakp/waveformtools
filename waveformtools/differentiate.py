@@ -84,8 +84,6 @@ def derivative(x_data, y_data, method='FD', degree=3):
         else:
             raise NotImplementedError(f'Unknown method {method}')
 
-        print(len(dydx_new), np.array(dydx_new).shape)
-
         if interp:
             dydx = interp1d(x_uniform, dydx_new, kind='cubic')(x_data)
         else:
