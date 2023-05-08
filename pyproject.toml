@@ -32,9 +32,24 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dependencies = ["numpy",
+	"scipy",
+	"matplotlib",
+	"numba",
+	"h5py",
+	"termcolor",
+	"datetime",
+	"sympy",
+	"numpydoc"]
+
+[project.optional-dependencies]
+EXT = ["pycbc", "lalsuite", "ligo-common"]
+
 [project.urls]
 "Homepage" = "https://gitlab.com/vaishakp/waveformtools"
 "Bug Tracker" = "https://gitlab.com/vaishakp/waveformtools/issues"
 
+
 [tools.setuptools.dynamic]
 version = {attr = "waveformtools.__version__"}
+

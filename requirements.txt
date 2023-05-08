@@ -7,8 +7,5 @@ numba
 h5py
 termcolor
 datetime
-lalsuite
-ligo-common
-pycbc
 sympy
 numpydoc
