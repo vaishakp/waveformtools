@@ -1290,7 +1290,8 @@ def xtract_cphase(tsdata_p, tsdata_x, delta_t=None, to_plot=False):
     # Calculate the wrapped phase (phi0 -> (0,2Pi))
     phi0 = np.pi + np.arctan2(datax, datap)
 
-    phic = unwrap_phase(phi0)
+    phic = unwrap_phase(phi0) - np.pi
+
     # phic = np.unwrap(phi0)
     # Plots.
     # Phase vs time.
