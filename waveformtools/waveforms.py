@@ -29,13 +29,15 @@ from waveformtools.waveformtools import message
 # Units
 #####################
 
-G = 6.67 * 10 ** (-11.0)
-c = 3.0 * 10**8  # m/s
+G = 6.67428 * 10 ** (-11.0) # m^3 /kg /s^2
+# c = 3.0 * 10**8  # m/s
+c = 299_792_458.0  # m/s
+#Msun = 1.32712440041e20
 Msun = 1.988500 * 10**30.0  # g, SI
 muc = c**2 / (G * Msun)  # g, NR to SI
 tuc = G * Msun / (c**3)  # s, NR to SI
-dMpc = 3.0857 * 10 ** (22)  # m
-
+# dMpc = 3.0857 * 10 ** (22)  # m
+dMpc = 3.0856775814913672789139379577965e22
 
 #################################################
 # Spherical array class
@@ -1071,7 +1073,7 @@ class modes_array:
             dataIO.load_gen_data_from_disk(
                 self, label, data_dir, file_name, r_ext, ell_max, pre_key, modes_list, crop, centre, key_ex, r_ext_factor
             )
-        elif ftype == "RIT":
+        elif ftype == "RIT" or "GT":
             if var_type == "Psi4":
                 dataIO.load_RIT_Psi4_data_from_disk(
                     wfa=self,
@@ -1907,7 +1909,7 @@ class modes_array:
 
         return filtered_modes
 
-    def to_td_waveform(self, Mtotal=1, theta=0, phi = 0, distance=1, delta_t=None, method='precise'):
+    def to_td_waveform(self, Mtotal=1, theta=0, phi = 0, alpha=None, distance=1, delta_t=None, method='precise'):
         """Get the plus and cross polarizations of
         of the waveform time series by summing the modes.
 
@@ -1945,26 +1947,28 @@ class modes_array:
         """
 
         if method == 'fast':
+            message('Using fast SWSH method')
             from waveformtools.transforms import Yslm
         elif method == 'precise':
+            message('Using precise SWSH method')
             from waveformtools.transforms import Yslm_prec as Yslm
         else:
             raise NotImplementedError(f'Unknown method {method}')
 
         # message(Yslm)
-        th = incl_angle
-        ph = 0
+        #th = theta
+        #ph = phi
 
-        wts = np.zeros(self.data_len, dtype=np.complex128)
+        wts = np.zeros(self.data_len, dtype=np.complex256)
 
         for ell, emm_list in self.modes_list:
             for emm in emm_list:
                 Alm = self.mode(ell, emm)
 
-                Y = Yslm(self.spin_weight, ell, emm, th, ph)
+                Y = Yslm(self.spin_weight, ell, emm, theta, phi)
                 # message(Y)
                 # message(Alm)
-                wts = wts + Alm * Y
+                wts = wts + Alm * np.complex256(Y)
 
         taxis = self.time_axis * tuc * Mtotal
 
@@ -1974,11 +1978,20 @@ class modes_array:
             # Resample the waveform
             new_taxis = np.arange(taxis[0], taxis[-1], delta_t)
 
-            from waveformtools.waveformtools import interp_resam_wfs
+            from waveformtools.waveformtools import interp_resam_wfs, xtract_camp_phase
 
-            wts = interp_resam_wfs(wts, taxis, new_taxis)
+            amp, phase = xtract_camp_phase(wts.real, wts.imag)
+
+            wts = interp_resam_wfs(wts, taxis, new_taxis, k=None)
 
             taxis = new_taxis
+
+        # Rotate polarizations
+        if alpha is not None:
+            from waveformtools.transforms import rotate_polarizations
+
+            wts = rotate_polarizations(wts, alpha)
+
         return taxis, wts.real, wts.imag
 
 

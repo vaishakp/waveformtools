@@ -308,7 +308,7 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
 
     return Yslmv
 
-def Yslm_pres(spin_weight, ell, emm, theta, phi, pres=16):
+def Yslm_prec(spin_weight, ell, emm, theta, phi, pres=16):
     ''' Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
 
         Inputs
@@ -393,9 +393,9 @@ def rotate_polarizations(wf, alpha):
     h1, h2 = wf.real, wf.imag
 
     rh1 = np.cos(2*alpha)*h1 - np.sin(2*alpha)*h2
-    rh2 = np.sin(2*alpha)*h1 + np.cos(2*alpha)*h1
+    rh2 = np.sin(2*alpha)*h1 + np.cos(2*alpha)*h2
 
-    return rh1+1j*rh2
+    return rh1+ 1j*rh2
 
 
 

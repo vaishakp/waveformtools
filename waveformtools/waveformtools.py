@@ -1290,9 +1290,9 @@ def xtract_cphase(tsdata_p, tsdata_x, delta_t=None, to_plot=False):
     # Calculate the wrapped phase (phi0 -> (0,2Pi))
     phi0 = np.pi + np.arctan2(datax, datap)
 
-    phic = unwrap_phase(phi0) - np.pi
+    # phic = unwrap_phase(phi0) - np.pi
 
-    # phic = np.unwrap(phi0)
+    phic = np.unwrap(phi0) - np.pi
     # Plots.
     # Phase vs time.
     if to_plot:
@@ -3152,7 +3152,7 @@ def resample(interp_data, new_delta_t, epoch, length, old_delta_t=None):
     return data
 
 
-def interp_resam_wfs(wavf_data, old_taxis, new_taxis, resam_kind="cubic"):
+def interp_resam_wfs(wavf_data, old_taxis, new_taxis, resam_kind="cubic", k=None):
     """Wrapper function for interpolation and resampling.
 
     Parameters
@@ -3168,13 +3168,29 @@ def interp_resam_wfs(wavf_data, old_taxis, new_taxis, resam_kind="cubic"):
     resam_wf_data:  1d array
                     Interpolated and resampled data.
     """
-    from scipy.interpolate import interp1d
+    # from scipy.interpolate import interp1d
+
+    amp, phase = xtract_camp_phase(wavf_data.real, wavf_data.imag)
+
 
     # Interpolate
-    interp_data = interp1d(old_taxis, wavf_data, kind=resam_kind)
+    if k is not None:
+        from scipy.interpolate import UnivariateSpline as interpolator
+
+        interp_amp_data = interpolator(old_taxis, amp, k=k)
+        interp_phase_data = interpolator(old_taxis, phase, k=k)
+
+    else:
+        from scipy.interpolate import interp1d as interpolator
+
+        interp_amp_data = interpolator(old_taxis, amp, kind=resam_kind)
+        interp_phase_data = interpolator(old_taxis, phase, kind=resam_kind)
 
     # Resample
-    resam_wf_data = interp_data(new_taxis)
+    resam_amp_data = interp_amp_data(new_taxis)
+    resam_phase_data = interp_phase_data(new_taxis)
+
+    resam_wf_data = resam_amp_data*np.exp(1j*resam_phase_data)
 
     return resam_wf_data
 

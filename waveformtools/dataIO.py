@@ -13,6 +13,7 @@ import sys
 import h5py
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.interpolate import UnivariateSpline as interpolator
 
 from waveformtools.waveformtools import interp_resam_wfs, message, xtract_camp_phase
 
@@ -488,7 +489,7 @@ def load_RIT_Psi4_from_disk(
             wfa.set_mode_data(ell, emm, wfmode)
 
     # Trim or recenter
-    wfa.crop(trim_upto_time=0)
+    wfa.trim(trim_upto_time=0)
 
     if save_as_ma is True:
         # Save the modes array as waveforms hdf file
@@ -513,7 +514,7 @@ def load_RIT_Strain_data_from_disk(
     r_ext_factor=1,
     debug=False,
 ):
-    """Load the RIT strain waveforms from the RIT catalogue,
+    """Load the RIT or strain waveforms from the RIT/ MAYA catalogue data,
     from hdf5 files from disk.
 
     Parameters
@@ -628,11 +629,17 @@ def load_RIT_Strain_data_from_disk(
     # import h5py
     data_file = h5py.File(f"{data_dir}/{file_name}")
 
-    time_axis = data_file["NRTimes"][...]
-    # dt_auto = time_axis[1]-time_axis[0]
-    from scipy.stats import mode
+    try:
+        # For RIT data type
+        time_axis = data_file["NRTimes"][...]
+        # dt_auto = time_axis[1]-time_axis[0]
+        from scipy.stats import mode
 
-    dt_auto = mode(np.diff(time_axis))[0][0]
+        dt_auto = mode(np.diff(time_axis))[0][0]
+    
+    except Exception as excep:
+        dt_auto = None
+        message('NRTimes not present. Will compute dt auto from mode time axis')
 
     message("Reading in modes...")
     for ell, emm_list in modes_list:
@@ -645,9 +652,23 @@ def load_RIT_Strain_data_from_disk(
 
             # Create modes_array on first run
 
+            ###############################
+            # Load the phase data
+            ##############################
+            Tphase = data_file[this_phase_key]["X"][...]
+
+            Yphase = data_file[this_phase_key]["Y"][...]
+
             # message(wfa.modes_data)
             if wfa.modes_data.all() == np.array(None):
                 message("Creating modes data")
+
+                if dt_auto is None:
+                    # For MAYA data type
+                    time_axis = Tphase
+                    # dt_auto = time_axis[1]-time_axis[0]
+                    from scipy.stats import mode
+                    dt_auto = mode(np.diff(time_axis))[0][0]
 
                 # min_dt = round(min(np.diff(wf_psi4_time)), 2)
                 # max_dt = round(max(np.diff(wf_psi4_time)), 2)
@@ -674,7 +695,7 @@ def load_RIT_Strain_data_from_disk(
 
                 # Assign to it the time axis
                 wfa.time_axis = time_axis
-                message(wfa.time_axis)
+                # message(wfa.time_axis)
             # message(wfa.time_axis - wf_psi4_time)
             # continue
             ###################################
@@ -682,14 +703,9 @@ def load_RIT_Strain_data_from_disk(
             ###################################
             # message('Wfa time axis', wfa.time_axis)
 
-            ###############################
-            # Load the phase data
-            ##############################
-            Tphase = data_file[this_phase_key]["X"][...]
-
-            Yphase = data_file[this_phase_key]["Y"][...]
-
+            
             Yphase_interp_fun = interp1d(Tphase, Yphase, kind=interp_kind)
+            # Yphase_interp_fun = interpolator(Tphase, Yphase, k=3)
 
             # Resample
 
@@ -703,6 +719,9 @@ def load_RIT_Strain_data_from_disk(
             Yamp = data_file[this_amp_key]["Y"][...]
 
             Yamp_interp_fun = interp1d(Tamp, Yamp, kind=interp_kind)
+            #Yamp_interp_fun = interpolator(Tamp, Yamp, k=3)
+
+            # wf_c = Yamp*np.exp(1j*Yphase)
 
             # Resample
 
@@ -710,6 +729,12 @@ def load_RIT_Strain_data_from_disk(
 
             wfmode = Yamp_resam * np.exp(1j * Yphase_resam)
 
+            #if not (Tphase==Tamp).all():
+            #    raise ValueError('The time axis of the amps and phase are different!')
+
+            # wfmode = interp_resam_wfs(wf_c, Tphase, time_axis, k=4)
+
+            
             ###################################
             # Load the modes data
             ###################################
@@ -717,15 +742,16 @@ def load_RIT_Strain_data_from_disk(
             wfa.set_mode_data(ell, emm, r_ext_factor * wfmode)
 
     data_file.close()
+
+    #####################
+    # Finishing touches
+    #####################
+
     # Trim or recenter
     if centre is True:
-        wfa.crop(trim_upto_time=0)
+        wfa.trim(trim_upto_time=0)
     if isinstance(crop, float):
-        wfa.crop(trim_upto_time=crop)
-
-    message(wfa.get_metadata())
-    message(wfa.time_axis)
-    message(wfa.mode(2, 2))
+        wfa.trim(trim_upto_time=crop)
 
     if save_as_ma is True:
         # Save the modes array as waveforms hdf file
@@ -1166,8 +1192,9 @@ def load_SpEC_data_from_disk(
             wf_time = wf_data[:, 0]
             wf_data_re = wf_data[:, 1]
             wf_data_im = wf_data[:, 2]
+            wf_data_c = wfs_data_re + 1j*wf_data_im
 
-            wf_amp, wf_phase = xtract_camp_phase(wf_data_re, wf_data_im)
+            # wf_amp, wf_phase = xtract_camp_phase(wf_data_re, wf_data_im)
 
             # message(type(wfa.modes_data))
             if wfa.modes_data.all() == np.array(None):
@@ -1226,9 +1253,11 @@ def load_SpEC_data_from_disk(
             # Interpolating in amplitude and phase is better
             # and has lower interpolation errors
             # but is slower due to unwrapping of phases.
+            
+            wf_int = interp_resam_wfs(wfs_data_c, wf_time, time_axis, k=4)
 
-            amp_int = interp_resam_wfs(wf_amp, wf_time, time_axis)
-            phase_int = interp_resam_wfs(wf_phase, wf_time, time_axis)
+            #amp_int = interp_resam_wfs(wf_amp, wf_time, time_axis)
+            #phase_int = interp_resam_wfs(wf_phase, wf_time, time_axis)
 
             # re_int = interp1d(wf_time, wf_data_re)
             # message(wf_time[0], wf_time[-1], time_axis[0], time_axis[-1])
@@ -1238,7 +1267,7 @@ def load_SpEC_data_from_disk(
             # im_dat = im_int(time_axis)
 
             # wfa.set_mode_data(ell, emm, data=re_dat + 1j * im_dat)
-            wfa.set_mode_data(ell, emm, data=amp_int * np.exp(1j * phase_int))
+            wfa.set_mode_data(ell, emm, data=wf_int)
 
     if debug is True:
         for ell, emm_list in modes_list:
