@@ -214,7 +214,7 @@ def plot_mode_differences(
 
     modes_to_plot = []
 
-    # print(mode_list_sorted)
+    # message(mode_list_sorted)
     for item in mode_list_sorted:
         ell = int(item[1])
         emm = int(item[3:])
@@ -283,7 +283,7 @@ def plot_mode_differences(
 
                 start_ind = int((-new_time_axis[0] - start_time) / new_delta_t)
 
-                # print(start_ind)
+                # message(start_ind)
                 # Remove the man phase shift
                 mean_phase_shift = np.mean(
                     mode_phase_resamx[start_ind : start_ind + dindex] - mode_phase_resam0[start_ind : start_ind + dindex]
@@ -293,7 +293,7 @@ def plot_mode_differences(
                 #   mode_phase_resamx - mode_phase_resam0
                 # )
 
-                # print(mean_phase_shift)
+                # message(mean_phase_shift)
                 delta_mode_ampx = (mode_amp_resamx - mode_amp_resam0) / mode_amp_resam0
                 delta_mode_phasex = (mode_phase_resamx - mode_phase_resam0 - mean_phase_shift) / mode_phase_resam0
 

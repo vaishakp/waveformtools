@@ -1408,7 +1408,7 @@ class sim:
 
         dir = Path(path)
         # The path of the file.
-        # print(list(dir.rglob(string)))
+        # message(list(dir.rglob(string)))
         try:
             file_path = list(dir.rglob(string))[0]
         except Exception as excep:
@@ -1439,12 +1439,12 @@ class sim:
             with open(full_file_path, "r") as file:
                 for line_index in range(15):
                     fline = next(file)
-                    # print(fline)
+                    # message(fline)
                     str_match = re.search(f"\d\d:qlm_np{np_qty}", fline)
-                    # print(str_match)
+                    # message(str_match)
                     if str_match is not None:
                         start_col = int(str_match[0][:2])
-                        # print(start_col)
+                        # message(start_col)
                         break
 
             NP_all_data = np.genfromtxt(full_file_path)[

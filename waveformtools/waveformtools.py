@@ -553,7 +553,7 @@ def lengtheq(data_a, data_b, delta_t=None, is_ts=False):
         # return pycbc.types.timeseries.TimeSeries(signalb,delta_t),lflag
     # If data_b < data_a
     else:
-        # print("Error!")
+        # message("Error!")
         # add zeros to b when b is smaller
         lflag = "b"
         zers = len(data_a) - len(data_b)
@@ -1816,22 +1816,22 @@ def taper_tanh(waveform, time_axis=None, delta_t=None, duration=10, sides="both"
         # Try to construct using `delta_t`
         try:
             time_axis = np.arange(0, data_len * delta_t, delta_t)
-            # print('time axis', time_axis)
+            # message('time axis', time_axis)
         except Exception as excep:
             message("Please suppy the time axis or delta_t!", excep)
 
     nearest_lower_power = int(np.log(data_len) / np.log(2))
 
-    # print('nearest lower power', nearest_lower_power)
+    # message('nearest lower power', nearest_lower_power)
     # Change in length of the data.
     data_delta_len = np.power(2, nearest_lower_power + 2) - data_len
-    # print('data delta len', data_delta_len)
+    # message('data delta len', data_delta_len)
     # nend_points = int((duration/2)/delta_t) + int(data_delta_len/2)
     nend_points = int(data_delta_len / 2)
     nstart_points = data_delta_len - nend_points
 
-    # print('N startend points', nend_points, nstart_points)
-    # print('New time axis', new_time_axis)
+    # message('N startend points', nend_points, nstart_points)
+    # message('New time axis', new_time_axis)
     tfinal = data_len * delta_t
 
     # start_axis = np.linspace(-1, 1, nstart_points)
@@ -2368,9 +2368,9 @@ def resample_wfs(both_time_axes, both_waveforms, delta_t="auto", Plot=False):
     min_t = max(min(time_axis1), min(time_axis2))
     max_t = min(max(time_axis1), max(time_axis2))
 
-    print("Taxis limits")
-    print(f"WF1 tmin {min(time_axis1)} tmax {max(time_axis1)}")
-    print(f"WF2 tmin {min(time_axis2)} tmax {max(time_axis2)}")
+    message("Taxis limits")
+    message(f"WF1 tmin {min(time_axis1)} tmax {max(time_axis1)}")
+    message(f"WF2 tmin {min(time_axis2)} tmax {max(time_axis2)}")
 
     delta_t1 = sorted(time_axis1)[1] - sorted(time_axis1)[0]
     delta_t2 = sorted(time_axis2)[1] - sorted(time_axis2)[0]
@@ -2468,9 +2468,9 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
         else:
             raise ValueError(f"Did not understand speification for delta_t {delta_t}")
 
-    # print(type(time_axis1), type(time_axis2))
-    # print(time_axis1-time_axis2)
-    # print(time_axis1==time_axis2)
+    # message(type(time_axis1), type(time_axis2))
+    # message(time_axis1-time_axis2)
+    # message(time_axis1==time_axis2)
 
     # Don't interpolate if the time axis are identical
     Interp = True
@@ -2491,7 +2491,7 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
     if Interp is True:
         message("Interpolating time axis")
         time_axis, wf1, wf2 = resample_wfs(all_time_axes, all_waveforms, delta_t)
-        # print(time_axis, wf1, wf2)
+        # message(time_axis, wf1, wf2)
 
     from waveformtools.transforms import compute_fft, compute_ifft
 
@@ -2516,10 +2516,10 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
     Pshift_rec = csnr[Tshift_rec_index] / np.absolute(csnr[Tshift_rec_index])
     Pshift_rec_rad = np.log(Pshift_rec) / (1j)
 
-    print("-----------------------------------\n Shift information for waveform 2 against 1 \n")
-    print(f"Recovered Time shift: {Tshift_rec}")
-    print(f"Recovered Phase shift: {Pshift_rec}, {Pshift_rec_rad} in radians")
-    print("-----------------------------------")
+    message("-----------------------------------\n Shift information for waveform 2 against 1 \n")
+    message(f"Recovered Time shift: {Tshift_rec}")
+    message(f"Recovered Phase shift: {Pshift_rec}, {Pshift_rec_rad} in radians")
+    message("-----------------------------------")
 
     # Apply the time shift to the second waveform
 
@@ -2596,9 +2596,9 @@ def match_wfs_pycbc(all_time_axes, all_waveforms):
     waveform1, waveform2 = all_waveforms
     time_axis1, time_axis2 = all_time_axes
 
-    print("Taxis limits")
-    print(f"Shear tmin {min(time_axis1)} tmax {max(time_axis1)}")
-    print(f"News tmin {min(time_axis2)} tmax {max(time_axis2)}")
+    message("Taxis limits")
+    message(f"Shear tmin {min(time_axis1)} tmax {max(time_axis1)}")
+    message(f"News tmin {min(time_axis2)} tmax {max(time_axis2)}")
 
     delta_t_1 = time_axis1[1] - time_axis1[0]
     delta_t = time_axis2[1] - time_axis2[0]
@@ -2624,7 +2624,7 @@ def match_wfs_pycbc(all_time_axes, all_waveforms):
 
     # maxloc = np.argmax(corrs)
     shift = np.argmax(np.array(corrs))
-    print(f"The shift units is {shift}")
+    message(f"The shift units is {shift}")
 
     # ii). apply the time shift to the second waveform
 

@@ -118,7 +118,7 @@ class spherical_array:
             try:
                 delta_t = self.time_axis[1] - self.time_axis[0]
             except Exception as ex:
-                print("Please input the value of `delta_t` or supply the `time_axis` to the waveform.", ex)
+                message("Please input the value of `delta_t` or supply the `time_axis` to the waveform.", ex)
         else:
             delta_t = value
 
@@ -348,18 +348,18 @@ class spherical_array:
                 # print(f'differentiating {dorder+1} times')
                 dPsidu = differentiate5_vec_numba(dPsidu, delta_t)
 
-            print("Incrementing...")
+            message("Incrementing...")
             # delta = np.power(supertransl_alpha_sp.data, index+1) * dPsidu / np.math.factorial(index+1)
             # print(delta/self.data)
 
             data += np.power(supertransl_alpha_sp.data, index + 1) * dPsidu / np.math.factorial(index + 1)  # delta
 
         data += self.data
-        print("Equal to original waveform?", (data == self.data).all())
+        message("Equal to original waveform?", (data == self.data).all())
 
         Psi4_supertransl_sp.data = data
         Psi4_supertransl_sp.time_axis = self.time_axis
-        print("Done.")
+        message("Done.")
         return Psi4_supertransl_sp
 
     def load_qlm_data(self, data_dir=None, grid_info=None, bh=0, variable="sigma"):
@@ -402,7 +402,7 @@ class spherical_array:
 
         if grid_info is None:
             if self.grid_info is None:
-                print("Please supply the grid spec!")
+                message("Please supply the grid spec!")
             else:
                 grid_info = self.grid_info
         else:
@@ -642,7 +642,7 @@ class spherical_array:
         # Create the modes_array
         waveform_modes.time_axis = self.time_axis[:]
         # sargs = np.argsort(waveform_modes.time_axis)
-        # print(sargs)
+        # message(sargs)
         waveform_modes.time_axis = waveform_modes.time_axis
 
         waveform_modes.create_modes_array(ell_max=ell_max, data_len=self.data_len)
@@ -667,7 +667,7 @@ class spherical_array:
 
             for emm_value in all_emm_values:
                 # m value.
-                # print(f'Processing l{ell_value} m{emm_value}')
+                # message(f'Processing l{ell_value} m{emm_value}')
                 # Spin weighted spherical harmonic function at (theta, phi)
 
                 Ybasis_fun = np.conj(
@@ -677,18 +677,18 @@ class spherical_array:
                 # ell=ell_value, emm=emm_value, theta_grid=theta[:, :, index],
                 # phi_grid=phi[:, :, index])) for index in range(self.data_len)])
                 # Ybasis_fun = np.transpose(Ybasis_fun, (1, 2, 0))
-                # print('Ybasis_fun', Ybasis_fun.shape)
+                # message('Ybasis_fun', Ybasis_fun.shape)
                 Ydarea = Ybasis_fun * darea
-                # print('Ydarea', Ydarea.shape)
-                # print(full_integrand)
+                # message('Ydarea', Ydarea.shape)
+                # message(full_integrand)
                 # Using quad
-                # print('self.data', self.data.shape)
+                # message('self.data', self.data.shape)
                 # multipole_ell_emm = np.tensordot(self.data, Ydarea, axes=((0, 1), (0, 1)))
                 multipole_ell_emm = np.sum(self.data * Ydarea, (0, 1))
 
-                # print(f'l{ell_value}m{emm_value}', multipole_ell_emm)
+                # message(f'l{ell_value}m{emm_value}', multipole_ell_emm)
 
-                # print('multipole_ell_emm', multipole_ell_emm.shape)
+                # message('multipole_ell_emm', multipole_ell_emm.shape)
                 waveform_modes.set_mode_data(ell_value, emm_value, data=multipole_ell_emm)
 
         return waveform_modes
@@ -1066,7 +1066,7 @@ class modes_array:
 
         # if self.file_name is not None:
         #   file_name = self.file_name
-        print("Passing", data_dir, file_name)
+        message("Passing", data_dir, file_name)
         if ftype == "generic":
             dataIO.load_gen_data_from_disk(
                 self, label, data_dir, file_name, r_ext, ell_max, pre_key, modes_list, crop, centre, key_ex, r_ext_factor
@@ -1089,7 +1089,7 @@ class modes_array:
                     r_ext_factor=r_ext_factor,
                 )
             elif var_type == "Strain":
-                # print(file_name)
+                # message(file_name)
                 dataIO.load_RIT_Strain_data_from_disk(
                     self,
                     data_dir=data_dir,
@@ -1286,7 +1286,7 @@ class modes_array:
                 sp_data += np.multiply.outer(
                     Yslm_vec(spin_weight, ell=ell, emm=emm, theta_grid=theta, phi_grid=phi), self.mode(ell, emm)
                 )
-                # print(sp_data)
+                # message(sp_data)
         # Set the data of the spherical array.
         waveform_sp.data = sp_data
         try:
@@ -1468,7 +1468,7 @@ class modes_array:
             )
 
         if method == "NM":
-            print("This method is not available yet! ")
+            message("This method is not available yet! ")
 
         # Prepare the modes to be extrapolated.
         if modes_list == "all":
@@ -1491,7 +1491,7 @@ class modes_array:
 
             for emm_value in emm_list:
                 # For every emm value
-                print(f"Processing l{ell_value}, m{emm_value}")
+                message(f"Processing l{ell_value}, m{emm_value}")
                 # Compute rPsi4_lm
                 mode_data = r_ext_factor * self.mode(ell_value, emm_value)
 
@@ -1502,7 +1502,7 @@ class modes_array:
                 # Assign data to new modes array
                 extrap_wf.set_mode_data(ell_value, emm_value, extrap_mode_data)
 
-        print("Done!")
+        message("Done!")
         return extrap_wf
 
     def supertranslate(self, supertransl_alpha_modes, grid_info, order=4):
@@ -1745,7 +1745,7 @@ class modes_array:
             nearest_power = int(np.log(data_len) / np.log(2))
             req_len = np.power(2, nearest_power + 1)
             zeros = req_len - data_len
-            print("num_zeros", zeros)
+            message("num_zeros", zeros)
 
         # New modes array.
 
@@ -1776,7 +1776,7 @@ class modes_array:
                     tapered_modes.create_modes_array(ell_max=self.ell_max, data_len=new_data_len)
                 tapered_data = tapered_data_re + 1j * tapered_data_im
 
-                # print(len(tapered_data_re))
+                # message(len(tapered_data_re))
                 tapered_modes.set_mode_data(ell, emm, data=tapered_data)
 
         # Set the time axis
@@ -1814,7 +1814,7 @@ class modes_array:
             nearest_power = int(np.log(data_len) / np.log(2))
             req_len = np.power(2, nearest_power + 1)
             zeros = req_len - data_len
-            # print('num_zeros', zeros)
+            # message('num_zeros', zeros)
 
         # New modes array.
 
@@ -1845,7 +1845,7 @@ class modes_array:
                     tapered_modes.create_modes_array(ell_max=self.ell_max, data_len=new_data_len)
                 tapered_data = tapered_data_re + 1j * tapered_data_im
 
-                # print(len(tapered_data_re))
+                # message(len(tapered_data_re))
                 tapered_modes.set_mode_data(ell, emm, data=tapered_data)
 
         # Set the time axis
@@ -1951,7 +1951,7 @@ class modes_array:
         else:
             raise NotImplementedError(f'Unknown method {method}')
 
-        # print(Yslm)
+        # message(Yslm)
         th = incl_angle
         ph = 0
 
@@ -1962,8 +1962,8 @@ class modes_array:
                 Alm = self.mode(ell, emm)
 
                 Y = Yslm(self.spin_weight, ell, emm, th, ph)
-                # print(Y)
-                # print(Alm)
+                # message(Y)
+                # message(Alm)
                 wts = wts + Alm * Y
 
         taxis = self.time_axis * tuc * Mtotal

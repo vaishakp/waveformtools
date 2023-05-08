@@ -16,3 +16,4 @@
 !.gitignore
 **/*.swp
 *.swp
+waveformtools/devel_nb

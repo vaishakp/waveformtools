@@ -40,7 +40,7 @@ def compute_fft(udata_x, delta_x):
 
     # Get frequency axes.
     Nlen = len(utilde)
-    # print(Nlen)
+    # message(Nlen)
     # Naxis			= np.arange(Nlen)
     # freq_orig		= fftfreq(Nlen)
     # freq_axis		= fftshift(freq_orig)*Nlen
@@ -87,7 +87,7 @@ def compute_ifft(utilde, delta_f):
 
     # Get frequency axes.
     Nlen = len(udata_time)
-    # print(Nlen)
+    # message(Nlen)
     # Naxis			= np.arange(Nlen)
     # freq_orig		= fftfreq(Nlen)
     # freq_axis		= fftshift(freq_orig)*Nlen
@@ -152,9 +152,9 @@ def unset_fft_conven(utilde_conven):
     utilde_np = np.fft.ifftshift(utilde_conven)
 
     utilde_np = len(utilde_np) * np.conj(utilde_np) / 2
-    # print(utilde_original[0])
+    # message(utilde_original[0])
     utilde_np[0] *= 2
-    # print(utilde_original[0])
+    # message(utilde_original[0])
 
     return utilde_np
 
@@ -194,18 +194,18 @@ def Yslm(spin_weight, ell, emm, theta, phi):
 
     for aar in range(ell - spin_weight + 1):
         if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
-            # print('Continuing')
+            # message('Continuing')
             continue
         else:
-            # print('r, l, s, m', r, l, s, m)
+            # message('r, l, s, m', r, l, s, m)
             # a1 = sp.binomial(ell - spin_weight, aar)
-            # print(a1)
+            # message(a1)
             # a2 = sp.binomial(ell + spin_weight, aar + spin_weight - emm)
-            # print(a2)
+            # message(a2)
             # a3 = np.exp(1j * emm * phi)
-            # print(a3)
+            # message(a3)
             # a4 = np.tan(theta / 2)
-            # print(a4)
+            # message(a4)
 
             Sum += (
                 sp.binomial(ell - spin_weight, aar)
@@ -216,9 +216,9 @@ def Yslm(spin_weight, ell, emm, theta, phi):
             )
 
     Sum = complex(Sum)
-    # print(type(m))
-    # print((-1)**int(m))
-    # print(np.sin(th/2)**(2*l))
+    # message(type(m))
+    # message((-1)**int(m))
+    # message(np.sin(th/2)**(2*l))
     Yslm = (-1) ** emm * (
         np.sqrt(
             fact(ell + emm)
@@ -272,14 +272,14 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     spin_weight = abs(spin_weight)
 
     for aar in range(0, ell - spin_weight + 1):
-        # print('aar', aar)
+        # message('aar', aar)
         subterm = 0
 
         if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
-            # print('Continuing')
+            # message('Continuing')
             continue
         else:
-            # print(aar + spin_weight-emm)
+            # message(aar + spin_weight-emm)
 
             term1 = comb(ell - spin_weight, aar)
             term2 = comb(ell + spin_weight, aar + spin_weight - emm)
@@ -289,12 +289,12 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
             term5 = np.power(np.tan(theta_grid / 2), (-2 * aar - spin_weight + emm))
             subterm = term1 * term2 * term3 * term4 * term5
 
-            # print(term1, term2, term3, term4)
+            # message(term1, term2, term3, term4)
 
             Sum += subterm
-            # print('arr, subterm', aar, subterm)
+            # message('arr, subterm', aar, subterm)
 
-    # print(ell+emm, ell+spin_weight, ell-spin_weight)
+    # message(ell+emm, ell+spin_weight, ell-spin_weight)
     Yslmv = float(-1) ** emm * (
         np.sqrt(
             fact(ell + emm)
@@ -346,18 +346,18 @@ def Yslm_pres(spin_weight, ell, emm, theta, phi, pres=16):
     for aar in range(ell-spin_weight + 1):
 
         if (aar + spin_weight-emm)<0 or (ell - aar - spin_weight)<0:
-            #print('Continuing')
+            #message('Continuing')
             continue
         else:
-            #print('r, l, s, m', r, l, s, m)
+            #message('r, l, s, m', r, l, s, m)
             a1 =    sp.binomial(ell-spin_weight, aar)
-            #print(a1)
+            #message(a1)
             a2 =   sp.binomial(ell+spin_weight, aar+spin_weight-emm)
-            #print(a2)
+            #message(a2)
             a3 =   sp.exp(1j*emm*phi)
-            #print(a3)
+            #message(a3)
             a4 =   sp.tan(theta/2)
-            #print(a4)
+            #message(a4)
 
             Sum +=  sp.binomial(ell - spin_weight, aar)*sp.binomial(ell + spin_weight, aar + spin_weight-emm)*sp.Pow((-1), (ell - aar - spin_weight))*sp.exp(1j* emm * phi)/sp.Pow(sp.tan(theta / 2), (2 * aar + spin_weight - emm))
 

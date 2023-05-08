@@ -6,7 +6,7 @@
 #############################
 
 import numpy as np
-
+from waveformtools.waveformtools import message
 
 def compute_conformal_k(vec_v, theta, phi, spin_phase=0):
     """Compute the conformal factor for the boost transformation
@@ -86,7 +86,7 @@ def compute_supertransl_alpha(supertransl_alpha_modes, theta, phi):
 
     # For partial evaluation of functions
     # from functools import partial
-    print(supertransl_alpha_modes.keys())
+    message(supertransl_alpha_modes.keys())
     # Find the extreme ell values.
     keys_list = sorted(list(supertransl_alpha_modes.keys()))
 
@@ -108,7 +108,7 @@ def compute_supertransl_alpha(supertransl_alpha_modes, theta, phi):
         ell = int(item[1])
         for m_index in range(2 * ell + 1):
             emm = m_index - ell
-            print("ell is", ell, type(ell), "emm is ", emm)
+            message("ell is", ell, type(ell), "emm is ", emm)
             supertransl_alpha_sphere += supertransl_alpha_modes[item][m_index] * Yslm(spin_weight, ell, emm, theta, phi)
 
     return supertransl_alpha_sphere

@@ -96,7 +96,7 @@ def match_wfs_pycbc_old(waveforms, delt=None):
 
         (match_score, shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
 
-        print("Priliminary match", match_score, shift)
+        message("Priliminary match", match_score, shift)
         # Shift the matched data against the template using the shift obtained
         # above
         waveform1 = roll(np.array(waveform1), int(shift))
@@ -124,7 +124,7 @@ def match_wfs_pycbc_old(waveforms, delt=None):
 
         (match_score, shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
 
-        print("Priliminary match", match_score, shift)
+        message("Priliminary match", match_score, shift)
         # Shift the matched data against the template using the shift obtained
         # above
         waveform1 = roll(np.array(waveform1), int(shift))
@@ -140,10 +140,10 @@ def match_wfs_pycbc_old(waveforms, delt=None):
             starti, endi = apxstartend(waveform1)
             message("starti, endi")
 
-        print("The approximate start and end indices are", starti, endi, "length", endi - starti)
+        message("The approximate start and end indices are", starti, endi, "length", endi - starti)
         # Convert the non-zero portion of the signal and template to
         # time-series
-        print("Converting shifted vectors to time series")
+        message("Converting shifted vectors to time series")
         signal = pycbc.types.timeseries.TimeSeries(
             np.array(waveform1)[starti:endi] / np.linalg.norm(np.array(waveform1)[starti:endi]), delt
         )

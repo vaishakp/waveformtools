@@ -153,7 +153,7 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
     # 	res = result[0][0]
     if res >= 1e-3:
         if res <= 1e-1 and res >= 1e-3:
-            print(f"Residue warning {res}")
+            message(f"Residue warning {res}")
         elif res > 1e-1:
             import traceback
 
@@ -165,7 +165,7 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
             plt.legend()
             plt.show()
 
-            print(f"Residue warning {res}: Bad fit!")
+            message(f"Residue warning {res}: Bad fit!")
 
     # compute the derivative
     cheb_der_coeffs = chebder(cheb_coeffs, m=order)
@@ -264,7 +264,7 @@ def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.in
     omega_axis = 2 * np.pi * freq_axis
 
     # print(omega_axis)
-    print("The cutoff angular frequency is", omega0)
+    message("The cutoff angular frequency is", omega0)
 
     # Alter the frequency axis if omega0 < inf
 
@@ -759,7 +759,7 @@ def differentiate5_vec_nonumba(data, delta_t):
     # der_data = np.append(der_data, [derNm1], axis=aax)
     der_data[-1] = derNm1
 
-    print(der_data.shape)
+    message('Shape of data', der_data.shape, message_verbosity=2)
     return np.transpose(der_data, (1, 2, 0))
 
 
@@ -893,7 +893,7 @@ def differentiate5_vec_numba(data, delta_t):
     # der_data = np.append(der_data, [derNm1], axis=aax)
     # der_data[-1] = derNm1
 
-    print(der_data.shape)
+    message('Shape of data', der_data.shape, message_verbosity=2)
     return np.transpose(der_data, (1, 2, 0))
 
 
