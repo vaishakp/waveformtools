@@ -15,13 +15,8 @@ import h5py
 import numpy as np
 
 from waveformtools import dataIO
-from waveformtools.dataIO import (
-    _get_modes_list_from_keys,
-    construct_mode_list
-)
-
+from waveformtools.dataIO import construct_mode_list
 from waveformtools.grids import spherical_grid
-
 from waveformtools.transforms import Yslm_vec
 from waveformtools.waveformtools import message
 
@@ -29,10 +24,10 @@ from waveformtools.waveformtools import message
 # Units
 #####################
 
-G = 6.67428 * 10 ** (-11.0) # m^3 /kg /s^2
+G = 6.67428 * 10 ** (-11.0)  # m^3 /kg /s^2
 # c = 3.0 * 10**8  # m/s
 c = 299_792_458.0  # m/s
-#Msun = 1.32712440041e20
+# Msun = 1.32712440041e20
 Msun = 1.988500 * 10**30.0  # g, SI
 muc = c**2 / (G * Msun)  # g, NR to SI
 tuc = G * Msun / (c**3)  # s, NR to SI
@@ -1068,12 +1063,14 @@ class modes_array:
 
         # if self.file_name is not None:
         #   file_name = self.file_name
-        message("Passing", data_dir, file_name)
+        message("Passing", data_dir, file_name, message_verbosity=2)
+
         if ftype == "generic":
             dataIO.load_gen_data_from_disk(
                 self, label, data_dir, file_name, r_ext, ell_max, pre_key, modes_list, crop, centre, key_ex, r_ext_factor
             )
-        elif ftype == "RIT" or "GT":
+
+        elif (ftype) == "RIT" or (ftype == "GT"):
             if var_type == "Psi4":
                 dataIO.load_RIT_Psi4_data_from_disk(
                     wfa=self,
@@ -1909,7 +1906,7 @@ class modes_array:
 
         return filtered_modes
 
-    def to_td_waveform(self, Mtotal=1, theta=0, phi = 0, alpha=None, distance=1, delta_t=None, method='precise'):
+    def to_td_waveform(self, Mtotal=1, theta=0, phi=0, alpha=None, distance=1, delta_t=None, method="precise"):
         """Get the plus and cross polarizations of
         of the waveform time series by summing the modes.
 
@@ -1919,12 +1916,12 @@ class modes_array:
                 The inclination and the azimuthal
                 angular position of the observer
                 in the NR coodinate system.
-                
+
         distance : float
-        
+
         method : str
                  The method to use to generate
-                 the SWSH basis. This can be 
+                 the SWSH basis. This can be
                  `precise` or `fast`.
         Returns
         -------
@@ -1940,24 +1937,24 @@ class modes_array:
         function of `waveformtools.transforms`
 
         For precessing systems and to obtain the waveform
-        in the LAL convention, one should use the 
-        nrcatalogtools package to obtain the correct 
+        in the LAL convention, one should use the
+        nrcatalogtools package to obtain the correct
         angles first.
 
         """
 
-        if method == 'fast':
-            message('Using fast SWSH method')
+        if method == "fast":
+            message("Using fast SWSH method")
             from waveformtools.transforms import Yslm
-        elif method == 'precise':
-            message('Using precise SWSH method')
+        elif method == "precise":
+            message("Using precise SWSH method")
             from waveformtools.transforms import Yslm_prec as Yslm
         else:
-            raise NotImplementedError(f'Unknown method {method}')
+            raise NotImplementedError(f"Unknown method {method}")
 
         # message(Yslm)
-        #th = theta
-        #ph = phi
+        # th = theta
+        # ph = phi
 
         wts = np.zeros(self.data_len, dtype=np.complex256)
 
@@ -1996,4 +1993,3 @@ class modes_array:
 
 
 #######################################################################################################
-

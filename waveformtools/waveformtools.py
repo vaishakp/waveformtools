@@ -128,19 +128,19 @@ def mode(a_list):
 ##########################################################################
 """ Data handling functions """
 ##########################################################################
-""" This library consists of a bunch of functions that were frequently used 
-for handling NR data. """
+""" This library consists of a bunch of functions that were frequently used
+ for handling NR data. """
 
 """ Notes
-1. Some functions here display plots. If you intend to use these on the 
-cluster and if xterm is not adequately setup, you may have to 
-either comment the plot codes or use the`Agg` mode for plotting 
-and save the figures instead of showing by changing the appropriate 
+1. Some functions here display plots. If you intend to use these on the
+cluster and if xterm is not adequately setup, you may have to
+either comment the plot codes or use the`Agg` mode for plotting
+and save the figures instead of showing by changing the appropriate
 lines in the code.
 
-2. These is a module consisting of functions, not completely optimized 
+2. These is a module consisting of functions, not completely optimized
 for speed. This will happen in future.
-3. These functions are not defined in classes as they mostly use and 
+3. These functions are not defined in classes as they mostly use and
 operate on the objects of pycbc's builtin classes.
 4. Any suggestions, comments, critisism invited to vaishak@gmail.com!"""
 
@@ -3172,7 +3172,6 @@ def interp_resam_wfs(wavf_data, old_taxis, new_taxis, resam_kind="cubic", k=None
 
     amp, phase = xtract_camp_phase(wavf_data.real, wavf_data.imag)
 
-
     # Interpolate
     if k is not None:
         from scipy.interpolate import UnivariateSpline as interpolator
@@ -3190,7 +3189,7 @@ def interp_resam_wfs(wavf_data, old_taxis, new_taxis, resam_kind="cubic", k=None
     resam_amp_data = interp_amp_data(new_taxis)
     resam_phase_data = interp_phase_data(new_taxis)
 
-    resam_wf_data = resam_amp_data*np.exp(1j*resam_phase_data)
+    resam_wf_data = resam_amp_data * np.exp(1j * resam_phase_data)
 
     return resam_wf_data
 

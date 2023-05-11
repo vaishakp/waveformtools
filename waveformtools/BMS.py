@@ -6,7 +6,9 @@
 #############################
 
 import numpy as np
+
 from waveformtools.waveformtools import message
+
 
 def compute_conformal_k(vec_v, theta, phi, spin_phase=0):
     """Compute the conformal factor for the boost transformation

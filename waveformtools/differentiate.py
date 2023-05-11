@@ -13,8 +13,8 @@ from numba import jit, njit
 from waveformtools.waveformtools import message
 
 
-def derivative(x_data, y_data, method='FD', degree=3):
-    ''' Compute the derivative of the y data w.r.t the x data
+def derivative(x_data, y_data, method="FD", degree=3):
+    """Compute the derivative of the y data w.r.t the x data
     using the specified method. x_data can be non-uniformly sampled
     in which case the derivative will be computed by resampling.
 
@@ -25,72 +25,75 @@ def derivative(x_data, y_data, method='FD', degree=3):
                      to be sorted.
     method : str
              The method to use for differentiation.
-             Presently supported values are 
-             'CS' : Chebyshev 
+             Presently supported values are
+             'CS' : Chebyshev
              'FS' : Fourier
              'FD' : Finite difference
     degree : int
             The algorithm degree to use for differentiating. This
             is applicable when dealing with the 'CS'
             method, which is the number of basis functions
-            to use and 'FD' method, which is the number 
+            to use and 'FD' method, which is the number
             of points on either side to use.
 
     Returns
     -------
     dydx : 1d array
            The first order derivative of y w.r.t. x.
-    '''
+    """
 
-    if method=='CS':
+    if method == "CS":
         dydx = Chebyshev_differential(x_data, y_data, order=1, degree=degree)
     else:
-        
+
         delta_x_all = np.diff(x_data)
 
-        if (delta_x_all-delta_x_all[0]<1e-14).all():
-            message('No interpolation required.')
-            interp=False
+        if (delta_x_all - delta_x_all[0] < 1e-14).all():
+            message("No interpolation required.")
+            interp = False
             x_uniform = x_data
             y_uniform = y_data
         else:
-            message('INterpolation required!')
-            interp=True
+            message("INterpolation required!")
+            interp = True
             from scipy.interpolate import interp1d
-        
+
             # Resample the axis
-            x_uniform = np.linspace(x_data[0], x_data[-1], 2*len(x_data))
-            y_uniform = interp1d(x_data, y_data, kind='cubic')(x_uniform)
-        
+            x_uniform = np.linspace(x_data[0], x_data[-1], 2 * len(x_data))
+            y_uniform = interp1d(x_data, y_data, kind="cubic")(x_uniform)
+
         delta_x = np.diff(x_uniform)[0]
 
-        if method=='FS':
-            dydx_new, _, x_new, _ = Fourier_differential(delta_x=delta_x, udata_x=y_uniform, order=1, zero_mode=0, taper=False)
+        if method == "FS":
+            dydx_new, _, x_new, _ = Fourier_differential(
+                delta_x=delta_x, udata_x=y_uniform, order=1, zero_mode=0, taper=False
+            )
 
-        elif method=='FD':
-            
-            if degree==1:
+        elif method == "FD":
+
+            if degree == 1:
                 dydx_new = differentiate(y_uniform, delta_x)
-            elif degree==2:
+            elif degree == 2:
                 dydx_new = differentiate2(y_uniform, delta_x)
-            elif degree==3:
+            elif degree == 3:
                 dydx_new = differentiate3(y_uniform, delta_x)
-            elif degree==4:
+            elif degree == 4:
                 dydx_new = differentiate4(y_uniform, delta_x)
-            elif degree==5:
+            elif degree == 5:
                 dydx_new = differentiate5(y_uniform, delta_x)
             else:
-                raise NotImplementedError(f'Unknown degree {degree}')
+                raise NotImplementedError(f"Unknown degree {degree}")
         else:
-            raise NotImplementedError(f'Unknown method {method}')
+            raise NotImplementedError(f"Unknown method {method}")
 
         if interp:
-            dydx = interp1d(x_uniform, dydx_new, kind='cubic')(x_data)
+            dydx = interp1d(x_uniform, dydx_new, kind="cubic")(x_data)
         else:
             dydx = dydx_new
 
     return dydx
-        
+
+
 ########################################################
 # Chebyshev differentiation
 ########################################################
@@ -759,7 +762,7 @@ def differentiate5_vec_nonumba(data, delta_t):
     # der_data = np.append(der_data, [derNm1], axis=aax)
     der_data[-1] = derNm1
 
-    message('Shape of data', der_data.shape, message_verbosity=2)
+    message("Shape of data", der_data.shape, message_verbosity=2)
     return np.transpose(der_data, (1, 2, 0))
 
 
@@ -893,7 +896,7 @@ def differentiate5_vec_numba(data, delta_t):
     # der_data = np.append(der_data, [derNm1], axis=aax)
     # der_data[-1] = derNm1
 
-    message('Shape of data', der_data.shape, message_verbosity=2)
+    message("Shape of data", der_data.shape, message_verbosity=2)
     return np.transpose(der_data, (1, 2, 0))
 
 

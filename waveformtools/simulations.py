@@ -367,9 +367,11 @@ class sim:
         Computes:
 
         self.indjn:	dict
-                                        A dictionary containing the index location corresponding to timestamp tjn.
+                                        A dictionary containing the index location 
+                                        corresponding to timestamp tjn.
         self.distjn:	dict
-                                        A dictionary containing the normalized co-ordinate distance between the two BHs at tjn.
+                                        A dictionary containing the normalized co-ordinate 
+                                        distance between the two BHs at tjn.
 
         """
 
@@ -1212,7 +1214,7 @@ class sim:
             # Masses of the horizons
             m1 = self.mass1[alias]
             m2 = self.mass2[alias]
-            M = m1 + m2
+            # M = m1 + m2
 
             flag = 1
             bh1 = np.genfromtxt(self._get_file_path_from_str(string="*.ah1.gp", alias=alias))

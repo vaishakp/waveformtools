@@ -12,8 +12,8 @@ import sys
 
 import h5py
 import numpy as np
-from scipy.interpolate import interp1d
 from scipy.interpolate import UnivariateSpline as interpolator
+from scipy.interpolate import interp1d
 
 from waveformtools.waveformtools import interp_resam_wfs, message, xtract_camp_phase
 
@@ -123,21 +123,22 @@ def get_ell_max_from_file(data_dir, var_type="Psi4", file_name="*.h5"):
 
     elif var_type == "Strain":
         # import h5py
-
+        message("Fetching all keys from H5 file", message_verbosity=2)
         data_file = h5py.File(f"{data_dir}/{file_name}")
         all_fnames = list(data_file.keys())
         data_file.close()
-        # message(all_fnames)
+        message(all_fnames)
 
     # Parse ell values
     # Filter the keys.
     all_fnames = [item for item in all_fnames if "_l" in item]
 
-    # message(all_fnames)
+    message(all_fnames)
 
     ell_max = get_ell_max_from_keys(all_fnames)
 
     return ell_max, all_fnames
+
 
 def _get_modes_list_from_keys(keys_list, r_ext):
     """Get the modes list from the keys list
@@ -325,8 +326,7 @@ def sort_keys(modes_keys_list):
     sorted_modes_keys_list = np.array(modes_keys_list)[sargs]
 
     return sorted_modes_keys_list
-    
-    
+
 
 def load_RIT_Psi4_from_disk(
     wfa=None,
@@ -373,6 +373,7 @@ def load_RIT_Psi4_from_disk(
     It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about
     choosing the time domain. This may change in future.
     """
+    message("Loading RIT Psi4 type data.", message_verbosity=1)
     from waveformtools.waveforms import modes_array
 
     # Max available mode l.
@@ -549,8 +550,8 @@ def load_RIT_Strain_data_from_disk(
     It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about
     choosing the time domain. This may change in future.
     """
+    message("Loading RIT strain data.", message_verbosity=1)
 
-    
     from waveformtools.waveforms import modes_array
 
     # Max available mode l.
@@ -636,10 +637,10 @@ def load_RIT_Strain_data_from_disk(
         from scipy.stats import mode
 
         dt_auto = mode(np.diff(time_axis))[0][0]
-    
+
     except Exception as excep:
         dt_auto = None
-        message('NRTimes not present. Will compute dt auto from mode time axis')
+        message("NRTimes not present. Will compute dt auto from mode time axis")
 
     message("Reading in modes...")
     for ell, emm_list in modes_list:
@@ -668,6 +669,7 @@ def load_RIT_Strain_data_from_disk(
                     time_axis = Tphase
                     # dt_auto = time_axis[1]-time_axis[0]
                     from scipy.stats import mode
+
                     dt_auto = mode(np.diff(time_axis))[0][0]
 
                 # min_dt = round(min(np.diff(wf_psi4_time)), 2)
@@ -703,7 +705,6 @@ def load_RIT_Strain_data_from_disk(
             ###################################
             # message('Wfa time axis', wfa.time_axis)
 
-            
             Yphase_interp_fun = interp1d(Tphase, Yphase, kind=interp_kind)
             # Yphase_interp_fun = interpolator(Tphase, Yphase, k=3)
 
@@ -719,7 +720,7 @@ def load_RIT_Strain_data_from_disk(
             Yamp = data_file[this_amp_key]["Y"][...]
 
             Yamp_interp_fun = interp1d(Tamp, Yamp, kind=interp_kind)
-            #Yamp_interp_fun = interpolator(Tamp, Yamp, k=3)
+            # Yamp_interp_fun = interpolator(Tamp, Yamp, k=3)
 
             # wf_c = Yamp*np.exp(1j*Yphase)
 
@@ -729,12 +730,11 @@ def load_RIT_Strain_data_from_disk(
 
             wfmode = Yamp_resam * np.exp(1j * Yphase_resam)
 
-            #if not (Tphase==Tamp).all():
+            # if not (Tphase==Tamp).all():
             #    raise ValueError('The time axis of the amps and phase are different!')
 
             # wfmode = interp_resam_wfs(wf_c, Tphase, time_axis, k=4)
 
-            
             ###################################
             # Load the modes data
             ###################################
@@ -818,6 +818,7 @@ def load_gen_data_from_disk(
     choosing the time domain. This may change in future.
 
     """
+    message("Loading generic data.", message_verbosity=1)
     from waveformtools.waveforms import modes_array
 
     # Max available mode l.
@@ -865,13 +866,12 @@ def load_gen_data_from_disk(
             # if 1:
             metadata_bytes = bytes(np.void(wfile["metadata"])).decode()
             metadata = json.loads(metadata_bytes)
-            # message(metadata)
             # Import the metadata.
             for key, val in metadata.items():
                 if val is not None:
                     wfa.__dict__.update({key: val})
-            message("Metadata loaded")
-            message("Waveform meta data:", wfa.get_metadata())
+            message("Metadata loaded", message_verbosity=2)
+            message("Waveform meta data:", wfa.get_metadata(), message_verbosity=1)
 
         except Exception as ex:
             # If no metadata found, pass empty dict for updation.
@@ -1091,10 +1091,11 @@ def load_SpEC_data_from_disk(
 
 
     """
+    message("Loading SpEC data.", message_verbosity=1)
+
     from waveformtools.waveforms import modes_array
 
     # Load SXS waveforms to modes_array.
-
     # Spectra infinty
 
     full_path = f"{data_dir}/{file_name}"
@@ -1192,7 +1193,7 @@ def load_SpEC_data_from_disk(
             wf_time = wf_data[:, 0]
             wf_data_re = wf_data[:, 1]
             wf_data_im = wf_data[:, 2]
-            wf_data_c = wfs_data_re + 1j*wf_data_im
+            wf_data_c = wf_data_re + 1j * wf_data_im
 
             # wf_amp, wf_phase = xtract_camp_phase(wf_data_re, wf_data_im)
 
@@ -1253,11 +1254,11 @@ def load_SpEC_data_from_disk(
             # Interpolating in amplitude and phase is better
             # and has lower interpolation errors
             # but is slower due to unwrapping of phases.
-            
-            wf_int = interp_resam_wfs(wfs_data_c, wf_time, time_axis, k=4)
 
-            #amp_int = interp_resam_wfs(wf_amp, wf_time, time_axis)
-            #phase_int = interp_resam_wfs(wf_phase, wf_time, time_axis)
+            wf_int = interp_resam_wfs(wf_data_c, wf_time, time_axis, k=4)
+
+            # amp_int = interp_resam_wfs(wf_amp, wf_time, time_axis)
+            # phase_int = interp_resam_wfs(wf_phase, wf_time, time_axis)
 
             # re_int = interp1d(wf_time, wf_data_re)
             # message(wf_time[0], wf_time[-1], time_axis[0], time_axis[-1])
@@ -1353,10 +1354,10 @@ def load_SpECTRE_data_from_disk(
 
 
     """
+    message("Loading SpECTRE data.", message_verbosity=1)
     from waveformtools.waveforms import modes_array
 
     # Load SXS waveforms to modes_array.
-
     # Spectra infinty
 
     full_path = f"{data_dir}/{file_name}"
@@ -1580,7 +1581,9 @@ def save_modes_data_to_gen(
     with h5py.File(full_path, "w") as wfile:
         # Create the metadata dataset.
         metadata = wfa.get_metadata()
-        message(metadata)
+
+        message(metadata, message_verbosity=1)
+
         metadata_bytes = json.dumps(metadata).encode()
 
         # dt = h5py.special_dtype(vlen=str)
