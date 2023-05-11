@@ -3152,7 +3152,7 @@ def resample(interp_data, new_delta_t, epoch, length, old_delta_t=None):
     return data
 
 
-def interp_resam_wfs(wavf_data, old_taxis, new_taxis, resam_kind="cubic", k=None):
+def interp_resam_wfs(wavf_data, old_taxis, new_taxis, kind="cubic", k=None):
     """Wrapper function for interpolation and resampling.
 
     Parameters
@@ -3182,8 +3182,8 @@ def interp_resam_wfs(wavf_data, old_taxis, new_taxis, resam_kind="cubic", k=None
     else:
         from scipy.interpolate import interp1d as interpolator
 
-        interp_amp_data = interpolator(old_taxis, amp, kind=resam_kind)
-        interp_phase_data = interpolator(old_taxis, phase, kind=resam_kind)
+        interp_amp_data = interpolator(old_taxis, amp, kind=kind)
+        interp_phase_data = interpolator(old_taxis, phase, kind=kind)
 
     # Resample
     resam_amp_data = interp_amp_data(new_taxis)

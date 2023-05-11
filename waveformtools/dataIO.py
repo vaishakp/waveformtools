@@ -1255,7 +1255,7 @@ def load_SpEC_data_from_disk(
             # and has lower interpolation errors
             # but is slower due to unwrapping of phases.
 
-            wf_int = interp_resam_wfs(wf_data_c, wf_time, time_axis, k=4)
+            wf_int = interp_resam_wfs(wf_data_c, wf_time, time_axis, kind='cubic', k=None)
 
             # amp_int = interp_resam_wfs(wf_amp, wf_time, time_axis)
             # phase_int = interp_resam_wfs(wf_phase, wf_time, time_axis)
