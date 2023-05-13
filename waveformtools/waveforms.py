@@ -1906,7 +1906,7 @@ class modes_array:
 
         return filtered_modes
 
-    def to_td_waveform(self, Mtotal=1, theta=0, phi=0, alpha=None, distance=1, delta_t=None, method="precise"):
+    def to_td_waveform(self, Mtotal=1, theta=0, phi=0, alpha=None, distance=1, delta_t=None, method="precise", k=None):
         """Get the plus and cross polarizations of
         of the waveform time series by summing the modes.
 
@@ -1979,7 +1979,7 @@ class modes_array:
 
             amp, phase = xtract_camp_phase(wts.real, wts.imag)
 
-            wts = interp_resam_wfs(wts, taxis, new_taxis, k=None)
+            wts = interp_resam_wfs(wts, taxis, new_taxis, k=k)
 
             taxis = new_taxis
 
@@ -1991,5 +1991,3 @@ class modes_array:
 
         return taxis, wts.real, wts.imag
 
-
-#######################################################################################################
