@@ -769,6 +769,7 @@ class modes_array:
         time=None,
         key_ex=None,
         spin_weight=-2,
+        actions='empty'
     ):
         self.label = label
         self.data_dir = data_dir
@@ -786,7 +787,7 @@ class modes_array:
         self.time = time
         self.key_ex = key_ex
         self.spin_weight = spin_weight
-
+        self.actions=actions
     def get_metadata(self):
         """Get the metadata associated with the instance.
 
@@ -1075,17 +1076,12 @@ class modes_array:
                 dataIO.load_RIT_Psi4_data_from_disk(
                     wfa=self,
                     data_dir=data_dir,
-                    file_name=file_name,
                     resam_type=resam_type,
                     interp_kind=interp_kind,
-                    r_ext=r_ext,
                     ell_max=ell_max,
-                    pre_key=pre_key,
                     modes_list=modes_list,
                     crop=crop,
                     centre=centre,
-                    key_ex=key_ex,
-                    r_ext_factor=r_ext_factor,
                 )
             elif var_type == "Strain":
                 # message(file_name)
