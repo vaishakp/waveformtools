@@ -762,7 +762,7 @@ class modes_array:
         ell_max=None,
         modes_list=None,
         label=None,
-        r_ext=500,
+        r_ext=np.inf,
         out_file_name=None,
         maxtime=None,
         date=None,
@@ -1064,7 +1064,7 @@ class modes_array:
 
         # if self.file_name is not None:
         #   file_name = self.file_name
-        message("Passing", data_dir, file_name, message_verbosity=2)
+        message(f"Passing {data_dir}/{file_name}", message_verbosity=2)
 
         if ftype == "generic":
             dataIO.load_gen_data_from_disk(

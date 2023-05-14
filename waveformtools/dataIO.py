@@ -517,9 +517,9 @@ def load_RIT_Psi4_data_from_disk(
             wfa.actions+='->crop'
     
         if save_as_ma is True:
-        # Save the modes array as waveforms hdf file
-        wfa.save_modes(out_file_name="{label}_resam.h5")
-        wfa.actions+='->save_as_wfh5'
+            # Save the modes array as waveforms hdf file
+            wfa.save_modes(out_file_name="{label}_resam.h5")
+            wfa.actions+='->save_as_wfh5'
     return wfa
 
 
@@ -1448,7 +1448,7 @@ def load_SpECTRE_data_from_disk(
         if not wfa.modes_list:
             message("Constructing the modes list")
             # sys.exit(0)
-            modes_list = construct_mode_list(ell_max=ell_max)
+            modes_list = construct_mode_list(ell_max=ell_max, spin_weight=spin_weight)
         else:
             modes_list = wfa.modes_list
     else:
