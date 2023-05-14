@@ -1125,18 +1125,18 @@ class modes_array:
         elif ftype == "SpECTRE":
             dataIO.load_SpECTRE_data_from_disk(
                 self,
-                label,
-                data_dir,
-                file_name,
-                r_ext,
-                ell_max,
-                centre,
-                modes_list,
-                save_as_ma,
-                resam_type,
-                interp_kind,
-                compression_opts,
-                r_ext_factor,
+                label=label,
+                data_dir=data_dir,
+                file_name=file_name,
+                r_ext=r_ext,
+                ell_max=ell_max,
+                centre=centre,
+                modes_list=modes_list,
+                save_as_ma=save_as_ma,
+                resam_type=resam_type,
+                kind=interp_kind,
+                compression_opts=compression_opts,
+                r_ext_factor=r_ext_factor,
             )
         else:
             message(f"Data {ftype} {var_type} not supported yet!")

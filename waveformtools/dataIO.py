@@ -1361,7 +1361,7 @@ def load_SpECTRE_data_from_disk(
     r_ext_factor=1,
     save_as_ma="False",
     resam_type="auto",
-    interp_kind="cubic",
+    kind="cubic",
     compression_opts=0,
 ):
     """Load the SpECTRE or SpEC CCE waveform to modes_array,from hdf5 files from disk.
@@ -1395,6 +1395,7 @@ def load_SpECTRE_data_from_disk(
 
 
     """
+    spin_weight = -2
     message("Loading SpECTRE data.", message_verbosity=1)
     from waveformtools.waveforms import modes_array
 
@@ -1456,7 +1457,7 @@ def load_SpECTRE_data_from_disk(
 
     # flag = None
 
-    from scipy.stat import mode
+    from scipy.stats import mode
 
     for ell, emm_list in modes_list:
         for emm in emm_list:
@@ -1475,7 +1476,7 @@ def load_SpECTRE_data_from_disk(
                 # max_dt = round(max(np.diff(wf_psi4_time)), 2)
                 # dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
                 # dt_auto = int(dt_auto*100)/100
-                dt_auto = mode(np.diff(time_axis))
+                dt_auto = mode(np.diff(time_axis))[0][0]
                 # message(f'Default dt is {dt_auto}')
 
                 # min_dt = round(min(np.diff(time_axis)), 2)
@@ -1484,26 +1485,26 @@ def load_SpECTRE_data_from_disk(
                 min_dt = min(np.diff(time_axis))
                 max_dt = max(np.diff(time_axis))
 
-                message(f"Min dt {min_dt} and Max dt {max_dt}")
+                message(f"Min dt {min_dt} and Max dt {max_dt}", message_verbosity=2)
 
                 if resam_type == "finest":
                     # Choose finest available timestep
                     # for upto 3 decimal digits.
                     m_dt = min_dt
-                    message("Resampling at the finest timestep", m_dt)
+                    message("Resampling at the finest timestep", m_dt, message_verbosity=1)
                 if resam_type == "coarsest":
                     m_dt = max_dt
-                    message("Resampling at the coarsest timestep", m_dt)
+                    message("Resampling at the coarsest timestep", m_dt, message_verbosity=1)
 
                 if isinstance(resam_type, float):
                     m_dt = resam_type
-                    message("Resampling at user defined timestep", m_dt)
+                    message("Resampling at user defined timestep", m_dt, message_verbosity=1)
 
                 if resam_type == "auto":
                     # Choose finest available timestep
                     # for upto 3 decimal digits.
                     m_dt = dt_auto
-                    message("Resampling at the default timestep", m_dt)
+                    message("Resampling at the default timestep", m_dt, message_verbosity=1)
 
                 # New (resampled) time axis
                 time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
@@ -1516,11 +1517,11 @@ def load_SpECTRE_data_from_disk(
                 # message(wfa.mode(0,0).shape)
                 wfa.time_axis = time_axis
 
-            re_int = interp1d(wf_time, wf_data_re)
+            re_int = interp1d(wf_time, wf_data_re, kind=kind)
             # message(wf_time[0], wf_time[-1], time_axis[0], time_axis[-1])
             re_dat = re_int(time_axis)
 
-            im_int = interp1d(wf_time, wf_data_im)
+            im_int = interp1d(wf_time, wf_data_im, kind=kind)
             im_dat = im_int(time_axis)
 
             wfa.set_mode_data(ell, emm, data=re_dat + 1j * im_dat)
