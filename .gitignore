@@ -17,3 +17,4 @@
 **/*.swp
 *.swp
 waveformtools/devel_nb
+**/.ipynb-checkpoints
