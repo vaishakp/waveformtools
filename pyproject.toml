@@ -16,10 +16,6 @@ ignore = ['E203']
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-
-version = "2023.05.06"
-enabled = true
-
 [project]
 name = "waveformtools"
 dynamic = ['version']

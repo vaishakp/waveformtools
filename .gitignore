@@ -18,3 +18,5 @@
 *.swp
 waveformtools/devel_nb
 **/.ipynb_checkpoints
+**/dist
+**/waveformtools.egg-info
