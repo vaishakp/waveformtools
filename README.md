@@ -1,4 +1,4 @@
-[![Project landing page](https://sites.google.com/view/waveformtools/home)]
+[![Project landing page]](https://sites.google.com/view/waveformtools/home)
 [![pipeline status](https://gitlab.com/vaishakp/waveformtools/badges/main/pipeline.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main/LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/waveformtools/badge/?version=latest)](https://waveformtools.readthedocs.io/en/latest/?badge=latest)
@@ -14,7 +14,7 @@ waveformtools is a numerical relativity data handling package that was written t
 This package contains implementations of customized algorithms and techniques.  Some of these contain the usage of existing python based library functions from pycbc, scipy, etc but effort has been made to keep these to a minimum.
 
  
-* Handling of numerical relativity data, and retreiving specific information about the physical system.
+* Handling of numerical relativity data, and retreiving specific information about the physical system. Presently, this supports the EinsteinToolkit data.
 
     The class container and methods "sim" can load NR data into convenient lists and dictionaries, which can be used to     retrieve specific data/ information about the numerical simulation. 
 
@@ -91,7 +91,7 @@ This package contains implementations of customized algorithms and techniques.  
 
 Please cite the latest version of this code if used in your work. This code was developed for use in the following works:
 
-1. [`News from Horizons in Binary Black Hole Mergers`](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.121101)
+1. ['News from Horizons in Binary Black Hole Mergers'](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.121101)
 2. ['Tidal deformation of dynamical horizons in binary black hole mergers'](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.105.044019)
 
 We request you to also cite these. Thanks!
