@@ -113,8 +113,8 @@ pages:
   only:
     - main
 
-publish:
-  stage: deploy
+build-package:
+  stage: publish
   image: continuumio/miniconda3:latest
   script:
     - uname -a
