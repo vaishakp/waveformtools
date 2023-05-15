@@ -128,7 +128,7 @@ build-package:
     - conda init
     - source ~/.bashrc
     - conda activate build
-    - pythin -m pip install --upgrade build
+    - python -m pip install --upgrade build
     - ls
     - pwd
     - python -m build
