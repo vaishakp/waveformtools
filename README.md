@@ -91,8 +91,8 @@ This package contains implementations of customized algorithms and techniques.  
 
 Please cite the latest version of this code if used in your work. This code was developed for use in the following works:
 
-1. ['News from Horizons in Binary Black Hole Mergers'](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.121101)
-2. ['Tidal deformation of dynamical horizons in binary black hole mergers'](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.105.044019)
+1. [News from Horizons in Binary Black Hole Mergers](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.125.121101)
+2. [Tidal deformation of dynamical horizons in binary black hole mergers](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.105.044019)
 
 We request you to also cite these. Thanks!
 
