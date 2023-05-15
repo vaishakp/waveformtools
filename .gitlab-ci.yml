@@ -114,33 +114,25 @@ pages:
     - main
 
 publish:
-	stage: deploy
-  	image: continuumio/miniconda3:latest
-  	#image: python:3.9-alpine
-  	script:
-  		# image: python:3.9-alpine
-  		# Note: only 3.9 works with rinohtype
-  		# Alternate image: python:3.7-alpine3.9
-		- uname -a
-		- python --version  # For debugging
-		- which python
-		#- apk update
-		#- apk add make
-		#- apk add git
-		#- apk add gcc 
-	  	# Setup conda environment
-		- conda update -y -n base conda
-		- conda update -y --all
-		- conda create -n build python=3.9 -y
-	  	#  - conda env create -f docs/environment.yml
-		- conda init
-		- source ~/.bashrc
-		- conda activate build
-		- pythin -m pip install --upgrade build
-		- ls
-		- pwd
-		- python -m build
-		- python -m pip install --upgrade twine
-		- TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
-	only:
-		- main
+  stage: deploy
+  image: continuumio/miniconda3:latest
+  script:
+    - uname -a
+    - python --version  # For debugging
+    - which python 
+    # Setup conda environment
+    - conda update -y -n base conda
+    - conda update -y --all
+    - conda create -n build python=3.9 -y
+    #  - conda env create -f docs/environment.yml
+    - conda init
+    - source ~/.bashrc
+    - conda activate build
+    - pythin -m pip install --upgrade build
+    - ls
+    - pwd
+    - python -m build
+    - python -m pip install --upgrade twine
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+  only:
+    - main
