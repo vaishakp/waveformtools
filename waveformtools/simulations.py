@@ -367,10 +367,10 @@ class sim:
         Computes:
 
         self.indjn:	dict
-                                        A dictionary containing the index location 
+                                        A dictionary containing the index location
                                         corresponding to timestamp tjn.
         self.distjn:	dict
-                                        A dictionary containing the normalized co-ordinate 
+                                        A dictionary containing the normalized co-ordinate
                                         distance between the two BHs at tjn.
 
         """

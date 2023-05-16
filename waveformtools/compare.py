@@ -43,7 +43,7 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100], ylim="auto", ns
            [xmin, xmax] limits to plot.
     tol:    float
                     The tolerance to detect the modes.
-    
+
     Returns
     -------
     Plots.
