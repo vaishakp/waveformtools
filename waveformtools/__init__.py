@@ -1,6 +1,5 @@
 # Copyright (c) 2020, Vaishak Prasad
 # See [LICENSE](https://gitlab.com/vaishakp/waveformtools/-/blob/main/LICENSE) file for details.
-
 """
 Module for the analysis and handling of numerical relativity and gravitational waveform data.
 
@@ -32,7 +31,9 @@ def read_git_version():
         with open(package_directory + "/../public/version", "r") as vers_file:
             vers = vers_file.readlines()[0]
     except Exception as excep:
-        print("This is not a git repo! please use the version attribute instead!")
+        print(
+            "This is not a git repo! please use the version attribute instead!"
+        )
     # with open(package_directory + "/../public/date.txt", "r") as vers_file:
     # vers = vers_file.read()[:10]
 

@@ -6,8 +6,12 @@ import numpy as np
 class method_info:
     """The methods for integration ,differential to be passed on
     for operations."""
-
-    def __init__(self, int_method="MP", diff_method="SH", ell_max=8, degree=8, reg=True):
+    def __init__(self,
+                 int_method="MP",
+                 diff_method="SH",
+                 ell_max=8,
+                 degree=8,
+                 reg=True):
         self.int_method = int_method
         self.diff_method = diff_method
         self.ell_max = ell_max
@@ -38,7 +42,7 @@ def RMSerrs(func1, func2, info):
     Amax = np.amax(diff)
     Amin = np.amin(diff)
 
-    RMS = np.sqrt(np.sum(np.absolute(diff) ** 2) / info.npix_act)
+    RMS = np.sqrt(np.sum(np.absolute(diff)**2) / info.npix_act)
 
     return RMS, Amin, Amax
 

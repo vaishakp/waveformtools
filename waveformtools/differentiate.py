@@ -65,9 +65,11 @@ def derivative(x_data, y_data, method="FD", degree=3):
         delta_x = np.diff(x_uniform)[0]
 
         if method == "FS":
-            dydx_new, _, x_new, _ = Fourier_differential(
-                delta_x=delta_x, udata_x=y_uniform, order=1, zero_mode=0, taper=False
-            )
+            dydx_new, _, x_new, _ = Fourier_differential(delta_x=delta_x,
+                                                         udata_x=y_uniform,
+                                                         order=1,
+                                                         zero_mode=0,
+                                                         taper=False)
 
         elif method == "FD":
 
@@ -162,8 +164,18 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
 
             traceback.print_stack()
             y_fit_data = chebval(x_data, cheb_coeffs)
-            plt.scatter(x_data, y_data, label="Input", s=3, c="magenta", marker="o")
-            plt.scatter(x_data, y_fit_data, label="fit", s=3, c="blue", marker="X")
+            plt.scatter(x_data,
+                        y_data,
+                        label="Input",
+                        s=3,
+                        c="magenta",
+                        marker="o")
+            plt.scatter(x_data,
+                        y_fit_data,
+                        label="fit",
+                        s=3,
+                        c="blue",
+                        marker="X")
             plt.grid()
             plt.legend()
             plt.show()
@@ -184,7 +196,13 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
 ########################################################
 
 
-def Fourier_differential(delta_x, udata_x=None, utilde_conven=None, omega0=np.inf, order=1, zero_mode=0, taper=True):
+def Fourier_differential(delta_x,
+                         udata_x=None,
+                         utilde_conven=None,
+                         omega0=np.inf,
+                         order=1,
+                         zero_mode=0,
+                         taper=True):
     """Fixed frequency differentiation, the inverse of the
     Fixed frequency integration as presented in Reisswig et al.
     This function takes in a function and returns its nth order
@@ -399,7 +417,7 @@ def differentiate2(data, delta_t):
 
     for index in range(order, len(data) - order):
         # For the interior points, use the five point stencil.
-        data_subarray = data[index - order : index + order + 1]
+        data_subarray = data[index - order:index + order + 1]
         der_data.append(np.dot(coeffs, data_subarray) / (divide * delta_t))
 
     der_data.append(derNm2)
@@ -464,7 +482,7 @@ def differentiate3(data, delta_t):
     der_data.append(der2)
 
     for index in range(order, len(data) - order):
-        data_subarray = data[index - order : index + order + 1]
+        data_subarray = data[index - order:index + order + 1]
         der_data.append(np.dot(coeffs, data_subarray) / (divide * delta_t))
 
     der_data.append(derNm3)
@@ -545,7 +563,7 @@ def differentiate4(data, delta_t):
 
     for index in range(order, len(data) - order):
         # For the interior points.
-        data_subarray = data[index - order : index + order + 1]
+        data_subarray = data[index - order:index + order + 1]
         der_data.append(np.dot(coeffs, data_subarray) / (divide * delta_t))
 
     der_data.append(derNm4)
@@ -640,7 +658,7 @@ def differentiate5(data, delta_t):
 
     for index in range(order, len(data) - order):
         # For the interior points.
-        data_subarray = data[index - order : index + order + 1]
+        data_subarray = data[index - order:index + order + 1]
         der_data.append(np.dot(coeffs, data_subarray) / (divide * delta_t))
 
     der_data.append(derNm5)
@@ -746,10 +764,11 @@ def differentiate5_vec_nonumba(data, delta_t):
     der_data[4] = der4
     for index in range(order, len(data) - order):
         # For the interior points.
-        data_subarray = data[index - order : index + order + 1]
+        data_subarray = data[index - order:index + order + 1]
         # der_data = np.append(der_data, [np.tensordot(coeffs, data_subarray, axes=((0), (0)))
         # / (divide * delta_t)], axis=aax)
-        der_data[index] = np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)
+        der_data[index] = np.tensordot(coeffs, data_subarray, axes=(
+            (0), (0))) / (divide * delta_t)
 
     # der_data = np.append(der_data, [derNm5], axis=aax)
     der_data[-5] = derNm5
@@ -878,12 +897,13 @@ def differentiate5_vec_numba(data, delta_t):
 
     for index in range(order, len(data) - order):
         # For the interior points.
-        data_subarray = data[index - order : index + order + 1]
+        data_subarray = data[index - order:index + order + 1]
         # der_data = np.append(der_data, [np.tensordot(coeffs, data_subarray, axes=((0), (0)))
         # / (divide * delta_t)], axis=aax)
         # der_data[index] = np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)
         for inner_index, val in enumerate(coeffs):
-            der_data[index] += val * data_subarray[inner_index] / (divide * delta_t)
+            der_data[index] += val * data_subarray[inner_index] / (divide *
+                                                                   delta_t)
 
     # der_data = np.append(der_data, [derNm5], axis=aax)
     # der_data[-5] = derNm5
@@ -929,13 +949,15 @@ def differentiate_cwaveform(time_axis, waveform):
     # Get the amplitude and phase of the complex 1d waveform.
     from waveformtools.waveformtools import xtract_camp_phase
 
-    waveform_amp, waveform_phase = xtract_camp_phase(waveform.real, waveform.imag)
+    waveform_amp, waveform_phase = xtract_camp_phase(waveform.real,
+                                                     waveform.imag)
 
     # Differentiate the waveform.
 
     Amplitude_dot = Chebyshev_differential(time_axis, waveform_amp, degree=25)
     Phase_dot = Chebyshev_differential(time_axis, waveform_phase, degree=25)
 
-    differentiated_waveform = (Amplitude_dot + waveform_amp * 1j * Phase_dot) * np.exp(1j * waveform_phase)
+    differentiated_waveform = (Amplitude_dot + waveform_amp * 1j *
+                               Phase_dot) * np.exp(1j * waveform_phase)
 
     return differentiated_waveform

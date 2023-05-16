@@ -79,7 +79,7 @@ def get_ell_max_from_keys(all_keys):
 
         # message('Match found', this_match.string)
         s1, s2 = this_match.span()
-        this_ell = int(this_match.string[s1 + 2 : s2 - 1])
+        this_ell = int(this_match.string[s1 + 2:s2 - 1])
         # message(this_ell)
 
         all_ell_modes.add(this_ell)
@@ -119,7 +119,9 @@ def get_ell_max_from_file(data_dir, var_type="Psi4", file_name="*.h5"):
         # Get files
         all_fnames = os.listdir(data_dir)
         # Get only files
-        all_fnames = [item for item in all_fnames if os.path.isfile(f"{data_dir}/{item}")]
+        all_fnames = [
+            item for item in all_fnames if os.path.isfile(f"{data_dir}/{item}")
+        ]
 
     elif var_type == "Strain":
         # import h5py
@@ -165,7 +167,8 @@ def _get_modes_list_from_keys(keys_list, r_ext):
         keys_list = [item for item in keys_list_orig if f"r{r_ext}" in item]
 
         if keys_list == []:
-            message("Got an empty list. Searching for r_ext value in key string")
+            message(
+                "Got an empty list. Searching for r_ext value in key string")
             keys_list = [item for item in keys_list_orig if f"{r_ext}" in item]
 
     # message('List of keys received', keys_list)
@@ -233,12 +236,12 @@ def _get_ell_emm_from_key(key):
     str_match = re.search("l\d*", key)
     ell_str_start = str_match.start()
     ell_str_end = str_match.end()
-    ell_value = int(key[ell_str_start + 1 : ell_str_end])
+    ell_value = int(key[ell_str_start + 1:ell_str_end])
 
     str_match = re.search("m-*\d*", key)
     emm_str_start = str_match.start()
     emm_str_end = str_match.end()
-    emm_value = int(key[emm_str_start + 1 : emm_str_end])
+    emm_value = int(key[emm_str_start + 1:emm_str_end])
 
     return ell_value, emm_value
 
@@ -265,7 +268,7 @@ def get_iteration_numbers_from_keys(keys_list):
         str_match = re.search(" it=\d* ", key)
         it_str_start = str_match.start()
         it_str_end = str_match.end()
-        it_value = int(key[it_str_start + 4 : it_str_end])
+        it_value = int(key[it_str_start + 4:it_str_end])
         iteration_numbers.append(it_value)
 
     return iteration_numbers
@@ -380,7 +383,9 @@ def load_RIT_Psi4_data_from_disk(
     from waveformtools.waveforms import modes_array
 
     if not wfa:
-        wfa = modes_array(label=label, data_dir=data_dir, modes_list=wf_modes_list)
+        wfa = modes_array(label=label,
+                          data_dir=data_dir,
+                          modes_list=wf_modes_list)
 
     if modes_list is None:
 
@@ -389,7 +394,8 @@ def load_RIT_Psi4_data_from_disk(
             ell_max, _ = get_ell_max_from_file(data_dir)
 
         # Construct a modes list
-        wf_modes_list = construct_mode_list(ell_max=ell_max, spin_weight=spin_weight)
+        wf_modes_list = construct_mode_list(ell_max=ell_max,
+                                            spin_weight=spin_weight)
 
         message("The modes list is", wf_modes_list, message_verbosity=2)
 
@@ -407,7 +413,9 @@ def load_RIT_Psi4_data_from_disk(
     # label = 'q1a0_a'
     # Create a modes array
     # Enforce only l>2 modes.
-    wf_modes_list = [item for item in wf_modes_list if item[0] >= abs(spin_weight)]
+    wf_modes_list = [
+        item for item in wf_modes_list if item[0] >= abs(spin_weight)
+    ]
 
     # tend = []
     # tstart = []
@@ -456,7 +464,8 @@ def load_RIT_Psi4_data_from_disk(
                     message("Resampling at user defined timestep", m_dt)
 
                 # New (resampled) time axis
-                time_axis = np.arange(wf_psi4_time[0], wf_psi4_time[-1] + m_dt, m_dt)
+                time_axis = np.arange(wf_psi4_time[0], wf_psi4_time[-1] + m_dt,
+                                      m_dt)
 
                 # Length of data.
                 data_len = len(time_axis)
@@ -479,7 +488,9 @@ def load_RIT_Psi4_data_from_disk(
             ##############################
 
             Yphase = wf_psi4_file[:, 4]
-            Yphase_interp_fun = interp1d(wf_psi4_time, Yphase, kind=interp_kind)
+            Yphase_interp_fun = interp1d(wf_psi4_time,
+                                         Yphase,
+                                         kind=interp_kind)
 
             # Resample
 
@@ -578,7 +589,8 @@ def load_RIT_Strain_data_from_disk(
 
     # Initialize the interpolator
     if isinstance(interp_kind, int):
-        message("Interpolating using InterpolatedUnivariateSpline", message_verbosity=2)
+        message("Interpolating using InterpolatedUnivariateSpline",
+                message_verbosity=2)
         interpolator = partial(interp, k=interp_kind)
 
     elif isinstance(interp_kind, str):
@@ -590,7 +602,9 @@ def load_RIT_Strain_data_from_disk(
     from waveformtools.waveforms import modes_array
 
     # Max available mode l.
-    ell_max_act, keys_list = get_ell_max_from_file(data_dir=data_dir, var_type="Strain", file_name=file_name)
+    ell_max_act, keys_list = get_ell_max_from_file(data_dir=data_dir,
+                                                   var_type="Strain",
+                                                   file_name=file_name)
 
     ####################################
     # Set variables with priorities
@@ -621,7 +635,9 @@ def load_RIT_Strain_data_from_disk(
         wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
     # wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
     if debug is True:
-        wf_nl = modes_array(label=label + "_nl", ell_max=ell_max, modes_list=modes_list)
+        wf_nl = modes_array(label=label + "_nl",
+                            ell_max=ell_max,
+                            modes_list=modes_list)
 
     if not data_dir:
         data_dir = wfa.data_dir
@@ -642,7 +658,8 @@ def load_RIT_Strain_data_from_disk(
     if not modes_list:
         if not wfa.modes_list:
             message("Constructing the modes list")
-            modes_list = construct_mode_list(ell_max=ell_max, spin_weight=wfa.spin_weight)
+            modes_list = construct_mode_list(ell_max=ell_max,
+                                             spin_weight=wfa.spin_weight)
         else:
             modes_list = wfa.modes_list
     else:
@@ -675,7 +692,8 @@ def load_RIT_Strain_data_from_disk(
 
     except Exception as excep:
         dt_auto = None
-        message("NRTimes not present. Will compute dt auto from mode time axis")
+        message(
+            "NRTimes not present. Will compute dt auto from mode time axis")
 
     message("Reading in modes...")
     for ell, emm_list in modes_list:
@@ -715,25 +733,34 @@ def load_RIT_Strain_data_from_disk(
                     # Choose finest available timestep
                     # for upto 3 decimal digits.
                     m_dt = dt_auto
-                    message("Sampling at the default timestep", m_dt, message_verbosity=2)
+                    message("Sampling at the default timestep",
+                            m_dt,
+                            message_verbosity=2)
 
                 elif resam_type == "finest":
                     m_dt = min_dt
-                    message("Sampling at the finest available timestep", m_dt, message_verbosity=2)
+                    message("Sampling at the finest available timestep",
+                            m_dt,
+                            message_verbosity=2)
 
                 elif resam_type == "coarsest":
                     m_dt = max_dt
-                    message("Sampling at the coarsest available timestep", m_dt, message_verbosity=2)
+                    message("Sampling at the coarsest available timestep",
+                            m_dt,
+                            message_verbosity=2)
 
                 elif isinstance(resam_type, float):
                     m_dt = resam_type
-                    message("Resampling at user defined timestep", m_dt, message_verbosity=2)
+                    message("Resampling at user defined timestep",
+                            m_dt,
+                            message_verbosity=2)
 
                     # New (resampled) time axis
                     time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
 
                 else:
-                    raise NotImplementedError(f"Unknown resampling parameter {resam_type}")
+                    raise NotImplementedError(
+                        f"Unknown resampling parameter {resam_type}")
 
                 # Length of data.
                 data_len = len(time_axis)
@@ -875,7 +902,10 @@ def load_gen_data_from_disk(
     # Max available mode l.
     if not wfa:
         # Create a modes array
-        wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list, ell_max=ell_max)
+        wfa = modes_array(label=label,
+                          data_dir=data_dir,
+                          modes_list=modes_list,
+                          ell_max=ell_max)
 
     # if not data_dir:
     # 	data_dir = wfa.data_dir
@@ -922,7 +952,9 @@ def load_gen_data_from_disk(
                 if val is not None:
                     wfa.__dict__.update({key: val})
             message("Metadata loaded", message_verbosity=2)
-            message("Waveform meta data:", wfa.get_metadata(), message_verbosity=1)
+            message("Waveform meta data:",
+                    wfa.get_metadata(),
+                    message_verbosity=1)
 
         except Exception as ex:
             # If no metadata found, pass empty dict for updation.
@@ -942,7 +974,9 @@ def load_gen_data_from_disk(
             # Filter the keys according to key_ex if specified.
             message("Filtering as per", key_ex)
             wfa.key_ex = key_ex
-            modes_keys_list = [item for item in modes_keys_list if key_ex in item]
+            modes_keys_list = [
+                item for item in modes_keys_list if key_ex in item
+            ]
             # message(modes_keys_list)
 
         else:
@@ -1017,15 +1051,18 @@ def load_gen_data_from_disk(
 
                 # Find the key corresponding to the mode
                 try:
-                    key = str(
-                        [item for item in modes_keys_list if re.search(f"l{ell_value}_m{emm_value}_r{r_ext}", item)][0]
-                    )
+                    key = str([
+                        item for item in modes_keys_list if re.search(
+                            f"l{ell_value}_m{emm_value}_r{r_ext}", item)
+                    ][0])
                     # message('The loaded key is ', key, type(key))
                     # message('The loaded key is ', key, type(key))
                     # if key=='l0_m0_r500.00':
                     # message('Its alright')
                 except Exception as ex:
-                    message(f"Waveform dataset for l{ell_value}, m{emm_value} not found", ex)
+                    message(
+                        f"Waveform dataset for l{ell_value}, m{emm_value} not found",
+                        ex)
                     sys.exit(0)
 
                 # Get the data
@@ -1043,7 +1080,9 @@ def load_gen_data_from_disk(
                             # Crop the beginning portion.
                             # delta_t = time_axis[1] - time_axis[0]
                             # shift = int(wfa.r_ext / delta_t)
-                            raise NotImplementedError("Not implemented! Please contact the developers!")
+                            raise NotImplementedError(
+                                "Not implemented! Please contact the developers!"
+                            )
 
                         else:
                             shift = 0
@@ -1063,7 +1102,8 @@ def load_gen_data_from_disk(
                         wfa._time_axis = time_axis
 
                 # wfa.set_mode_data(ell_value, emm_value, r_ext_factor*(data_re[shift:] + 1j * data_im[shift:]))
-                wfa.set_mode_data(ell_value, emm_value, r_ext_factor * (data_re + 1j * data_im))
+                wfa.set_mode_data(ell_value, emm_value,
+                                  r_ext_factor * (data_re + 1j * data_im))
 
         ##############################
         # Recenter axis
@@ -1191,7 +1231,9 @@ def load_SpEC_data_from_disk(
         wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
     # wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
     if debug is True:
-        wf_nl = modes_array(label=label + "_nl", ell_max=ell_max, modes_list=modes_list)
+        wf_nl = modes_array(label=label + "_nl",
+                            ell_max=ell_max,
+                            modes_list=modes_list)
 
     wfa.extrap_order = extrap_order
     message(f"Using extrap order {extrap_order}")
@@ -1216,7 +1258,8 @@ def load_SpEC_data_from_disk(
         if not wfa.modes_list:
             message("Constructing the modes list")
             # sys.exit(0)
-            modes_list = construct_mode_list(ell_max=ell_max, spin_weight=wfa.spin_weight)
+            modes_list = construct_mode_list(ell_max=ell_max,
+                                             spin_weight=wfa.spin_weight)
         else:
             modes_list = wfa.modes_list
     else:
@@ -1306,7 +1349,11 @@ def load_SpEC_data_from_disk(
             # and has lower interpolation errors
             # but is slower due to unwrapping of phases.
 
-            wf_int = interp_resam_wfs(wf_data_c, wf_time, time_axis, kind="cubic", k=None)
+            wf_int = interp_resam_wfs(wf_data_c,
+                                      wf_time,
+                                      time_axis,
+                                      kind="cubic",
+                                      k=None)
 
             # amp_int = interp_resam_wfs(wf_amp, wf_time, time_axis)
             # phase_int = interp_resam_wfs(wf_phase, wf_time, time_axis)
@@ -1333,18 +1380,22 @@ def load_SpEC_data_from_disk(
                 wf_data_im = wf_data[:, 2]
 
                 if wf_nl.modes_data.all() == np.array(None):
-                    wf_nl.create_modes_array(ell_max=ell_max, data_len=len(wf_time))
+                    wf_nl.create_modes_array(ell_max=ell_max,
+                                             data_len=len(wf_time))
                     wf_nl.time_axis = wf_time
                     wf_nl.data_len = len(wf_time)
 
-                wf_nl.set_mode_data(ell, emm, data=wf_data_re + 1j * wf_data_im)
+                wf_nl.set_mode_data(ell,
+                                    emm,
+                                    data=wf_data_re + 1j * wf_data_im)
 
     if centre:
         wfa.trim(trim_upto_time=0)
 
     if save_as_ma is True:
         # Save the modes array as waveforms hdf file
-        wfa.save_modes(out_file_name=f"{label}_resam.h5", compression_opts=compression_opts)
+        wfa.save_modes(out_file_name=f"{label}_resam.h5",
+                       compression_opts=compression_opts)
 
     wf_f0.close()
 
@@ -1417,7 +1468,9 @@ def load_SpECTRE_data_from_disk(
     try:
         import scri
     except Exception as ex:
-        message("scri module is required for reading in SXS waveforms. Please install and try again", ex)
+        message(
+            "scri module is required for reading in SXS waveforms. Please install and try again",
+            ex)
         sys.exit(0)
 
     wf_file = scri.rpxmb.load(full_path)[0].to_inertial_frame()
@@ -1459,7 +1512,8 @@ def load_SpECTRE_data_from_disk(
         if not wfa.modes_list:
             message("Constructing the modes list")
             # sys.exit(0)
-            modes_list = construct_mode_list(ell_max=ell_max, spin_weight=spin_weight)
+            modes_list = construct_mode_list(ell_max=ell_max,
+                                             spin_weight=spin_weight)
         else:
             modes_list = wfa.modes_list
     else:
@@ -1495,26 +1549,35 @@ def load_SpECTRE_data_from_disk(
                 min_dt = min(np.diff(time_axis))
                 max_dt = max(np.diff(time_axis))
 
-                message(f"Min dt {min_dt} and Max dt {max_dt}", message_verbosity=2)
+                message(f"Min dt {min_dt} and Max dt {max_dt}",
+                        message_verbosity=2)
 
                 if resam_type == "finest":
                     # Choose finest available timestep
                     # for upto 3 decimal digits.
                     m_dt = min_dt
-                    message("Resampling at the finest timestep", m_dt, message_verbosity=1)
+                    message("Resampling at the finest timestep",
+                            m_dt,
+                            message_verbosity=1)
                 if resam_type == "coarsest":
                     m_dt = max_dt
-                    message("Resampling at the coarsest timestep", m_dt, message_verbosity=1)
+                    message("Resampling at the coarsest timestep",
+                            m_dt,
+                            message_verbosity=1)
 
                 if isinstance(resam_type, float):
                     m_dt = resam_type
-                    message("Resampling at user defined timestep", m_dt, message_verbosity=1)
+                    message("Resampling at user defined timestep",
+                            m_dt,
+                            message_verbosity=1)
 
                 if resam_type == "auto":
                     # Choose finest available timestep
                     # for upto 3 decimal digits.
                     m_dt = dt_auto
-                    message("Resampling at the default timestep", m_dt, message_verbosity=1)
+                    message("Resampling at the default timestep",
+                            m_dt,
+                            message_verbosity=1)
 
                 # New (resampled) time axis
                 time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
@@ -1541,7 +1604,8 @@ def load_SpECTRE_data_from_disk(
 
     if save_as_ma is True:
         # Save the modes array as waveforms hdf file
-        wfa.save_modes(out_file_name=f"{label}_resam.h5", compression_opts=compression_opts)
+        wfa.save_modes(out_file_name=f"{label}_resam.h5",
+                       compression_opts=compression_opts)
 
     return wfa
 
@@ -1640,7 +1704,9 @@ def save_modes_data_to_gen(
 
         # dt = h5py.special_dtype(vlen=str)
         # metadata=np.asarray([metadata_bytes], dtype=dt)
-        wfile.create_dataset("metadata", data=metadata_bytes, compression_opts=compression_opts)
+        wfile.create_dataset("metadata",
+                             data=metadata_bytes,
+                             compression_opts=compression_opts)
 
         # Load the modes listed in mode_numbers list
         for item in modes_to_save:
@@ -1656,7 +1722,8 @@ def save_modes_data_to_gen(
                 data_re = data.real
                 data_im = data.imag
 
-                save_data = np.transpose(np.array([wfa.time_axis, data_re, data_im]))
+                save_data = np.transpose(
+                    np.array([wfa.time_axis, data_re, data_im]))
                 # Make the key
                 key = _key_gen(ell_value, emm_value, extras=f"r{r_ext:.2f}")
                 # message('Processing key', key)

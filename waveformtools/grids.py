@@ -61,8 +61,12 @@ class spherical_grid:
                             Get the :math:`\\phi` axis.
 
     """
-
-    def __init__(self, nphi=80, ntheta=41, nphimax=124, nthetamax=66, nghosts=2):
+    def __init__(self,
+                 nphi=80,
+                 ntheta=41,
+                 nphimax=124,
+                 nthetamax=66,
+                 nghosts=2):
         # Number of gridpoints along phi direction including ghost points.
         self.nphi = nphi
         # Number of gridpoints along theta direction including ghost points.
@@ -86,7 +90,8 @@ class spherical_grid:
         """Return the actual number of pixels,
         excluding the ghost zones present at
         one iteration"""
-        return (self.ntheta - 2 * self.nghosts) * (self.nphi - 2 * self.nghosts)
+        return (self.ntheta - 2 * self.nghosts) * (self.nphi -
+                                                   2 * self.nghosts)
 
     @property
     def npix_max(self):
@@ -149,7 +154,8 @@ class spherical_grid:
         if not theta_index:
             theta_index = np.arange(self.nghosts, self.ntheta - self.nghosts)
 
-        return (theta_index - self.nghosts + 0.5) * np.pi / (self.ntheta - 2 * self.nghosts)
+        return (theta_index - self.nghosts + 0.5) * np.pi / (self.ntheta -
+                                                             2 * self.nghosts)
 
     def phi_1d(self, phi_index=None):
         """Returns the coordinate value theta
@@ -175,7 +181,8 @@ class spherical_grid:
         if not phi_index:
             phi_index = np.arange(self.nghosts, self.nphi - self.nghosts)
 
-        return (phi_index - self.nghosts) * 2 * np.pi / (self.nphi - 2 * self.nghosts)
+        return (phi_index - self.nghosts) * 2 * np.pi / (self.nphi -
+                                                         2 * self.nghosts)
 
     @property
     def meshgrid(self):
@@ -261,7 +268,6 @@ class gl_grid:
     This integrates out spherical harmonics of degree L exactly,
     given a regular function on the sphere.
     """
-
     def __init__(self, nphi=None, ntheta=None, L=47, nghosts=2):
         # Number of gridpoints along phi direction including ghost points.
         self._nphi = nphi
@@ -298,7 +304,8 @@ class gl_grid:
 
         from scipy.special import roots_legendre
 
-        cpoints, self._weights, self._sum_of_weights = roots_legendre(L + 1, mu=True)
+        cpoints, self._weights, self._sum_of_weights = roots_legendre(L + 1,
+                                                                      mu=True)
 
         # xpoints = (np.pi-np.arccos(cpoints))
         xpoints = np.arccos(cpoints[::-1])

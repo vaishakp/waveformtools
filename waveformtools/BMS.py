@@ -1,6 +1,5 @@
 """ The implementation of BMS transformations on the waveforms. """
 
-
 #############################
 # Imports
 #############################
@@ -42,7 +41,8 @@ def compute_conformal_k(vec_v, theta, phi, spin_phase=0):
     # magnitude of velocity
     mag_v = np.sqrt(vel_x**2 + vel_y**2 + vel_z**2)
     # compute the dot product
-    v_dot_r = np.sin(theta) * (vel_x * np.cos(phi) + vel_y * np.sin(phi)) + vel_z * np.cos(theta)
+    v_dot_r = np.sin(theta) * (vel_x * np.cos(phi) +
+                               vel_y * np.sin(phi)) + vel_z * np.cos(theta)
 
     # Lorentz factor
     gamma = 1.0 / np.sqrt(1 - mag_v**2)
@@ -111,7 +111,8 @@ def compute_supertransl_alpha(supertransl_alpha_modes, theta, phi):
         for m_index in range(2 * ell + 1):
             emm = m_index - ell
             message("ell is", ell, type(ell), "emm is ", emm)
-            supertransl_alpha_sphere += supertransl_alpha_modes[item][m_index] * Yslm(spin_weight, ell, emm, theta, phi)
+            supertransl_alpha_sphere += supertransl_alpha_modes[item][
+                m_index] * Yslm(spin_weight, ell, emm, theta, phi)
 
     return supertransl_alpha_sphere
 

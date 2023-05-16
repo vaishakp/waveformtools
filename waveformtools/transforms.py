@@ -1,6 +1,5 @@
 """ Methods to transform the waveform """
 
-
 import numpy as np
 
 # from numba import jit, njit
@@ -160,10 +159,10 @@ def unset_fft_conven(utilde_conven):
 
 
 def Yslm(spin_weight, ell, emm, theta, phi):
-    """Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
+    """Spin-weighted spherical harmonics fast evaluation.
 
-    Inputs
-    -----------
+    Parameters
+    ----------
 
     spin_weight :   int
                     The Spin weight.
@@ -180,6 +179,10 @@ def Yslm(spin_weight, ell, emm, theta, phi):
     --------
     Yslm :  float
             The value of Yslm at :math:`\\theta, phi'.
+
+        Note
+        ----
+        This is accurate upto 14 decimals for L upto 25.
 
     """
     import sympy as sp
@@ -207,34 +210,27 @@ def Yslm(spin_weight, ell, emm, theta, phi):
             # a4 = np.tan(theta / 2)
             # message(a4)
 
-            Sum += (
-                sp.binomial(ell - spin_weight, aar)
-                * sp.binomial(ell + spin_weight, aar + spin_weight - emm)
-                * np.power((-1), (ell - aar - spin_weight))
-                * np.exp(1j * emm * phi)
-                / np.power(np.tan(theta / 2), (2 * aar + spin_weight - emm))
-            )
+            Sum += (sp.binomial(ell - spin_weight, aar) *
+                    sp.binomial(ell + spin_weight, aar + spin_weight - emm) *
+                    np.power(
+                        (-1),
+                        (ell - aar - spin_weight)) * np.exp(1j * emm * phi) /
+                    np.power(np.tan(theta / 2), (2 * aar + spin_weight - emm)))
 
     Sum = complex(Sum)
     # message(type(m))
     # message((-1)**int(m))
     # message(np.sin(th/2)**(2*l))
-    Yslm = (-1) ** emm * (
-        np.sqrt(
-            fact(ell + emm)
-            * fact(ell - emm)
-            * (2 * ell + 1)
-            / (4 * np.pi * fact(ell + spin_weight) * fact(ell - spin_weight))
-        )
-        * np.sin(theta / 2) ** (2 * ell)
-        * Sum
-    )
+    Yslm = (-1)**emm * (np.sqrt(
+        fact(ell + emm) * fact(ell - emm) * (2 * ell + 1) /
+        (4 * np.pi * fact(ell + spin_weight) * fact(ell - spin_weight))) *
+                        np.sin(theta / 2)**(2 * ell) * Sum)
 
     return Yslm
 
 
 def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
-    """Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
+    """Spin-weighted spherical harmonics fast evaluations on numpy arrays for vectorized evaluations.
 
     Inputs
     -----------
@@ -255,6 +251,9 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     Yslm :  float
             The value of Yslm at :math:`\\theta, phi'.
 
+        Note
+        ----
+        This is accurate upto 14 decimals for L upto 25.
     """
 
     # spin_weight = abs(spin_weight)
@@ -286,7 +285,8 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
             term3 = np.power(float(-1), (ell - aar - spin_weight))
             # term3 = (-1)**(ell-aar-spin_weight)
             term4 = np.exp(1j * emm * phi_grid)
-            term5 = np.power(np.tan(theta_grid / 2), (-2 * aar - spin_weight + emm))
+            term5 = np.power(np.tan(theta_grid / 2),
+                             (-2 * aar - spin_weight + emm))
             subterm = term1 * term2 * term3 * term4 * term5
 
             # message(term1, term2, term3, term4)
@@ -295,25 +295,20 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
             # message('arr, subterm', aar, subterm)
 
     # message(ell+emm, ell+spin_weight, ell-spin_weight)
-    Yslmv = float(-1) ** emm * (
-        np.sqrt(
-            fact(ell + emm)
-            * fact(ell - emm)
-            * (2 * ell + 1)
-            / (4 * np.pi * fact(ell + spin_weight) * fact(ell - spin_weight))
-        )
-        * np.sin(theta_grid / 2) ** (2 * ell)
-        * Sum
-    )
+    Yslmv = float(-1)**emm * (np.sqrt(
+        fact(ell + emm) * fact(ell - emm) * (2 * ell + 1) /
+        (4 * np.pi * fact(ell + spin_weight) * fact(ell - spin_weight))) *
+                              np.sin(theta_grid / 2)**(2 * ell) * Sum)
 
     return Yslmv
 
 
 def Yslm_prec(spin_weight, ell, emm, theta, phi, prec=24):
-    """Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
-
-    Inputs
-    -----------
+    """Spin-weighted spherical harmonics function with precise computations.
+                Uses a symbolic method evaluated at the degree of precision requested
+                by the user.
+    Parameters
+    ----------
 
     spin_weight :   int
                     The Spin weight.
@@ -361,37 +356,33 @@ def Yslm_prec(spin_weight, ell, emm, theta, phi, prec=24):
             # a4 = sp.tan(theta / 2)
             # message(a4)
 
-            Sum += (
-                sp.binomial(ell - spin_weight, aar)
-                * sp.binomial(ell + spin_weight, aar + spin_weight - emm)
-                * sp.Pow((-1), (ell - aar - spin_weight))
-                * sp.exp(sp.I * emm * ph)
-                * sp.Pow(sp.cot(th / 2), (2 * aar + spin_weight - emm))
-            )
+            Sum += (sp.binomial(ell - spin_weight, aar) *
+                    sp.binomial(ell + spin_weight, aar + spin_weight - emm) *
+                    sp.Pow(
+                        (-1),
+                        (ell - aar - spin_weight)) * sp.exp(sp.I * emm * ph) *
+                    sp.Pow(sp.cot(th / 2), (2 * aar + spin_weight - emm)))
 
-    Yslm_expr = sp.Pow(-1, emm) * sp.simplify(
-        (
-            sp.sqrt(
-                fact(ell + emm)
-                * fact(ell - emm)
-                * (2 * ell + 1)
-                / (4 * sp.pi * fact(ell + spin_weight) * fact(ell - spin_weight))
-            )
-            * sp.Pow(sp.sin(th / 2), (2 * ell))
-            * Sum
-        )
-    )
+    Yslm_expr = sp.Pow(-1, emm) * sp.simplify((sp.sqrt(
+        fact(ell + emm) * fact(ell - emm) * (2 * ell + 1) /
+        (4 * sp.pi * fact(ell + spin_weight) * fact(ell - spin_weight))) *
+                                               sp.Pow(sp.sin(th / 2),
+                                                      (2 * ell)) * Sum))
 
     # Yslm_expr = sp.simplify(Yslm_expr)
 
-    return Yslm_expr.evalf(prec, subs={th: sp.Float(f"{theta}"), ph: sp.Float(f"{phi}")})
+    return Yslm_expr.evalf(prec,
+                           subs={
+                               th: sp.Float(f"{theta}"),
+                               ph: sp.Float(f"{phi}")
+                           })
 
 
 def Yslm_prec2(spin_weight, ell, emm, pres=16):
-    """Spin-weighted spherical harmonics data defined as a function of zeta and phi, for qlm data decomposition.
+    """Spin-weighted spherical harmonics precise, symbolic computation for deferred evaluations.
 
-    Inputs
-    -----------
+    Parameters
+    ----------
 
     spin_weight :   int
                     The Spin weight.
@@ -406,9 +397,10 @@ def Yslm_prec2(spin_weight, ell, emm, pres=16):
     pres : int, optional
            The precision i.e. number of digits to compute
            upto. Default value is 16.
+
     Returns
     --------
-    Yslm :  float
+    Yslm :  sym
             The value of Yslm at :math:`\\theta, phi'.
 
     """
@@ -439,24 +431,17 @@ def Yslm_prec2(spin_weight, ell, emm, pres=16):
             # a4 = sp.tan(theta / 2)
             # message(a4)
 
-            Sum += (
-                sp.binomial(ell - spin_weight, aar)
-                * sp.binomial(ell + spin_weight, aar + spin_weight - emm)
-                * sp.Pow((-1), (ell - aar - spin_weight))
-                * sp.exp(sp.I * emm * ph)
-                * sp.Pow(sp.cot(th / 2), (2 * aar + spin_weight - emm))
-            )
+            Sum += (sp.binomial(ell - spin_weight, aar) *
+                    sp.binomial(ell + spin_weight, aar + spin_weight - emm) *
+                    sp.Pow(
+                        (-1),
+                        (ell - aar - spin_weight)) * sp.exp(sp.I * emm * ph) *
+                    sp.Pow(sp.cot(th / 2), (2 * aar + spin_weight - emm)))
 
-    Yslm_expr = sp.Pow(-1, emm) * (
-        sp.sqrt(
-            fact(ell + emm)
-            * fact(ell - emm)
-            * (2 * ell + 1)
-            / (4 * sp.pi * fact(ell + spin_weight) * fact(ell - spin_weight))
-        )
-        * sp.Pow(sp.sin(th / 2), (2 * ell))
-        * Sum
-    )
+    Yslm_expr = sp.Pow(-1, emm) * (sp.sqrt(
+        fact(ell + emm) * fact(ell - emm) * (2 * ell + 1) /
+        (4 * sp.pi * fact(ell + spin_weight) * fact(ell - spin_weight))) *
+                                   sp.Pow(sp.sin(th / 2), (2 * ell)) * Sum)
 
     Yslm_expr = sp.simplify(Yslm_expr)
 
