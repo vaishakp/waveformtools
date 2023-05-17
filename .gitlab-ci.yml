@@ -116,6 +116,9 @@ pages:
 build-package:
   stage: publish
   image: continuumio/miniconda3:latest
+  variables:
+    TWINE_USERNAME: $TWINE_USERNAME
+    TWINE_PASSWORD: $TWINE_PASSWORD
   script:
     - uname -a
     - python --version  # For debugging
