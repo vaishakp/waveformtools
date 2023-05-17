@@ -111,7 +111,7 @@ pages:
     paths:
       - public
   only:
-    - main
+    - merge_requests
 
 build-package:
   stage: publish
