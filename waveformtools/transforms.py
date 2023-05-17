@@ -1,7 +1,7 @@
 """ Methods to transform the waveform """
 
 import numpy as np
-
+from waveformtools.waveformtools import message
 # from numba import jit, njit
 
 
@@ -13,18 +13,18 @@ def compute_fft(udata_x, delta_x):
     ----------
 
     udata_x:	1d array
-                            The samples in time-space.
+                                                    The samples in time-space.
 
     delta_x:	float
-                            The stepping delta_x
+                                                    The stepping delta_x
 
     Returns
     -------
 
     freqs:	1d array
-                    The frequency axis, shifted approriately.
+                                    The frequency axis, shifted approriately.
     utilde:	1d array
-                            The samples in frequency space, with conventions applied.
+                                                    The samples in frequency space, with conventions applied.
 
     """
 
@@ -59,19 +59,19 @@ def compute_ifft(utilde, delta_f):
     ----------
 
     utilde	:	1d array
-                            The samples in frequency-space.
+                                                    The samples in frequency-space.
 
     delta_f:	float
-                            The frequency stepping
+                                                    The frequency stepping
 
     Returns
     -------
 
     time_axis:	1d array
-                            The time axis.
+                                                    The time axis.
 
     udata_time:	1d array
-                                    The samples in time domain.
+                                                                    The samples in time domain.
 
     """
 
@@ -104,20 +104,20 @@ def compute_ifft(utilde, delta_f):
 # @njit(parallel=True)
 def set_fft_conven(utilde_orig):
     """Make a numppy fft consistent with the chosen conventions.
-            This takes care of the zero mode factor and array position.
-            Also, it shifts the negative frequencies using numpy's fftshift.
+                    This takes care of the zero mode factor and array position.
+                    Also, it shifts the negative frequencies using numpy's fftshift.
 
     Parameters
     ----------
 
     utilde_orig:	1d array
-                                    The result of a numpy fft.
+                                                                    The result of a numpy fft.
 
     Returns
     -------
 
     utilde_conven:	1d array
-                                    The fft with set conventions.
+                                                                    The fft with set conventions.
     """
 
     # Multiply by 2, take conjugate.
@@ -133,14 +133,14 @@ def set_fft_conven(utilde_orig):
 # @njit(parallel=True)
 def unset_fft_conven(utilde_conven):
     """Make an actual conventional fft consistent with numpy's conventions.
-            The inverse of set_conv.
+                    The inverse of set_conv.
 
 
     Parameters
     ----------
 
     utilde_conven:	1d array
-                                    The conventional fft data vector.
+                                                                    The conventional fft data vector.
 
     Returns
     -------
@@ -164,25 +164,25 @@ def Yslm(spin_weight, ell, emm, theta, phi):
     Parameters
     ----------
 
-    spin_weight :   int
-                    The Spin weight.
-    ell :   int
-            The mode number :math:`\\ell'.
-    emm :   int
-            The azimuthal mode number :math:`m'.
+    spin_weight :	int
+                                    The Spin weight.
+    ell :	int
+                    The mode number :math:`\\ell'.
+    emm :	int
+                    The azimuthal mode number :math:`m'.
     theta : float
-            The polar angle  :math:`\\theta` in radians,
-    phi :   float
-            The aximuthal angle :math:`\\phi' in radians.
+                    The polar angle  :math:`\\theta` in radians,
+    phi :	float
+                    The aximuthal angle :math:`\\phi' in radians.
 
     Returns
     --------
-    Yslm :  float
-            The value of Yslm at :math:`\\theta, phi'.
+    Yslm :	float
+                    The value of Yslm at :math:`\\theta, phi'.
 
-        Note
-        ----
-        This is accurate upto 14 decimals for L upto 25.
+            Note
+            ----
+            This is accurate upto 14 decimals for L upto 25.
 
     """
     import sympy as sp
@@ -193,40 +193,40 @@ def Yslm(spin_weight, ell, emm, theta, phi):
     # fact = sp.factorial
     Sum = 0
 
-    spin_weight = abs(spin_weight)
+    factor = 1
+    if spin_weight < 0:
+        factor = (-1) ** ell
+        theta = np.pi - theta
+        phi += np.pi
 
-    for aar in range(ell - spin_weight + 1):
-        if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
-            # message('Continuing')
+    abs_spin_weight = abs(spin_weight)
+
+    for aar in range(ell - abs_spin_weight + 1):
+        if (aar + abs_spin_weight - emm) < 0 or (ell - aar - abs_spin_weight) < 0:
+            message(f"Skippin r {aar}", message_verbosity=3)
             continue
         else:
-            # message('r, l, s, m', r, l, s, m)
-            # a1 = sp.binomial(ell - spin_weight, aar)
-            # message(a1)
-            # a2 = sp.binomial(ell + spin_weight, aar + spin_weight - emm)
-            # message(a2)
-            # a3 = np.exp(1j * emm * phi)
-            # message(a3)
-            # a4 = np.tan(theta / 2)
-            # message(a4)
-
-            Sum += (sp.binomial(ell - spin_weight, aar) *
-                    sp.binomial(ell + spin_weight, aar + spin_weight - emm) *
-                    np.power(
-                        (-1),
-                        (ell - aar - spin_weight)) * np.exp(1j * emm * phi) /
-                    np.power(np.tan(theta / 2), (2 * aar + spin_weight - emm)))
+            Sum += (
+                sp.binomial(ell - abs_spin_weight, aar)
+                * sp.binomial(ell + abs_spin_weight, aar + abs_spin_weight - emm)
+                * np.power((-1), (ell - aar - abs_spin_weight))
+                * np.exp(1j * emm * phi)
+                / np.power(np.tan(theta / 2), (2 * aar + abs_spin_weight - emm))
+            )
 
     Sum = complex(Sum)
-    # message(type(m))
-    # message((-1)**int(m))
-    # message(np.sin(th/2)**(2*l))
-    Yslm = (-1)**emm * (np.sqrt(
-        fact(ell + emm) * fact(ell - emm) * (2 * ell + 1) /
-        (4 * np.pi * fact(ell + spin_weight) * fact(ell - spin_weight))) *
-                        np.sin(theta / 2)**(2 * ell) * Sum)
+    Yslm = (-1) ** emm * (
+        np.sqrt(
+            fact(ell + emm)
+            * fact(ell - emm)
+            * (2 * ell + 1)
+            / (4 * np.pi * fact(ell + abs_spin_weight) * fact(ell - abs_spin_weight))
+        )
+        * np.sin(theta / 2) ** (2 * ell)
+        * Sum
+    )
 
-    return Yslm
+    return factor * Yslm
 
 
 def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
@@ -235,32 +235,29 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     Inputs
     -----------
 
-    spin_weight :   int
-                    The Spin weight.
-    ell :   int
-            The mode number :math:`\\ell'.
-    emm :   int
-            The azimuthal mode number :math:`m'.
+    spin_weight :	int
+                                    The Spin weight.
+    ell :	int
+                    The mode number :math:`\\ell'.
+    emm :	int
+                    The azimuthal mode number :math:`m'.
     theta : float
-            The polar angle  :math:`\\theta` in radians,
-    phi :   float
-            The aximuthal angle :math:`\\phi' in radians.
+                    The polar angle  :math:`\\theta` in radians,
+    phi :	float
+                    The aximuthal angle :math:`\\phi' in radians.
 
     Returns
     --------
-    Yslm :  float
-            The value of Yslm at :math:`\\theta, phi'.
+    Yslm :	float
+                    The value of Yslm at :math:`\\theta, phi'.
 
-        Note
-        ----
-        This is accurate upto 14 decimals for L upto 25.
+            Note
+            ----
+            This is accurate upto 14 decimals for L upto 25.
     """
 
-    # spin_weight = abs(spin_weight)
-    # theta, phi = sp.symbols('theta phi')
     from math import comb
 
-    # import sympy as sp
     fact = np.math.factorial
 
     theta_grid = np.array(theta_grid)
@@ -268,65 +265,69 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
 
     Sum = 0 + 1j * 0
 
-    spin_weight = abs(spin_weight)
+    factor = 1
+    if spin_weight < 0:
+        factor = (-1) ** ell
+        theta = np.pi - theta
+        phi += np.pi
 
-    for aar in range(0, ell - spin_weight + 1):
-        # message('aar', aar)
+    abs_spin_weight = abs(spin_weight)
+
+    for aar in range(0, ell - abs_spin_weight + 1):
         subterm = 0
 
-        if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
-            # message('Continuing')
+        if (aar + abs_spin_weight - emm) < 0 or (ell - aar - abs_spin_weight) < 0:
+            message(f"Skipping r {aar}", message_verbosity=3)
             continue
         else:
-            # message(aar + spin_weight-emm)
 
-            term1 = comb(ell - spin_weight, aar)
-            term2 = comb(ell + spin_weight, aar + spin_weight - emm)
-            term3 = np.power(float(-1), (ell - aar - spin_weight))
-            # term3 = (-1)**(ell-aar-spin_weight)
+            term1 = comb(ell - abs_spin_weight, aar)
+            term2 = comb(ell + abs_spin_weight, aar + abs_spin_weight - emm)
+            term3 = np.power(float(-1), (ell - aar - abs_spin_weight))
             term4 = np.exp(1j * emm * phi_grid)
-            term5 = np.power(np.tan(theta_grid / 2),
-                             (-2 * aar - spin_weight + emm))
+            term5 = np.power(np.tan(theta_grid / 2), (-2 * aar - abs_spin_weight + emm))
             subterm = term1 * term2 * term3 * term4 * term5
 
-            # message(term1, term2, term3, term4)
-
             Sum += subterm
-            # message('arr, subterm', aar, subterm)
 
-    # message(ell+emm, ell+spin_weight, ell-spin_weight)
-    Yslmv = float(-1)**emm * (np.sqrt(
-        fact(ell + emm) * fact(ell - emm) * (2 * ell + 1) /
-        (4 * np.pi * fact(ell + spin_weight) * fact(ell - spin_weight))) *
-                              np.sin(theta_grid / 2)**(2 * ell) * Sum)
+    Yslmv = float(-1) ** emm * (
+        np.sqrt(
+            fact(ell + emm)
+            * fact(ell - emm)
+            * (2 * ell + 1)
+            / (4 * np.pi * fact(ell + abs_spin_weight) * fact(ell - abs_spin_weight))
+        )
+        * np.sin(theta_grid / 2) ** (2 * ell)
+        * Sum
+    )
 
-    return Yslmv
+    return factor * Yslmv
 
 
 def Yslm_prec(spin_weight, ell, emm, theta, phi, prec=24):
     """Spin-weighted spherical harmonics function with precise computations.
-                Uses a symbolic method evaluated at the degree of precision requested
-                by the user.
+                            Uses a symbolic method evaluated at the degree of precision requested
+                            by the user.
     Parameters
     ----------
 
-    spin_weight :   int
-                    The Spin weight.
-    ell :   int
-            The mode number :math:`\\ell'.
-    emm :   int
-            The azimuthal mode number :math:`m'.
+    spin_weight :	int
+                                    The Spin weight.
+    ell :	int
+                    The mode number :math:`\\ell'.
+    emm :	int
+                    The azimuthal mode number :math:`m'.
     theta : float
-            The polar angle  :math:`\\theta` in radians,
-    phi :   float
-            The aximuthal angle :math:`\\phi' in radians.
+                    The polar angle  :math:`\\theta` in radians,
+    phi :	float
+                    The aximuthal angle :math:`\\phi' in radians.
     pres : int, optional
-           The precision i.e. number of digits to compute
-           upto. Default value is 16.
+               The precision i.e. number of digits to compute
+               upto. Default value is 16.
     Returns
     --------
-    Yslm :  float
-            The value of Yslm at :math:`\\theta, phi'.
+    Yslm :	float
+                    The value of Yslm at :math:`\\theta, phi'.
 
     """
     import sympy as sp
@@ -334,90 +335,58 @@ def Yslm_prec(spin_weight, ell, emm, theta, phi, prec=24):
     # tv, pv = theta, phi
     th, ph = sp.symbols("theta phi")
 
-    # fact = np.math.factorial
-    fact = sp.factorial
-    Sum = 0
+    Yslm_expr = Yslm_prec_sym(spin_weight, ell, emm)
 
-    spin_weight = abs(spin_weight)
+    if spin_weight < 0:
+        theta = np.pi - theta
+        phi = np.pi + phi
 
-    for aar in range(ell - spin_weight + 1):
-
-        if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
-            # message('Continuing')
-            continue
-        else:
-            # message('r, l, s, m', r, l, s, m)
-            # a1 = sp.binomial(ell - spin_weight, aar)
-            # message(a1)
-            # a2 = sp.binomial(ell + spin_weight, aar + spin_weight - emm)
-            # message(a2)
-            # a3 = sp.exp(1j * emm * phi)
-            # message(a3)
-            # a4 = sp.tan(theta / 2)
-            # message(a4)
-
-            Sum += (sp.binomial(ell - spin_weight, aar) *
-                    sp.binomial(ell + spin_weight, aar + spin_weight - emm) *
-                    sp.Pow(
-                        (-1),
-                        (ell - aar - spin_weight)) * sp.exp(sp.I * emm * ph) *
-                    sp.Pow(sp.cot(th / 2), (2 * aar + spin_weight - emm)))
-
-    Yslm_expr = sp.Pow(-1, emm) * sp.simplify((sp.sqrt(
-        fact(ell + emm) * fact(ell - emm) * (2 * ell + 1) /
-        (4 * sp.pi * fact(ell + spin_weight) * fact(ell - spin_weight))) *
-                                               sp.Pow(sp.sin(th / 2),
-                                                      (2 * ell)) * Sum))
-
-    # Yslm_expr = sp.simplify(Yslm_expr)
-
-    return Yslm_expr.evalf(prec,
-                           subs={
-                               th: sp.Float(f"{theta}"),
-                               ph: sp.Float(f"{phi}")
-                           })
+    return Yslm_expr.evalf(prec, subs={th: sp.Float(f"{theta}"), ph: sp.Float(f"{phi}")})
 
 
-def Yslm_prec2(spin_weight, ell, emm, pres=16):
+def Yslm_prec_sym(spin_weight, ell, emm):
     """Spin-weighted spherical harmonics precise, symbolic computation for deferred evaluations.
-
+       Is dependent on variables th: theta and ph:phi.
     Parameters
     ----------
 
-    spin_weight :   int
-                    The Spin weight.
-    ell :   int
-            The mode number :math:`\\ell'.
-    emm :   int
-            The azimuthal mode number :math:`m'.
+    spin_weight :	int
+                                    The Spin weight.
+    ell :	int
+                    The mode number :math:`\\ell'.
+    emm :	int
+                    The azimuthal mode number :math:`m'.
     theta : float
-            The polar angle  :math:`\\theta` in radians,
-    phi :   float
-            The aximuthal angle :math:`\\phi' in radians.
+                    The polar angle  :math:`\\theta` in radians,
+    phi :	float
+                    The aximuthal angle :math:`\\phi' in radians.
     pres : int, optional
-           The precision i.e. number of digits to compute
-           upto. Default value is 16.
+               The precision i.e. number of digits to compute
+               upto. Default value is 16.
 
     Returns
     --------
-    Yslm :  sym
-            The value of Yslm at :math:`\\theta, phi'.
+    Yslm :	sym
+                    The value of Yslm at :math:`\\theta, phi'.
 
     """
     import sympy as sp
 
-    # tv, pv = theta, phi
     th, ph = sp.symbols("theta phi")
 
-    # fact = np.math.factorial
     fact = sp.factorial
     Sum = 0
 
-    spin_weight = abs(spin_weight)
+    abs_spin_weight = abs(spin_weight)
+    # To get negative spin weight SWSH
+    # in terms of positive spin weight
+    factor = 1
+    if spin_weight < 0:
+        factor = sp.Pow(-1, ell)
 
-    for aar in range(ell - spin_weight + 1):
+    for aar in range(ell - abs_spin_weight + 1):
 
-        if (aar + spin_weight - emm) < 0 or (ell - aar - spin_weight) < 0:
+        if (aar + abs_spin_weight - emm) < 0 or (ell - aar - abs_spin_weight) < 0:
             # message('Continuing')
             continue
         else:
@@ -431,21 +400,28 @@ def Yslm_prec2(spin_weight, ell, emm, pres=16):
             # a4 = sp.tan(theta / 2)
             # message(a4)
 
-            Sum += (sp.binomial(ell - spin_weight, aar) *
-                    sp.binomial(ell + spin_weight, aar + spin_weight - emm) *
-                    sp.Pow(
-                        (-1),
-                        (ell - aar - spin_weight)) * sp.exp(sp.I * emm * ph) *
-                    sp.Pow(sp.cot(th / 2), (2 * aar + spin_weight - emm)))
+            Sum += (
+                sp.binomial(ell - abs_spin_weight, aar)
+                * sp.binomial(ell + abs_spin_weight, aar + abs_spin_weight - emm)
+                * sp.Pow((-1), (ell - aar - abs_spin_weight))
+                * sp.exp(sp.I * emm * ph)
+                * sp.Pow(sp.cot(th / 2), (2 * aar + abs_spin_weight - emm))
+            )
 
-    Yslm_expr = sp.Pow(-1, emm) * (sp.sqrt(
-        fact(ell + emm) * fact(ell - emm) * (2 * ell + 1) /
-        (4 * sp.pi * fact(ell + spin_weight) * fact(ell - spin_weight))) *
-                                   sp.Pow(sp.sin(th / 2), (2 * ell)) * Sum)
+    Yslm_expr = sp.Pow(-1, emm) * (
+        sp.sqrt(
+            fact(ell + emm)
+            * fact(ell - emm)
+            * (2 * ell + 1)
+            / (4 * sp.pi * fact(ell + abs_spin_weight) * fact(ell - abs_spin_weight))
+        )
+        * sp.Pow(sp.sin(th / 2), (2 * ell))
+        * Sum
+    )
 
-    Yslm_expr = sp.simplify(Yslm_expr)
+    Yslm_expr = factor * sp.simplify(Yslm_expr)
 
-    return Yslm_expr  # .evalf(pres, subs={th: sp.Float(f"{theta}"), ph: sp.Float(f"{phi}")})
+    return Yslm_expr
 
 
 def rotate_polarizations(wf, alpha):
@@ -455,17 +431,17 @@ def rotate_polarizations(wf, alpha):
     Parameters
     ----------
     wf : 1d array
-         The complex observer waveform to rotate.
+             The complex observer waveform to rotate.
     alpha : float
-            The coordinate angle to rotate the polarizations
-            in radians. Note that the polarizarions would
-            rotate by :math:`2 \alpha` on a cordinate
-            rotation of :math:`\alpha`.
+                    The coordinate angle to rotate the polarizations
+                    in radians. Note that the polarizarions would
+                    rotate by :math:`2 \alpha` on a cordinate
+                    rotation of :math:`\alpha`.
 
     Returns
     -------
     rot_wf : 1d array
-             The rotated waveform.
+                     The rotated waveform.
     """
 
     h1, h2 = wf.real, wf.imag
