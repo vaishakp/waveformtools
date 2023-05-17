@@ -7,11 +7,7 @@
 import numpy as np
 
 
-def decompose_in_SWSHs(waveform,
-                       gridinfo,
-                       spin_weight=-2,
-                       ell_max=8,
-                       emm_list="all"):
+def decompose_in_SWSHs(waveform, gridinfo, spin_weight=-2, ell_max=8, emm_list="all"):
     """Decompose a given function on a sphere in Spin Weighted Spherical Harmonics
 
     Parameters
@@ -119,8 +115,7 @@ def decompose_in_SWSHs(waveform,
                 emm_val = int(emm_list[emm_index])
 
                 # Spin weighted spherical harmonic function at (theta, phi)
-                Ybasis_fun = Yslm_vec(spin_weight, ell_index, emm_val, theta,
-                                      phi)
+                Ybasis_fun = Yslm_vec(spin_weight, ell_index, emm_val, theta, phi)
 
                 # Integrate to obtain the multipole of order l.
 
@@ -128,8 +123,7 @@ def decompose_in_SWSHs(waveform,
                 # Integrate the function
 
                 # Using quad
-                multipole_emm = quad_on_sphere(
-                    integrand_ij * Ybasis_fun * darea, gridinfo)
+                multipole_emm = quad_on_sphere(integrand_ij * Ybasis_fun * darea, gridinfo)
                 # multipole_emm	 =	 np.sum(integrand_ij * Ybasis_fun * darea)
 
                 multipoles_ell.update({emm_val: multipole_emm})
@@ -190,13 +184,10 @@ def quad_on_sphere(integrand, gridinfo, kind="third"):
 
         integrand_phi = integrand[:, phi_index]
 
-        integrand_phi_interp_func = interp1d(theta_1d,
-                                             integrand_phi,
-                                             kind=kind)
+        integrand_phi_interp_func = interp1d(theta_1d, integrand_phi, kind=kind)
 
         # Integrate on the phi plane
-        integral_phi_vals, integral_phi_errs = quad(integrand_phi_interp_func,
-                                                    0, np.pi)
+        integral_phi_vals, integral_phi_errs = quad(integrand_phi_interp_func, 0, np.pi)
 
         theta_first_integral_vals.append(integral_phi_vals)
         theta_first_integral_errs.append(integral_phi_errs)
@@ -210,8 +201,7 @@ def quad_on_sphere(integrand, gridinfo, kind="third"):
     integrand_theta_interp_func = interp1d(phi_1d, integrand_theta, kind=kind)
 
     # Integrate on the theta plane
-    final_integral, semi_final_errs = quad(integrand_theta_interp_func, 0,
-                                           2 * np.pi)
+    final_integral, semi_final_errs = quad(integrand_theta_interp_func, 0, 2 * np.pi)
 
     # Get final errors
     final_errs = semi_final_errs + np.sum(np.array(theta_first_integral_errs))

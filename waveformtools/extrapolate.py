@@ -52,9 +52,7 @@ def r_to_ra_conversion(coord_radius, mass=1, spin=0):
     Nakano et al., (2015),	Phys. Rev. D 91, 104022, in-text below Eq.[30].
     """
 
-    areal_radius = coord_radius * (1 + (mass + spin) /
-                                   (2 * coord_radius)) * (1 + (mass - spin) /
-                                                          (2 * coord_radius))
+    areal_radius = coord_radius * (1 + (mass + spin) / (2 * coord_radius)) * (1 + (mass - spin) / (2 * coord_radius))
 
     return areal_radius
 
@@ -64,13 +62,7 @@ def r_to_ra_conversion(coord_radius, mass=1, spin=0):
 ############################################################################
 
 
-def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm,
-                                                delta_t,
-                                                areal_radius=500,
-                                                mass=1,
-                                                spin=0,
-                                                ell=2,
-                                                emm=2):
+def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius=500, mass=1, spin=0, ell=2, emm=2):
     """Extract a numerical waveform to null infinity using perturbative techniques. This is :
             * accurate to second order in :math:`1/r`.
             * accurate to first order in Kerr mass and spin.
@@ -129,29 +121,24 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm,
     term_1_prefac = 1 - 2 * mass / areal_radius
     subterm_1_1 = rPsi4_rlm
     subterm_1_2_prefac = (ell - 1) * (ell + 2) / (2 * areal_radius)
-    subterm_1_2, _ = fixed_frequency_integrator(
-        rPsi4_rlm, delta_t, omega0=0.015)  # Integral_rPsi4_rlm
-    subterm_1_3_prefac = (ell - 1) * (ell + 2) * (ell**2 + ell -
-                                                  4) / (8 * areal_radius**2)
-    subterm_1_3, _ = fixed_frequency_integrator(
-        rPsi4_rlm, delta_t, order=2, omega0=0.015)  # Double_integral_rPsi4_rlm
+    subterm_1_2, _ = fixed_frequency_integrator(rPsi4_rlm, delta_t, omega0=0.015)  # Integral_rPsi4_rlm
+    subterm_1_3_prefac = (ell - 1) * (ell + 2) * (ell**2 + ell - 4) / (8 * areal_radius**2)
+    subterm_1_3, _ = fixed_frequency_integrator(rPsi4_rlm, delta_t, order=2, omega0=0.015)  # Double_integral_rPsi4_rlm
 
-    term_1 = term_1_prefac * (subterm_1_1 + subterm_1_2_prefac * subterm_1_2 +
-                              subterm_1_3_prefac * subterm_1_3)
+    term_1 = term_1_prefac * (subterm_1_1 + subterm_1_2_prefac * subterm_1_2 + subterm_1_3_prefac * subterm_1_3)
 
-    term_2_prefac = (2 * 1j * spin / (ell + 1)**2) * np.sqrt(
-        (ell + 3) * (ell - 1) * (ell + emm + 1) * (ell - emm + 1) /
-        ((2 * ell + 1) * (2 * ell + 3)))
-    subterm_2_1 = differentiate_cwaveform(
-        timeaxis, rPsi4_rlm)  # Differential of waveform
+    term_2_prefac = (2 * 1j * spin / (ell + 1) ** 2) * np.sqrt(
+        (ell + 3) * (ell - 1) * (ell + emm + 1) * (ell - emm + 1) / ((2 * ell + 1) * (2 * ell + 3))
+    )
+    subterm_2_1 = differentiate_cwaveform(timeaxis, rPsi4_rlm)  # Differential of waveform
     subterm_2_2_prefac = -ell * (ell + 3) / areal_radius
     subterm_2_2 = subterm_1_1
 
     term_2 = term_2_prefac * (subterm_2_1 + subterm_2_2_prefac * subterm_2_2)
 
     term_3_prefac = (-2 * 1j * spin / ell**2) * np.sqrt(
-        ((ell + 2) * (ell - 2) * (ell + emm) * (ell - emm)) / ((2 * ell - 1) *
-                                                               (2 * ell + 1)))
+        ((ell + 2) * (ell - 2) * (ell + emm) * (ell - emm)) / ((2 * ell - 1) * (2 * ell + 1))
+    )
     subterm_3_1 = subterm_2_1
     subterm_3_2_prefac = -(ell - 2) * (ell + 1) / areal_radius
     subterm_3_2 = subterm_1_1
@@ -163,11 +150,7 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm,
     return rPsi4_inflm
 
 
-def waveextract_to_inf_perturbative_two_order(rPsi4_rlm,
-                                              delta_t,
-                                              areal_radius=500,
-                                              mass=1,
-                                              ell=2):
+def waveextract_to_inf_perturbative_two_order(rPsi4_rlm, delta_t, areal_radius=500, mass=1, ell=2):
     """Extract a numerical waveform to null infinity using perturbative techniques. This is :
             * accurate to second order in :math:`1/r`.
             * accurate to first order in Kerr mass and spin.
@@ -221,14 +204,11 @@ def waveextract_to_inf_perturbative_two_order(rPsi4_rlm,
     term_1 = rPsi4_rlm
 
     term_2_prefac = -(ell - 1) * (ell + 2) / (2 * areal_radius)
-    subterm_2_1, _ = fixed_frequency_integrator(
-        rPsi4_rlm, delta_t, omega0=0.015)  # Integral_rPsi4_rlm
+    subterm_2_1, _ = fixed_frequency_integrator(rPsi4_rlm, delta_t, omega0=0.015)  # Integral_rPsi4_rlm
     term_2 = term_2_prefac * subterm_2_1
 
-    term_3_prefac = (ell - 1) * (ell + 2) * (ell**2 + ell -
-                                             4) / (8 * areal_radius**2)
-    subterm_3_1, _ = fixed_frequency_integrator(
-        rPsi4_rlm, delta_t, order=2, omega0=0.015)  # Double_Integral_rPsi4_rlm
+    term_3_prefac = (ell - 1) * (ell + 2) * (ell**2 + ell - 4) / (8 * areal_radius**2)
+    subterm_3_1, _ = fixed_frequency_integrator(rPsi4_rlm, delta_t, order=2, omega0=0.015)  # Double_Integral_rPsi4_rlm
     term_3 = term_3_prefac * subterm_3_1
 
     term_4_prefac = -3 * mass / (2 * areal_radius**2)
@@ -240,10 +220,7 @@ def waveextract_to_inf_perturbative_two_order(rPsi4_rlm,
     return rPsi4_inflm
 
 
-def waveextract_to_inf_perturbative_one_order(u_ret,
-                                              rPsi4_rlm,
-                                              areal_radius=500,
-                                              ell=2):
+def waveextract_to_inf_perturbative_one_order(u_ret, rPsi4_rlm, areal_radius=500, ell=2):
     """Extract a numerical waveform to null infinity using perturbative techniques. This is :
             * accurate to second order in :math:`1/r`.
             * accurate to first order in Kerr mass and spin.
@@ -295,15 +272,12 @@ def waveextract_to_inf_perturbative_one_order(u_ret,
     delta_t = u_ret[1] - u_ret[0]
 
     # Get the waveform instantaneous frequency
-    omega_lm = waveformtools.get_waveform_angular_frequency(rPsi4_rlm,
-                                                            delta_t=delta_t,
-                                                            timeaxis=u_ret)
+    omega_lm = waveformtools.get_waveform_angular_frequency(rPsi4_rlm, delta_t=delta_t, timeaxis=u_ret)
 
     # Assigning the terms. Each set of subterms in a pair of paranthesis is a term.
 
     # The amplitude correction factor
-    A_lm_correction = 0.5 * np.power(
-        ((ell * (ell + 1) / (2 * omega_lm * areal_radius))), 2)
+    A_lm_correction = 0.5 * np.power(((ell * (ell + 1) / (2 * omega_lm * areal_radius))), 2)
 
     # The phase correction factor.
     sin_Phase_correction = ell * (ell + 1) / (2 * omega_lm * areal_radius)

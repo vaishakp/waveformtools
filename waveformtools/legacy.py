@@ -79,9 +79,7 @@ def match_wfs_pycbc_old(waveforms, delt=None):
             try:
                 delt = waveformdat[0].delta_t
             except BaseException:
-                message(
-                    "Waveform is not a pycbc TimeSeries. Please provide the gridspacing delt"
-                )
+                message("Waveform is not a pycbc TimeSeries. Please provide the gridspacing delt")
                 sys.exit(0)
         # Match procedure
 
@@ -89,18 +87,14 @@ def match_wfs_pycbc_old(waveforms, delt=None):
 
         # waveform1 = signaldat[0]
         # waveform2 = signaldat[1]
-        waveform1, waveform2, _ = lengtheq(waveformdat[0],
-                                           waveformdat[1],
-                                           delt,
-                                           is_ts=True)
+        waveform1, waveform2, _ = lengtheq(waveformdat[0], waveformdat[1], delt, is_ts=True)
 
         # alignedwvs = pycbc.waveform.utils.coalign_waveforms(signaldat,hpa)
         # Compute the match to calculate match and shift.
         # Note: The match function from pycbc returns the match of the
         # normalized templates
 
-        (match_score,
-         shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
+        (match_score, shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
 
         message("Priliminary match", match_score, shift)
         # Shift the matched data against the template using the shift obtained
@@ -121,18 +115,14 @@ def match_wfs_pycbc_old(waveforms, delt=None):
 
         # waveform1 = signaldat[0]
         # waveform2 = signaldat[1]
-        waveform1, waveform2, _ = lengtheq(waveformdat[0],
-                                           waveformdat[1],
-                                           delt,
-                                           is_ts=True)
+        waveform1, waveform2, _ = lengtheq(waveformdat[0], waveformdat[1], delt, is_ts=True)
 
         # alignedwvs = pycbc.waveform.utils.coalign_waveforms(signaldat,hpa)
         # Compute the match to calculate match and shift.
         # Note: The match function from pycbc returns the match of the
         # normalized templates
 
-        (match_score,
-         shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
+        (match_score, shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
 
         message("Priliminary match", match_score, shift)
         # Shift the matched data against the template using the shift obtained
@@ -150,39 +140,31 @@ def match_wfs_pycbc_old(waveforms, delt=None):
             starti, endi = apxstartend(waveform1)
             message("starti, endi")
 
-        message("The approximate start and end indices are", starti, endi,
-                "length", endi - starti)
+        message("The approximate start and end indices are", starti, endi, "length", endi - starti)
         # Convert the non-zero portion of the signal and template to
         # time-series
         message("Converting shifted vectors to time series")
         signal = pycbc.types.timeseries.TimeSeries(
-            np.array(waveform1)[starti:endi] /
-            np.linalg.norm(np.array(waveform1)[starti:endi]), delt)
+            np.array(waveform1)[starti:endi] / np.linalg.norm(np.array(waveform1)[starti:endi]), delt
+        )
         template = pycbc.types.timeseries.TimeSeries(
-            np.array(waveform2)[starti:endi] /
-            np.linalg.norm(np.array(waveform2)[starti:endi]), delt)
+            np.array(waveform2)[starti:endi] / np.linalg.norm(np.array(waveform2)[starti:endi]), delt
+        )
         # Sanity check: The template and the signal must be of the same length
         # at this point in execution
         if len(signal) != len(template):
             message("Error\n")
-            message("Length of data, template after truncation are %d,%d" %
-                    (len(signal), len(template)))
+            message("Length of data, template after truncation are %d,%d" % (len(signal), len(template)))
             sys.exit(0)
         # Compute the match, shift again on the truncated data
         # message("length of data %d, aligned data %d, template %d"%(len(signaldat),len(alignedwvs[0]),len(alignedwvs[1])))
 
         try:
-            (match_score,
-             shift) = pycbc.filter.matchedfilter.match(signal, template)
+            (match_score, shift) = pycbc.filter.matchedfilter.match(signal, template)
         except BaseException:
             message("Final match couldn't be found!")
             match_score = None
             shift = None
 
-        match = {
-            "Match score": match_score,
-            "Shift": shift,
-            "Start index": starti,
-            "End index": endi
-        }
+        match = {"Match score": match_score, "Shift": shift, "Start index": starti, "End index": endi}
     return match
