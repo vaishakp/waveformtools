@@ -57,6 +57,10 @@ The `spherical_array` class is the coordinate space (:math:`\theta, \phi`) repre
 1. The grid is staggered across the poles to circumvent dealing with coordinate singularities.
 2. Transformation/ expansion to spectral basis i.e. `modes_array` given the spin weight.
 
+Presently, the supported grids are
+
+1. Gauss-Legendre grid.
+2. Uniformly spaced grid in :math:`\theta, \phi`.
 
 
 

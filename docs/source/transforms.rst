@@ -1,10 +1,10 @@
 Transforms
 ==========
 
-The ``wavefortools.transforms`` module provides capabilities to transform the waveforms in the fllowing ways:
+The ``wavefortools.transforms`` module provides capabilities to transform the waveforms in the following ways:
 
 1. The time series to frequency domain and vice-versa.
-2. The modes data into coordinate representation on the sphere.
+2. The modes data into coordinate representation on the sphere and vice-versa.
 
 
 Fourier transforms
@@ -21,7 +21,7 @@ For changing the representation between the coordinate space and SWSH basis, one
 Computation of SWSH basis functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two choised for computing the SWSH basis functions required in the transformations. One using numpy implementation and the other using sympy. In the former method, the computations are only accurate upto about 12 decimals for :math:`\\ell \\leq 20` but they are fast. In the latter, the SWSH can be computed to any precision required at the cost of speed.
+There are two choised for computing the SWSH basis functions required in the transformations. One is named `fast` and is implemented using numpy, and the other is a `precise`. The latter method uses sympy (and optionally gmpy) and is capable of computing the SWSHs at arbitrary accuracy, upto any number of digits as requested by the user. In the former method, the computations are fast and accurate upto about 14 decimals for :math:`\\ell \\leq 25`. In the latter, the SWSH can be computed to any precision required at the cost of execution time.
 
 
 

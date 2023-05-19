@@ -16,4 +16,4 @@ The `waveformtools.waveformtools` module is a toolkit to carryout various transf
 9. Extraction of amplitudes and unwrapped phases.
 10. A simple progress bar
 11. A logger/print function with verbosity levels.
-
+12. Various other functions to facilitate data analysis of Numerical relativity data.
