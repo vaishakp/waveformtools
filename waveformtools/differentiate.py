@@ -45,7 +45,6 @@ def derivative(x_data, y_data, method="FD", degree=3):
     if method == "CS":
         dydx = Chebyshev_differential(x_data, y_data, order=1, degree=degree)
     else:
-
         delta_x_all = np.diff(x_data)
 
         if (delta_x_all - delta_x_all[0] < 1e-14).all():
@@ -70,7 +69,6 @@ def derivative(x_data, y_data, method="FD", degree=3):
             )
 
         elif method == "FD":
-
             if degree == 1:
                 dydx_new = differentiate(y_uniform, delta_x)
             elif degree == 2:

@@ -127,13 +127,13 @@ def get_ell_max_from_file(data_dir, var_type="Psi4", file_name="*.h5"):
         data_file = h5py.File(f"{data_dir}/{file_name}")
         all_fnames = list(data_file.keys())
         data_file.close()
-        message(all_fnames)
+        # message(all_fnames)
 
     # Parse ell values
     # Filter the keys.
     all_fnames = [item for item in all_fnames if "_l" in item]
 
-    message("All files found", all_fnames, message_verbosity=2)
+    message("All files found", all_fnames, message_verbosity=3)
 
     ell_max = get_ell_max_from_keys(all_fnames)
 
@@ -383,7 +383,6 @@ def load_RIT_Psi4_data_from_disk(
         wfa = modes_array(label=label, data_dir=data_dir, modes_list=wf_modes_list)
 
     if modes_list is None:
-
         # Max available mode l.
         if ell_max is None:
             ell_max, _ = get_ell_max_from_file(data_dir)
@@ -683,7 +682,7 @@ def load_RIT_Strain_data_from_disk(
             this_amp_key = f"amp_l{ell}_m{emm}"
             this_phase_key = f"phase_l{ell}_m{emm}"
 
-            message("Loading", ell, emm)
+            message("Loading", ell, emm, message_verbosity=3)
             # Construct file path
 
             # Create modes_array on first run

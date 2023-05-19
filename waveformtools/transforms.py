@@ -1,7 +1,9 @@
 """ Methods to transform the waveform """
 
 import numpy as np
+
 from waveformtools.waveformtools import message
+
 # from numba import jit, njit
 
 
@@ -280,7 +282,6 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
             message(f"Skipping r {aar}", message_verbosity=3)
             continue
         else:
-
             term1 = comb(ell - abs_spin_weight, aar)
             term2 = comb(ell + abs_spin_weight, aar + abs_spin_weight - emm)
             term3 = np.power(float(-1), (ell - aar - abs_spin_weight))
@@ -385,7 +386,6 @@ def Yslm_prec_sym(spin_weight, ell, emm):
         factor = sp.Pow(-1, ell)
 
     for aar in range(ell - abs_spin_weight + 1):
-
         if (aar + abs_spin_weight - emm) < 0 or (ell - aar - abs_spin_weight) < 0:
             # message('Continuing')
             continue

@@ -14,7 +14,6 @@ dependencies:
     - numpy
     - sympy
     - numpydoc
-
 channels:
     - defaults
     - conda-forge
