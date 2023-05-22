@@ -112,15 +112,29 @@ This module has the following dependencies:
     * [`statistics`](https://docs.python.org/3/library/statistics.html)
     * [`matplotlib`](http://matplotlib.org/)
     * [`h5py`](http://www.h5py.org/)
-* The pyCBC module
-    * [`pyCBC`](https://pycbc.org/).
-* Third party modules
     * [`termcolor`](https://pypi.org/project/termcolor/)
+    * 
+* Optional dependencies (labelled [EXT])
+    * For use with PyCBC data analysis packages.
+        * [`pyCBC`](https://pycbc.org/)
+        * [`lalsuite`](https://git.ligo.org/lscsoft/lalsuite)
+        * [`ligo-common`](https://git.ligo.org/lscsoft/ligo-common)
+    * [`gmpy2`](https://gmpy2.readthedocs.io/en/latest/)
 
 
 ## Recommended method
 
-I recommend installing this module using anaconda with python 3. 
+I recommend installing this module through pypi:
+```sh
+pip install waveformtools
+```
+## Alternate method
+
+Manual install directly from gitlab:
+
+```pip install git+https://gitlab.com/vaishakp/waveformtools@main```
+
+Or from a clone:
 
 * First, clone this repository:
 
@@ -128,43 +142,19 @@ I recommend installing this module using anaconda with python 3.
 git clone https://gitlab.com/vaishakp/waveformtools.git
 
 ```
+* Second, run python setup from the `waveformtools` directory:
+```sh
+cd waveformtools
+python setup.py install --prefix="<path to your preferred installation dir>"
+``` 
 
-* Second, create an environment with dependencies resolved, and activate it.
+## Manually setup conda environment
+
+* To create an environment with automatic dependency resolution and activate it, run
 ```sh
 conda create env -f docs/environment.yml
 conda activate wftools
 ```
-
-
-* Third, add the path to the $PYTHONPATH variable
-
-```sh
-PYTHONPATH="/path/to/this/cloned/repo":$PYTHONPATH
-export PYTHONPATH
-```
-
-* Alternatively, steps 1-2 can be replaced by a manual environment creation and conda package installation.
-
-
-## Manual method
-
-This is not recommended. One can also install this using the pip commands on this git repository:
-
-```sh
-pip install git+https://gitlab.com/vaishakp/waveformtools.git
-```
-or by running python setup file on the cloned repository:
-
-
-```sh
-python setyp.py install
-```
-
-This is not recommended because of various reasons:
-
-* The commands are better run on user privelages, and using virtual environments, so as to 
-    * not cause system version conflicts 
-    * Avoid dependency issues
 
 
 # Using this code
@@ -225,6 +215,11 @@ The documentation for this module is available at [Link to the Documentation](ht
 
 In some case where the repo has run out of gitlab CI minutes, the documentation is not automatically built. In such cases, we request the user to access the documentation through the `index.html` file in `docs` directory.
 
+
+# Bug tracker
+If you run into any issues while using this package, please report the issue on the [issue tracker](https://gitlab.com/vaishakp/waveformtools/-/issues).
+
+ 
 # Acknowledgements
 
 This project has been hosted, as you can see, on gitlab. Several gitlab tools are used in the deployment of the code, its testing, version control.
