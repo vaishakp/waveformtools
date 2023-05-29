@@ -1398,21 +1398,21 @@ class modes_array:
 
         return waveform_modes
 
-    def extrap_to_inf(self, mass=1, spin=None, modes_list="all", method="SIO", r_ext_factor=1):
+    def extrap_to_inf(self, mass=1, spin=None, modes_list="all", method="SIO", r_ext_factor=1, diff_method='CS', diff_degree=24):
         """Extrapolate the :math:`\\Psi_4` modes to infinity
         using the perturbative improved second order method.
 
         Parameters
         ----------
         mass:		float
-                                                                                                                                                                                                                                                                                                                                                                                                        The effective total mass of the system.
+					The effective total mass of the system.
         spin:		float
-                                                                                                                                                                                                                                                                                                                                                                                                        The effective spin of the system.
+					The effective spin of the system.
         modes:		modes array, optional
-                                                                                                                                                                                                        The modes to extrapolate. Defaults
-                                                                                                                                                                                                        to `all` if not specified.
-        method: str
-                                                                                                                                                                                                        The method to use for extrapolation. The available methods are:
+                    The modes to extrapolate. Defaults
+                    to `all` if not specified.
+        method:     str
+					The method to use for extrapolation. The available methods are:
 
         +------------+--------------------------------------+
         | Method str | Name									|
@@ -1426,14 +1426,15 @@ class modes_array:
         Returns
         -------
         waveform_inf_modes: modes array
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A new modes array that contains
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        the extrapolated modes.
+                            A new modes array that contains the extrapolated modes.
         """
 
         from functools import partial
 
         # Prepare the extrapolating method.
         if method == "SIO":
+
+
             from waveformtools.extrapolate import (
                 waveextract_to_inf_perturbative_twop5_order,
             )
@@ -1444,6 +1445,8 @@ class modes_array:
                 areal_radius=self.r_ext,
                 mass=mass,
                 spin=spin,
+				method=diff_method,
+				degree=diff_degree,
             )
 
         if method == "SO":
@@ -1473,7 +1476,7 @@ class modes_array:
 
         # Prepare the modes to be extrapolated.
         if modes_list == "all":
-            modes_list = construct_mode_list(self.ell_max)
+            modes_list = construct_mode_list(self.ell_max, self.spin_weight)
 
         # Create a mode array for the extrapolated waveform.
         extrap_wf = modes_array(

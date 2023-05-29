@@ -62,7 +62,7 @@ def r_to_ra_conversion(coord_radius, mass=1, spin=0):
 ############################################################################
 
 
-def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius=500, mass=1, spin=0, ell=2, emm=2):
+def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius=500, mass=1, spin=0, ell=2, emm=2, degree=24, method='CS'):
     """Extract a numerical waveform to null infinity using perturbative techniques. This is :
             * accurate to second order in :math:`1/r`.
             * accurate to first order in Kerr mass and spin.
@@ -75,27 +75,22 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius
 
     rPsi4_rlm:	1d array
                             The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array
-
     delta_t:	float
                             The time stepping.
-
-
     areal_radius:	1d array
                                     The areal radius of the extraction sphere.
-
-
     mass:	float
                     The total horizon mass of the system.
-
     spin:	float, optional
                     The effective spin of the spacetime. Defaults to 0.
-
     ell:	int
                     The polar quantum number :math:`\\ell`.
-
     emm:	int
                     The azimuthal quantum number :math:`m`.
-
+	method: str
+			The method to use for differentiation.
+	degree: int
+			The degree to use for dfferentiation.
     Returns
     -------
 
@@ -130,7 +125,7 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius
     term_2_prefac = (2 * 1j * spin / (ell + 1) ** 2) * np.sqrt(
         (ell + 3) * (ell - 1) * (ell + emm + 1) * (ell - emm + 1) / ((2 * ell + 1) * (2 * ell + 3))
     )
-    subterm_2_1 = differentiate_cwaveform(timeaxis, rPsi4_rlm)  # Differential of waveform
+    subterm_2_1 = differentiate_cwaveform(timeaxis, rPsi4_rlm, method=method, degree=degree)  # Differential of waveform
     subterm_2_2_prefac = -ell * (ell + 3) / areal_radius
     subterm_2_2 = subterm_1_1
 

@@ -615,11 +615,8 @@ def taperlengtheq(data_a, data_b, delta_t=None):
     return lengtheq(signala, signalb, delta_t)
 
 
-# Check data for discontinuity
-
-
-def iscontinuous_old(timeaxis, delta_t=0):
-    """Check if the data has discontinuities. This checks for repetitive time rows and jumps.
+def iscontinuous_new(time_axis, delta_t=None, toldt=1e-3)
+	""" Check if the data has discontinuities. This checks for repetitive time rows and jumps.
 
     Notes
     -----
@@ -632,74 +629,44 @@ def iscontinuous_old(timeaxis, delta_t=0):
     Parameters
     ----------
 
-    timeaxis:	list
-                            Input as a single 1d time axis
-                            or a list of 1d arrays [time, data1, data2, ...].
-                            All the data share the common time axis `time`
+    data:	list
+                                                                    Input as a list of 1d arrays [time, data1, data2, ...].
+                                                                    All the data share the common time axis `time`
     delta_t:	float
-                            The time stepping.
+                                                                    The time stepping.
     toldt : float
-                    The tolerance for error in checking.
-                    Defaluts to toldt=1e-3.
+                                                                    The tolerance for error in checking. defaluts to toldt=1e-3.
 
     Returns
     -------
 
-    discontinuity_details : a list.
-                                                    It contains: [ the actual location of discontinuity along
-                                                    the time axis,
-                                                    value of time location of original array,
-                                                    the type of discontinuity].
-
-    """
-
-    # If data array is supplied, assign first column as timeaxis
-    if np.array(timeaxis).ndim > 1:
-        timeaxis = timeaxis[:, 0]
-    # Check data for continuity.
-    # If not timeseries
-    if delta_t == 0:
-        delta_t = timeaxis[1] - timeaxis[0]
-    # Set epoch to first element of timeaxis
-    epoch = timeaxis[0]
-    # List to hold discintinuity details
-    discontinuity_details = []
-    # List to hold indices
-    # indices = []
-    # Set start index,epoch_index to 0
-    # index = 0
-    epoch_index = 0
-    # List to hold discontinuity type
-    discontinuity_type = []
-
-    for timestamp in timeaxis:
-        # Iterate over every timestamp in timeaxis
-        # Check for discontinuity
-        if timestamp != timeaxis[0] + epoch_index * delta_t:
-            # Check for type of discontinuity
-            # Repetitive rows
-            if timestamp < timeaxis[0] + epoch_index * delta_t:
-                discontinuity_type = 1
-            # Missing rows
-            elif epoch > timeaxis[0] + epoch_index + delta_t:
-                discontinuity_type = 2
-            # Append [index location,correct timestamp
-            discontinuity_details.append([epoch_index, timeaxis[epoch_index], discontinuity_type])
-        epoch_index += 1
-        # message("Progress: %f%%\r"%(epoch_index*100./len(timeaxis)))
-
-    # Print the result
-    # changed discontinuity_timestamps to discontinuity details May 5 2022
-    if len(discontinuity_details) != 0:
-        message("The data is discontinuous!")
-    else:
-        message("The data is continuous!")
-    # Return the details of discontinuity
-    return discontinuity_details
+    discontinuity_details:	a list.
+                                                    It contains:
+                                                    1. A list. details of discontinuity:  index location of original array,
+                                                                                                                            the corresponding discinbtinuity type.
+                                                    2. A float. the global discontinuity type.
+	"""
 
 
-# Check data for discontinuity
+	time_axis = np.sort(time_axis)
 
+	dt_axis = np.diff(time_axis)
+
+	if not delta_t:
+		from scipy.stats import mode
+		delta_t = mode(dt_axis)[0][0]
+
+	discontinuity_type = 0
+
+	if ((dt_axis-delta_t)>(1+toldt)*delta_t).any():
+		discont_locs = np.where((dt_axis-delta_t)>(1+toldt)*delta_t)[0]
+		discontinuity_type+=2;
+
+	if ((dt_axis-delta_t)< toldt*delta_t).any():
+		rep_locs = np.where((dt_axis-delta_t)<(toldt)*delta_t)[0]
+		discontinuity_type+=1
+
+	return [discontinuity_type, res_locs, discont_locs]
 
 def iscontinuous(data, delta_t=0, toldt=1e-3):
     """Check if the data has discontinuities. This checks for repetitive time rows and jumps.
@@ -735,7 +702,7 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
 
     # Check the data (time,datar,datai) for locations of repetition and
     # discontinuities.
-    message("Checking continuity of data", message_verbosity=1)
+    message("Checking continuity of data", message_verbosity=3)
     # Ensure data as numpy array
     data = np.array(data)
     message("Data shape:", (data.shape), message_verbosity=3)
@@ -866,81 +833,70 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
     return discontinuity_details
 
 
+#################################################
 # cleaning data for repeatative values
+# ToDo: breakdown this function into sub methods
+#################################################
+@njit(parallel=True)
+def remove_repeated_rows(data, delta_t, toldt=1e-3):
+	''' Remove repeated rows in the data
 
+	Parameters
+	----------
+	data: ndarray
+		  Data array where the first axis refers to different
+		  columns of data. The zeroth column is time axis.
+		  The second axis refers to entries at different time
+		  steps.
 
-def cleandata_old(data, verbose=False):
-    """Old version. Check the data (time,datar,datai) for repetetive rows and remove them.
-
-    Parameters
-    ----------
-
-    data:	list
-                                                                    Input as a list of 1d arrays [time, data1, data2, ...].
-                                                                    All the data share the common time axis `time`
-    verbose : bool
-                                                                    A verbosity flag.
+	delta_t: float
+			 The tim stepping.
+    toldt : float
+			The tolerance for error in checking. defaluts to toldt=1e-3.
 
     Returns
     -------
-
-    cleaned_data:	nd array
+    cleaned_data:   list
                                     The cleaned data array with repetitive
-                                    rows and gaps (if bridge=True) removed
-    """
+                                    rows removed.
 
-    # Ensure data as numpy array
-    data = np.array(data)
-    if verbose == "yes":
-        message("Data shape:", data.shape)
-    # Set axis along which to remove
-    axis = data.ndim - 1
-    if verbose == "yes":
-        message("Axis:", axis)
-    # Associate data[0] as timeaxis
-    if axis > 0:
-        shapes = data.shape
-        if shapes[0] > shapes[1]:
-            data = np.transpose(data)
-        time = data[0, :]
-        if verbose == "yes":
-            message("The time array:", time)
-    else:
-        time = data
-    # Assign delta_t
-    # delta_t = statistics.mode(np.diff(time))
-    delta_t = mode(np.diff(time))
+	'''
+	message("Checking data for repetative rows...\n", message_verbosity=2)
 
-    if verbose:
-        message("length,shape of data", len(data), data.shape)
-    # Reassign data without time_array
-    # data=data[:,1:]
-    # message("++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
-    # message("Checking data for repetative rows...\n")
-    # Index of ros to delete
+	time = data[0]
+
+	# Index of ros to delete
     dind = []
+
     # Initial data length
     ki_index = len(time)
-    # message("length of old array is %d\n" %ki_index)
+
+    # message("length of old array is %d\n" %ki)
     # Row iteration variable
     ii_index = 0
+
     # Flag to identify if any repetetive rows were found
     rep_row_index = 0
+
     # ci=0
-    # rowcounter=np.zeros([])
+    # rowcounter
+    counter = 0
+
     # Iterate over rows
     while ii_index < ki_index - 1:
         # Repetition condition :if the successive time stamp is less than or
         # equal to the present, delete the row.
-        if (time[ii_index + 1] - time[ii_index]) <= -0.1 * delta_t:
+        if (time[ii_index + 1] == time[ii_index]) or (time[ii_index] - time[ii_index + 1]) >= toldt * delta_t:
+            # if time[ii_index]-time[ii_index+1]<=0.01*delta_t:
+            #        message("Error!!",message_verbosity=0)
             # Set flag to 1 if repetition condition is met.
             rep_row_index = 1
-            if verbose == "yes":
-                message("found a repeating row at %d, time %f\n" % (ii_index + 1, time[ii_index + 1]))
-                message("timei: %f timef %f\n" % (time[ii_index], time[ii_index + 1]))
+            counter += 1
+            message("found a repeating row at %d, time %f\n" % (ii_index + 1, time[ii_index + 1]), message_verbosity=3)
+            message("timei: %f timef %f\n" % (time[ii_index], time[ii_index + 1]), message_verbosity=3)
             # ci = ci+1
             # Delete the entire row
-            time = np.delete(time, ii_index + 1)
+            time = np.delete(time, ii_index + 1, 0)
             # data = np.delete(data,ii_index,1)
             # data = [np.delete(item,ii_index+1) for item in data]
             data = np.delete(data, ii_index + 1, axis)
@@ -952,30 +908,135 @@ def cleandata_old(data, verbose=False):
         ii_index = ii_index + 1
         # Recalculate the array length
         ki_index = len(time)
-    if verbose == "yes":
-        if rep_row_index == 1:
-            message("No. of points removed = %d\n" % len(dind))
-            message("length of new array is %d\n" % len(time))
-        else:
-            message("No points removed\n")
+
+    if rep_row_index == 1:
+        message("Repetitive rows were removed", message_verbosity=2)
+        message("No. of rows removed = %d\n" % counter, message_verbosity=2)
+        message("Length of new array is %d\n" % len(time), message_verbosity=3)
+
+    else:
+        message("No points removed\n", message_verbosity=2)
         # message("++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
     # Return the "cleaned" data matrix
     cleaned_data = data
-    # cleaned_data=[time]
-    # for item in data:
-    # 	 cleaned_data.append(item)
-    # cleaned_data.append(item for item in data)
-    # Transpose the data back to original shape
-    if shapes[0] > shapes[1]:
-        cleaned_data = np.transpose(cleaned_data)
+
+
+	return cleaned_data
+
+
+def fill_gaps_in_data(data, k=5):
+	''' Fill gaps in data by interpolation
+
+	Parameters
+	----------
+	data:   list
+            Input as a list of 1d arrays [time, data1, data2, ...].
+            All the data share the common time axis `time`
+	k: int, optional
+		The interpolation order. Defaults to 5
+
+	Returns
+	-------
+	cleaned_data:   list
+                    The cleaned data array with repetitive
+                    rows and gaps (if bridge=True) removed.
+
+	See Also
+	--------
+	scipy.interpolate.InterpolatedUnivariateSpline
+
+	'''
+
+	time = np.sort(data[0])
+
+	s1, l = data.shape
+
+	from scipy.stats import mode
+    delta_t = mode(np.diff(time))[0][0]
+
+	if iscontinuous_new(time)[0] >= 2:
+        message("The data will be interpolated to bridge the gaps", message_verbosity=2)
+
+        # Interpolate the data to fill in the discontinuities
+        t_final = time[-1]
+        t_initial = time[0]
+
+        proper_timeaxis = np.arange(t_initial, t_final, delta_t)
+
+		interp_data = []
+        interp_data.append(proper_timeaxis)
+
+        from scipy.interpolate import InterpolatedUnivariateSpline as interpolator
+
+        for index in range(1, s1):
+            interp_data.append(interpolator(time, data[index, :], k=k)(proper_timeaxis)
+
+        cleaned_data = np.array(interp_data)
+        message("The data has been interpolated", message_verbosity=3)
+	else:
+		message("No jumps found in the data", message_verbosity=2)
+
+	return cleaned_data
+
+
+def cleandata_new(data, toldt=1e-3, bridge=False, k=5):
+    """Check the data (time,datar,datai) for repetetive rows and remove them.
+
+    Parameters
+    ----------
+
+    data:	list
+                                                                    Input as a list of 1d arrays [time, data1, data2, ...].
+                                                                    All the data share the common time axis `time`
+    toldt : float
+                                                                    The tolerance for error in checking. defaluts to toldt=1e-3.
+    bridge : bool
+                                                                    A bridge flag to decide whether or not to interpolate and
+                                                                    resample to fill in jump discontinuities.
+	k: int, optional
+        The interpolation order. Defaults to 5
+
+    Returns
+    -------
+
+    cleaned_data:	list
+                                    The cleaned data array with repetitive
+                                    rows and gaps (if bridge=True) removed.
+
+    """
+
+    # Check the data (time,datar,datai) for repetetive rows and remove them.
+    # Ensure data as numpy array
+    data = np.array(data)
+    # message("Data shape:", (data.shape), message_verbosity=3)
+    # Set axis along which to remove
+    axis = data.ndim - 1
+    message("Axis:%d" % axis, message_verbosity=3)
+
+    # Associate data[0] as timeaxis
+    if axis > 0:
+        shapes = data.shape
+        if shapes[0] > shapes[1]:
+            data = np.transpose(data)
+        time = data[0, :]
+        message("The time array:%s" % time, message_verbosity=3)
+    else:
+        time = data
+
+    # delta_t = statistics.mode(np.diff(time))
+    delta_t = mode(np.diff(time))
+
+    message("shape of data:", (data.shape), message_verbosity=3)
+
+    cleaned_data = remove_repetitive_rows(data, delta_t=delta_t, toldt=toldt)
+
+    if bridge:
+		cleaned_data = fill_gaps_in_data(cleaned_data, k=k)
+
+    if axis > 0:
+        if shapes[0] > shapes[1]:
+            cleaned_data = np.transpose(cleaned_data)
     return cleaned_data
-
-
-#################################################
-# cleaning data for repeatative values
-# ToDo: breakdown this function into sub methods
-#################################################
-
 
 def cleandata(data, toldt=1e-3, bridge="no"):
     """Check the data (time,datar,datai) for repetetive rows and remove them.
@@ -1004,7 +1065,7 @@ def cleandata(data, toldt=1e-3, bridge="no"):
     # Check the data (time,datar,datai) for repetetive rows and remove them.
     # Ensure data as numpy array
     data = np.array(data)
-    message("Data shape:", (data.shape), message_verbosity=3)
+    # message("Data shape:", (data.shape), message_verbosity=3)
     # Set axis along which to remove
     axis = data.ndim - 1
     message("Axis:%d" % axis, message_verbosity=3)
