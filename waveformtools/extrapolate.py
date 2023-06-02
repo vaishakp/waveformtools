@@ -62,7 +62,9 @@ def r_to_ra_conversion(coord_radius, mass=1, spin=0):
 ############################################################################
 
 
-def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius=500, mass=1, spin=0, ell=2, emm=2, degree=24, method='CS'):
+def waveextract_to_inf_perturbative_twop5_order(
+    rPsi4_rlm, delta_t, areal_radius=500, mass=1, spin=0, ell=2, emm=2, degree=24, method="CS"
+):
     """Extract a numerical waveform to null infinity using perturbative techniques. This is :
             * accurate to second order in :math:`1/r`.
             * accurate to first order in Kerr mass and spin.
@@ -87,10 +89,10 @@ def waveextract_to_inf_perturbative_twop5_order(rPsi4_rlm, delta_t, areal_radius
                     The polar quantum number :math:`\\ell`.
     emm:	int
                     The azimuthal quantum number :math:`m`.
-	method: str
-			The method to use for differentiation.
-	degree: int
-			The degree to use for dfferentiation.
+        method: str
+                        The method to use for differentiation.
+        degree: int
+                        The degree to use for dfferentiation.
     Returns
     -------
 

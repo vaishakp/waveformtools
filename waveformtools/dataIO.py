@@ -15,7 +15,12 @@ import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline as interp
 from scipy.interpolate import interp1d
 
-from waveformtools.waveformtools import interp_resam_wfs, message, xtract_camp_phase, cleandata
+from waveformtools.waveformtools import (
+    cleandata,
+    interp_resam_wfs,
+    message,
+    xtract_camp_phase,
+)
 
 ##########################
 # RIT data
@@ -1033,7 +1038,6 @@ def load_gen_data_from_disk(
                 # set the time and data axis
                 time_axis, data_re = cleandata([data[:, 0], data[:, 1]])
                 time_axis, data_im = cleandata([data[:, 0], data[:, 2]])
-
 
                 # create flag
                 if not cflag:

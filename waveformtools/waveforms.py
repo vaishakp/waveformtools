@@ -231,7 +231,9 @@ class spherical_array:
 
                 # Spin weighted spherical harmonic function at (theta, phi)
 
-                Ybasis_fun = np.conj(Yslm_vec(spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta, phi_grid=phi))
+                Ybasis_fun = np.conj(
+                    Yslm_vec(spin_weight, ell=ell_value, emm=emm_value, theta_grid=theta, phi_grid=phi)
+                )
 
                 Ydarea = Ybasis_fun * darea
                 # print(Ydarea.shape)
@@ -561,7 +563,9 @@ class spherical_array:
 
         sqrt_met_det = np.sqrt(
             np.linalg.det(
-                np.transpose(np.array([[qtt_data_array, qtp_data_array], [qtp_data_array, qpp_data_array]]), (2, 3, 4, 0, 1))
+                np.transpose(
+                    np.array([[qtt_data_array, qtp_data_array], [qtp_data_array, qpp_data_array]]), (2, 3, 4, 0, 1)
+                )
             )
         )
 
@@ -1069,7 +1073,18 @@ class modes_array:
 
         if ftype == "generic":
             dataIO.load_gen_data_from_disk(
-                self, label, data_dir, file_name, r_ext, ell_max, pre_key, modes_list, crop, centre, key_ex, r_ext_factor
+                self,
+                label,
+                data_dir,
+                file_name,
+                r_ext,
+                ell_max,
+                pre_key,
+                modes_list,
+                crop,
+                centre,
+                key_ex,
+                r_ext_factor,
             )
 
         elif (ftype) == "RIT" or (ftype == "GT"):
@@ -1398,21 +1413,23 @@ class modes_array:
 
         return waveform_modes
 
-    def extrap_to_inf(self, mass=1, spin=None, modes_list="all", method="SIO", r_ext_factor=1, diff_method='CS', diff_degree=24):
+    def extrap_to_inf(
+        self, mass=1, spin=None, modes_list="all", method="SIO", r_ext_factor=1, diff_method="CS", diff_degree=24
+    ):
         """Extrapolate the :math:`\\Psi_4` modes to infinity
         using the perturbative improved second order method.
 
         Parameters
         ----------
         mass:		float
-					The effective total mass of the system.
+                                        The effective total mass of the system.
         spin:		float
-					The effective spin of the system.
+                                        The effective spin of the system.
         modes:		modes array, optional
                     The modes to extrapolate. Defaults
                     to `all` if not specified.
         method:     str
-					The method to use for extrapolation. The available methods are:
+                                        The method to use for extrapolation. The available methods are:
 
         +------------+--------------------------------------+
         | Method str | Name									|
@@ -1433,8 +1450,6 @@ class modes_array:
 
         # Prepare the extrapolating method.
         if method == "SIO":
-
-
             from waveformtools.extrapolate import (
                 waveextract_to_inf_perturbative_twop5_order,
             )
@@ -1445,8 +1460,8 @@ class modes_array:
                 areal_radius=self.r_ext,
                 mass=mass,
                 spin=spin,
-				method=diff_method,
-				degree=diff_degree,
+                method=diff_method,
+                degree=diff_degree,
             )
 
         if method == "SO":

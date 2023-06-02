@@ -1086,7 +1086,13 @@ class sim:
             start_index = 0  # start_index = 0#int(190/deltat[j])
             # Load the strain data.
             sim_strain_data = np.genfromtxt(
-                self.WAVDIR + self.aliases[sim_index] + "/" + self.strain_dir + "/strain_" + str(alias) + "_wavextcpm.dat"
+                self.WAVDIR
+                + self.aliases[sim_index]
+                + "/"
+                + self.strain_dir
+                + "/strain_"
+                + str(alias)
+                + "_wavextcpm.dat"
             )
 
             # Load the timeaxis, plus and cross polarized data.
@@ -1096,7 +1102,13 @@ class sim:
 
             message("The strain file is")
             message(
-                self.WAVDIR + self.aliases[sim_index] + "/" + self.strain_dir + "/strain_" + str(alias) + "_wavextcpm.dat"
+                self.WAVDIR
+                + self.aliases[sim_index]
+                + "/"
+                + self.strain_dir
+                + "/strain_"
+                + str(alias)
+                + "_wavextcpm.dat"
             )
 
             # Align the peak of the strain with the formation of the common

@@ -287,7 +287,8 @@ def plot_mode_differences(
                 # message(start_ind)
                 # Remove the man phase shift
                 mean_phase_shift = np.mean(
-                    mode_phase_resamx[start_ind : start_ind + dindex] - mode_phase_resam0[start_ind : start_ind + dindex]
+                    mode_phase_resamx[start_ind : start_ind + dindex]
+                    - mode_phase_resam0[start_ind : start_ind + dindex]
                 )
 
                 # mean_phase_shift = np.mean(

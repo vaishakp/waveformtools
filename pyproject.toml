@@ -1,15 +1,15 @@
 [tool.black]
-line-length = 125
+line-length = 120
 
 [tool.isort]
 profile = "black"
 
 [tool.pylint.'MESSAGES CONTROL']
-max-line-length = 125
+max-line-length = 120
 disable= "W0311"
 
 [tool.flake8]
-max-line-length = 125
+max-line-length = 120
 ignore = ['E203']
 
 [build-system]
