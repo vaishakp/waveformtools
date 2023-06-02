@@ -84,7 +84,7 @@ def get_ell_max_from_keys(all_keys):
 
         # message('Match found', this_match.string)
         s1, s2 = this_match.span()
-        this_ell = int(this_match.string[s1 + 2 : s2 - 1])
+        this_ell = int(this_match.string[s1 + 2: s2 - 1])
         # message(this_ell)
 
         all_ell_modes.add(this_ell)
@@ -238,12 +238,12 @@ def _get_ell_emm_from_key(key):
     str_match = re.search("l\d*", key)
     ell_str_start = str_match.start()
     ell_str_end = str_match.end()
-    ell_value = int(key[ell_str_start + 1 : ell_str_end])
+    ell_value = int(key[ell_str_start + 1: ell_str_end])
 
     str_match = re.search("m-*\d*", key)
     emm_str_start = str_match.start()
     emm_str_end = str_match.end()
-    emm_value = int(key[emm_str_start + 1 : emm_str_end])
+    emm_value = int(key[emm_str_start + 1: emm_str_end])
 
     return ell_value, emm_value
 
@@ -270,7 +270,7 @@ def get_iteration_numbers_from_keys(keys_list):
         str_match = re.search(" it=\d* ", key)
         it_str_start = str_match.start()
         it_str_end = str_match.end()
-        it_value = int(key[it_str_start + 4 : it_str_end])
+        it_value = int(key[it_str_start + 4: it_str_end])
         iteration_numbers.append(it_value)
 
     return iteration_numbers
