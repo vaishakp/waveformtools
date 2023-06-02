@@ -44,14 +44,24 @@ def match_wfs_pycbc_old(waveforms, delt=None):
     ---------
     1. For each pair of waveforms as a list:
                                                     a. Findout if delt has been specified.
+
                                                     b. Findout if the object has attribute delta_t
                                                     to discern whether it is a pycbc timeseries
                                                     ( not exactly. ). If not then exit.
+
                                                     c. Equalize the lengths.
-                                                    d. Compute the match score and shift using the pycbc shift function.
-                                                    e. Findout the start and the end of the waveform using handles.startend.
-                                                    f. Reconstruct normalized and clipped pycbc.timeseries of the waveforms.
-                                                    g. Confirm the equalization of the lengths of the waveoforms.
+
+                                                    d. Compute the match score and shift using
+                                                        the pycbc shift function.
+
+                                                    e. Findout the start and the end of the waveform
+                                                        using handles.startend.
+
+                                                    f. Reconstruct normalized and clipped
+                                                        pycbc.timeseries of the waveforms.
+
+                                                    g. Confirm the equalization of the lengths of
+                                                        the waveoforms.
                                                     h. Append the match details to an array
                                                     [ waveform list, [ match score, shift, start_index, end_index]]
     2. Retun the match details for all the waveforms.
@@ -60,7 +70,7 @@ def match_wfs_pycbc_old(waveforms, delt=None):
     Parameters
     ----------
     waveforms:	list
-                                                                                                    A List of pairs [waveform A, waveform B].
+                A List of pairs [waveform A, waveform B].
 
     Notes
     -----
@@ -69,8 +79,8 @@ def match_wfs_pycbc_old(waveforms, delt=None):
     Returns
     -------
     match:	a list of dicts
-                                                                    A list of dictionaries in the format
-                                                                    {match score (float), shift (number), start_index, end_index}
+            A list of dictionaries in the format
+            {match score (float), shift (number), start_index, end_index}
     """
     # Iterate over (signal,template) pairs in waveforms
     for waveformdat in waveforms:
@@ -157,7 +167,8 @@ def match_wfs_pycbc_old(waveforms, delt=None):
             message("Length of data, template after truncation are %d,%d" % (len(signal), len(template)))
             sys.exit(0)
         # Compute the match, shift again on the truncated data
-        # message("length of data %d, aligned data %d, template %d"%(len(signaldat),len(alignedwvs[0]),len(alignedwvs[1])))
+        # message("length of data %d, aligned data %d, template %d",
+        # (len(signaldat),len(alignedwvs[0]),len(alignedwvs[1])))
 
         try:
             (match_score, shift) = pycbc.filter.matchedfilter.match(signal, template)
@@ -183,25 +194,23 @@ def iscontinuous_old(timeaxis, delta_t=0):
 
     Parameters
     ----------
-
     timeaxis:	list
-                                                    Input as a single 1d time axis
-                                                    or a list of 1d arrays [time, data1, data2, ...].
-                                                    All the data share the common time axis `time`
+                Input as a single 1d time axis
+                or a list of 1d arrays [time, data1, data2, ...].
+                All the data share the common time axis `time`
     delta_t:	float
-                                                    The time stepping.
+                The time stepping.
     toldt : float
-                                    The tolerance for error in checking.
-                                    Defaluts to toldt=1e-3.
+            The tolerance for error in checking.
+            Defaluts to toldt=1e-3.
 
     Returns
     -------
-
     discontinuity_details : a list.
-                                                                                                    It contains: [ the actual location of discontinuity along
-                                                                                                    the time axis,
-                                                                                                    value of time location of original array,
-                                                                                                    the type of discontinuity].
+                            It contains: [ the actual location of
+                            discontinuity along the time axis,
+                            value of time location of original array,
+                            the type of discontinuity].
 
     """
 
@@ -255,19 +264,17 @@ def cleandata_old(data, verbose=False):
 
     Parameters
     ----------
-
     data:	list
-                                                                                                                                    Input as a list of 1d arrays [time, data1, data2, ...].
-                                                                                                                                    All the data share the common time axis `time`
-    verbose : bool
-                                                                                                                                    A verbosity flag.
+            Input as a list of 1d arrays [time, data1, data2, ...].
+            All the data share the common time axis `time`
+    verbose:   bool
+                A verbosity flag.
 
     Returns
     -------
-
-    cleaned_data:	nd array
-                                                                    The cleaned data array with repetitive
-                                                                    rows and gaps (if bridge=True) removed
+    cleaned_data:	ndarray
+                    The cleaned data array with repetitive
+                    rows and gaps (if bridge=True) removed
     """
 
     # Ensure data as numpy array
@@ -290,7 +297,9 @@ def cleandata_old(data, verbose=False):
         time = data
     # Assign delta_t
     # delta_t = statistics.mode(np.diff(time))
-    delta_t = mode(np.diff(time))
+    from scipy.stats import modes as stat_mode
+
+    delta_t = stat_mode(np.diff(time))
 
     if verbose:
         message("length,shape of data", len(data), data.shape)
@@ -357,23 +366,20 @@ def cleandata(data, toldt=1e-3, bridge="no"):
 
     Parameters
     ----------
-
     data:	list
-                                                                                                                                    Input as a list of 1d arrays [time, data1, data2, ...].
-                                                                                                                                    All the data share the common time axis `time`
+            Input as a list of 1d arrays [time, data1, data2, ...].
+            All the data share the common time axis `time`
     toldt : float
-                                                                                                                                    The tolerance for error in checking. defaluts to toldt=1e-3.
+            The tolerance for error in checking. defaluts to toldt=1e-3.
     bridge : bool
-                                                                                                                                    A bridge flag to decide whether or not to interpolate and
-                                                                                                                                    resample to fill in jump discontinuities.
+            A bridge flag to decide whether or not to interpolate and
+            resample to fill in jump discontinuities.
 
     Returns
     -------
-
     cleaned_data:	list
-                                                                    The cleaned data array with repetitive
-                                                                    rows and gaps (if bridge=True) removed.
-
+                    The cleaned data array with repetitive
+                    rows and gaps (if bridge=True) removed.
     """
 
     # Check the data (time,datar,datai) for repetetive rows and remove them.
@@ -395,7 +401,9 @@ def cleandata(data, toldt=1e-3, bridge="no"):
         time = data
 
     # delta_t = statistics.mode(np.diff(time))
-    delta_t = mode(np.diff(time))
+    from scipy.stats import mode as stat_mode
+
+    delta_t = stat_mode(np.diff(time))
 
     message("shape of data:", (data.shape), message_verbosity=3)
 
@@ -514,23 +522,22 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
 
     Parameters
     ----------
-
     data:	list
-                                                                                                                                    Input as a list of 1d arrays [time, data1, data2, ...].
-                                                                                                                                    All the data share the common time axis `time`
+            Input as a list of 1d arrays [time, data1, data2, ...].
+            All the data share the common time axis `time`
     delta_t:	float
-                                                                                                                                    The time stepping.
+                The time stepping.
     toldt : float
-                                                                                                                                    The tolerance for error in checking. defaluts to toldt=1e-3.
+            The tolerance for error in checking. defaluts to toldt=1e-3.
 
     Returns
     -------
-
     discontinuity_details:	a list.
-                                                                                                    It contains:
-                                                                                                    1. A list. details of discontinuity:  index location of original array,
-                                                                                                                                                                                                                                                    the corresponding discinbtinuity type.
-                                                                                                    2. A float. the global discontinuity type.
+                            It contains:
+                                1. A list. details of discontinuity.
+                                    index location of original array,
+                                    the corresponding discinbtinuity type.
+                                2. A float. the global discontinuity type.
     """
 
     # Check the data (time,datar,datai) for locations of repetition and
@@ -559,9 +566,12 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
     # message('Timeaxis`,timeaxis,message_verbosity=3)
     # Check data for continuity.
     # If delta_t is not supplied
+
     if delta_t == 0:
         # delta_t = statistics.mode(np.diff(timeaxis))
-        delta_t = mode(np.diff(timeaxis))
+        import scipy.stats.mode as stat_mode
+
+        delta_t = stat_mode(np.diff(timeaxis))
 
     # Set epoch to first element of timeaxis
     epoch = timeaxis[0]

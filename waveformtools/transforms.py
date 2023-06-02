@@ -270,8 +270,8 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     factor = 1
     if spin_weight < 0:
         factor = (-1) ** ell
-        theta = np.pi - theta
-        phi += np.pi
+        theta_grid = np.pi - theta_grid
+        phi_grid += np.pi
 
     abs_spin_weight = abs(spin_weight)
 

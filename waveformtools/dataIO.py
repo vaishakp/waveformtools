@@ -385,7 +385,7 @@ def load_RIT_Psi4_data_from_disk(
     from waveformtools.waveforms import modes_array
 
     if not wfa:
-        wfa = modes_array(label=label, data_dir=data_dir, modes_list=wf_modes_list)
+        wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
 
     if modes_list is None:
         # Max available mode l.
@@ -679,7 +679,7 @@ def load_RIT_Strain_data_from_disk(
 
     except Exception as excep:
         dt_auto = None
-        message("NRTimes not present. Will compute dt auto from mode time axis")
+        message("NRTimes not present. Will compute dt auto from mode time axis", excep, message_verbosity=2)
 
     message("Reading in modes...")
     for ell, emm_list in modes_list:
@@ -1570,21 +1570,21 @@ def save_modes_data_to_gen(
     Parameters
     ----------
     pre_key:	str, optional
-                                                    A string containing the key of the group in
-                                                    the HDF file in which the modes` dataset exists.
-                                                    It defaults to `None`.
+                A string containing the key of the group in
+                the HDF file in which the modes` dataset exists.
+                It defaults to `None`.
     mode_numbers:	list
-                                                                    The mode numbers to load from the file.
-                                                                    Each item in the list is a list that
-                                                                    contains two integrer numbers, one for
-                                                                    the mode index :math:`\\ell` and the
-                                                                    other for the mode index :math:`m`.
+                    The mode numbers to load from the file.
+                    Each item in the list is a list that
+                    contains two integrer numbers, one for
+                    the mode index :math:`\\ell` and the
+                    other for the mode index :math:`m`.
 
     Returns
     -------
     waveform_obj:	3d array
-                                                                    Sets the three dimensional array `waveform.modes` that contains
-                                                                    the required :math:`\\ell, m` modes.
+                    Sets the three dimensional array `waveform.modes`
+                    that contains the required :math:`\\ell, m` modes.
 
     Examples
     --------
@@ -1595,8 +1595,7 @@ def save_modes_data_to_gen(
     >>> wf.modes_list = [[2, 2], [3, 3]]
     >>> wf.load_gen_data()
     """
-
-    from waveformtools.waveforms import modes_array
+    # from waveformtools.waveforms import modes_array
 
     #############################
     # I/O assignments.
@@ -1632,7 +1631,7 @@ def save_modes_data_to_gen(
     ##########################
     # Create the modes file.
     ##########################
-    message(wfa.label)
+    message("Saving waveform", wfa.label, message_verbosity=2)
     with h5py.File(full_path, "w") as wfile:
         # Create the metadata dataset.
         metadata = wfa.get_metadata()

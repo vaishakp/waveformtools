@@ -944,19 +944,17 @@ def differentiate_cwaveform(time_axis, waveform, method="SP", degree=5):
 
     Parameters
     ----------
-
     time_axis:	1d array
-                                                    The time axis of the waveform.
+                The time axis of the waveform.
 
     waveform:	1d array
-                                                    The complex 1d array of the waveform timeseries.
+                The complex 1d array of the waveform timeseries.
 
 
     Returns
     -------
-
     differentiated_waveform:	1d array
-                                                                                                                    The waveform differentiated in time.
+                                The waveform differentiated in time.
 
     """
 
