@@ -30,6 +30,19 @@ def write_git_version():
 
     ee = os.popen(f"sed -i '/version/c\ \tversion=\"{vers}\",' {source_directory}/setup.py")
     print('Version', vers)
+
+    # Generate badge
+    badge = f"""<svg width="120" height="20" xmlns="http://www.w3.org/2000/svg">
+                <rect width="80" height="20" rx="0" ry="5" fill="grey" x="0" y="0" />
+                <rect width="40" height="20" fill="blue" x="80" y="0" />
+                <text x="6" y="13" fill="white" font-size="12">pypi package</text>
+                <text x="82" y="14" fill="white" font-size="8">{vers}</text>
+                </svg>
+            """
+
+    with open("docs/vers_badge.svg", "w") as svgf:
+        svgf.write(badge)
+
     return vers
 
 
