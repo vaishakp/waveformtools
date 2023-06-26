@@ -173,7 +173,8 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
     # print(x_data, y_data)
     cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)
 
-    message("Result", result, result[0], message_verbosity=1)
+    message("\n CS derivative Result\n", result, result[0], message_verbosity=4)
+
     res = result[0][0]
 
     # L2errs = [(a + b)  for a, b in zip(L2errs[::2], L2errs[1::2])]

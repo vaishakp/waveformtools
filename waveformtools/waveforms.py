@@ -16,13 +16,11 @@ import numpy as np
 
 from waveformtools import dataIO
 from waveformtools.dataIO import construct_mode_list, get_iteration_numbers_from_keys, sort_keys
-from waveformtools.grids import spherical_grid
+from waveformtools.grids import UniformGrid
 from waveformtools.transforms import Yslm_vec
 from waveformtools.waveformtools import interp_resam_wfs, message
 
-#####################
-# Units
-#####################
+""" Units """
 
 G = 6.67428 * 10 ** (-11.0)  # m^3 /kg /s^2
 # c = 3.0 * 10**8  # m/s
@@ -34,12 +32,6 @@ tuc = G * Msun / (c**3)  # s, NR to SI
 # dMpc = 3.0857 * 10 ** (22)  # m
 dMpc = 3.0856775814913672789139379577965e22
 
-#################################################
-# Spherical array class
-################################################
-
-
-# @jitclass(spec_sp)
 class spherical_array:
 	"""A class for handling waveforms on a sphere.
 
@@ -53,8 +45,8 @@ class spherical_array:
 	frequency_axis: 1d array
 																	The frequency axis if the data
 																	is represented in frequency domain.
-	grid_info:	spherical_grid
-													An instance of the `spherical_grid` class.
+	grid_info:	UniformGrid
+													An instance of the `UniformGrid` class.
 	data_len:	int
 													The length of the data along the time axis.
 
@@ -167,7 +159,7 @@ class spherical_array:
 		if grid_info is None:
 			if self.grid_info is None:
 				message("Please specify the grid specs. Assuming defaults.")
-				grid_info = spherical_grid()
+				grid_info = UniformGrid()
 				self.grid_info = grid_info
 			else:
 				grid_info = self.grid_info
@@ -583,7 +575,7 @@ class spherical_array:
 		if grid_info is None:
 			if self.grid_info is None:
 				message("Please specify the grid specs. Assuming defaults.")
-				grid_info = spherical_grid()
+				grid_info = UniformGrid()
 				self.grid_info = grid_info
 			else:
 				grid_info = self.grid_info
@@ -1230,7 +1222,7 @@ class modes_array:
 		----------
 
 		grid_info:	cls instance
-														An instance of the "spherical_grid" class
+														An instance of the "UniformGrid" class
 																																		to hold the grid info.
 		meth_info:	cls instance
 														An instance of the class waveformtools.diagnostics.method_info that
@@ -1596,11 +1588,11 @@ class modes_array:
 																						that contains the boosted waveform.
 		"""
 
-		from waveformtools.grids import spherical_grid
+		from waveformtools.grids import UniformGrid
 
 		# Construct a spherical grid.
 		if grid_info is None:
-			grid_info = spherical_grid()
+			grid_info = UniformGrid()
 
 		# Get spherical array from modes.
 		unboosted_waveform = self.to_spherical_array(grid_info)

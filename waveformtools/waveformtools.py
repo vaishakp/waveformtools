@@ -725,7 +725,7 @@ def remove_repetitive_rows(data, delta_t=1, toldt=1e-3):
     # Index of ros to delete
     dind = []
 
-    discontinuities = iscontinuous_new(time)
+    discontinuities = iscontinuous(time)
 
     repetition = bool(discontinuities["repetitions"][0])
 
@@ -775,7 +775,7 @@ def fill_gaps_in_data(data, k=5):
 
     delta_t = mode(np.diff(time))[0][0]
 
-    discontinuities = iscontinuous_new(time)
+    discontinuities = iscontinuous(time)
 
     gaps = bool(discontinuties["gaps"][0])
 
