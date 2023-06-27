@@ -40,9 +40,21 @@ def X_com_moments(time_axis, Xcom, order):
     # Interpolate
     from scipy.interpolate import interp1d
 
-    x_all_int_fun = interp1d(time_axis, np.power(time_axis, order) * x_all / duration_t, kind="quadratic")
-    y_all_int_fun = interp1d(time_axis, np.power(time_axis, order) * y_all / duration_t, kind="quadratic")
-    z_all_int_fun = interp1d(time_axis, np.power(time_axis, order) * z_all / duration_t, kind="quadratic")
+    x_all_int_fun = interp1d(
+        time_axis,
+        np.power(time_axis, order) * x_all / duration_t,
+        kind="quadratic",
+    )
+    y_all_int_fun = interp1d(
+        time_axis,
+        np.power(time_axis, order) * y_all / duration_t,
+        kind="quadratic",
+    )
+    z_all_int_fun = interp1d(
+        time_axis,
+        np.power(time_axis, order) * z_all / duration_t,
+        kind="quadratic",
+    )
 
     int_funcs = [x_all_int_fun, y_all_int_fun, z_all_int_fun]
 
@@ -87,7 +99,8 @@ def compute_com_alpha(time_i, time_f, Xcom_0, Xcom_1):
     """
 
     com_alpha = (
-        4 * (time_f**2 + time_f * time_i + time_i**2) * np.array(Xcom_0) - 6 * (time_f + time_i) * np.array(Xcom_1)
+        4 * (time_f**2 + time_f * time_i + time_i**2) * np.array(Xcom_0)
+        - 6 * (time_f + time_i) * np.array(Xcom_1)
     ) / (time_f - time_i) ** 2
 
     return com_alpha
@@ -117,7 +130,9 @@ def compute_com_beta(time_i, time_f, Xcom_0, Xcom_1):
 
     """
 
-    com_beta = (12 * (Xcom_1) - 6 * (time_f + time_i) * Xcom_0) / (time_f - time_i) ** 2
+    com_beta = (12 * (Xcom_1) - 6 * (time_f + time_i) * Xcom_0) / (
+        time_f - time_i
+    ) ** 2
 
     return com_beta
 
@@ -162,7 +177,9 @@ def compute_conformal_k(vec_v, info, spin_phase=0):
     theta, phi = info.meshgrid
 
     # compute the dot product
-    v_dot_r = np.sin(theta) * (vel_x * np.cos(phi) + vel_y * np.sin(phi)) + vel_z * np.cos(theta)
+    v_dot_r = np.sin(theta) * (
+        vel_x * np.cos(phi) + vel_y * np.sin(phi)
+    ) + vel_z * np.cos(theta)
 
     # Lorentz factor
     gamma = 1.0 / np.sqrt(1 - mag_v**2)
@@ -284,7 +301,10 @@ def boost_waveform(unboosted_waveform, conformal_factor):
         boosted_waveform_data.append(boosted_waveform_item)
 
     # Construct a 2d waveform array object
-    boosted_waveform = spherical_array(gridinfo=unboosted_waveform.gridinfo, data=np.array(boosted_waveform_data))
+    boosted_waveform = spherical_array(
+        gridinfo=unboosted_waveform.gridinfo,
+        data=np.array(boosted_waveform_data),
+    )
     boosted_waveform.label = "boosted"
 
     return boosted_waveform

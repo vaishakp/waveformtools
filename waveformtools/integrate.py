@@ -13,7 +13,9 @@ from waveformtools.waveformtools import message
 ##################################################
 
 
-def fixed_frequency_integrator(udata_time, delta_t, utilde_conven=None, omega0=0, order=1, zero_mode=0):
+def fixed_frequency_integrator(
+    udata_time, delta_t, utilde_conven=None, omega0=0, order=1, zero_mode=0
+):
     """Fixed frequency integrator as presented in Reisswig et. al.
 
 
@@ -300,23 +302,38 @@ def Simpson2DInteg(func, info):
     Py = int(NPhi / 2)
 
     # Around corners
-    integrand_sum += func[0, 0] + func[NTheta - 1, 0] + func[0, NPhi - 1] + func[NTheta - 1, NPhi - 1]
+    integrand_sum += (
+        func[0, 0]
+        + func[NTheta - 1, 0]
+        + func[0, NPhi - 1]
+        + func[NTheta - 1, NPhi - 1]
+    )
 
     # Arount edges
     for index_phi in range(1, Py):
-        integrand_sum += 4 * func[0, 2 * index_phi - 1] + 4 * func[NTheta - 1, 2 * index_phi - 1]
+        integrand_sum += (
+            4 * func[0, 2 * index_phi - 1]
+            + 4 * func[NTheta - 1, 2 * index_phi - 1]
+        )
 
     # for (iy = 1; iy <= py-1; iy++)
     for index_phi in range(1, Py - 1):
-        integrand_sum += 2 * func[0, 2 * index_phi] + 2 * func[NTheta - 1, 2 * index_phi]
+        integrand_sum += (
+            2 * func[0, 2 * index_phi] + 2 * func[NTheta - 1, 2 * index_phi]
+        )
 
     # for (ix = 1; ix <= px; ix++)
     for index_theta in range(1, Px):
-        integrand_sum += 4 * func[2 * index_theta - 1, 0] + 4 * func[2 * index_theta - 1, NPhi - 1]
+        integrand_sum += (
+            4 * func[2 * index_theta - 1, 0]
+            + 4 * func[2 * index_theta - 1, NPhi - 1]
+        )
 
     # for (ix = 1; ix <= px-1; ix++)
     for index_theta in range(1, Px - 1):
-        integrand_sum += 2 * func[2 * index_theta, 0] + 2 * func[2 * index_theta, NPhi - 1]
+        integrand_sum += (
+            2 * func[2 * index_theta, 0] + 2 * func[2 * index_theta, NPhi - 1]
+        )
 
     # In the Interiors
     # for (iy = 1; iy <= py; iy++)

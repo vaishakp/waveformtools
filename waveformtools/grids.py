@@ -16,18 +16,20 @@ import numpy as np
 # import numba as nb
 
 # from numba.experimental import jitclass
-        
-        
+
+
 class UniformGrid:
     """A class to store the theta-phi grid info."""
 
-    def __init__(self, 
-                 nphi=80, 
-                 ntheta=41, 
-                 nphimax=124, 
-                 nthetamax=66, 
-                 nghosts=2,
-                 integration_method='MP'):
+    def __init__(
+        self,
+        nphi=80,
+        ntheta=41,
+        nphimax=124,
+        nthetamax=66,
+        nghosts=2,
+        integration_method="MP",
+    ):
 
         # Number of gridpoints along phi direction including ghost points.
         self.nphi = nphi
@@ -50,7 +52,9 @@ class UniformGrid:
     @property
     def npix_act(self):
         # Return the actual number of pixels, excluding the ghost zones present at one iteration.
-        return (self.ntheta - 2 * self.nghosts) * (self.nphi - 2 * self.nghosts)
+        return (self.ntheta - 2 * self.nghosts) * (
+            self.nphi - 2 * self.nghosts
+        )
 
     @property
     def npix_max(self):
@@ -93,21 +97,21 @@ class UniformGrid:
 
     @property
     def theta_1d(self, theta_index=None):
-        """Returns the coordinate value theta given the coordinate index. The coordinate index ranges from (0, ntheta).
-                        The actual indices without the ghost and extra zones is (nghosts, ntheta-nghosts).
+        """Returns the coordinate value theta 
+        given the coordinate index. The coordinate 
+        index ranges from (0, ntheta). The actual 
+        indices without the ghost and extra zones 
+        is (nghosts, ntheta-nghosts).
 
         Parameters
         -----------
-
-        theta_index:	int/ 1d array
-                                                                        The theta coordinate index or axis.
+        theta_index : int/ 1d array
+                      The theta coordinate index or axis.
 
         Returns
         -------
-
-        theta_1d:	float
-                                                        The coordinate(s) :math:`\\theta` on the sphere.
-
+        theta_1d : float
+                   The coordinate(s) :math:`\\theta` on the sphere.
         """
 
         if not theta_index:
@@ -121,43 +125,47 @@ class UniformGrid:
 
     @property
     def phi_1d(self, phi_index=None):
-        """Returns the coordinate value theta given the coordinate index. The coordinate index lies in (0, nphi).
-                        The actual indices without the ghost and extra zones is (nghosts, nphi-nghosts).
+        """Returns the coordinate value theta given 
+        the coordinate index. The coordinate index lies 
+        in (0, nphi). The actual indices without 
+        the ghost and extra zones is (nghosts, nphi-nghosts).
 
         Parameters
         -----------
-
-        phi_1d: int / 1d array
-                                                        The phi coordinate index or axis.
+        phi_1d : int / 1d array
+                 The phi coordinate index or axis.
 
         Returns
         -------
-
-        phi_1d: float or 1d array
-                                                        The coordinate(s) :math:`\\phi` on the sphere.
+        phi_1d : float or 1d array
+                 The coordinate(s) :math:`\\phi` on the sphere.
 
         """
 
         if not phi_index:
             phi_index = np.arange(self.nghosts, self.nphi - self.nghosts)
 
-        return (phi_index - self.nghosts) * 2 * np.pi / (self.nphi - 2 * self.nghosts)
+        return (
+            (phi_index - self.nghosts)
+            * 2
+            * np.pi
+            / (self.nphi - 2 * self.nghosts)
+        )
 
     @property
     def meshgrid(self):
         """The (:math:`\\theta, \\phi)`: coordinate meshes.
-                        Excludes the ghost zones.
-
+        Excludes the ghost zones.
 
         Returns
         -------
+        theta :	2d array
+                The :math:`\\theta` coordinate matrix 
+                for vectorization.
 
-        theta:	2d array
-                                        The :math:`\\theta` coordinate matrix for vectorization.
-
-        phi:	2d array
-                                        The :math:`\\phi` coordinate matrix for vectorization.
-
+        phi : 2d array
+              The :math:`\\phi` coordinate matrix 
+              for vectorization.
         """
 
         theta, phi = np.meshgrid(self.theta_1d, self.phi_1d)
@@ -174,54 +182,54 @@ class UniformGrid:
 
     @property
     def integration_method(self):
-        ''' The default integration method '''
+        """The default integration method"""
         return self._integration_method
+
 
 class GLGrid:
     """A class to store the coordinate grid on a sphere.
 
     Attributes
     ----------
-    ntheta: int
-                                                    The number of angular points in the :math:`\\theta`
-                                                    direction, including ghost zones.
-    nphi:	int
-                                    The number of angular points in the :math:`\\phi`
-                                    direction, including ghost zones.
-    nghosts:	int
-                                                    The number of ghost zones at the end of
-                                                    each direction.
-    meshgrid:	tuple of 2d array
-                                                    The 2d array containing the meshgrid of
-                                                    (:math:`\\theta, \\phi`) angular points.
-    theta_1d:	1d array
-                                                    The 1d array of angular points
-                                                    along the :math:`\\theta` axis.
-    phi_1d: 1d array
-                                                    The 1d array of angular points
-                                                    along the :math:`\\phi` axis.
-    dtheta: float
-                                                    The angular step size in the :math:`\\theta`
-                                                    direction.
-    dphi:	float
-                                    The angular step size inthe :math:`\\phi`
-                                    direction.
-    npix_act:	int
-                                                    The total number of gridpoints on the sphere,
-                                                    excluding the ghost points.
-    meshgrid:
-                                                    Get the 2d angular grid.
+    ntheta : int
+             The number of angular points in the :math:`\\theta`
+             direction, including ghost zones.
+    nphi : int
+           The number of angular points in the :math:`\\phi`
+           direction, including ghost zones.
+    nghosts : int
+              The number of ghost zones at the end of
+              each direction.
+    meshgrid : tuple of 2d array
+               The 2d array containing the meshgrid of
+               (:math:`\\theta, \\phi`) angular points.
+    theta_1d : 1d array
+               The 1d array of angular points
+               along the :math:`\\theta` axis.
+    phi_1d : 1d array
+             The 1d array of angular points
+             along the :math:`\\phi` axis.
+    dtheta : float
+             The angular step size in the :math:`\\theta`
+             direction.
+    dphi : float
+           The angular step size inthe :math:`\\phi`
+           direction.
+    npix_act : int
+               The total number of gridpoints on the sphere,
+               excluding the ghost points.
+    meshgrid : tuple of 2darray
+               Get the 2d angular grid.
 
     Methods
     -------
-    theta_1d:
-                                                    Get the :math:`\\theta` axis.
-    phi_1d:
-                                                    Get the :math:`\\phi` axis.
+    theta_1d :
+        Get the :math:`\\theta` axis.
+    phi_1d :
+        Get the :math:`\\phi` axis.
 
     Notes
     -----
-
     The total number of points on the sphere
     is assumed to be :math:`2 (L+1)^2`
 
@@ -234,8 +242,14 @@ class GLGrid:
     """
 
     def __init__(
-        self, nphi=None, ntheta=None, nphi_act=None, ntheta_act=None, L=47, nghosts=2, integration_method='GL'
-    ):
+        self,
+        nphi=None,
+        ntheta=None,
+        nphi_act=None,
+        ntheta_act=None,
+        L=47,
+        nghosts=2,
+        integration_method="GL"):
 
         # Number of gridpoints along phi direction including ghost points.
         self._nphi = nphi
@@ -276,7 +290,9 @@ class GLGrid:
 
         from scipy.special import roots_legendre
 
-        cpoints, self._weights, self._sum_of_weights = roots_legendre(L + 1, mu=True)
+        cpoints, self._weights, self._sum_of_weights = roots_legendre(
+            L + 1, mu=True
+        )
 
         # xpoints = (np.pi-np.arccos(cpoints))
         xpoints = np.arccos(cpoints[::-1])
@@ -331,6 +347,7 @@ class GLGrid:
             return self.ntheta - 2 * self.nghosts
         else:
             return self._ntheta_act
+
     @property
     def nphi_act(self):
         """Return the actual number of physical data points
@@ -351,7 +368,8 @@ class GLGrid:
 
     @property
     def dtheta_1d(self):
-        """Return the non-uniform angular stepping in :math:`\theta` direction"""
+        """Return the non-uniform angular stepping in 
+        :math:`\theta` direction"""
         return self._dtheta_1d
 
     @property
@@ -361,12 +379,14 @@ class GLGrid:
 
     @property
     def L(self):
-        """Return the total number of pixels, including the ghost zones present at one iteration."""
+        """Return the total number of pixels, including 
+        the ghost zones present at one iteration."""
         return self._L
 
     @property
     def npix(self):
-        """Return the total number of pixels, including the ghost zones present at one iteration."""
+        """Return the total number of pixels, including 
+        the ghost zones present at one iteration."""
         return (self.ntheta) * (self.nphi)
 
     @property
@@ -386,42 +406,38 @@ class GLGrid:
 
     @property
     def theta_1d(self):
-        """Returns the coordinate value theta given the coordinate index. The coordinate index ranges from (0, ntheta).
-                        The actual indices without the ghost and extra zones is (nghosts, ntheta-nghosts).
+        """Returns the coordinate value theta given the coordinate index. 
+        The coordinate index ranges from (0, ntheta). The actual indices 
+        without the ghost and extra zones is (nghosts, ntheta-nghosts).
 
         Parameters
         -----------
-
-        theta_index:	int/ 1d array
-                                                                        The theta coordinate index or axis.
+        theta_index : int/ 1d array
+                      The theta coordinate index or axis.
 
         Returns
         -------
-
-        theta_1d:	float
-                                                        The coordinate(s) :math:`\\theta` on the sphere.
-
+        theta_1d : float
+                   The coordinate(s) :math:`\\theta` on the sphere.
         """
 
         return self._theta_1d
 
     @property
     def phi_1d(self):
-        """Returns the coordinate value theta given the coordinate index. The coordinate index lies in (0, nphi).
-                        The actual indices without the ghost and extra zones is (nghosts, nphi-nghosts).
+        """Returns the coordinate value theta given the coordinate index. 
+        The coordinate index lies in (0, nphi). The actual indices without 
+        the ghost and extra zones is (nghosts, nphi-nghosts).
 
         Parameters
         -----------
-
-        phi_1d: int / 1d array
-                                                        The phi coordinate index or axis.
+        phi_1d : int / 1d array
+                 The phi coordinate index or axis.
 
         Returns
         -------
-
-        phi_1d: float or 1d array
-                                                        The coordinate(s) :math:`\\phi` on the sphere.
-
+        phi_1d : float or 1d array
+                 The coordinate(s) :math:`\\phi` on the sphere.
         """
 
         return self._phi_1d
@@ -429,23 +445,21 @@ class GLGrid:
     @property
     def meshgrid(self):
         """The (:math:`\\theta, \\phi)`: coordinate meshes.
-                        Excludes the ghost zones.
+        Excludes the ghost zones.
 
 
         Returns
         -------
+        theta :	2d array
+                The :math:`\\theta` coordinate matrix for vectorization.
 
-        theta:	2d array
-                                        The :math:`\\theta` coordinate matrix for vectorization.
-
-        phi:	2d array
-                                        The :math:`\\phi` coordinate matrix for vectorization.
-
+        phi : 2d array
+              The :math:`\\phi` coordinate matrix for vectorization.
         """
 
         return self._meshgrid
 
     @property
     def integration_method(self):
-        ''' The default integration method '''
+        """The default integration method"""
         return self._integration_method
