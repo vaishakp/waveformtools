@@ -89,7 +89,9 @@ def match_wfs_pycbc_old(waveforms, delt=None):
             try:
                 delt = waveformdat[0].delta_t
             except BaseException:
-                message("Waveform is not a pycbc TimeSeries. Please provide the gridspacing delt")
+                message(
+                    "Waveform is not a pycbc TimeSeries. Please provide the gridspacing delt"
+                )
                 sys.exit(0)
         # Match procedure
 
@@ -97,14 +99,18 @@ def match_wfs_pycbc_old(waveforms, delt=None):
 
         # waveform1 = signaldat[0]
         # waveform2 = signaldat[1]
-        waveform1, waveform2, _ = lengtheq(waveformdat[0], waveformdat[1], delt, is_ts=True)
+        waveform1, waveform2, _ = lengtheq(
+            waveformdat[0], waveformdat[1], delt, is_ts=True
+        )
 
         # alignedwvs = pycbc.waveform.utils.coalign_waveforms(signaldat,hpa)
         # Compute the match to calculate match and shift.
         # Note: The match function from pycbc returns the match of the
         # normalized templates
 
-        (match_score, shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
+        (match_score, shift) = pycbc.filter.matchedfilter.match(
+            waveform1, waveform2
+        )
 
         message("Priliminary match", match_score, shift)
         # Shift the matched data against the template using the shift obtained
@@ -125,14 +131,18 @@ def match_wfs_pycbc_old(waveforms, delt=None):
 
         # waveform1 = signaldat[0]
         # waveform2 = signaldat[1]
-        waveform1, waveform2, _ = lengtheq(waveformdat[0], waveformdat[1], delt, is_ts=True)
+        waveform1, waveform2, _ = lengtheq(
+            waveformdat[0], waveformdat[1], delt, is_ts=True
+        )
 
         # alignedwvs = pycbc.waveform.utils.coalign_waveforms(signaldat,hpa)
         # Compute the match to calculate match and shift.
         # Note: The match function from pycbc returns the match of the
         # normalized templates
 
-        (match_score, shift) = pycbc.filter.matchedfilter.match(waveform1, waveform2)
+        (match_score, shift) = pycbc.filter.matchedfilter.match(
+            waveform1, waveform2
+        )
 
         message("Priliminary match", match_score, shift)
         # Shift the matched data against the template using the shift obtained
@@ -150,34 +160,54 @@ def match_wfs_pycbc_old(waveforms, delt=None):
             starti, endi = apxstartend(waveform1)
             message("starti, endi")
 
-        message("The approximate start and end indices are", starti, endi, "length", endi - starti)
+        message(
+            "The approximate start and end indices are",
+            starti,
+            endi,
+            "length",
+            endi - starti,
+        )
         # Convert the non-zero portion of the signal and template to
         # time-series
         message("Converting shifted vectors to time series")
         signal = pycbc.types.timeseries.TimeSeries(
-            np.array(waveform1)[starti:endi] / np.linalg.norm(np.array(waveform1)[starti:endi]), delt
+            np.array(waveform1)[starti:endi]
+            / np.linalg.norm(np.array(waveform1)[starti:endi]),
+            delt,
         )
         template = pycbc.types.timeseries.TimeSeries(
-            np.array(waveform2)[starti:endi] / np.linalg.norm(np.array(waveform2)[starti:endi]), delt
+            np.array(waveform2)[starti:endi]
+            / np.linalg.norm(np.array(waveform2)[starti:endi]),
+            delt,
         )
         # Sanity check: The template and the signal must be of the same length
         # at this point in execution
         if len(signal) != len(template):
             message("Error\n")
-            message("Length of data, template after truncation are %d,%d" % (len(signal), len(template)))
+            message(
+                "Length of data, template after truncation are %d,%d"
+                % (len(signal), len(template))
+            )
             sys.exit(0)
         # Compute the match, shift again on the truncated data
         # message("length of data %d, aligned data %d, template %d",
         # (len(signaldat),len(alignedwvs[0]),len(alignedwvs[1])))
 
         try:
-            (match_score, shift) = pycbc.filter.matchedfilter.match(signal, template)
+            (match_score, shift) = pycbc.filter.matchedfilter.match(
+                signal, template
+            )
         except BaseException:
             message("Final match couldn't be found!")
             match_score = None
             shift = None
 
-        match = {"Match score": match_score, "Shift": shift, "Start index": starti, "End index": endi}
+        match = {
+            "Match score": match_score,
+            "Shift": shift,
+            "Start index": starti,
+            "End index": endi,
+        }
     return match
 
 
@@ -245,7 +275,9 @@ def iscontinuous_old(timeaxis, delta_t=0):
             elif epoch > timeaxis[0] + epoch_index + delta_t:
                 discontinuity_type = 2
             # Append [index location,correct timestamp
-            discontinuity_details.append([epoch_index, timeaxis[epoch_index], discontinuity_type])
+            discontinuity_details.append(
+                [epoch_index, timeaxis[epoch_index], discontinuity_type]
+            )
         epoch_index += 1
         # message("Progress: %f%%\r"%(epoch_index*100./len(timeaxis)))
 
@@ -326,8 +358,14 @@ def cleandata_old(data, verbose=False):
             # Set flag to 1 if repetition condition is met.
             rep_row_index = 1
             if verbose == "yes":
-                message("found a repeating row at %d, time %f\n" % (ii_index + 1, time[ii_index + 1]))
-                message("timei: %f timef %f\n" % (time[ii_index], time[ii_index + 1]))
+                message(
+                    "found a repeating row at %d, time %f\n"
+                    % (ii_index + 1, time[ii_index + 1])
+                )
+                message(
+                    "timei: %f timef %f\n"
+                    % (time[ii_index], time[ii_index + 1])
+                )
             # ci = ci+1
             # Delete the entire row
             time = np.delete(time, ii_index + 1)
@@ -432,14 +470,23 @@ def cleandata(data, toldt=1e-3, bridge="no"):
     while ii_index < ki_index - 1:
         # Repetition condition :if the successive time stamp is less than or
         # equal to the present, delete the row.
-        if (time[ii_index + 1] == time[ii_index]) or (time[ii_index] - time[ii_index + 1]) >= toldt * delta_t:
+        if (time[ii_index + 1] == time[ii_index]) or (
+            time[ii_index] - time[ii_index + 1]
+        ) >= toldt * delta_t:
             # if time[ii_index]-time[ii_index+1]<=0.01*delta_t:
             # 		 message("Error!!",message_verbosity=0)
             # Set flag to 1 if repetition condition is met.
             rep_row_index = 1
             counter += 1
-            message("found a repeating row at %d, time %f\n" % (ii_index + 1, time[ii_index + 1]), message_verbosity=3)
-            message("timei: %f timef %f\n" % (time[ii_index], time[ii_index + 1]), message_verbosity=3)
+            message(
+                "found a repeating row at %d, time %f\n"
+                % (ii_index + 1, time[ii_index + 1]),
+                message_verbosity=3,
+            )
+            message(
+                "timei: %f timef %f\n" % (time[ii_index], time[ii_index + 1]),
+                message_verbosity=3,
+            )
             # ci = ci+1
             # Delete the entire row
             time = np.delete(time, ii_index + 1, 0)
@@ -467,7 +514,10 @@ def cleandata(data, toldt=1e-3, bridge="no"):
     cleaned_data = data
 
     if bridge and iscontinuous(cleaned_data)[-1] >= 2:
-        message("The data will be interpolated to bridge the gaps", message_verbosity=2)
+        message(
+            "The data will be interpolated to bridge the gaps",
+            message_verbosity=2,
+        )
 
         # from scipy import interpolate
 
@@ -622,26 +672,35 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
                 repetition = 1
                 discont_type = repetition
                 message(
-                    "Repetitive rows found at index: %d,timestamp: %f" % (index, original_timestamp),
+                    "Repetitive rows found at index: %d,timestamp: %f"
+                    % (index, original_timestamp),
                     message_verbosity=3,
                 )
                 message(
-                    "Repetition at timestamp original: %f correct %f\n" % (original_timestamp, recentered_timestamp),
+                    "Repetition at timestamp original: %f correct %f\n"
+                    % (original_timestamp, recentered_timestamp),
                     message_verbosity=3,
                 )
                 repetition_counter += 1
             # Missing rows
-            if (original_timestamp - recentered_timestamp) >= (1.0 + toldt) * delta_t:
+            if (original_timestamp - recentered_timestamp) >= (
+                1.0 + toldt
+            ) * delta_t:
                 discont = 2
                 discont_type = discont
                 message(
-                    "Jump discountinuity in data found at index:%d,timestamp:%f" % (index, original_timestamp),
+                    "Jump discountinuity in data found at index:%d,timestamp:%f"
+                    % (index, original_timestamp),
                     message_verbosity=2,
                 )
                 message("delta_t=%f" % delta_t, message_verbosity=1)
                 message(
                     "Jump at timestamp original: %f correct %f\n Dt = %f"
-                    % (original_timestamp, recentered_timestamp, (original_timestamp - recentered_timestamp) / delta_t),
+                    % (
+                        original_timestamp,
+                        recentered_timestamp,
+                        (original_timestamp - recentered_timestamp) / delta_t,
+                    ),
                     message_verbosity=1,
                 )
                 discont_counter += 1
@@ -659,13 +718,25 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
     if discont_type:
         message("The data is not clean!", message_verbosity=1)
         global_discont_type = repetition + discont
-        message("Discontinuity type:", global_discont_type, message_verbosity=1)
+        message(
+            "Discontinuity type:", global_discont_type, message_verbosity=1
+        )
         if global_discont_type == 1:
-            message("The data has repetitive rows at %d locations" % repetition_counter, message_verbosity=1)
+            message(
+                "The data has repetitive rows at %d locations"
+                % repetition_counter,
+                message_verbosity=1,
+            )
         elif global_discont_type == 2:
-            message("The data has %d discontinuities" % discont_counter, message_verbosity=1)
+            message(
+                "The data has %d discontinuities" % discont_counter,
+                message_verbosity=1,
+            )
         else:
-            message("The data has repetitive rows and is discontinious", message_verbosity=1)
+            message(
+                "The data has repetitive rows and is discontinious",
+                message_verbosity=1,
+            )
 
         discontinuity_details = [discont_type_details, global_discont_type]
     else:
@@ -724,14 +795,23 @@ def remove_repeated_rows(data, delta_t, toldt=1e-3):
     while ii_index < ki_index - 1:
         # Repetition condition :if the successive time stamp is less than or
         # equal to the present, delete the row.
-        if (time[ii_index + 1] == time[ii_index]) or (time[ii_index] - time[ii_index + 1]) >= toldt * delta_t:
+        if (time[ii_index + 1] == time[ii_index]) or (
+            time[ii_index] - time[ii_index + 1]
+        ) >= toldt * delta_t:
             # if time[ii_index]-time[ii_index+1]<=0.01*delta_t:
             # 		 message("Error!!",message_verbosity=0)
             # Set flag to 1 if repetition condition is met.
             rep_row_index = 1
             counter += 1
-            message("found a repeating row at %d, time %f\n" % (ii_index + 1, time[ii_index + 1]), message_verbosity=3)
-            message("timei: %f timef %f\n" % (time[ii_index], time[ii_index + 1]), message_verbosity=3)
+            message(
+                "found a repeating row at %d, time %f\n"
+                % (ii_index + 1, time[ii_index + 1]),
+                message_verbosity=3,
+            )
+            message(
+                "timei: %f timef %f\n" % (time[ii_index], time[ii_index + 1]),
+                message_verbosity=3,
+            )
             # ci = ci+1
             # Delete the entire row
             time = np.delete(time, ii_index + 1, 0)

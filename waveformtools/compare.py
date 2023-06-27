@@ -27,7 +27,15 @@ plt.rcParams.update({"legend.markerscale": 9})
 # from waveformtools.waveforms import modes_array
 
 
-def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100], ylim="auto", nstop=1, plot22=False):
+def plot_modes(
+    wf1,
+    nmodes=3,
+    save_fig=False,
+    xlim=[-1200, 100],
+    ylim="auto",
+    nstop=1,
+    plot22=False,
+):
     """Plot the first `nmodes` dominant modes of
     the input waveforms
 
@@ -101,8 +109,19 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100], ylim="auto", ns
 
             mode_phase = xtract_cphase(mode_values.real, mode_values.imag)
 
-            ax1.scatter(wf1.time_axis[:], mode_amp[:], label=rf"$\ell${ell}$m${emm}", s=1, alpha=0.2 * abs(emm) % 1)
-            ax2.scatter(wf1.time_axis[:], abs(mode_phase[:]), label=rf"$\ell${ell}$m${emm}", s=1)
+            ax1.scatter(
+                wf1.time_axis[:],
+                mode_amp[:],
+                label=rf"$\ell${ell}$m${emm}",
+                s=1,
+                alpha=0.2 * abs(emm) % 1,
+            )
+            ax2.scatter(
+                wf1.time_axis[:],
+                abs(mode_phase[:]),
+                label=rf"$\ell${ell}$m${emm}",
+                s=1,
+            )
 
     if plot22:
         ell = 2
@@ -113,8 +132,19 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100], ylim="auto", ns
 
         mode_phase = xtract_cphase(mode_values.real, mode_values.imag)
 
-        ax1.scatter(wf1.time_axis[:], mode_amp[:], label=rf"$\ell${ell}$m${emm}", s=1, alpha=0.2 * abs(emm) % 1)
-        ax2.scatter(wf1.time_axis[:], abs(mode_phase[:]), label=rf"$\ell${ell}$m${emm}", s=1)
+        ax1.scatter(
+            wf1.time_axis[:],
+            mode_amp[:],
+            label=rf"$\ell${ell}$m${emm}",
+            s=1,
+            alpha=0.2 * abs(emm) % 1,
+        )
+        ax2.scatter(
+            wf1.time_axis[:],
+            abs(mode_phase[:]),
+            label=rf"$\ell${ell}$m${emm}",
+            s=1,
+        )
 
     ax1.grid(which="both")
     ax2.grid(which="both")
@@ -147,7 +177,13 @@ def plot_modes(wf1, nmodes=3, save_fig=False, xlim=[-1200, 100], ylim="auto", ns
 
 
 def plot_mode_differences(
-    waveforms, nmodes=3, save_fig=False, xlabel="t/M", ylabel=r"r\Psi_{4}^{(\ell m)}", labels=None, xlim=[-1000, 100]
+    waveforms,
+    nmodes=3,
+    save_fig=False,
+    xlabel="t/M",
+    ylabel=r"r\Psi_{4}^{(\ell m)}",
+    labels=None,
+    xlim=[-1000, 100],
 ):
     """Plot the fractional difference of the first `nmodes`
     dominant modes of the input waveforms.
@@ -274,7 +310,9 @@ def plot_mode_differences(
 
                 mode_valuesx = wfx.mode(ell, emm)
                 mode_ampx = np.absolute(mode_valuesx)
-                mode_phasex = xtract_cphase(mode_valuesx.real, mode_valuesx.imag)
+                mode_phasex = xtract_cphase(
+                    mode_valuesx.real, mode_valuesx.imag
+                )
 
                 mode_amp_int_funx = interp1d(wfx.time_axis, mode_ampx)
                 mode_amp_resamx = mode_amp_int_funx(new_time_axis)
@@ -296,16 +334,30 @@ def plot_mode_differences(
                 # )
 
                 # message(mean_phase_shift)
-                delta_mode_ampx = (mode_amp_resamx - mode_amp_resam0) / mode_amp_resam0
-                delta_mode_phasex = (mode_phase_resamx - mode_phase_resam0 - mean_phase_shift) / mode_phase_resam0
+                delta_mode_ampx = (
+                    mode_amp_resamx - mode_amp_resam0
+                ) / mode_amp_resam0
+                delta_mode_phasex = (
+                    mode_phase_resamx - mode_phase_resam0 - mean_phase_shift
+                ) / mode_phase_resam0
 
-                rms_amp_diff = np.sqrt(np.sum(delta_mode_ampx**2) / (len(delta_mode_ampx)))
-                rms_phase_diff = np.sqrt(np.sum(delta_mode_phasex**2) / (len(delta_mode_phasex)))
+                rms_amp_diff = np.sqrt(
+                    np.sum(delta_mode_ampx**2) / (len(delta_mode_ampx))
+                )
+                rms_phase_diff = np.sqrt(
+                    np.sum(delta_mode_phasex**2) / (len(delta_mode_phasex))
+                )
                 max_phase_diff = np.amax(np.absolute(delta_mode_phasex))
                 max_phase_diff_loc = np.argmax(np.absolute(delta_mode_phasex))
                 max_phase_diff_time = new_time_axis[max_phase_diff_loc]
                 cumulative_diff.update(
-                    {f"l{ell}m{emm}": [rms_amp_diff, rms_phase_diff, [max_phase_diff, max_phase_diff_time]]}
+                    {
+                        f"l{ell}m{emm}": [
+                            rms_amp_diff,
+                            rms_phase_diff,
+                            [max_phase_diff, max_phase_diff_time],
+                        ]
+                    }
                 )
                 max_mode_value = np.amax(mode_values)
 
@@ -316,7 +368,12 @@ def plot_mode_differences(
                 s=1,
                 alpha=0.2 * abs(emm) % 1,
             )
-            ax2.scatter(new_time_axis[:], abs(delta_mode_phasex[:]), label=rf"{label} $\ell${ell}$m${emm}", s=1)
+            ax2.scatter(
+                new_time_axis[:],
+                abs(delta_mode_phasex[:]),
+                label=rf"{label} $\ell${ell}$m${emm}",
+                s=1,
+            )
 
     ax1.grid(which="both")
     ax2.grid(which="both")

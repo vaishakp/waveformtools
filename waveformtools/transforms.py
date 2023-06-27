@@ -204,16 +204,22 @@ def Yslm(spin_weight, ell, emm, theta, phi):
     abs_spin_weight = abs(spin_weight)
 
     for aar in range(ell - abs_spin_weight + 1):
-        if (aar + abs_spin_weight - emm) < 0 or (ell - aar - abs_spin_weight) < 0:
+        if (aar + abs_spin_weight - emm) < 0 or (
+            ell - aar - abs_spin_weight
+        ) < 0:
             message(f"Skippin r {aar}", message_verbosity=3)
             continue
         else:
             Sum += (
                 sp.binomial(ell - abs_spin_weight, aar)
-                * sp.binomial(ell + abs_spin_weight, aar + abs_spin_weight - emm)
+                * sp.binomial(
+                    ell + abs_spin_weight, aar + abs_spin_weight - emm
+                )
                 * np.power((-1), (ell - aar - abs_spin_weight))
                 * np.exp(1j * emm * phi)
-                / np.power(np.tan(theta / 2), (2 * aar + abs_spin_weight - emm))
+                / np.power(
+                    np.tan(theta / 2), (2 * aar + abs_spin_weight - emm)
+                )
             )
 
     Sum = complex(Sum)
@@ -222,7 +228,12 @@ def Yslm(spin_weight, ell, emm, theta, phi):
             fact(ell + emm)
             * fact(ell - emm)
             * (2 * ell + 1)
-            / (4 * np.pi * fact(ell + abs_spin_weight) * fact(ell - abs_spin_weight))
+            / (
+                4
+                * np.pi
+                * fact(ell + abs_spin_weight)
+                * fact(ell - abs_spin_weight)
+            )
         )
         * np.sin(theta / 2) ** (2 * ell)
         * Sum
@@ -278,7 +289,9 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     for aar in range(0, ell - abs_spin_weight + 1):
         subterm = 0
 
-        if (aar + abs_spin_weight - emm) < 0 or (ell - aar - abs_spin_weight) < 0:
+        if (aar + abs_spin_weight - emm) < 0 or (
+            ell - aar - abs_spin_weight
+        ) < 0:
             message(f"Skipping r {aar}", message_verbosity=3)
             continue
         else:
@@ -286,7 +299,9 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
             term2 = comb(ell + abs_spin_weight, aar + abs_spin_weight - emm)
             term3 = np.power(float(-1), (ell - aar - abs_spin_weight))
             term4 = np.exp(1j * emm * phi_grid)
-            term5 = np.power(np.tan(theta_grid / 2), (-2 * aar - abs_spin_weight + emm))
+            term5 = np.power(
+                np.tan(theta_grid / 2), (-2 * aar - abs_spin_weight + emm)
+            )
             subterm = term1 * term2 * term3 * term4 * term5
 
             Sum += subterm
@@ -296,7 +311,12 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
             fact(ell + emm)
             * fact(ell - emm)
             * (2 * ell + 1)
-            / (4 * np.pi * fact(ell + abs_spin_weight) * fact(ell - abs_spin_weight))
+            / (
+                4
+                * np.pi
+                * fact(ell + abs_spin_weight)
+                * fact(ell - abs_spin_weight)
+            )
         )
         * np.sin(theta_grid / 2) ** (2 * ell)
         * Sum
@@ -342,7 +362,9 @@ def Yslm_prec(spin_weight, ell, emm, theta, phi, prec=24):
         theta = np.pi - theta
         phi = np.pi + phi
 
-    return Yslm_expr.evalf(prec, subs={th: sp.Float(f"{theta}"), ph: sp.Float(f"{phi}")})
+    return Yslm_expr.evalf(
+        prec, subs={th: sp.Float(f"{theta}"), ph: sp.Float(f"{phi}")}
+    )
 
 
 def Yslm_prec_sym(spin_weight, ell, emm):
@@ -386,7 +408,9 @@ def Yslm_prec_sym(spin_weight, ell, emm):
         factor = sp.Pow(-1, ell)
 
     for aar in range(ell - abs_spin_weight + 1):
-        if (aar + abs_spin_weight - emm) < 0 or (ell - aar - abs_spin_weight) < 0:
+        if (aar + abs_spin_weight - emm) < 0 or (
+            ell - aar - abs_spin_weight
+        ) < 0:
             # message('Continuing')
             continue
         else:
@@ -402,7 +426,9 @@ def Yslm_prec_sym(spin_weight, ell, emm):
 
             Sum += (
                 sp.binomial(ell - abs_spin_weight, aar)
-                * sp.binomial(ell + abs_spin_weight, aar + abs_spin_weight - emm)
+                * sp.binomial(
+                    ell + abs_spin_weight, aar + abs_spin_weight - emm
+                )
                 * sp.Pow((-1), (ell - aar - abs_spin_weight))
                 * sp.exp(sp.I * emm * ph)
                 * sp.Pow(sp.cot(th / 2), (2 * aar + abs_spin_weight - emm))
@@ -413,7 +439,12 @@ def Yslm_prec_sym(spin_weight, ell, emm):
             fact(ell + emm)
             * fact(ell - emm)
             * (2 * ell + 1)
-            / (4 * sp.pi * fact(ell + abs_spin_weight) * fact(ell - abs_spin_weight))
+            / (
+                4
+                * sp.pi
+                * fact(ell + abs_spin_weight)
+                * fact(ell - abs_spin_weight)
+            )
         )
         * sp.Pow(sp.sin(th / 2), (2 * ell))
         * Sum
