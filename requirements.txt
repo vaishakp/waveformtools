@@ -9,3 +9,4 @@ termcolor
 datetime
 sympy
 numpydoc
+config @ git+https://gitlab.com/vaishakp/config@master
