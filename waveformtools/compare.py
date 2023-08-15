@@ -41,19 +41,19 @@ def plot_modes(
 
     Parameters
     ----------
-    wf:           modes_array
-                              The list of `modes_array` waveforms
-                              to plot.
-    nmodes:     int
-                            The number of modes to plot.
+    wf : modes_array
+         The list of `modes_array` waveforms
+         to plot.
+    nmodes : int
+             The number of modes to plot.
     xlim : list
            [xmin, xmax] limits to plot.
-    tol:    float
-                    The tolerance to detect the modes.
+    tol : float
+          The tolerance to detect the modes.
 
     Returns
     -------
-    Plots.
+    Plots
     """
 
     from waveformtools.waveformtools import xtract_cphase
@@ -190,13 +190,13 @@ def plot_mode_differences(
 
     Parameters
     ----------
-    waveforms:    modes_array
-                              The list of `modes_array` waveforms
-                              to plot.
-    nmodes:     int
-                            The number of modes to plot.
-    tol:    float
-                    The tolerance to detect the modes.
+    waveforms : modes_array
+                The list of `modes_array` waveforms
+                to plot.
+    nmodes : int
+             The number of modes to plot.
+    tol : float
+          The tolerance to detect the modes.
 
     Returns
     -------

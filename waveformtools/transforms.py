@@ -48,7 +48,8 @@ def compute_fft(udata_x, delta_x):
     # delta_x		 = xdata[1] - xdata[0]
 
     # Naxis			 = np.arange(Nlen)
-    freq_axis = np.linspace(-0.5 / delta_x, 0.5 / delta_x, Nlen)
+    #freq_axis = np.linspace(-0.5 / delta_x, 0.5 / delta_x, Nlen)
+    freq_axis = np.fft.fftshift(np.fft.fftfreq(Nlen, delta_x))
 
     return freq_axis, utilde
 
@@ -98,7 +99,8 @@ def compute_ifft(utilde, delta_f):
     delta_t = 1.0 / (delta_f * Nlen)
     # Dt				= Nlen * delta_f/2
 
-    time_axis = np.linspace(0, delta_t * Nlen, Nlen)
+    # time_axis = np.linspace(0, delta_t * Nlen, Nlen)
+    time_axis = np.arange(0, delta_t * Nlen, 1/Nlen)
 
     return time_axis, udata_time
 

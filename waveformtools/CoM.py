@@ -12,21 +12,19 @@ def X_com_moments(time_axis, Xcom, order):
 
     Parameters
     ----------
-
-    time_axis:		1d array
-                                    The time axis.
-    Xcom:		list
-                            A list of three 1d arrays, each a 1d array containing the
-                            time series of the x, y and z co-ordinates in that order.
-    order:		int
-                            The order of the moment.
+    time_axis :	1d array
+                The time axis.
+    Xcom : list
+           A list of three 1d arrays, each a 1d array containing the
+           time series of the x, y and z co-ordinates in that order.
+    order :	int
+            The order of the moment.
 
     Returns
     -------
-
-    moments:	list
-                            A list containing three real numbers, one each for the moment
-                            of x, y and z locations.
+    moments : list
+              A list containing three real numbers, one each for the moment
+              of x, y and z locations.
 
     """
     # Initial and final times
@@ -75,26 +73,26 @@ def X_com_moments(time_axis, Xcom, order):
 
 
 def compute_com_alpha(time_i, time_f, Xcom_0, Xcom_1):
-    """Computes the CoM correction alpha parameter: the mean displacement of the system,
-    of the COM correction as defined in Woodford et al. 2019 (Phys. Rev. D 100, 124010).
+    """Computes the CoM correction alpha parameter: 
+    the mean displacement of the system,
+    of the COM correction as defined in 
+    Woodford et al. 2019 (Phys. Rev. D 100, 124010).
 
     Parameters
     ----------
-
-    time_i:	float
-                            initial time
-    time_f:	float
-                            final time
-    Xcom_0:	list
-                            A list containing the zeroth order moments of the COM.
-    Xcom_1:	list
-                            A list containing the first order moments of the COM.
+    time_i : float
+             initial time
+    time_f : float
+             final time
+    Xcom_0 : list
+             A list containing the zeroth order moments of the COM.
+    Xcom_1 : list
+             A list containing the first order moments of the COM.
 
     Returns
     -------
-
-    com_alpha:		list
-                                    The list containig the alpha parameter vector
+    com_alpha :	list
+                The list containig the alpha parameter vector
 
     """
 
