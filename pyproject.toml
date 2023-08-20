@@ -46,6 +46,8 @@ EXT = ["pycbc", "lalsuite", "ligo-common"]
 "Homepage" = "https://gitlab.com/vaishakp/waveformtools"
 "Bug Tracker" = "https://gitlab.com/vaishakp/waveformtools/issues"
 
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tools.setuptools.dynamic]
 version = {attr = "waveformtools.__version__"}
