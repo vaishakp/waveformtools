@@ -36,7 +36,8 @@ dependencies = ["numpy",
 	"termcolor",
 	"datetime",
 	"sympy",
-	"numpydoc"]
+	"numpydoc",
+    "config @ git+https://gitlab.com/vaishakp/config@master"]
 
 [project.optional-dependencies]
 EXT = ["pycbc", "lalsuite", "ligo-common"]
