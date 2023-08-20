@@ -23,7 +23,12 @@ import sys
 import traceback
 from inspect import getframeinfo, stack
 
-import config
+try:
+    import config
+except Exception as ex:
+    print(ex)
+    import waveformtools.config as config
+
 import numpy as np
 from numba import njit
 
