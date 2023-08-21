@@ -53,7 +53,19 @@ pylint:
 
 test:
   stage: testing
+  image: continuumio/miniconda3:latest
   script:
+    - uname -a
+    - python --version  # For debugging
+    - which python
+    # Setup conda environment
+    - conda update -y -n base conda
+    - conda update -y --all
+    - conda create -n test python=3.9 -y
+    #  - conda env create -f docs/environment.yml
+    - conda init
+    - source ~/.bashrc
+    - conda activate test
     - pip install -r requirements.txt
     - python3 -m unittest discover
 
