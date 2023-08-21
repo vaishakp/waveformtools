@@ -10,6 +10,7 @@
 
 stages:
   - linting
+  - testing
   - deploy
   - publish
 
@@ -49,6 +50,11 @@ pylint:
     - find . -type f -iname "*.py" | xargs pylint
   only:
     - merge_requests
+
+test:
+  stage: testing
+  script:
+    - python3 -m unittest
 
 pages:
   stage: deploy
