@@ -9,25 +9,23 @@ from waveformtools.waveformtools import message
 
 # @njit(parallel=True)
 def compute_fft(udata_x, delta_x):
-    """Find the FFT of the samples in time-space, and return with the frequencies.
+    """Find the FFT of the samples in time-space, 
+    and return with the frequencies.
 
     Parameters
     ----------
+    udata_x : 1d array
+              The samples in time-space.
 
-    udata_x:	1d array
-                                                    The samples in time-space.
-
-    delta_x:	float
-                                                    The stepping delta_x
+    delta_x : float
+              The stepping delta_x
 
     Returns
     -------
-
-    freqs:	1d array
-                                    The frequency axis, shifted approriately.
-    utilde:	1d array
-                                                    The samples in frequency space, with conventions applied.
-
+    freqs :	1d array
+            The frequency axis, shifted approriately.
+    utilde : 1d array
+             The samples in frequency space, with conventions applied.
     """
 
     # import necessary libraries.
@@ -48,7 +46,7 @@ def compute_fft(udata_x, delta_x):
     # delta_x		 = xdata[1] - xdata[0]
 
     # Naxis			 = np.arange(Nlen)
-    #freq_axis = np.linspace(-0.5 / delta_x, 0.5 / delta_x, Nlen)
+    # freq_axis = np.linspace(-0.5 / delta_x, 0.5 / delta_x, Nlen)
     freq_axis = np.fft.fftshift(np.fft.fftfreq(Nlen, delta_x))
 
     return freq_axis, utilde
@@ -56,26 +54,24 @@ def compute_fft(udata_x, delta_x):
 
 # @njit(parallel=True)
 def compute_ifft(utilde, delta_f):
-    """Find the inverse FFT of the samples in frequency-space, and return with the time axis.
+    """Find the inverse FFT of the samples in frequency-space,
+    and return with the time axis.
 
     Parameters
     ----------
+    utilde : 1d array
+             The samples in frequency-space.
 
-    utilde	:	1d array
-                                                    The samples in frequency-space.
-
-    delta_f:	float
-                                                    The frequency stepping
+    delta_f : float
+              The frequency stepping
 
     Returns
     -------
+    time_axis : 1d array
+                The time axis.
 
-    time_axis:	1d array
-                                                    The time axis.
-
-    udata_time:	1d array
-                                                                    The samples in time domain.
-
+    udata_time : 1d array
+                 The samples in time domain.
     """
 
     # import necessary libraries.
@@ -100,7 +96,7 @@ def compute_ifft(utilde, delta_f):
     # Dt				= Nlen * delta_f/2
 
     # time_axis = np.linspace(0, delta_t * Nlen, Nlen)
-    time_axis = np.arange(0, delta_t * Nlen, 1/Nlen)
+    time_axis = np.arange(0, delta_t * Nlen, 1 / Nlen)
 
     return time_axis, udata_time
 
@@ -108,20 +104,18 @@ def compute_ifft(utilde, delta_f):
 # @njit(parallel=True)
 def set_fft_conven(utilde_orig):
     """Make a numppy fft consistent with the chosen conventions.
-                    This takes care of the zero mode factor and array position.
-                    Also, it shifts the negative frequencies using numpy's fftshift.
+    This takes care of the zero mode factor and array position.
+    Also, it shifts the negative frequencies using numpy's fftshift.
 
     Parameters
     ----------
-
-    utilde_orig:	1d array
-                                                                    The result of a numpy fft.
+    utilde_orig : 1d array
+                  The result of a numpy fft.
 
     Returns
     -------
-
-    utilde_conven:	1d array
-                                                                    The fft with set conventions.
+    utilde_conven :	1d array
+                    The fft with set conventions.
     """
 
     # Multiply by 2, take conjugate.
@@ -136,20 +130,20 @@ def set_fft_conven(utilde_orig):
 
 # @njit(parallel=True)
 def unset_fft_conven(utilde_conven):
-    """Make an actual conventional fft consistent with numpy's conventions.
-                    The inverse of set_conv.
+    """Make an actual conventional fft 
+    consistent with numpy's conventions. 
+    The inverse of set_conv.
 
 
     Parameters
     ----------
-
-    utilde_conven:	1d array
-                                                                    The conventional fft data vector.
+    utilde_conven : 1d array
+                    The conventional fft data vector.
 
     Returns
     -------
-
-    utilde_np
+    utilde_np : 1darray
+                The fft data vector in numpy conventions.
     """
 
     utilde_np = np.fft.ifftshift(utilde_conven)
@@ -162,33 +156,57 @@ def unset_fft_conven(utilde_conven):
     return utilde_np
 
 
+def check_Yslm_args(spin_weight, ell, emm):
+    """Check if the arguments to a Yslm functions
+    makes sense
+
+    Parameters
+    ----------
+    spin_weight : int
+                  The Spin weight of the harmonic
+    ell : int
+          The mode number :math:`\\ell'.
+    emm : int
+          The azimuthal mode number :math:`m'.
+    """
+
+    assert ell >= abs(spin_weight), (
+        " ell should be greater than"
+        "or equal to the absolute value of spin weight "
+    )
+
+    assert abs(emm) <= ell, (
+        "absolute value of emm should be" "less than or equal to ell"
+    )
+
+
 def Yslm(spin_weight, ell, emm, theta, phi):
     """Spin-weighted spherical harmonics fast evaluation.
 
     Parameters
     ----------
-
-    spin_weight :	int
-                                    The Spin weight.
-    ell :	int
-                    The mode number :math:`\\ell'.
-    emm :	int
-                    The azimuthal mode number :math:`m'.
+    spin_weight : int
+                  The Spin weight of the harmonic.
+    ell : int
+          The mode number :math:`\\ell'.
+    emm : int
+          The azimuthal mode number :math:`m'.
     theta : float
-                    The polar angle  :math:`\\theta` in radians,
-    phi :	float
-                    The aximuthal angle :math:`\\phi' in radians.
+            The polar angle  :math:`\\theta` in radians,
+    phi : float
+          The aximuthal angle :math:`\\phi' in radians.
 
     Returns
     --------
-    Yslm :	float
-                    The value of Yslm at :math:`\\theta, phi'.
+    Yslm : float
+           The value of Yslm at :math:`\\theta, phi'.
 
-            Note
-            ----
-            This is accurate upto 14 decimals for L upto 25.
-
+    Note
+    ----
+    This is accurate upto 14 decimals for L upto 25.
     """
+
+    check_Yslm_args(spin_weight, ell, emm)
     import sympy as sp
 
     # theta, phi = sp.symbols('theta phi')
@@ -219,9 +237,7 @@ def Yslm(spin_weight, ell, emm, theta, phi):
                 )
                 * np.power((-1), (ell - aar - abs_spin_weight))
                 * np.exp(1j * emm * phi)
-                / np.power(
-                    np.tan(theta / 2), (2 * aar + abs_spin_weight - emm)
-                )
+                / np.power(np.tan(theta / 2), (2 * aar + abs_spin_weight - emm))
             )
 
     Sum = complex(Sum)
@@ -245,31 +261,33 @@ def Yslm(spin_weight, ell, emm, theta, phi):
 
 
 def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
-    """Spin-weighted spherical harmonics fast evaluations on numpy arrays for vectorized evaluations.
+    """Spin-weighted spherical harmonics fast evaluations 
+    on numpy arrays for vectorized evaluations.
 
-    Inputs
-    -----------
-
-    spin_weight :	int
-                                    The Spin weight.
-    ell :	int
-                    The mode number :math:`\\ell'.
-    emm :	int
-                    The azimuthal mode number :math:`m'.
+    Parameters
+    ----------
+    spin_weight : int
+                  The Spin weight of the harmonic
+    ell : int
+          The mode number :math:`\\ell'.
+    emm : int
+          The azimuthal mode number :math:`m'.
     theta : float
-                    The polar angle  :math:`\\theta` in radians,
-    phi :	float
-                    The aximuthal angle :math:`\\phi' in radians.
+            The polar angle  :math:`\\theta` in radians,
+    phi : float
+          The aximuthal angle :math:`\\phi' in radians.
 
     Returns
     --------
-    Yslm :	float
-                    The value of Yslm at :math:`\\theta, phi'.
+    Yslm : float
+           The value of Yslm at :math:`\\theta, phi'.
 
-            Note
-            ----
-            This is accurate upto 14 decimals for L upto 25.
+    Note
+    ----
+    This is accurate upto 14 decimals for L upto 25.
     """
+
+    check_Yslm_args(spin_weight, ell, emm)
 
     from math import comb
 
@@ -329,30 +347,33 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
 
 def Yslm_prec(spin_weight, ell, emm, theta, phi, prec=24):
     """Spin-weighted spherical harmonics function with precise computations.
-                            Uses a symbolic method evaluated at the degree of precision requested
-                            by the user.
+    Uses a symbolic method evaluated at the degree of precision requested
+    by the user.
+
     Parameters
     ----------
-
-    spin_weight :	int
-                                    The Spin weight.
-    ell :	int
-                    The mode number :math:`\\ell'.
-    emm :	int
-                    The azimuthal mode number :math:`m'.
+    spin_weight : int
+                  The Spin weight of the harmonic
+    ell : int
+          The mode number :math:`\\ell'.
+    emm : int
+          The azimuthal mode number :math:`m'.
     theta : float
-                    The polar angle  :math:`\\theta` in radians,
-    phi :	float
-                    The aximuthal angle :math:`\\phi' in radians.
+            The polar angle  :math:`\\theta` in radians,
+    phi : float
+          The aximuthal angle :math:`\\phi' in radians.
     pres : int, optional
-               The precision i.e. number of digits to compute
-               upto. Default value is 16.
+           The precision i.e. number of digits to compute
+           upto. Default value is 16.
+
     Returns
     --------
-    Yslm :	float
-                    The value of Yslm at :math:`\\theta, phi'.
-
+    Yslm : float
+           The value of Yslm at :math:`\\theta, phi'.
     """
+
+    check_Yslm_args(spin_weight, ell, emm)
+
     import sympy as sp
 
     # tv, pv = theta, phi
@@ -370,31 +391,34 @@ def Yslm_prec(spin_weight, ell, emm, theta, phi, prec=24):
 
 
 def Yslm_prec_sym(spin_weight, ell, emm):
-    """Spin-weighted spherical harmonics precise, symbolic computation for deferred evaluations.
-       Is dependent on variables th: theta and ph:phi.
+    """Spin-weighted spherical harmonics precise, 
+    symbolic computation for deferred evaluations.
+    Is dependent on variables th: theta and ph:phi.
+
     Parameters
     ----------
-
-    spin_weight :	int
-                                    The Spin weight.
-    ell :	int
-                    The mode number :math:`\\ell'.
-    emm :	int
-                    The azimuthal mode number :math:`m'.
+    spin_weight : int
+                  The Spin weight of the harmonic
+    ell : int
+          The mode number :math:`\\ell'.
+    emm : int
+          The azimuthal mode number :math:`m'.
     theta : float
-                    The polar angle  :math:`\\theta` in radians,
-    phi :	float
-                    The aximuthal angle :math:`\\phi' in radians.
+            The polar angle  :math:`\\theta` in radians,
+    phi : float
+          The aximuthal angle :math:`\\phi' in radians.
     pres : int, optional
-               The precision i.e. number of digits to compute
-               upto. Default value is 16.
+           The precision i.e. number of digits to compute
+           upto. Default value is 16.
 
     Returns
     --------
-    Yslm :	sym
-                    The value of Yslm at :math:`\\theta, phi'.
-
+    Yslm : sym
+           The value of Yslm at :math:`\\theta, phi'.
     """
+
+    check_Yslm_args(spin_weight, ell, emm)
+
     import sympy as sp
 
     th, ph = sp.symbols("theta phi")
@@ -464,17 +488,17 @@ def rotate_polarizations(wf, alpha):
     Parameters
     ----------
     wf : 1d array
-             The complex observer waveform to rotate.
+         The complex observer waveform to rotate.
     alpha : float
-                    The coordinate angle to rotate the polarizations
-                    in radians. Note that the polarizarions would
-                    rotate by :math:`2 \alpha` on a cordinate
-                    rotation of :math:`\alpha`.
+            The coordinate angle to rotate the polarizations
+            in radians. Note that the polarizarions would
+            rotate by :math:`2 \alpha` on a cordinate
+            rotation of :math:`\alpha`.
 
     Returns
     -------
     rot_wf : 1d array
-                     The rotated waveform.
+             The rotated waveform.
     """
 
     h1, h2 = wf.real, wf.imag

@@ -40,4 +40,4 @@ def read_git_version():
     return vers
 
 
-__version__ = "2023.08.21"
+__version__ = "2023.08.22"
