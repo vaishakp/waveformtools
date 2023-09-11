@@ -29,6 +29,7 @@ class UniformGrid:
         nthetamax=66,
         nghosts=2,
         integration_method="MP",
+        grid_type='Uniform',
     ):
 
         # Number of gridpoints along phi direction including ghost points.
@@ -43,6 +44,12 @@ class UniformGrid:
         self.nghosts = nghosts
         # The default integration method
         self._integration_method = integration_method
+        
+        self._grid_type = grid_type
+
+    @property
+    def grid_type(self):
+        return self._grid_type
 
     @property
     def npix(self):
@@ -249,7 +256,9 @@ class GLGrid:
         ntheta_act=None,
         L=47,
         nghosts=2,
-        integration_method="GL"):
+        integration_method="GL",
+        grid_type='GL',
+        ):
 
         # Number of gridpoints along phi direction including ghost points.
         self._nphi = nphi
@@ -268,6 +277,7 @@ class GLGrid:
         self._phi_1d = None
         self._meshgrid = None
         self._integration_method = integration_method
+        self._grid_type = grid_type
 
         if self._ntheta is None:
             if self._L is None:
@@ -313,6 +323,11 @@ class GLGrid:
         self._dtheta_1d = dtheta_axis
 
         self._dphi = dphi  # self._phi_1d[1]
+
+    @property
+    def grid_type(self):
+
+        return self._grid_type
 
     def nphi(self):
         """Return the total number of gridpoints

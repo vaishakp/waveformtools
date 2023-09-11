@@ -126,7 +126,7 @@ def fixed_frequency_integrator(
 #############################################
 
 
-def TwoDIntegral(func, info, method="DH"):
+def TwoDIntegral(func, info, method=None):
     """Integrate a function over a sphere.
 
     Parameters
@@ -154,6 +154,16 @@ def TwoDIntegral(func, info, method="DH"):
 
     # ht = info.dtheta
     # hp = info.dphi
+
+    if method is None:
+        if info.grid_type=='GL':
+            method = 'GL'
+        elif info.grid_type=='Uniform':
+            method='MP'
+        else:
+            raise KeyError("Unable to discern default integration"
+                    "method due to unknown grid type. Please provide" 
+                    "method explicitely")
 
     if method == "DH":
         integral = DriscollHealy2DInteg(func, info)
@@ -388,6 +398,13 @@ def GaussLegendre2DInteg(func, info):
 
     # theta_grid, _ = info.meshgrid
     # Norm = 1#(info.L +1)/4
-    integral = np.sum(func * info.weights_grid) * info.dphi
+    #if len(func.shape)==2:
+        #integral = np.sum(func * info.weights_grid) * info.dphi
+    #print("Shape", func.shape, info.weights_grid.shape)
+
+    integral = np.tensordot(func, info.weights_grid, axes=((0, 1), (0, 1))) * info.dphi
+
+    #elif len(func.shape)==3:
+    #    integral = np.tensordot()
 
     return integral
