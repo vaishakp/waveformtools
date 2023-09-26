@@ -305,11 +305,17 @@ def construct_mode_list(ell_max, spin_weight):
 
     # The modes list.
     modes_list = []
-
+    
+    message("Construct modes list in dataIO")
+    message(f"ell_max {ell_max}, spin weight {spin_weight}")
+    
     for ell_index in range(abs(spin_weight), ell_max + 1):
         # Append all emm modes for each ell mode.
         modes_list.append([ell_index, list(range(-ell_index, ell_index + 1))])
 
+    message(f"ell max of created modes list {max([item[0] for item in modes_list])}")
+    message("--------------------------------\n")
+    
     return modes_list
 
 

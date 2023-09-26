@@ -240,12 +240,16 @@ class GLGrid:
     The total number of points on the sphere
     is assumed to be :math:`2 (L+1)^2`
 
-    :math:`N_\theta = L+1`
+    :math:`N_\\theta = L+1`
 
-    :math:`N_\phi = 2(L+1)`
+    :math:`N_\\phi = 2(L+1)`
 
     This integrates out spherical harmonics of degree L exactly,
     given a regular function on the sphere.
+
+    In other words, given :math:`L+1` points in the :math:`\\theta`
+    direction, one can resolve spherical harmonics upto degree
+    :math:`L`.
     """
 
     def __init__(

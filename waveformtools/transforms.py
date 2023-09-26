@@ -6,6 +6,14 @@ from waveformtools.waveformtools import message
 
 # from numba import jit, njit
 
+fact_dict = {0 : 1, 1 : 1}
+
+def factorial(number):
+    if number not in fact_dict.keys():
+        fact_dict.update({number : factorial(number-1)*number})
+
+    return fact_dict[number]
+
 
 # @njit(parallel=True)
 def compute_fft(udata_x, delta_x):
@@ -328,14 +336,14 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
 
     Yslmv = float(-1) ** emm * (
         np.sqrt(
-            fact(ell + emm)
-            * fact(ell - emm)
+            np.longdouble(fact(ell + emm))
+            * np.longdouble(fact(ell - emm))
             * (2 * ell + 1)
             / (
                 4
                 * np.pi
-                * fact(ell + abs_spin_weight)
-                * fact(ell - abs_spin_weight)
+                * np.longdouble(fact(ell + abs_spin_weight))
+                * np.longdouble(fact(ell - abs_spin_weight))
             )
         )
         * np.sin(theta_grid / 2) ** (2 * ell)
