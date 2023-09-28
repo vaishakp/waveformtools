@@ -1,2 +1,2 @@
-print_verbosity=2
-log_verbosity=2
+print_verbosity=1
+log_verbosity=1

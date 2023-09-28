@@ -1,7 +1,7 @@
 import numpy as np
-from qlmtools.transforms import SHExpand
+from waveformtools.transforms import SHExpand
 from waveformtools.grids import GLGrid
-from qlmtools.diagnostics import method_info
+from waveformtools.diagnostics import method_info
 from waveformtools.waveformtools import message
 import unittest
 
@@ -412,7 +412,52 @@ class TestGLGridYslm(unittest.TestCase):
                                                      "must agree with exact"
                                                      "upto 12 digits")
                 
+    
+    def test_ylm_vs_exact_grid(self):
+        ''' Test the SH modes computed using
+        the fast method against the exact 
+        symbolic computation '''
         
+        info = GLGrid(L=24)
+        #minfo = method_info(ell_max=24, int_method='GL')
+
+        ell_max = 24
+
+        from waveformtools.transforms import Yslm_vec, Yslm_prec_grid
+
+        theta_grid, phi_grid = info.meshgrid
+
+        #theta = np.pi/21
+        #phi = np.pi/6
+
+
+        for ell in range(ell_max+1):
+            for emm in range(ell, ell+1):
+
+                message(f"Testing l{ell} m{emm}", message_verbosity=2)
+
+                Ylm_this_module = Yslm_vec(spin_weight=0, 
+                                           ell=ell, 
+                                           emm=emm, 
+                                           theta_grid=theta_grid, 
+                                           phi_grid=phi_grid)
+
+                Ylm_exact = Yslm_prec_grid(spin_weight=0, 
+                                                 ell=ell, 
+                                                 emm=emm, 
+                                                 theta_grid=theta_grid,  
+                                                 phi_grid=phi_grid,
+                                                 prec=14)
+
+
+                np.testing.assert_array_almost_equal(Ylm_this_module, 
+                                                     np.complex128(Ylm_exact), 
+                                                     14, 
+                                                     "The spherical harmonic" 
+                                                     "modes from this module"
+                                                     "must agree with exact"
+                                                     "upto 14 digits")
+                
     
     def test_ylm_vs_spherical(self):
         ''' Test the vectorized SH mode
@@ -453,16 +498,17 @@ class TestGLGridYslm(unittest.TestCase):
         wigner = spherical.Wigner(ell_max)
         Y2 = wigner.sYlm(spin_weight, R)
 
+        
 
         for ell in range(ell_max+1):
             for emm in range(ell, ell+1):
                 
-                message(f"Testing l{ell} m{emm}", message_verbosity=1)
+                message(f"Testing l{ell} m{emm}", message_verbosity=2)
                 
                 Ylm_this_module = Yslm_vec(spin_weight=0, 
                                            ell=ell, 
                                            emm=emm, 
-                                           theta_grid=theta, 
+                                           theta_grid=theta,  
                                            phi_grid=phi)
                 
                 Ylm_spherical = Y2[get_index(ell, emm)]
@@ -477,7 +523,137 @@ class TestGLGridYslm(unittest.TestCase):
                                                      " must agree with this"
                                                      " module upto 14 digits")
                 
-                
-if __name__ == '__main__':
+    
+    def test_ylm_vs_spherical_grid(self):
+        ''' Test the vectorized SH mode
+        computation against the spherical 
+        package modes 
+        
+        Notes
+        -----
+        It was observed that the 
+        spherical package is accurate 
+        upto 13 digits at :math:`\\l`=100
+        '''
+        
+        def get_index(ell, emm):
+            ind = 0
+            for ell_ind in range(ell+1):
+                ind+=(2*ell_ind+1)
 
-    unittest.main(argv=['first-arg-is-ignored'], exit=False, verbosity=2)
+            return ind+emm - ell_ind - 1
+
+
+        info = GLGrid(L=24)
+        #minfo = method_info(ell_max=24, int_method='GL')
+
+        ell_max = 24
+        
+        from waveformtools.transforms import Yslm_vec
+    
+        theta_grid, phi_grid = info.meshgrid
+        
+        #theta = np.pi/21
+        #phi = np.pi/6
+        spin_weight=0
+        
+        import quaternionic, spherical
+        R = quaternionic.array.from_spherical_coordinates(theta_grid, phi_grid)
+        #ell_max = ell
+        wigner = spherical.Wigner(ell_max)
+        Y2 = wigner.sYlm(spin_weight, R)
+
+        
+
+        for ell in range(ell_max+1):
+            for emm in range(ell, ell+1):
+                
+                message(f"Testing l{ell} m{emm}", message_verbosity=2)
+                
+                Ylm_this_module = Yslm_vec(spin_weight=0, 
+                                           ell=ell, 
+                                           emm=emm, 
+                                           theta_grid=theta_grid,  
+                                           phi_grid=phi_grid)
+                
+                Ylm_spherical = Y2.T[get_index(ell, emm)].T
+                
+                
+                np.testing.assert_array_almost_equal(Ylm_this_module, 
+                                                     Ylm_spherical, 
+                                                     14, 
+                                                     "The spherical harmonic" 
+                                                     f" l{ell}m{emm} mode"
+                                                     " from the spherical module"
+                                                     " must agree with this"
+                                                     " module upto 14 digits")
+                
+                
+                
+    def test_spherical_vs_prec_grid(self):
+        ''' Test the vectorized SH mode
+        computation against the spherical 
+        package modes 
+        
+        Notes
+        -----
+        It was observed that the 
+        spherical package is accurate 
+        upto 13 digits at :math:`\\l`=100
+        '''
+        
+        def get_index(ell, emm):
+            ind = 0
+            for ell_ind in range(ell+1):
+                ind+=(2*ell_ind+1)
+
+            return ind+emm - ell_ind - 1
+
+
+        info = GLGrid(L=24)
+        #minfo = method_info(ell_max=24, int_method='GL')
+
+        ell_max = 24
+        
+        from waveformtools.transforms import Yslm_prec_grid
+    
+        theta_grid, phi_grid = info.meshgrid
+        
+        #theta = np.pi/21
+        #phi = np.pi/6
+        spin_weight=0
+        
+        import quaternionic, spherical
+        R = quaternionic.array.from_spherical_coordinates(theta_grid, phi_grid)
+        #ell_max = ell
+        wigner = spherical.Wigner(ell_max)
+        Y2 = wigner.sYlm(spin_weight, R)
+
+        
+
+        for ell in range(ell_max+1):
+            for emm in range(ell, ell+1):
+                
+                message(f"Testing l{ell} m{emm}", message_verbosity=2)
+                
+                Ylm_exact = Yslm_prec_grid(spin_weight=0, 
+                                           ell=ell, 
+                                           emm=emm, 
+                                           theta_grid=theta_grid,  
+                                           phi_grid=phi_grid,
+                                           prec=16)
+                
+                Ylm_spherical = Y2.T[get_index(ell, emm)].T
+                
+                
+                np.testing.assert_array_almost_equal(Ylm_spherical, 
+                                                     Ylm_exact, 
+                                                     14, 
+                                                     "The spherical harmonic" 
+                                                     f" l{ell}m{emm} mode"
+                                                     " from the spherical module"
+                                                     " must agree with this"
+                                                     " module upto 14 digits")
+#if __name__ == '__main__':
+
+#    unittest.main(argv=['first-arg-is-ignored'], exit=False, verbosity=2)

@@ -76,7 +76,7 @@ def get_ell_max_from_keys(all_keys):
 
     # Get mode numbers
     for item in all_keys:
-        this_match = re.search("\_l\d\_", item)
+        this_match = re.search(r"\_l\d\_", item)
 
         if this_match is None:
             # message(f'Skipped file {item}')
@@ -239,12 +239,12 @@ def _get_ell_emm_from_key(key):
 
     import re
 
-    str_match = re.search("l\d*", key)
+    str_match = re.search(r"l\d*", key)
     ell_str_start = str_match.start()
     ell_str_end = str_match.end()
     ell_value = int(key[ell_str_start + 1 : ell_str_end])
 
-    str_match = re.search("m-*\d*", key)
+    str_match = re.search(r"m-*\d*", key)
     emm_str_start = str_match.start()
     emm_str_end = str_match.end()
     emm_value = int(key[emm_str_start + 1 : emm_str_end])
@@ -271,7 +271,7 @@ def get_iteration_numbers_from_keys(keys_list):
     iteration_numbers = []
 
     for key in keys_list:
-        str_match = re.search(" it=\d* ", key)
+        str_match = re.search(r" it=\d* ", key)
         it_str_start = str_match.start()
         it_str_end = str_match.end()
         it_value = int(key[it_str_start + 4 : it_str_end])
@@ -313,8 +313,8 @@ def construct_mode_list(ell_max, spin_weight):
         # Append all emm modes for each ell mode.
         modes_list.append([ell_index, list(range(-ell_index, ell_index + 1))])
 
-    message(f"ell max of created modes list {max([item[0] for item in modes_list])}")
-    message("--------------------------------\n")
+    message(f"ell max of created modes list {max([item[0] for item in modes_list])}", message_verbosity=2)
+    message("--------------------------------\n", message_verbosity=2)
     
     return modes_list
 

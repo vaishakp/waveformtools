@@ -199,7 +199,7 @@ def MidPoint2DInteg(func, info):
 
     theta_grid, _ = info.meshgrid
 
-    integral = np.sum(func) * ht * hp
+    integral = np.sum(func) * np.sin(theta_grid) * ht * hp
 
     return integral
 
@@ -241,7 +241,7 @@ def DriscollHealy2DInteg(func, info):
         raise ValueError("NTheta must be even!")
 
     integrand_sum = 0.0
-
+    func*=np.sin(theta_grid)
     # Skip the poles (ix=0 and ix=NTheta), as the weight there is zero
 
     for index_theta in range(1, NTheta):
@@ -311,6 +311,8 @@ def Simpson2DInteg(func, info):
     Px = int(NTheta / 2)
     Py = int(NPhi / 2)
 
+    func*=np.sin(theta_grid)
+    
     # Around corners
     integrand_sum += (
         func[0, 0]
