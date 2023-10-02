@@ -192,6 +192,72 @@ class UniformGrid:
         """The default integration method"""
         return self._integration_method
 
+    def to_GLGrid(self):
+        ''' Find the highest resolution
+        closest equivalent GL grid of this
+        grid 
+        '''
+        
+        theta_min = min(self.theta_1d)
+        
+        possibleL = 1
+        
+        Lfound_flag = False
+        
+        while Lfound_flag is False:
+            
+            infoGL = GLGrid(L=possibleL)
+            
+            theta_gl_min = min(infoGL.theta_1d)
+            
+            if theta_gl_min<theta_min:
+                Lfound_flag = True
+                Lmax = possibleL-1
+                
+            possibleL+=1
+        
+        Lmax = min(Lmax, self.ntheta_act-1)
+        
+        infoGL = GLGrid(L=Lmax)
+        
+        self.equivalent_GLGrid = infoGL
+        
+        return infoGL
+    
+    
+    def get_data_on_GLGrid(self, func, infoGL=None):
+        ''' Get the data on a GLGrid given data on
+        the uniform grid.
+        
+        Parameters
+        ----------
+        func : 2darray
+               The function to be interpolated
+               onto the GLGrid
+        infoGL : grid_info, optional
+                 The GLGrid onto which the function
+                 is to be interpolated. If not given,
+                 then the closeset equivalent GL grid
+                 to this instance of UniformGrid will
+                 be found and used.
+                 
+        Returns
+        -------
+        infoGL : grid_info
+                 The GLGrid used for interpolation
+                 
+        func_on_GLGrid : 2darray
+                         The function `func`
+                         values on the GLGrid
+        '''
+        
+        if infoGL is None:
+            infoGL = self.to_GLGrid()
+            
+        
+        theta_grid_gl, phi_grid_gl = infoGL.meshgrid
+        
+        
 
 class GLGrid:
     """A class to store the coordinate grid on a sphere.

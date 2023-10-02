@@ -199,7 +199,7 @@ def MidPoint2DInteg(func, info):
 
     theta_grid, _ = info.meshgrid
 
-    integral = np.sum(func) * np.sin(theta_grid) * ht * hp
+    integral = np.sum(func * np.sin(theta_grid)) * ht * hp
 
     return integral
 
@@ -228,44 +228,141 @@ def DriscollHealy2DInteg(func, info):
     NPhi = info.nphi_act
 
     # NTheta, NPhi = func.shape
-
+    theta_grid, _ = info.meshgrid
+    
     ht = info.dtheta
     hp = info.dphi
 
     if NTheta < 0:
-        raise ValueError("N_x is negative!")
+        raise ValueError("Ntheta is negative!")
     elif NPhi < 0:
-        raise ValueError("N_y is negative!")
+        raise ValueError("Nphi is negative!")
 
     if (NTheta % 2) != 0:
         raise ValueError("NTheta must be even!")
 
     integrand_sum = 0.0
+    
     func*=np.sin(theta_grid)
+    
     # Skip the poles (ix=0 and ix=NTheta), as the weight there is zero
-
-    for index_theta in range(1, NTheta):
+    
+    #theta_1d = np.pi* np.arange(1, NTheta)/NTheta
+    #ell_weight_axis = np.arange(int(NTheta/2))
+    
+    #theta_2d, ell_2d = np.meshgrid(theta_1d, ell_weight_axis)
+    
+    
+    #weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / (2 * ell_2d + 1)
+    
+    #weights_axis = np.sum(weights_grid, axis=1)
+    
+    #latitude_sum_axis = np.sum(func, axis=1)
+    
+    
+    #integrand_axis = latitude_sum_axis * weights_axis
+    
+    
+    for theta_index in range(1, NTheta):
         # These weights lead to an almost spectral convergence
         this_theta = np.pi * index_theta / NTheta
+        
+        #this_theta = theta_1d[theta_index]
+        
         weight = 0
-        # CCTK_REAL const theta = M_PI * ix / NTheta;
-        # CCTK_REAL weight = 0.0;
+        
+        # theta = M_PI * ix / NTheta;
+        # weight = 0.0;
         for ell in range(int(NTheta / 2)):
-            # for (int l = 0; l < NTheta/2; ++ l)
+            #for (int l = 0; l < NTheta/2; ++ l)
             weight += np.sin((2 * ell + 1) * this_theta) / (2 * ell + 1)
-
+        
+        #weight_axis = np.sin((2 * ell_weight_axis + 1) * this_theta) / (2 * ell_weight_axis + 1)
+        
         weight *= 4.0 / np.pi
         latitude_sum = 0
-        # CCTK_REAL local_sum = 0.0;
+        
+        # local_sum = 0.0;
         # Skip the last point (iy=NPhi), since we assume periodicity and
         # therefore it has the same value as the first point. We don't use
         # weights in this direction, which leads to spectral convergence.
         # (Yay periodicity!)
+        
         for index_phi in range(NPhi):
             # for (int iy = 0; iy < NPhi; ++ iy)
             latitude_sum += func[index_theta, index_phi]
-
+        
+        #latitude_sum = np.sum(func[index_theta, :])
+        
         integrand_sum += weight * latitude_sum
+
+    return ht * hp * integrand_sum
+
+def DriscollHealy2DInteg_v2(func, info):
+    """Implementation of the Driscoll Healy 2D integration that
+    exhibits near spectral convergence.
+
+    Parameters
+    ----------
+    func : function
+            The function to be integrated
+    NTheta, NPhi : int
+             The number of grid points in the theta and phi directions.
+             Note that NTheta must be even.
+    ht, hp : float
+             The grid spacings.
+
+    Returns
+    -------
+    integ : float
+            The function f integrated over the sphere.
+    """
+
+    NTheta = info.ntheta_act
+    NPhi = info.nphi_act
+
+    # NTheta, NPhi = func.shape
+    theta_grid, _ = info.meshgrid
+    
+    ht = info.dtheta
+    hp = info.dphi
+
+    if NTheta < 0:
+        raise ValueError("Ntheta is negative!")
+    elif NPhi < 0:
+        raise ValueError("Nphi is negative!")
+
+    if (NTheta % 2) != 0:
+        raise ValueError("NTheta must be even!")
+
+    integrand_sum = 0.0
+    
+    #func*=np.sin(theta_grid)
+    
+    # Skip the poles (ix=0 and ix=NTheta), as the weight there is zero
+    
+    theta_1d = np.pi* np.arange(1, NTheta)/NTheta
+    ell_weight_axis = np.arange(int(NTheta/2))
+    
+    print("theta 1d", len(theta_1d))
+    print("ell axis", len(ell_weight_axis))
+    
+    theta_2d, ell_2d = np.meshgrid(theta_1d, ell_weight_axis)
+    print("T2d", theta_2d.shape)
+    
+    weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / (2 * ell_2d + 1)
+    
+    print("WG", weights_grid.shape)
+    
+    weights_axis = np.sum(weights_grid, axis=1)
+    print("WG", weights_axis.shape)
+    
+    latitude_sum_axis = np.sum(func, axis=1)
+    print("LSA", latitude_sum_axis.shape)
+    
+    integrand_axis = latitude_sum_axis * weights_axis
+    
+    integrand_sum = np.sum(integrand_axis)
 
     return ht * hp * integrand_sum
 

@@ -1026,6 +1026,7 @@ def SHExpandSimple(
     theta_grid, phi_grid = info.meshgrid
 
     ell_max = method_info.ell_max
+    
     method = method_info.int_method
     
     message(f"SHExpandSimple: expansion ell max is {ell_max}")
@@ -1083,7 +1084,9 @@ def SHExpandSimple(
             recon_func += Clm * Ylm
             
             #emmCoeffs.update({f"m{emm}": Clm})
-
+            #print(Clm)
+            #message("Clm ", Clm, message_verbosity=2)
+            
             result.set_mode_data(ell, emm, Clm)
             
         res = np.sqrt(np.mean(np.absolute(func - recon_func)**2))
