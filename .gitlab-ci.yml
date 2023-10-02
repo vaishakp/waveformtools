@@ -96,6 +96,8 @@ pages:
     - source ~/.bashrc
     - conda activate test
     - pip install -r requirements.txt
+    - pip install quaternionic
+    - pip install spherical
     - conda info --env
     - which python
     - which conda
