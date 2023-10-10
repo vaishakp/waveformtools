@@ -353,7 +353,24 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
         * Sum
     )
 
-    return factor * Yslmv
+    value = factor * Yslmv
+    
+    if np.isnan(np.array(value)).any():
+        message("Nan discovered. Falling back to Yslm_prec_grid", message_verbosity=2)
+        
+        value = np.complex128(Yslm_prec_grid(spin_weight, ell, emm, theta_grid, phi_grid, prec=16))
+        
+        if np.isnan(np.array(value)).any():
+            
+            if (abs(np.array(theta_grid))<1e-14).any():
+            #print("!!! Warning: setting to zero manually. Please check again !!!")
+            #value = 0
+                raise ValueError(f"Possible zero value encountered due to small theta {np.amin(theta_grid)}")
+            
+            else:
+                raise ValueError("Although theta>1e-14, couldnt compute Yslm. Please check theta")
+                
+    return value 
 
 
 def Yslm_prec_grid(spin_weight, ell, emm, theta_grid, phi_grid, prec=24):

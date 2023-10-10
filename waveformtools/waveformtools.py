@@ -110,7 +110,16 @@ def message(
     return 1
 
 
-def mode(a_list):
+def unsort(sorted_array, args_order):
+    
+    original_array = np.zeros(len(sorted_array), dtype=object)
+    
+    for index, item in enumerate(args_order):
+        original_array[item] = sorted_array[index]
+        
+    return original_array
+
+def stat_mode(a_list):
     """Find the mode of a list
 
     Parameters

@@ -313,7 +313,10 @@ def construct_mode_list(ell_max, spin_weight):
         # Append all emm modes for each ell mode.
         modes_list.append([ell_index, list(range(-ell_index, ell_index + 1))])
 
-    message(f"ell max of created modes list {max([item[0] for item in modes_list])}", message_verbosity=2)
+    message("ell max of created modes list"
+            f"{max([item[0] for item in modes_list])}", 
+            message_verbosity=3)
+
     message("--------------------------------\n", message_verbosity=2)
     
     return modes_list

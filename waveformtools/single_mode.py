@@ -113,7 +113,8 @@ class SingleMode:
                 self.ell_max, self.spin_weight
             )
 
-        message(f"ell max of created modes list {max([item[0] for item in self._modes_list])}", message_verbosity=3)
+        #message(f"ell max of created modes list {max([item[0] for item in self._modes_list])}", 
+        #        message_verbosity=4)
         
         return self._modes_list
 
