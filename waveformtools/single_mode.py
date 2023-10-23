@@ -239,11 +239,11 @@ class SingleMode:
 
         if self.modes_dim>1:
             self._modes_data = np.zeros(
-                (ell_max + 1, 2 * (ell_max + 1) + 1, self.modes_dim), dtype=np.complex128
+                (ell_max + 1, 2 * (ell_max) + 1, self.modes_dim), dtype=np.complex128
             )
         else:
             self._modes_data = np.zeros(
-                (ell_max + 1, 2 * (ell_max + 1) + 1), dtype=np.complex128
+                (ell_max + 1, 2 * (ell_max) + 1), dtype=np.complex128
             )
         
 
@@ -263,11 +263,11 @@ class SingleMode:
         # Compute the emm index given ell.
         emm_index = emm + ell
         
-        message(f'Setting l{ell} m{emm} data {value}', message_verbosity=3)
+        message(f'Setting l{ell} m{emm} data {value}', message_verbosity=4)
         
         # Set the mode data.
         self._modes_data[ell, emm_index] = value
-        message(f"Set mode data {self.mode(ell, emm)}", message_verbosity=3)
+        message(f"Set mode data {self.mode(ell, emm)}", message_verbosity=4)
         
     def compute_zero_modes(self, tol=1e-8):
         """Get the details of the zero modes in

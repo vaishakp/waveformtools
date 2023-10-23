@@ -269,7 +269,20 @@ def Yslm(spin_weight, ell, emm, theta, phi):
     return factor * Yslm
 
 
+def check_Yslm_theta(theta_grid, threshold=1e-6):
     
+    theta_list = np.array(theta_grid).flatten()
+
+    locs = np.where(abs(theta_list)<threshold)
+    
+    for index in locs:
+        sign = theta_list[index]/abs(theta_list[index])
+        
+        theta_list[index] = theta_list[index] + sign*threshold
+        
+    return theta_list.reshape(np.array(theta_grid).shape)
+
+
 
 def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     """Spin-weighted spherical harmonics fast evaluations 
@@ -298,8 +311,12 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     This is accurate upto 14 decimals for L upto 25.
     """
 
+    
     check_Yslm_args(spin_weight, ell, emm)
-
+    
+    theta_grid = check_Yslm_theta(theta_grid)
+    
+    
     from math import comb
 
     fact = np.math.factorial
@@ -330,9 +347,9 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
             term2 = comb(ell + abs_spin_weight, aar + abs_spin_weight - emm)
             term3 = np.power(float(-1), (ell - aar - abs_spin_weight))
             term4 = np.exp(1j * emm * phi_grid)
-            term5 = np.power(
+            term5 = np.longdouble(np.power(
                 np.tan(theta_grid / 2), (-2 * aar - abs_spin_weight + emm)
-            )
+            ))
             subterm = term1 * term2 * term3 * term4 * term5
 
             Sum += subterm
@@ -356,19 +373,47 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     value = factor * Yslmv
     
     if np.isnan(np.array(value)).any():
-        message("Nan discovered. Falling back to Yslm_prec_grid", message_verbosity=2)
         
-        value = np.complex128(Yslm_prec_grid(spin_weight, ell, emm, theta_grid, phi_grid, prec=16))
+        message("Nan discovered. Falling back to Yslm_prec on defaulted locations", message_verbosity=1)
+        
+        nan_locs = np.where(np.isnan(np.array(value).flatten()))[0]
+        
+        message("Nan locations", nan_locs, message_verbosity=1)
+        
+        
+        theta_list = np.array(theta_grid).flatten()
+        phi_list = np.array(phi_grid).flatten()
+        
+        message("Theta values", theta_list[nan_locs], message_verbosity=1)
+        
+        value_list = np.array(value, dtype=np.complex128).flatten()
+        
+        
+        
+        for index in nan_locs:
+            
+            replaced_value = Yslm_prec(spin_weight=spin_weight, theta=theta_list[index], phi=phi_list[index], ell=ell, emm=emm)
+            
+            value_list[index] = replaced_value
+            
+        value = np.array(value_list).reshape(theta_grid.shape)
+        
+        message("nan corrected", value, message_verbosity=1)
         
         if np.isnan(np.array(value)).any():
-            
-            if (abs(np.array(theta_grid))<1e-14).any():
-            #print("!!! Warning: setting to zero manually. Please check again !!!")
-            #value = 0
-                raise ValueError(f"Possible zero value encountered due to small theta {np.amin(theta_grid)}")
-            
-            else:
-                raise ValueError("Although theta>1e-14, couldnt compute Yslm. Please check theta")
+            message("Nan re discovered. Falling back to Yslm_prec_grid", message_verbosity=1)
+
+            value = np.complex128(Yslm_prec_grid(spin_weight, ell, emm, theta_grid, phi_grid, prec=16))
+
+            if np.isnan(np.array(value)).any():
+
+                if (abs(np.array(theta_grid))<1e-14).any():
+                #print("!!! Warning: setting to zero manually. Please check again !!!")
+                #value = 0
+                    raise ValueError(f"Possible zero value encountered due to small theta {np.amin(theta_grid)}")
+
+                else:
+                    raise ValueError("Although theta>1e-14, couldnt compute Yslm. Please check theta")
                 
     return value 
 
@@ -1046,7 +1091,7 @@ def SHExpandSimple(
     
     method = method_info.int_method
     
-    message(f"SHExpandSimple: expansion ell max is {ell_max}")
+    message(f"SHExpandSimple: expansion ell max is {ell_max}", message_verbosity=3)
     
     # Good old Modes dict
     #modes = {}

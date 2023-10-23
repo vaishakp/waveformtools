@@ -112,9 +112,14 @@ def message(
 
 def unsort(sorted_array, args_order):
     
+    print("Sorted array", sorted_array)
+    print("Args order", args_order)
+    
     original_array = np.zeros(len(sorted_array), dtype=object)
     
     for index, item in enumerate(args_order):
+        print(f"Index {index} item {item}")
+        
         original_array[item] = sorted_array[index]
         
     return original_array
