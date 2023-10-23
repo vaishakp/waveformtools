@@ -69,7 +69,7 @@ pytest:
     - pip install -r requirements.txt
     - pip install pytest
   script:
-    - pytest --junitxml=report.xml
+    - pytest -vv --junitxml=report.xml
   artifacts:
     when: always
     reports:
