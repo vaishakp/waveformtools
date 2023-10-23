@@ -67,7 +67,7 @@ pytest:
     - source ~/.bashrc
     - conda activate test
     - pip install -r requirements.txt
-    - pip install -r requirements.txt
+    - pip install pytest
   script:
     - pytest --junitxml=report.xml
   artifacts:
