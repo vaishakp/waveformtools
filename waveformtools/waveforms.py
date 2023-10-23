@@ -13,6 +13,7 @@ import sys
 
 import h5py
 import numpy as np
+import math
 
 from waveformtools import dataIO
 from waveformtools.dataIO import (
@@ -457,7 +458,7 @@ class spherical_array:
             data += (
                 np.power(supertransl_alpha_sp.data, index + 1)
                 * dPsidu
-                / np.math.factorial(index + 1)
+                / math.factorial(index + 1)
             )  # delta
 
         data += self.data

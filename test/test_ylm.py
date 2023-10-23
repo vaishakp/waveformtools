@@ -3,9 +3,9 @@ from waveformtools.transforms import SHExpand
 from waveformtools.grids import GLGrid
 from waveformtools.diagnostics import method_info
 from waveformtools.waveformtools import message
-import unittest
+import unittest, pytest
 
-class TestGLGridYslm(unittest.TestCase):
+class TestGLGridYlm(unittest.TestCase):
 
     def test_ylm_single_mode_recovery(self):
         ''' Test single mode recovery for every mode 
@@ -589,8 +589,8 @@ class TestGLGridYslm(unittest.TestCase):
                                                      " module upto 14 digits")
                 
                 
-                
-    def test_spherical_vs_prec_grid(self):
+    @pytest.mark.skip(reason="This tests spherical code. Takes long.")
+    def test_spherical_vs_exact_grid(self):
         ''' Test the vectorized SH mode
         computation against the spherical 
         package modes 

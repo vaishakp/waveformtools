@@ -1,7 +1,7 @@
 """ Methods to transform the waveform """
 
 import numpy as np
-
+import math
 from waveformtools.waveformtools import message
 from waveformtools.integrate import TwoDIntegral
 
@@ -220,7 +220,7 @@ def Yslm(spin_weight, ell, emm, theta, phi):
 
     # theta, phi = sp.symbols('theta phi')
 
-    fact = np.math.factorial
+    fact = math.factorial
     # fact = sp.factorial
     Sum = 0
 
@@ -319,7 +319,7 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     
     from math import comb
 
-    fact = np.math.factorial
+    fact = math.factorial
 
     theta_grid = np.array(theta_grid)
     phi_grid = np.array(phi_grid)
