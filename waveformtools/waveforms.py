@@ -77,7 +77,7 @@ class spherical_array:
         data_dir=None,
         file_name=None,
         grid_info=None,
-        spin_weight=2,
+        spin_weight=-2,
         ell_max=8,
     ):
         self._label = label
@@ -1214,6 +1214,7 @@ class modes_array:
 
         if debug is False:
             wfs_nl = 1
+            
         if not data_dir:
             data_dir = self.data_dir
         else:
@@ -1306,6 +1307,25 @@ class modes_array:
                 r_ext_factor,
                 debug,
             )
+            
+        elif ftype == "SpEC_raw":
+            wfs_nl = dataIO.load_SpEC_non_extrap_data_from_disk(
+                self,
+                label,
+                data_dir,
+                file_name,
+                r_ext,
+                ell_max,
+                centre,
+                modes_list,
+                save_as_ma,
+                resam_type,
+                interp_kind,
+                compression_opts,
+                r_ext_factor,
+                debug,
+            )
+            
         elif ftype == "SpECTRE":
             dataIO.load_SpECTRE_data_from_disk(
                 self,
@@ -1446,13 +1466,14 @@ class modes_array:
                 self.spin_weight = spin_weight
 
         spin_weight = abs(spin_weight)
-        waveform_sp.spin_weight = spin_weight
+        waveform_sp._spin_weight = spin_weight
         # Set the time-axis
         try:
-            waveform_sp.time_axis = self.time_axis
+            waveform_sp._time_axis = self.time_axis
+            
         except Exception as ex:
             message(ex)
-            waveform_sp.frequency_axis = self.frequency_axis
+            waveform_sp._frequency_axis = self.frequency_axis
 
         # Get the coordinate meshgrid
         theta, phi = grid_info.meshgrid
@@ -1484,12 +1505,16 @@ class modes_array:
                 )
                 # message(sp_data)
         # Set the data of the spherical array.
-        waveform_sp.data = sp_data
-        try:
-            waveform_sp.time_axis = self.time_axis
-        except Exception as ex:
-            message(ex)
-            waveform_sp.frequency_axis = self.frequency_axis
+        waveform_sp._data = sp_data
+        
+        waveform_sp._areal_radii = self._areal_radii
+        
+        #try:
+        #    waveform_sp._time_axis = self.time_axis
+        #except Exception as ex:
+        #    message(ex)
+        #    waveform_sp._frequency_axis = self.frequency_axis
+        
         return waveform_sp
 
     def trim(self, trim_upto_time=None):
