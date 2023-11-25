@@ -29,9 +29,8 @@ class UniformGrid:
         nthetamax=66,
         nghosts=2,
         integration_method="MP",
-        grid_type='Uniform',
+        grid_type="Uniform",
     ):
-
         # Number of gridpoints along phi direction including ghost points.
         self.nphi = nphi
         # Number of gridpoints along theta direction including ghost points.
@@ -44,7 +43,7 @@ class UniformGrid:
         self.nghosts = nghosts
         # The default integration method
         self._integration_method = integration_method
-        
+
         self._grid_type = grid_type
 
     @property
@@ -59,9 +58,7 @@ class UniformGrid:
     @property
     def npix_act(self):
         # Return the actual number of pixels, excluding the ghost zones present at one iteration.
-        return (self.ntheta - 2 * self.nghosts) * (
-            self.nphi - 2 * self.nghosts
-        )
+        return (self.ntheta - 2 * self.nghosts) * (self.nphi - 2 * self.nghosts)
 
     @property
     def npix_max(self):
@@ -104,10 +101,10 @@ class UniformGrid:
 
     @property
     def theta_1d(self, theta_index=None):
-        """Returns the coordinate value theta 
-        given the coordinate index. The coordinate 
-        index ranges from (0, ntheta). The actual 
-        indices without the ghost and extra zones 
+        """Returns the coordinate value theta
+        given the coordinate index. The coordinate
+        index ranges from (0, ntheta). The actual
+        indices without the ghost and extra zones
         is (nghosts, ntheta-nghosts).
 
         Parameters
@@ -121,7 +118,7 @@ class UniformGrid:
                    The coordinate(s) :math:`\\theta` on the sphere.
         """
 
-        if not theta_index:
+        if np.array(theta_index).all() is np.array(None):
             theta_index = np.arange(self.nghosts, self.ntheta - self.nghosts)
 
         return (
@@ -132,9 +129,9 @@ class UniformGrid:
 
     @property
     def phi_1d(self, phi_index=None):
-        """Returns the coordinate value theta given 
-        the coordinate index. The coordinate index lies 
-        in (0, nphi). The actual indices without 
+        """Returns the coordinate value theta given
+        the coordinate index. The coordinate index lies
+        in (0, nphi). The actual indices without
         the ghost and extra zones is (nghosts, nphi-nghosts).
 
         Parameters
@@ -149,7 +146,7 @@ class UniformGrid:
 
         """
 
-        if not phi_index:
+        if np.array(phi_index).all() is np.array(None):
             phi_index = np.arange(self.nghosts, self.nphi - self.nghosts)
 
         return (
@@ -167,11 +164,11 @@ class UniformGrid:
         Returns
         -------
         theta :	2d array
-                The :math:`\\theta` coordinate matrix 
+                The :math:`\\theta` coordinate matrix
                 for vectorization.
 
         phi : 2d array
-              The :math:`\\phi` coordinate matrix 
+              The :math:`\\phi` coordinate matrix
               for vectorization.
         """
 
@@ -193,42 +190,40 @@ class UniformGrid:
         return self._integration_method
 
     def to_GLGrid(self):
-        ''' Find the highest resolution
+        """Find the highest resolution
         closest equivalent GL grid of this
-        grid 
-        '''
-        
+        grid
+        """
+
         theta_min = min(self.theta_1d)
-        
+
         possibleL = 1
-        
+
         Lfound_flag = False
-        
+
         while Lfound_flag is False:
-            
             infoGL = GLGrid(L=possibleL)
-            
+
             theta_gl_min = min(infoGL.theta_1d)
-            
-            if theta_gl_min<theta_min:
+
+            if theta_gl_min < theta_min:
                 Lfound_flag = True
-                Lmax = possibleL-1
-                
-            possibleL+=1
-        
-        Lmax = min(Lmax, self.ntheta_act-1)
-        
+                Lmax = possibleL - 1
+
+            possibleL += 1
+
+        Lmax = min(Lmax, self.ntheta_act - 1)
+
         infoGL = GLGrid(L=Lmax)
-        
+
         self.equivalent_GLGrid = infoGL
-        
+
         return infoGL
-    
-    
+
     def get_data_on_GLGrid(self, func, infoGL=None):
-        ''' Get the data on a GLGrid given data on
+        """Get the data on a GLGrid given data on
         the uniform grid.
-        
+
         Parameters
         ----------
         func : 2darray
@@ -240,24 +235,22 @@ class UniformGrid:
                  then the closeset equivalent GL grid
                  to this instance of UniformGrid will
                  be found and used.
-                 
+
         Returns
         -------
         infoGL : grid_info
                  The GLGrid used for interpolation
-                 
+
         func_on_GLGrid : 2darray
                          The function `func`
                          values on the GLGrid
-        '''
-        
+        """
+
         if infoGL is None:
             infoGL = self.to_GLGrid()
-            
-        
+
         theta_grid_gl, phi_grid_gl = infoGL.meshgrid
-        
-        
+
 
 class GLGrid:
     """A class to store the coordinate grid on a sphere.
@@ -327,9 +320,8 @@ class GLGrid:
         L=47,
         nghosts=2,
         integration_method="GL",
-        grid_type='GL',
-        ):
-
+        grid_type="GL",
+    ):
         # Number of gridpoints along phi direction including ghost points.
         self._nphi = nphi
         # Number of gridpoints along theta direction including ghost points.
@@ -396,14 +388,14 @@ class GLGrid:
 
     @property
     def grid_type(self):
-
         return self._grid_type
 
     def nphi(self):
         """Return the total number of gridpoints
         along the phi direction, including
         the ghost zones at one iteration."""
-        if not self._nphi:
+
+        if self._nphi is None:
             return self._nphi_act + self.nghosts
         else:
             return self._nphi
@@ -412,7 +404,8 @@ class GLGrid:
         """Return the total number gridpoints
         along the theta direction, including
         the ghost zones at one iteration."""
-        if not self._ntheta:
+
+        if self._ntheta is None:
             return self._ntheta_act + self.nghosts
         else:
             return self._ntheta
@@ -428,7 +421,8 @@ class GLGrid:
         """Return the actual number of physical data points
         along the theta direction excluding the ghost and
         buffer zones at one iteration."""
-        if not self._ntheta_act:
+
+        if self._ntheta_act is None:
             return self.ntheta - 2 * self.nghosts
         else:
             return self._ntheta_act
@@ -439,7 +433,7 @@ class GLGrid:
         along the phi direction excluding the ghost and
         buffer zones at one iteration."""
 
-        if not self._ntheta_act:
+        if self._ntheta_act is None:
             return self.nphi - 2 * self.nghosts
         else:
             return self._nphi_act
@@ -453,7 +447,7 @@ class GLGrid:
 
     @property
     def dtheta_1d(self):
-        """Return the non-uniform angular stepping in 
+        """Return the non-uniform angular stepping in
         :math:`\theta` direction"""
         return self._dtheta_1d
 
@@ -464,13 +458,13 @@ class GLGrid:
 
     @property
     def L(self):
-        """Return the total number of pixels, including 
+        """Return the total number of pixels, including
         the ghost zones present at one iteration."""
         return self._L
 
     @property
     def npix(self):
-        """Return the total number of pixels, including 
+        """Return the total number of pixels, including
         the ghost zones present at one iteration."""
         return (self.ntheta) * (self.nphi)
 
@@ -491,8 +485,8 @@ class GLGrid:
 
     @property
     def theta_1d(self):
-        """Returns the coordinate value theta given the coordinate index. 
-        The coordinate index ranges from (0, ntheta). The actual indices 
+        """Returns the coordinate value theta given the coordinate index.
+        The coordinate index ranges from (0, ntheta). The actual indices
         without the ghost and extra zones is (nghosts, ntheta-nghosts).
 
         Parameters
@@ -510,8 +504,8 @@ class GLGrid:
 
     @property
     def phi_1d(self):
-        """Returns the coordinate value theta given the coordinate index. 
-        The coordinate index lies in (0, nphi). The actual indices without 
+        """Returns the coordinate value theta given the coordinate index.
+        The coordinate index lies in (0, nphi). The actual indices without
         the ghost and extra zones is (nghosts, nphi-nghosts).
 
         Parameters

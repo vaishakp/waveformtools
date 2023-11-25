@@ -130,7 +130,7 @@ def get_ell_max_from_file(data_dir, var_type="Psi4", file_name="*.h5"):
 
     elif var_type == "Strain":
         # import h5py
-        message("Fetching all keys from H5 file", message_verbosity=2)
+        message("Fetching all keys from H5 file", message_verbosity=3)
         data_file = h5py.File(f"{data_dir}/{file_name}")
         all_fnames = list(data_file.keys())
         data_file.close()
@@ -305,20 +305,24 @@ def construct_mode_list(ell_max, spin_weight):
 
     # The modes list.
     modes_list = []
-    
-    message("Construct modes list in dataIO", message_verbosity=3)
-    message(f"ell_max {ell_max}, spin weight {spin_weight}", message_verbosity=3)
-    
+
+    message("Construct modes list in dataIO", message_verbosity=4)
+    message(
+        f"ell_max {ell_max}, spin weight {spin_weight}", message_verbosity=4
+    )
+
     for ell_index in range(abs(spin_weight), ell_max + 1):
         # Append all emm modes for each ell mode.
         modes_list.append([ell_index, list(range(-ell_index, ell_index + 1))])
 
-    message("ell max of created modes list"
-            f"{max([item[0] for item in modes_list])}", 
-            message_verbosity=3)
+    message(
+        "ell max of created modes list"
+        f"{max([item[0] for item in modes_list])}",
+        message_verbosity=4,
+    )
 
-    message("--------------------------------\n", message_verbosity=2)
-    
+    message("--------------------------------\n", message_verbosity=4)
+
     return modes_list
 
 
@@ -398,9 +402,7 @@ def load_RIT_Psi4_data_from_disk(
     from waveformtools.waveforms import modes_array
 
     if not wfa:
-        wfa = modes_array(
-            label=label, data_dir=data_dir, modes_list=modes_list
-        )
+        wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
 
     if modes_list is None:
         # Max available mode l.
@@ -412,7 +414,7 @@ def load_RIT_Psi4_data_from_disk(
             ell_max=ell_max, spin_weight=spin_weight
         )
 
-        message("The modes list is", wf_modes_list, message_verbosity=2)
+        message("The modes list is", wf_modes_list, message_verbosity=4)
 
     else:
         ell_max = max([item[0] for item in modes_list])
@@ -504,9 +506,7 @@ def load_RIT_Psi4_data_from_disk(
             ##############################
 
             Yphase = wf_psi4_file[:, 4]
-            Yphase_interp_fun = interp1d(
-                wf_psi4_time, Yphase, kind=interp_kind
-            )
+            Yphase_interp_fun = interp1d(wf_psi4_time, Yphase, kind=interp_kind)
 
             # Resample
 
@@ -1426,9 +1426,7 @@ def load_SpEC_data_from_disk(
                     wf_nl.time_axis = wf_time
                     wf_nl.data_len = len(wf_time)
 
-                wf_nl.set_mode_data(
-                    ell, emm, data=wf_data_re + 1j * wf_data_im
-                )
+                wf_nl.set_mode_data(ell, emm, data=wf_data_re + 1j * wf_data_im)
 
     if centre:
         wfa.trim(trim_upto_time=0)

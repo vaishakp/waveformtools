@@ -4,21 +4,23 @@ import numpy as np
 import math
 from waveformtools.waveformtools import message
 from waveformtools.integrate import TwoDIntegral
+from waveformtools.single_mode import SingleMode
 
 # from numba import jit, njit
 
-fact_dict = {0 : 1, 1 : 1}
+fact_dict = {0: 1, 1: 1}
+
 
 def factorial(number):
     if number not in fact_dict.keys():
-        fact_dict.update({number : factorial(number-1)*number})
+        fact_dict.update({number: factorial(number - 1) * number})
 
     return fact_dict[number]
 
 
 # @njit(parallel=True)
 def compute_fft(udata_x, delta_x):
-    """Find the FFT of the samples in time-space, 
+    """Find the FFT of the samples in time-space,
     and return with the frequencies.
 
     Parameters
@@ -139,8 +141,8 @@ def set_fft_conven(utilde_orig):
 
 # @njit(parallel=True)
 def unset_fft_conven(utilde_conven):
-    """Make an actual conventional fft 
-    consistent with numpy's conventions. 
+    """Make an actual conventional fft
+    consistent with numpy's conventions.
     The inverse of set_conv.
 
 
@@ -270,22 +272,20 @@ def Yslm(spin_weight, ell, emm, theta, phi):
 
 
 def check_Yslm_theta(theta_grid, threshold=1e-6):
-    
     theta_list = np.array(theta_grid).flatten()
 
-    locs = np.where(abs(theta_list)<threshold)
-    
+    locs = np.where(abs(theta_list) < threshold)
+
     for index in locs:
-        sign = theta_list[index]/abs(theta_list[index])
-        
-        theta_list[index] = theta_list[index] + sign*threshold
-        
+        sign = theta_list[index] / abs(theta_list[index])
+
+        theta_list[index] = theta_list[index] + sign * threshold
+
     return theta_list.reshape(np.array(theta_grid).shape)
 
 
-
 def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
-    """Spin-weighted spherical harmonics fast evaluations 
+    """Spin-weighted spherical harmonics fast evaluations
     on numpy arrays for vectorized evaluations.
 
     Parameters
@@ -311,12 +311,10 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     This is accurate upto 14 decimals for L upto 25.
     """
 
-    
     check_Yslm_args(spin_weight, ell, emm)
-    
+
     theta_grid = check_Yslm_theta(theta_grid)
-    
-    
+
     from math import comb
 
     fact = math.factorial
@@ -340,16 +338,18 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
         if (aar + abs_spin_weight - emm) < 0 or (
             ell - aar - abs_spin_weight
         ) < 0:
-            message(f"Skipping r {aar}", message_verbosity=3)
+            message(f"Skipping r {aar}", message_verbosity=4)
             continue
         else:
             term1 = comb(ell - abs_spin_weight, aar)
             term2 = comb(ell + abs_spin_weight, aar + abs_spin_weight - emm)
             term3 = np.power(float(-1), (ell - aar - abs_spin_weight))
             term4 = np.exp(1j * emm * phi_grid)
-            term5 = np.longdouble(np.power(
-                np.tan(theta_grid / 2), (-2 * aar - abs_spin_weight + emm)
-            ))
+            term5 = np.longdouble(
+                np.power(
+                    np.tan(theta_grid / 2), (-2 * aar - abs_spin_weight + emm)
+                )
+            )
             subterm = term1 * term2 * term3 * term4 * term5
 
             Sum += subterm
@@ -371,56 +371,70 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
     )
 
     value = factor * Yslmv
-    
+
     if np.isnan(np.array(value)).any():
-        
-        message("Nan discovered. Falling back to Yslm_prec on defaulted locations", message_verbosity=1)
-        
+        message(
+            "Nan discovered. Falling back to Yslm_prec on defaulted locations",
+            message_verbosity=1,
+        )
+
         nan_locs = np.where(np.isnan(np.array(value).flatten()))[0]
-        
+
         message("Nan locations", nan_locs, message_verbosity=1)
-        
-        
+
         theta_list = np.array(theta_grid).flatten()
         phi_list = np.array(phi_grid).flatten()
-        
-        message("Theta values", theta_list[nan_locs], message_verbosity=1)
-        
-        value_list = np.array(value, dtype=np.complex128).flatten()
-        
-        
-        
-        for index in nan_locs:
-            
-            replaced_value = Yslm_prec(spin_weight=spin_weight, theta=theta_list[index], phi=phi_list[index], ell=ell, emm=emm)
-            
-            value_list[index] = replaced_value
-            
-        value = np.array(value_list).reshape(theta_grid.shape)
-        
-        message("nan corrected", value, message_verbosity=1)
-        
-        if np.isnan(np.array(value)).any():
-            message("Nan re discovered. Falling back to Yslm_prec_grid", message_verbosity=1)
 
-            value = np.complex128(Yslm_prec_grid(spin_weight, ell, emm, theta_grid, phi_grid, prec=16))
+        message("Theta values", theta_list[nan_locs], message_verbosity=1)
+
+        value_list = np.array(value, dtype=np.complex128).flatten()
+
+        for index in nan_locs:
+            replaced_value = Yslm_prec(
+                spin_weight=spin_weight,
+                theta=theta_list[index],
+                phi=phi_list[index],
+                ell=ell,
+                emm=emm,
+            )
+
+            value_list[index] = replaced_value
+
+        value = np.array(value_list).reshape(theta_grid.shape)
+
+        message("nan corrected", value, message_verbosity=1)
+
+        if np.isnan(np.array(value)).any():
+            message(
+                "Nan re discovered. Falling back to Yslm_prec_grid",
+                message_verbosity=1,
+            )
+
+            value = np.complex128(
+                Yslm_prec_grid(
+                    spin_weight, ell, emm, theta_grid, phi_grid, prec=16
+                )
+            )
 
             if np.isnan(np.array(value)).any():
-
-                if (abs(np.array(theta_grid))<1e-14).any():
-                #print("!!! Warning: setting to zero manually. Please check again !!!")
-                #value = 0
-                    raise ValueError(f"Possible zero value encountered due to small theta {np.amin(theta_grid)}")
+                if (abs(np.array(theta_grid)) < 1e-14).any():
+                    # print("!!! Warning: setting to zero manually. Please check again !!!")
+                    # value = 0
+                    raise ValueError(
+                        f"Possible zero value encountered due to small theta {np.amin(theta_grid)}"
+                    )
 
                 else:
-                    raise ValueError("Although theta>1e-14, couldnt compute Yslm. Please check theta")
-                
-    return value 
+                    raise ValueError(
+                        "Although theta>1e-14, couldnt compute Yslm. Please check theta"
+                    )
+
+    return value
 
 
 def Yslm_prec_grid(spin_weight, ell, emm, theta_grid, phi_grid, prec=24):
     """Spin-weighted spherical harmonics function with precise computations
-    on an angular grid. Uses a symbolic method evaluated at the degree 
+    on an angular grid. Uses a symbolic method evaluated at the degree
     of precision requested by the user.
 
     Parameters
@@ -445,26 +459,27 @@ def Yslm_prec_grid(spin_weight, ell, emm, theta_grid, phi_grid, prec=24):
                The value of Yslm at the grid
                :math:`\\theta, phi'.
     """
-        
-    
+
     theta_grid_1d, phi_grid_1d = theta_grid.flatten(), phi_grid.flatten()
     from itertools import zip_longest
-    
+
     ang_set = zip_longest(theta_grid_1d, phi_grid_1d)
-    
-    Yslm_vals = np.array([Yslm_prec(spin_weight=spin_weight, 
-                                        theta=thetav, 
-                                        phi=phiv, 
-                                        ell=ell, 
-                                        emm=emm, 
-                                        prec=prec) 
-                              for thetav,phiv 
-                              in ang_set]).reshape(theta_grid.shape)
-    
-    
+
+    Yslm_vals = np.array(
+        [
+            Yslm_prec(
+                spin_weight=spin_weight,
+                theta=thetav,
+                phi=phiv,
+                ell=ell,
+                emm=emm,
+                prec=prec,
+            )
+            for thetav, phiv in ang_set
+        ]
+    ).reshape(theta_grid.shape)
 
     return Yslm_vals
-
 
 
 def Yslm_prec(spin_weight, ell, emm, theta, phi, prec=24):
@@ -513,7 +528,7 @@ def Yslm_prec(spin_weight, ell, emm, theta, phi, prec=24):
 
 
 def Yslm_prec_sym(spin_weight, ell, emm):
-    """Spin-weighted spherical harmonics precise, 
+    """Spin-weighted spherical harmonics precise,
     symbolic computation for deferred evaluations.
     Is dependent on variables th: theta and ph:phi.
 
@@ -655,9 +670,7 @@ def CheckRegReq(data):
     check_reg = [0, 0]
 
     toln = int(nlen / 10)
-    if (
-        np.argmax(np.absolute(first_half)) <= toln
-    ):  # Added tolerence Apr 8 2023
+    if np.argmax(np.absolute(first_half)) <= toln:  # Added tolerence Apr 8 2023
         check_reg[0] = 1
 
     if np.argmax(np.absolute(second_half)) >= nrlen - toln:  # Here as well
@@ -707,16 +720,19 @@ def SHExpand(
             The modes as a dictionary whose keys are lm.
     """
 
-    if info.grid_type=='GL':
-        assert(method_info.ell_max==info.L, "The GL grid L must be same"
-               "as ell_max of requested expansion")
-    
+    if info.grid_type == "GL":
+        assert method_info.ell_max == info.L, (
+            "The GL grid L must be same" " as ell_max of requested expansion"
+        )
+
     if auto_ell_max:
-        message("Using SHExpandAuto: "
-                " Will automatically find optimal "
-                " ell_max", 
-                message_verbosity=2)
-        
+        message(
+            "Using SHExpandAuto: "
+            " Will automatically find optimal "
+            " ell_max",
+            message_verbosity=2,
+        )
+
         results = SHExpandAuto(
             func,
             info,
@@ -728,11 +744,13 @@ def SHExpand(
         )
 
     else:
-        message("Using ShExpandSimple:"
-                " Expanding upto user prescribed"
-                f" ell_max {method_info.ell_max}", 
-                message_verbosity=2)
-        
+        message(
+            "Using ShExpandSimple:"
+            " Expanding upto user prescribed"
+            f" ell_max {method_info.ell_max}",
+            message_verbosity=2,
+        )
+
         results = SHExpandSimple(
             func, info, method_info, err_info, reg=reg, reg_order=reg_order
         )
@@ -744,7 +762,7 @@ def SHRegularize(func, theta_grid, check_reg, order=1):
     """Regularize an SH expansion"""
 
     reg_func = func.copy()
-    
+
     if bool(check_reg[0]):
         message("Regularizing north end ", message_verbosity=2)
         reg_func *= (theta_grid) ** order
@@ -778,14 +796,14 @@ def SHExpandAuto(
     res_tol_percent=3,
     reg=False,
     reg_order=1,
-    check_reg=None
+    check_reg=None,
 ):
     """Expand a given function in spin weight 0 spherical harmonics
     upto an optimal :math:`\\ell \\leq \\ell_{max}` that is
-    automatically found. 
-    
+    automatically found.
+
     Additionally, if requested, this routine can:
-    
+
     1. regularize a function and expand and return the
        modes of the regularized function and the associated
        regularization details.
@@ -821,22 +839,22 @@ def SHExpandAuto(
     -------
     modes : dict
             The modes as a dictionary whose keys are lm.
-            
-            
+
+
     Notes
     -----
     When regularization is requested,
-        1. To compute the total RMS deviation, 
+        1. To compute the total RMS deviation,
            the orginal form is used.
         2. To compute the rms deviation per mode,
            regularized expression is used.
-     
+
     """
-    
+
     #####################
     # Prepare
     #####################
-    
+
     orig_func = func.copy()
 
     # from scipy.special import sph_harm
@@ -847,23 +865,21 @@ def SHExpandAuto(
     ell_max = method_info.ell_max
     method = method_info.int_method
 
-    from waveformtools.single_mode import SingleMode
+    # from waveformtools.single_mode import SingleMode
 
     modes = {}
 
-    #if method != "GL":
+    # if method != "GL":
     #    SinTheta = np.sin(theta_grid)
-    #else:
+    # else:
     #    SinTheta = 1
 
     #####################
-    
-    
+
     ####################
     # Regularize
     ####################
     if reg:
-        
         if check_reg is None:
             check_reg = CheckRegReq(func)
 
@@ -872,30 +888,27 @@ def SHExpandAuto(
             func = SHRegularize(func, theta_grid, check_reg, order=reg_order)
 
     #####################
-    
-    
+
     #################
     # Zeroth residue
     #################
-    
+
     recon_func = np.zeros(func.shape, dtype=np.complex128)
 
     # The first residue is the maximum residue
     # with zero as reconstructed function
-    res1 = np.sqrt(np.mean(np.absolute(func - recon_func)**2))
+    res1 = np.sqrt(np.mean(np.absolute(func - recon_func) ** 2))
 
     # The list holding all residues
     all_res = [res1]
 
     #################
-    
-    
+
     #######################
     # Expand
     #######################
-    
-    for ell in range(ell_max + 1):
 
+    for ell in range(ell_max + 1):
         emm_list = np.arange(-ell, ell + 1)
 
         emmCoeffs = {}
@@ -922,45 +935,45 @@ def SHExpandAuto(
 
             emmCoeffs.update({f"m{emm}": Clm})
 
-        
-
         if ell % 2 == 0:
-            res2 = np.sqrt(np.mean(np.absolute(func - recon_func)**2))
-            
+            res2 = np.sqrt(np.mean(np.absolute(func - recon_func) ** 2))
+
             dres_percent = 100 * (res2 / res1 - 1)
 
             if dres_percent > res_tol_percent:
-                
                 all_res.append(res2)
                 message(
-                        f" ell_max residue increase error of {dres_percent} %", message_verbosity=1
+                    f" ell_max residue increase error of {dres_percent} %",
+                    message_verbosity=1,
                 )
-                
+
                 ell_max = ell - 1
-                message("Auto setting ell max to {ell_max} instead", ell_max, message_verbosity=1)
+                message(
+                    "Auto setting ell max to {ell_max} instead",
+                    ell_max,
+                    message_verbosity=1,
+                )
                 break
-                
+
             else:
                 res1 = res2
                 all_res.append(res1)
 
-        elif ell==ell_max:
-            res2 = np.sqrt(np.mean(np.absolute(func - recon_func)**2))
+        elif ell == ell_max:
+            res2 = np.sqrt(np.mean(np.absolute(func - recon_func) ** 2))
             all_res.append(res2)
-            
+
         modes.update({f"l{ell}": emmCoeffs})
 
     ############################
-    
-    
+
     #################################
     # update details
     #################################
-    
+
     result = SingleMode(modes_dict=modes)
     result._Grid = info
 
-    
     if reg:
         result.reg_order = reg_order
         result.reg_details = check_reg
@@ -978,17 +991,17 @@ def SHExpandAuto(
         # Compute total RMS deviation
         # of the expansion
         ###############################
-        
+
         if reg:
             if np.array(check_reg).any() > 0:
-                message("De-regularizing function"
-                        "for RMS deviation computation", 
-                        message_verbosity=2)
-                
-                recon_func = SHDeRegularize(recon_func, 
-                                            theta_grid, 
-                                            check_reg, 
-                                            order=reg_order)
+                message(
+                    "De-regularizing function" "for RMS deviation computation",
+                    message_verbosity=2,
+                )
+
+                recon_func = SHDeRegularize(
+                    recon_func, theta_grid, check_reg, order=reg_order
+                )
 
         Rerr, Amin, Amax = RMSerrs(orig_func, recon_func, info)
         err_info_dict = {"RMS": Rerr, "Amin": Amin, "Amax": Amax}
@@ -996,39 +1009,44 @@ def SHExpandAuto(
         ############################
         # Update error details
         ############################
-        
+
         result.error_info = err_info_dict
         result.residuals = all_res
 
         even_mode_nums = np.arange(0, ell_max, 2)
-        
+
         residual_axis = [-1] + list(even_mode_nums)
-        
-        if ell_max%2==1:
+
+        if ell_max % 2 == 1:
             residual_axis += [ell_max]
-            
+
         result.residual_axis = residual_axis
-        
-        
+
         if Rerr > 0.1:
             message(
                 f"Residue warning {Rerr}!  Inaccurate representation.",
                 message_verbosity=0,
             )
-    
+
     #####################################
-    
+
     return result
 
 
 def SHExpandSimple(
-    func, info, method_info, err_info=False, reg=False, reg_order=1, check_reg=None
+    func,
+    info,
+    method_info,
+    err_info=False,
+    reg=False,
+    reg_order=1,
+    check_reg=None,
 ):
     """Expand a given function in spin weight 0 spherical harmonics
     upto a user prescribed :math:`\\ell_{max}`.
-    
+
     Additionally, if requested, this routine can:
-    
+
     1. regularize a function and expand and return the
        modes of the regularized function and the associated
        regularization details.
@@ -1062,43 +1080,45 @@ def SHExpandSimple(
                 that depicts whether or not to
                 regularize the input function
                 at the poles.
-                
+
     Returns
     -------
     modes : dict
             The modes as a dictionary whose keys are lm.
-            
+
     Notes
     -----
     When regularization is requested,
-        1. To compute the total RMS deviation, 
+        1. To compute the total RMS deviation,
            the orginal form is used.
         2. To compute the rms deviation per mode,
            regularized expression is used.
-           
-           
+
+
     """
     # from scipy.special import sph_harm
     import sys
 
-    from waveformtools.single_mode import SingleMode
+    # from waveformtools.single_mode import SingleMode
 
     orig_func = func.copy()
 
     theta_grid, phi_grid = info.meshgrid
 
     ell_max = method_info.ell_max
-    
-    method = method_info.int_method
-    
-    message(f"SHExpandSimple: expansion ell max is {ell_max}", message_verbosity=3)
-    
-    # Good old Modes dict
-    #modes = {}
 
-    #if method != "GL":
+    method = method_info.int_method
+
+    message(
+        f"SHExpandSimple: expansion ell max is {ell_max}", message_verbosity=3
+    )
+
+    # Good old Modes dict
+    # modes = {}
+
+    # if method != "GL":
     #    SinTheta = np.sin(theta_grid)
-    #else:
+    # else:
     #    SinTheta = 1
 
     if reg:
@@ -1110,20 +1130,19 @@ def SHExpandSimple(
             func = SHRegularize(func, theta_grid, check_reg, order=reg_order)
 
     result = SingleMode(ell_max=ell_max)
-    
-    recon_func = np.zeros(func.shape, dtype=np.complex128)
-    
-    res1 = np.sqrt(np.mean(np.absolute(func - recon_func)**2))
-    
-    all_res = [res1]
-    
-    for ell in range(ell_max + 1):
 
+    recon_func = np.zeros(func.shape, dtype=np.complex128)
+
+    res1 = np.sqrt(np.mean(np.absolute(func - recon_func) ** 2))
+
+    all_res = [res1]
+
+    for ell in range(ell_max + 1):
         emm_list = np.arange(-ell, ell + 1)
-    
+
         # Subdict of modes
-        #emmCoeffs = {}
-        
+        # emmCoeffs = {}
+
         for emm in emm_list:
             Ylm = Yslm_vec(
                 spin_weight=0,
@@ -1144,23 +1163,22 @@ def SHExpandSimple(
             Clm = TwoDIntegral(integrand, info, method=method)
 
             recon_func += Clm * Ylm
-            
-            #emmCoeffs.update({f"m{emm}": Clm})
-            #print(Clm)
-            #message("Clm ", Clm, message_verbosity=2)
-            
-            result.set_mode_data(ell, emm, Clm)
-            
-        res = np.sqrt(np.mean(np.absolute(func - recon_func)**2))
-        all_res.append(res)
-            
-        #modes.update({f"l{ell}": emmCoeffs})
 
-    #result2 = SingleMode(modes_dict=modes)
-    
-    #message(f"result2 ell max {result2.ell_max}", message_verbosity=1)
-    
-    
+            # emmCoeffs.update({f"m{emm}": Clm})
+            # print(Clm)
+            # message("Clm ", Clm, message_verbosity=2)
+
+            result.set_mode_data(ell, emm, Clm)
+
+        res = np.sqrt(np.mean(np.absolute(func - recon_func) ** 2))
+        all_res.append(res)
+
+        # modes.update({f"l{ell}": emmCoeffs})
+
+    # result2 = SingleMode(modes_dict=modes)
+
+    # message(f"result2 ell max {result2.ell_max}", message_verbosity=1)
+
     result._Grid = info
 
     if reg:
@@ -1178,16 +1196,15 @@ def SHExpandSimple(
 
         if reg:
             if np.array(check_reg).any() > 0:
-                message("De-regularizing function"
-                        " for total RMS deviation"
-                        " computation", 
-                        message_verbosity=2)
-                
+                message(
+                    "De-regularizing function"
+                    " for total RMS deviation"
+                    " computation",
+                    message_verbosity=2,
+                )
+
                 recon_func = SHDeRegularize(
-                    recon_func, 
-                    theta_grid, 
-                    check_reg, 
-                    order=reg_order
+                    recon_func, theta_grid, check_reg, order=reg_order
                 )
 
         Rerr, Amin, Amax = RMSerrs(orig_func, recon_func, info)
@@ -1195,15 +1212,15 @@ def SHExpandSimple(
 
         result.error_info = err_info_dict
         result.residuals = all_res
-        result.residual_axis = np.arange(-1, ell_max+1) 
-        
+        result.residual_axis = np.arange(-1, ell_max + 1)
+
         if Rerr > 0.1:
             message("Residue warning!", message_verbosity=0)
 
     return result
 
 
-def SHContract(modes, info, ell_max=None):
+def SHContract(modes, info=None, ell_max=None):
     """Reconstruct a function on a grid given its SH modes.
 
     Parameters
@@ -1219,23 +1236,26 @@ def SHContract(modes, info, ell_max=None):
     recon_func : ndarray
                  The reconstructed grid function.
     """
-    from waveformtools.single_mode import SingleMode
-    
-    if isinstance(modes, SingleMode):
-        message("SingleMode obj input. Converting to modes dictionary", message_verbosity=2)
-        modes = modes.get_modes_dict()
-        
-        if not ell_max:
-            ell_max = modes.ell_max
-            
-    message(f"Modes in SHContract {modes}", message_verbosity=3)
-    
-    #print(modes)
+
+    # if isinstance(modes, SingleMode):
+    # message("SingleMode obj input. Converting to modes dictionary", message_verbosity=3)
+
+    # modes = modes.get_modes_dict()
+    if info is None:
+        info = modes.Grid
+
+    if ell_max is None:
+        ell_max = modes.ell_max
+
+    # message(f"Modes in SHContract {modes}", message_verbosity=4)
+
+    # print(modes)
     from waveformtools.waveforms import construct_mode_list
 
     # Construct modes list
-
     modes_list = construct_mode_list(ell_max=ell_max, spin_weight=0)
+
+    message(f"Modes list in SHContract {modes_list}", message_verbosity=4)
 
     theta_grid, phi_grid = info.meshgrid
 
@@ -1243,11 +1263,11 @@ def SHContract(modes, info, ell_max=None):
 
     for ell, emm_list in modes_list:
         for emm in emm_list:
-            
-            Clm = modes[f"l{ell}"][f"m{emm}"]
-            
-            message(f"Clm shape in SHContract {Clm.shape}", message_verbosity=3)
-            
+            # Clm = modes[f"l{ell}"][f"m{emm}"]
+
+            Clm = modes.mode(ell, emm)
+            message(f"Clm shape in SHContract {Clm.shape}", message_verbosity=4)
+
             recon_func += Clm * Yslm_vec(
                 spin_weight=0,
                 ell=ell,

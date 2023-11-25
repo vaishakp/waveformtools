@@ -23,23 +23,23 @@ from recommonmark.parser import CommonMarkParser
 
 # Load the package into pythonpath
 cwd = os.getcwd()
-print('CurrWD', cwd)
+print("CurrWD", cwd)
 
-pack_path = cwd+'/../../'
+pack_path = cwd + "/../../"
 sys.path.append(pack_path)
 
-print('Pythonpath:', sys.path)
-#with open('../../public/date.txt', 'r') as f:
+print("Pythonpath:", sys.path)
+# with open('../../public/date.txt', 'r') as f:
 #    proj_vers = f.readline()
 
 # Fetch the latest commit version
-dvers = os.popen('git log -1 --date=short | grep Date').read()
+dvers = os.popen("git log -1 --date=short | grep Date").read()
 
-print('Date fetched', dvers)
-print('Version string', dvers[8:-1])
+print("Date fetched", dvers)
+print("Version string", dvers[8:-1])
 proj_vers = dvers
-print('Parsed version:', proj_vers)
-waveformtools_version = proj_vers#get_version()
+print("Parsed version:", proj_vers)
+waveformtools_version = proj_vers  # get_version()
 
 # -- Project information -----------------------------------------------------
 
@@ -62,14 +62,14 @@ extensions = [
     "sphinx.ext.autosummary",
     "numpydoc",
     "sphinx.ext.doctest",
-#    "sphinx.ext.intersphinx",
+    #    "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
     "sphinx.ext.mathjax",
     "sphinx.ext.ifconfig",
     "sphinx.ext.viewcode",
-#    "sphinx.ext.imgmath",
-#    "myst_parser"
-	"recommonmark"
+    #    "sphinx.ext.imgmath",
+    #    "myst_parser"
+    "recommonmark",
 ]
 
 
@@ -79,15 +79,19 @@ autodoc_docstring_signature = True
 if sphinx.version_info < (1, 8):
     autodoc_default_flags = ["members", "undoc-members"]
 else:
-    autodoc_default_options = {"members": None, "undoc-members": None, "special-members": "__call__"}
+    autodoc_default_options = {
+        "members": None,
+        "undoc-members": None,
+        "special-members": "__call__",
+    }
 
 # -- Try to auto-generate numba-decorated signatures -----------------
 
-#import numba
+# import numba
 import inspect
 
 
-#def process_numba_docstring(app, what, name, obj, options, signature, return_annotation):
+# def process_numba_docstring(app, what, name, obj, options, signature, return_annotation):
 #    if type(obj) is not numba.core.registry.CPUDispatcher:
 #        return (signature, return_annotation)
 #    else:
@@ -102,7 +106,7 @@ import inspect
 #        return (str(orig_sig), ret_ann)
 
 
-#def setup(app):
+# def setup(app):
 #    app.connect("autodoc-process-signature", process_numba_docstring)
 
 
@@ -137,7 +141,7 @@ else:
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
-#html_style = 'css/my_theme.css'
+# html_style = 'css/my_theme.css'
 
 html_theme_options = {
     "analytics_id": "G-XXXXXXXXXX",  #  Provided by Google in your dashboard
@@ -148,7 +152,7 @@ html_theme_options = {
     #'style_external_links': False,
     #'vcs_pageview_mode': '',
     "style_nav_header_background": "blue",
-#	"body_max_width" : "70%"
+    # 	"body_max_width" : "70%"
     # Toc options
     #'collapse_navigation': True,
     #'sticky_navigation': True,

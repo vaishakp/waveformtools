@@ -177,9 +177,7 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
     # print(x_data, y_data)
     cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)
 
-    message(
-        "\n CS derivative Result\n", result, result[0], message_verbosity=4
-    )
+    message("\n CS derivative Result\n", result, result[0], message_verbosity=4)
 
     res = result[0][0]
 
@@ -706,22 +704,24 @@ def differentiate5(data, delta_t):
 
 
 def differentiate5_vec_nonumba(data, delta_t):
-    """Eleven point difference derivative calculator. Not accurate near the boundaries.
+    """Eleven point difference derivative calculator
+    for data on a sphere.
+
+    Not accurate near the boundaries.
 
 
     Parameters
     ----------
+    data:	3d array
+            The axis order being (theta, phi, time)
 
-    data:	1d array
-                                    The 1d data.
-    delta_t:	float
-                                                    The time step in t/M.
+    delta_t: float
+             The time step in t/M.
 
     Returns
     -------
-
-    dAdt:	1d array
-                                    The derivative of the data.
+    dAdt: 3d array
+          The derivative of the data.
 
     """
 

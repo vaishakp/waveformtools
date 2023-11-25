@@ -7,28 +7,28 @@ with open("README.md", "r") as fh:
 
 
 def get_requirements():
-    ''' Get the requirement libraries '''
-    with open('requirements.txt') as freq:
+    """Get the requirement libraries"""
+    with open("requirements.txt") as freq:
         rlines = freq.readlines()
         # print(rlines)
         mreq = rlines[2:]
 
-    with open('optional-requirements.txt') as foreq:
+    with open("optional-requirements.txt") as foreq:
         rlines = foreq.readlines()
 
         oreq = rlines[2:]
 
     return mreq, oreq
 
+
 # This is deprecatred. Will read
 # requiremnts directly from toml
 # mreq, oreq = get_requirements()
 
 
-
 setuptools.setup(
     name="waveformtools",
- 	version="2023.10.23",
+    version="2023.10.23",
     author="Vaishak Prasad",
     author_email="vaishakprasad@gmail.com",
     description="Functions for handling waveform and numerical relativity data",
@@ -42,19 +42,16 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3",
-    )
+)
 
 #
 # Alternate preparation of pyproject
-#with open("pyproject.toml", 'r') as file:
+# with open("pyproject.toml", 'r') as file:
 
 #    all_data = file.readlines()
 
-#for num, line in enumerate(all_data):
+# for num, line in enumerate(all_data):
 #        break
 
-#with open("pyproject.toml", "w") as file:
+# with open("pyproject.toml", "w") as file:
 #    file.writelines(all_data)
-
-
-

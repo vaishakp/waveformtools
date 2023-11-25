@@ -73,9 +73,9 @@ def X_com_moments(time_axis, Xcom, order):
 
 
 def compute_com_alpha(time_i, time_f, Xcom_0, Xcom_1):
-    """Computes the CoM correction alpha parameter: 
+    """Computes the CoM correction alpha parameter:
     the mean displacement of the system,
-    of the COM correction as defined in 
+    of the COM correction as defined in
     Woodford et al. 2019 (Phys. Rev. D 100, 124010).
 
     Parameters

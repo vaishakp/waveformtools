@@ -156,14 +156,16 @@ def TwoDIntegral(func, info, method=None):
     # hp = info.dphi
 
     if method is None:
-        if info.grid_type=='GL':
-            method = 'GL'
-        elif info.grid_type=='Uniform':
-            method='MP'
+        if info.grid_type == "GL":
+            method = "GL"
+        elif info.grid_type == "Uniform":
+            method = "MP"
         else:
-            raise KeyError("Unable to discern default integration"
-                    "method due to unknown grid type. Please provide" 
-                    "method explicitely")
+            raise KeyError(
+                "Unable to discern default integration"
+                "method due to unknown grid type. Please provide"
+                "method explicitely"
+            )
 
     if method == "DH":
         integral = DriscollHealy2DInteg(func, info)
@@ -229,7 +231,7 @@ def DriscollHealy2DInteg(func, info):
 
     # NTheta, NPhi = func.shape
     theta_grid, _ = info.meshgrid
-    
+
     ht = info.dtheta
     hp = info.dphi
 
@@ -242,61 +244,59 @@ def DriscollHealy2DInteg(func, info):
         raise ValueError("NTheta must be even!")
 
     integrand_sum = 0.0
-    
-    func*=np.sin(theta_grid)
-    
+
+    func *= np.sin(theta_grid)
+
     # Skip the poles (ix=0 and ix=NTheta), as the weight there is zero
-    
-    #theta_1d = np.pi* np.arange(1, NTheta)/NTheta
-    #ell_weight_axis = np.arange(int(NTheta/2))
-    
-    #theta_2d, ell_2d = np.meshgrid(theta_1d, ell_weight_axis)
-    
-    
-    #weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / (2 * ell_2d + 1)
-    
-    #weights_axis = np.sum(weights_grid, axis=1)
-    
-    #latitude_sum_axis = np.sum(func, axis=1)
-    
-    
-    #integrand_axis = latitude_sum_axis * weights_axis
-    
-    
+
+    # theta_1d = np.pi* np.arange(1, NTheta)/NTheta
+    # ell_weight_axis = np.arange(int(NTheta/2))
+
+    # theta_2d, ell_2d = np.meshgrid(theta_1d, ell_weight_axis)
+
+    # weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / (2 * ell_2d + 1)
+
+    # weights_axis = np.sum(weights_grid, axis=1)
+
+    # latitude_sum_axis = np.sum(func, axis=1)
+
+    # integrand_axis = latitude_sum_axis * weights_axis
+
     for theta_index in range(1, NTheta):
         # These weights lead to an almost spectral convergence
         this_theta = np.pi * index_theta / NTheta
-        
-        #this_theta = theta_1d[theta_index]
-        
+
+        # this_theta = theta_1d[theta_index]
+
         weight = 0
-        
+
         # theta = M_PI * ix / NTheta;
         # weight = 0.0;
         for ell in range(int(NTheta / 2)):
-            #for (int l = 0; l < NTheta/2; ++ l)
+            # for (int l = 0; l < NTheta/2; ++ l)
             weight += np.sin((2 * ell + 1) * this_theta) / (2 * ell + 1)
-        
-        #weight_axis = np.sin((2 * ell_weight_axis + 1) * this_theta) / (2 * ell_weight_axis + 1)
-        
+
+        # weight_axis = np.sin((2 * ell_weight_axis + 1) * this_theta) / (2 * ell_weight_axis + 1)
+
         weight *= 4.0 / np.pi
         latitude_sum = 0
-        
+
         # local_sum = 0.0;
         # Skip the last point (iy=NPhi), since we assume periodicity and
         # therefore it has the same value as the first point. We don't use
         # weights in this direction, which leads to spectral convergence.
         # (Yay periodicity!)
-        
+
         for index_phi in range(NPhi):
             # for (int iy = 0; iy < NPhi; ++ iy)
             latitude_sum += func[index_theta, index_phi]
-        
-        #latitude_sum = np.sum(func[index_theta, :])
-        
+
+        # latitude_sum = np.sum(func[index_theta, :])
+
         integrand_sum += weight * latitude_sum
 
     return ht * hp * integrand_sum
+
 
 def DriscollHealy2DInteg_v2(func, info):
     """Implementation of the Driscoll Healy 2D integration that
@@ -323,7 +323,7 @@ def DriscollHealy2DInteg_v2(func, info):
 
     # NTheta, NPhi = func.shape
     theta_grid, _ = info.meshgrid
-    
+
     ht = info.dtheta
     hp = info.dphi
 
@@ -336,32 +336,34 @@ def DriscollHealy2DInteg_v2(func, info):
         raise ValueError("NTheta must be even!")
 
     integrand_sum = 0.0
-    
-    #func*=np.sin(theta_grid)
-    
+
+    # func*=np.sin(theta_grid)
+
     # Skip the poles (ix=0 and ix=NTheta), as the weight there is zero
-    
-    theta_1d = np.pi* np.arange(1, NTheta)/NTheta
-    ell_weight_axis = np.arange(int(NTheta/2))
-    
+
+    theta_1d = np.pi * np.arange(1, NTheta) / NTheta
+    ell_weight_axis = np.arange(int(NTheta / 2))
+
     print("theta 1d", len(theta_1d))
     print("ell axis", len(ell_weight_axis))
-    
+
     theta_2d, ell_2d = np.meshgrid(theta_1d, ell_weight_axis)
     print("T2d", theta_2d.shape)
-    
-    weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / (2 * ell_2d + 1)
-    
+
+    weights_grid = (
+        (4 / np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / (2 * ell_2d + 1)
+    )
+
     print("WG", weights_grid.shape)
-    
+
     weights_axis = np.sum(weights_grid, axis=1)
     print("WG", weights_axis.shape)
-    
+
     latitude_sum_axis = np.sum(func, axis=1)
     print("LSA", latitude_sum_axis.shape)
-    
+
     integrand_axis = latitude_sum_axis * weights_axis
-    
+
     integrand_sum = np.sum(integrand_axis)
 
     return ht * hp * integrand_sum
@@ -408,8 +410,8 @@ def Simpson2DInteg(func, info):
     Px = int(NTheta / 2)
     Py = int(NPhi / 2)
 
-    func*=np.sin(theta_grid)
-    
+    func *= np.sin(theta_grid)
+
     # Around corners
     integrand_sum += (
         func[0, 0]
@@ -497,13 +499,15 @@ def GaussLegendre2DInteg(func, info):
 
     # theta_grid, _ = info.meshgrid
     # Norm = 1#(info.L +1)/4
-    #if len(func.shape)==2:
-        #integral = np.sum(func * info.weights_grid) * info.dphi
-    #print("Shape", func.shape, info.weights_grid.shape)
+    # if len(func.shape)==2:
+    # integral = np.sum(func * info.weights_grid) * info.dphi
+    # print("Shape", func.shape, info.weights_grid.shape)
 
-    integral = np.tensordot(func, info.weights_grid, axes=((0, 1), (0, 1))) * info.dphi
+    integral = (
+        np.tensordot(func, info.weights_grid, axes=((0, 1), (0, 1))) * info.dphi
+    )
 
-    #elif len(func.shape)==3:
+    # elif len(func.shape)==3:
     #    integral = np.tensordot()
 
     return integral

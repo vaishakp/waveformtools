@@ -5,31 +5,36 @@ from datetime import date
 
 source_directory = os.path.dirname(os.path.abspath(__file__))
 
-#print(source_directory)
+# print(source_directory)
+
 
 def write_git_version():
     """Write the latest version number based on the last commit date
-    to the public folder and to __init__.py file """
+    to the public folder and to __init__.py file"""
 
     # print(package_directory)
     # Open the file
     # Get the version
     # vers = os.popen(f'git -C {source_directory} log -1 --date=short | grep Date').read()[8:-1]
     vers = str(date.today())
-    vers = vers.replace('-', '.')
+    vers = vers.replace("-", ".")
 
     # Write to public/version
-    with open(source_directory+'/public/version', 'w') as vers_file:
+    with open(source_directory + "/public/version", "w") as vers_file:
         vers_file.writelines([vers])
 
     # write to __init__.py
-    ee = os.popen(f"sed -i '/__version__/c\__version__ = \"{vers}\"' {source_directory}/waveformtools/__init__.py")
-    #with open(package_directory+'/waveformtools/__init__.py', 'r') as init_file:
-    #with open(package_directory + "/../public/date.txt", "r") as vers_file:
-        #vers = vers_file.read()[:10]
+    ee = os.popen(
+        f"sed -i '/__version__/c\__version__ = \"{vers}\"' {source_directory}/waveformtools/__init__.py"
+    )
+    # with open(package_directory+'/waveformtools/__init__.py', 'r') as init_file:
+    # with open(package_directory + "/../public/date.txt", "r") as vers_file:
+    # vers = vers_file.read()[:10]
 
-    ee = os.popen(f"sed -i '/version/c\ \tversion=\"{vers}\",' {source_directory}/setup.py")
-    print('Version', vers)
+    ee = os.popen(
+        f"sed -i '/version/c\ \tversion=\"{vers}\",' {source_directory}/setup.py"
+    )
+    print("Version", vers)
 
     # Generate badge
     badge = f"""<svg width="140" height="20" xmlns="http://www.w3.org/2000/svg">
@@ -47,4 +52,3 @@ def write_git_version():
 
 
 write_git_version()
-
