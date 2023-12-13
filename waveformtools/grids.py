@@ -118,7 +118,7 @@ class UniformGrid:
                    The coordinate(s) :math:`\\theta` on the sphere.
         """
 
-        if np.array(theta_index).all() is np.array(None):
+        if np.array(theta_index).all() == np.array(None):
             theta_index = np.arange(self.nghosts, self.ntheta - self.nghosts)
 
         return (
@@ -146,7 +146,7 @@ class UniformGrid:
 
         """
 
-        if np.array(phi_index).all() is np.array(None):
+        if np.array(phi_index).all() == np.array(None):
             phi_index = np.arange(self.nghosts, self.nphi - self.nghosts)
 
         return (

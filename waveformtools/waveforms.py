@@ -1508,7 +1508,7 @@ class modes_array:
         emm_index = emm_value + ell_value
 
         if self.extra_mode_axis_len > 1:
-            if r_value is None:
+            if r_index is None:
                 try:
                     # Set the mode data.
                     self._modes_data[ell_value, emm_index, :, :] = data
