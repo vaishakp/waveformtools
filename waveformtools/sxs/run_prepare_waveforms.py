@@ -27,6 +27,7 @@ A script to use PrepareSXSWaveforms class.
 
 # import scri
 # import numpy as np
+
 from waveformtools.prepare_waveforms import PrepareSXSWaveform
 
 # sims1 = ['ICTSEccParallel01', 'ICTSEccParallel02', 'ICTSEccParallel03']

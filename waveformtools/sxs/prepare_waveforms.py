@@ -37,6 +37,106 @@ import scri
 import numpy as np
 from pathlib import Path
 
+class DiscoverWaveforms:
+    """ Discover simulations and waveforms 
+    that havent been processed yet. 
+    
+    Attributes
+    ----------
+
+
+    Methods
+    -------
+
+    """
+
+    def __init__(self,
+                 search_dir,
+                 history_file):
+        
+        self._search_dir = search_dir
+        self._history_file = history_file
+        
+        self._sim_dirs = []
+        self._done_sims = []
+        self._done_sims_full_path = []
+        
+    @property
+    def search_dir(self):
+        return self._search_dir
+    
+    @property
+    def history_file(self):
+        return self._history_file
+    
+    @property
+    def done_sims(self):
+        return self._done_sims
+
+    @property
+    def done_sims_full_path(self):
+        return self._done_sims_full_path
+    
+    @property
+    def sim_dirs(self):
+        return self._sim_dirs
+
+    @property
+    def sim_names(self):
+        return self._sim_names    
+
+    @property
+    def sims_to_be_processed(self):
+
+        return self._sims_to_be_processed
+    
+    
+    def parse_simulations(self):
+
+        sims_in_search_dir = os.listdir(self.search_dir)
+
+        self._sim_names = [ name for name in os.listdir(self.search_dir) if os.path.isdir(os.path.join(self.search_dir, name)) ]
+
+
+    def read_history(self):
+        
+        done_sims_full_path = []
+        done_sims = []
+
+        line=None
+
+        with open(self.history_file, 'r') as th:
+            
+            while line!='':
+                line = th.readline()
+                done_sims.append(line)
+                done_sims_full_path.append(self.search_dir.joinpath(Path(line.replace('\n', ''))))
+
+        done_sims_full_path = done_sims_full_path[:-1]
+        done_sims = done_sims[:-1]
+
+        self._done_sims = done_sims
+        self._done_sims_full_path = done_sims_full_path
+
+    def compute_sims_to_be_processed(self):
+
+        sims_to_be_processed = []
+
+        for item in self.sim_names:
+            
+            if item not in self.done_sims:
+
+                sims_to_be_processed.append(item)
+
+        self._sims_to_be_processed = sims_to_be_processed
+
+    def discover(self):
+
+        self.parse_simulations()
+
+        self.read_history()
+
+
 
 class PrepareSXSWaveform:
     """Prepare waveforms from a particular Lev and ECC of
@@ -64,8 +164,6 @@ class PrepareSXSWaveform:
     ecc
     extrap_out_dir
 
-
-
     Methods
     -------
     join_waveform_h5_files
@@ -74,14 +172,12 @@ class PrepareSXSWaveform:
     transform_to_CoM_frame
     upload_output_dir
     prepare_waveform
-
-
-
     """
 
     def __init__(
         self,
         sim_name,
+        history_file=Path("./history_file.txt"),
         sim_dir=Path("./"),
         out_dir=None,
         joined_waveform_outfile_name=None,
@@ -97,6 +193,7 @@ class PrepareSXSWaveform:
         self._sim_name = sim_name
         self._lev = lev
         self._ecc = ecc
+        self._history_file = history_file
 
         if joined_waveform_outfile_name is None:
             print("Choosing default directory for output...")
@@ -188,6 +285,10 @@ class PrepareSXSWaveform:
     def extrap_out_dir(self):
         return os.path.join(self.out_dir, Path("extrapolated"))
 
+    @property
+    def history_file(self):
+        return self._history_file
+    
     def join_waveform_h5_files(self, verbose=False):
         """Join the waveform h5 files"""
 
@@ -407,3 +508,13 @@ class PrepareSXSWaveform:
         print("\n--------------------------------------------------------\n")
 
         return True
+
+    def write_history(self):
+
+        with open(self.history_file, 'a') as th:
+    
+            for item in dirs:
+                th.write(item)
+                th.write('\n')
+        
+        #th.write('EOF')

@@ -725,13 +725,9 @@ def differentiate5_vec_nonumba(data, delta_t):
 
     """
 
-    # import pdb
-    # pdb.set_trace()
-
     data = np.transpose(data, (2, 0, 1))
     der_data = np.zeros(data.shape, dtype=np.complex128)
 
-    # aax = 0
     # The number of points on one side.
     order = 5
     # The stencil.
@@ -742,63 +738,48 @@ def differentiate5_vec_nonumba(data, delta_t):
     # A list to hold the derivatives.
     # der_data = np.array([])
 
-    # Near the boundaries
+    # Near the edges
 
-    # n=0, N-1
+    # n=0, N-1, forward/ backward Euler
     der0 = (data[1] - data[0]) / delta_t
     derNm1 = (data[-1] - data[-2]) / delta_t
-
     # der_data = np.append(der_data, [der0], axis=aax)
-
     der_data[0] = der0
-    # for n=1, N-2
+
+    # for n=1, N-2, Central difference
     der1 = (data[2] - data[0]) / (2 * delta_t)
     derNm2 = (data[-1] - data[-3]) / (2 * delta_t)
-
     # der_data = np.append(der_data, [der1], axis=aax)
     der_data[1] = der1
 
-    # For n=2, N-3
+    # For n=2, N-3, 5 point stencil
     stencil = np.array([1, -8, 0, 8, -1]) / 12
     data_vec = data[:5]
-
     der2 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
-
     data_vec = data[-5:]
-
     derNm3 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
-
     # der_data = np.append(der_data, [der2], axis=aax)
-
     der_data[2] = der2
-    # For n=3, N-4
+
+    # For n=3, N-4, 7 point stencil
     stencil = np.array([-1, 9, -45, 0, 45, -9, 1]) / 60
-
     data_vec = data[:7]
-
     der3 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
-
     data_vec = data[-7:]
-
     derNm4 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
-
     # der_data = np.append(der_data, [der3], axis=aax)
     der_data[3] = der3
-    # For n=4, N-5
-    stencil = np.array([3, -32, 168, -672, 0, 672, -168, 32, 3]) / 840
 
+    # For n=4, N-5, 9 point stencil
+    stencil = np.array([3, -32, 168, -672, 0, 672, -168, 32, -3]) / 840
     data_vec = data[:9]
-
     der4 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
-
     data_vec = data[-9:]
-
     derNm5 = np.tensordot(stencil, data_vec, axes=((0), (0))) / delta_t
 
-    # der_data = np.append(der_data, [der4], axis=aax)
+    # For interior points
     der_data[4] = der4
     for index in range(order, len(data) - order):
-        # For the interior points.
         data_subarray = data[index - order : index + order + 1]
         # der_data = np.append(der_data, [np.tensordot(coeffs, data_subarray, axes=((0), (0)))
         # / (divide * delta_t)], axis=aax)
