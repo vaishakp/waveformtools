@@ -140,7 +140,7 @@ class DiscoverWaveforms:
 
 class PrepareSXSWaveform:
     """Prepare waveforms from a particular Lev and ECC of
-    an SXS NR runs by
+    an SXS NR run by
 
     1) Joining all segments
     2) Extrapolating to infinity
@@ -210,6 +210,8 @@ class PrepareSXSWaveform:
             # print(f"Creating out directory ({sim_name}_waveforms) in cwd...")
 
         else:
+            self._out_dir = out_dir
+            
             print(f"Out directory is set to {self.out_dir}")
 
         if not os.path.isdir(self.out_dir):
