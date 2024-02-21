@@ -444,6 +444,14 @@ def massratio(chirp_mass):
     return mass_ratio
 
 
+def compute_masses_from_mass_ratio_and_total_mass(mass_ratio, M=1):
+    ''' Compute the individual masses from mass-ratio and total mass '''
+
+    mass2 = M/(mass_ratio+1)
+    mass1 = mass_ratio*mass2
+
+    return mass1, mass2
+
 # Defining function for calculating Chirpmass from a2
 
 

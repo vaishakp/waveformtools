@@ -2,7 +2,7 @@
 import numpy as np
 import os
 from pathlib import Path
-from waveformtools.waveformtools import message
+from waveformtools.waveformtools import message, compute_masses_from_mass_ratio_and_total_mass
 from waveformtools.sxs.prepare_waveforms import PrepareSXSWaveform
 
 import re
@@ -507,6 +507,47 @@ class SimulationExplorer:
 
         self._processed_waveforms = processed_waveforms
 
+    def compute_masses(self):
+
+        for sim_name in self.found_sim_names:
+
+            mass1, mass2 = compute_masses_from_mass_ratio_and_total_mass(self.all_sim_params[sim_name]['MassRatio'])
+
+            self.all_sim_params[sim_name].update({'IndividualMasses' : (mass1, mass2)})
+
+    def compute_chi_eff(self):
+
+        for sim_name in self.found_sim_names:
+
+            mass_ratio = 1/self.all_sim_params[sim_name]['MassRatio']
+
+            _, _, spin1z = self.all_sim_params[sim_name]['ChiA']
+            _, _, spin2z = self.all_sim_params[sim_name]['ChiB']
+
+            chi_eff = (spin1z*mass_ratio + spin2z)/(1+mass_ratio)
+
+            self.all_sim_params[sim_name].update({'ChiEff' : chi_eff})
+
+
+    def get_all_chi_eff(self):
+
+        all_chi_eff = []
+
+        for sim_name in self.found_sim_names:
+
+            all_chi_eff.append(self.all_sim_params[sim_name]['ChiEff'])
+
+        return all_chi_eff
+    
+    def get_all_mass_ratios(self):
+
+        all_mass_ratios = []
+
+        for sim_name in self.found_sim_names:
+
+            all_mass_ratios.append(self.all_sim_params[sim_name]['MassRatio'])
+
+        return all_mass_ratios
 
     def write_history(self):
 
@@ -538,9 +579,18 @@ def re_fetch_string(line):
 
 def re_fetch_vector(line):
     
-    result = re.search('\(-?[0-9]*[.]?[0-9]*,-?[0-9]*[.]?[0-9]*,-?[0-9]*[.]?[0-9]*\)' ,line)
+    #result = re.search('\(-?[0-9]*[.]?[0-9]*,-?[0-9]*[.]?[0-9]*,-?[0-9]*[.]?[0-9]*\)' ,line)
     
-    val = str(result.group())
+    result1 = re.search('\(-?[0-9]*[.]?[0-9]*,' ,line)
+    result2 = re.search(',-?[0-9]*[.]?[0-9]*,' ,line)
+    result3 = re.search(',-?[0-9]*[.]?[0-9]*\)' ,line)
+
+
+    #val = str(result.group())
     
-    return val
+    val1 = float(result1.group()[1:-1])
+    val2 = float(result2.group()[1:-1])
+    val3 = float(result3.group()[1:-1])
+
+    return (val1,val2,val3)
     
