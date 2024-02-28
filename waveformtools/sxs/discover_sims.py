@@ -469,7 +469,7 @@ class SimulationExplorer:
 
         self._waveforms_to_prepare = waveforms_to_prep
 
-    def prepare_waveforms(self):
+    def prepare_waveforms(self, simulations_to_prepare=None):
         ''' Prepare waveforms that havent been prepared yet 
         by extrapolating, CoM correcting '''
 
@@ -477,7 +477,13 @@ class SimulationExplorer:
 
         processed_waveforms = {}
 
-        for sim_name in self.waveforms_to_prepare:
+        if (np.array(simulations_to_prepare)==np.array(None)).any():
+            simulations_to_prepare = self.waveforms_to_prepare
+        
+        else:
+            simulations_to_prepare = [item for item in simulations_to_prepare if item not in self.prepared_waveforms]
+
+        for sim_name in simulations_to_prepare:
 
             processed_levs = []
 
@@ -529,6 +535,28 @@ class SimulationExplorer:
             self.all_sim_params[sim_name].update({'ChiEff' : chi_eff})
 
 
+    def compute_chi_prec(self):
+
+        for sim_name in self.found_sim_names:
+
+            mass_ratio = self.all_sim_params[sim_name]['MassRatio']
+
+            mass1, mass2 = compute_masses_from_mass_ratio_and_total_mass(self.all_sim_params[sim_name]['MassRatio'])
+
+            s1x, s1y, _ = self.all_sim_params[sim_name]['ChiA']
+            s2x, s2y, _ = self.all_sim_params[sim_name]['ChiB']
+
+            s1p = mass1**2 * np.sqrt(s1x**2 + s1y**2)
+            s2p = mass2**2 * np.sqrt(s2x**2 + s2y**2)
+
+            A1 = 2 + 3/(2*mass_ratio)
+            A2 = 2 + 3*mass_ratio/(2)
+
+            chi_prec = max(A1*s1p, A2*s2p)/(A1*mass1**2)
+
+            self.all_sim_params[sim_name].update({'ChiPrec' : chi_prec})
+
+
     def get_all_chi_eff(self):
 
         all_chi_eff = []
@@ -538,6 +566,7 @@ class SimulationExplorer:
             all_chi_eff.append(self.all_sim_params[sim_name]['ChiEff'])
 
         return all_chi_eff
+    
     
     def get_all_mass_ratios(self):
 
@@ -557,6 +586,7 @@ class SimulationExplorer:
                 th.write(item)
                 th.write('\n')
 
+    
 def re_fetch_float(line):
 
     result = re.search('= -?[0-9]*[.]?[0-9]*' ,line)

@@ -325,26 +325,51 @@ class PrepareSXSWaveform:
             else:
                 run_cmd = "JoinH5"
 
-            run_cmd += (
-                f" -o {self.joined_waveform_outfile_path}"
-                f" -l {data_paths_insp} {data_paths_rdown}"
-            )
+            
+            try:
+                run_cmd += (
+                    f" -o {self.joined_waveform_outfile_path}"
+                    f" -l {data_paths_insp} "
+                )
 
-            print(f"Running command\n {run_cmd}")
 
-            # with open('join_waveforms_output.txt', "wb") as fout:
-            # subprocess.check_call('dir',stdout=f)
-            # cmd_out = subprocess.Popen(run_cmd, stdout=subprocess.PIPE)
+                print(f"Running command\n {run_cmd}")
 
-            # for cline in iter(lambda: process.stdout.read(1), b""):
-            # sys.stdout.buffer.write(cline)
-            # f.buffer.write(cline)
+                # with open('join_waveforms_output.txt', "wb") as fout:
+                # subprocess.check_call('dir',stdout=f)
+                # cmd_out = subprocess.Popen(run_cmd, stdout=subprocess.PIPE)
 
-            cmd = os.popen(run_cmd)
+                # for cline in iter(lambda: process.stdout.read(1), b""):
+                # sys.stdout.buffer.write(cline)
+                # f.buffer.write(cline)
 
-            out = cmd.read()
+                cmd = os.popen(run_cmd)
 
-            print("Command output \n", out)
+                out = cmd.read()
+
+                print("Command output \n", out)
+            except Exception as ex:
+                
+                run_cmd += (
+                    f" -o {self.joined_waveform_outfile_path}"
+                    f" -l {data_paths_insp}"
+                )
+
+                print(f"Running command\n {run_cmd}")
+
+                # with open('join_waveforms_output.txt', "wb") as fout:
+                # subprocess.check_call('dir',stdout=f)
+                # cmd_out = subprocess.Popen(run_cmd, stdout=subprocess.PIPE)
+
+                # for cline in iter(lambda: process.stdout.read(1), b""):
+                # sys.stdout.buffer.write(cline)
+                # f.buffer.write(cline)
+
+                cmd = os.popen(run_cmd)
+
+                out = cmd.read()
+
+                print("Command output \n", out)
 
             print("Command completed. Please check Errors.txt for details")
 
@@ -413,18 +438,34 @@ class PrepareSXSWaveform:
             else:
                 run_cmd = "JoinH5"
 
-            run_cmd += (
-                f" -o {self.joined_horizons_outfile_path}"
-                f" -l {data_paths_insp} {data_paths_rdown}"
-            )
+            try:
+                run_cmd += (
+                    f" -o {self.joined_horizons_outfile_path}"
+                    f" -l {data_paths_insp} "
+                )
 
-            print(f"Running command\n {run_cmd}")
+                print(f"Running command\n {run_cmd}")
 
-            cmd = os.popen(run_cmd)
+                cmd = os.popen(run_cmd)
 
-            out = cmd.read()
+                out = cmd.read()
 
-            print("Command output \n", out)
+                print("Command output \n", out)
+
+            except Exception as ex:
+
+                run_cmd += (
+                    f" -o {self.joined_horizons_outfile_path}"
+                    f" -l {data_paths_insp}"
+                )
+
+                print(f"Running command\n {run_cmd}")
+
+                cmd = os.popen(run_cmd)
+
+                out = cmd.read()
+
+                print("Command output \n", out)
 
             print("Command completed. Please check Errors.txt for details.")
 

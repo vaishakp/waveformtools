@@ -705,9 +705,9 @@ def load_RIT_Strain_data_from_disk(
         # For RIT data type
         time_axis = data_file["NRTimes"][...]
         # dt_auto = time_axis[1]-time_axis[0]
-        from scipy.stats import mode
+        from scipy.stats import mode as stats_mode
 
-        dt_auto = mode(np.diff(time_axis))[0][0]
+        dt_auto = stats_mode(np.diff(time_axis))[0]
 
     except Exception as excep:
         dt_auto = None
@@ -743,9 +743,9 @@ def load_RIT_Strain_data_from_disk(
                     # For MAYA data type
                     time_axis = Tphase
                     # dt_auto = time_axis[1]-time_axis[0]
-                    from scipy.stats import mode
+                    from scipy.stats import mode as stats_mode
 
-                    dt_auto = mode(np.diff(time_axis))[0][0]
+                    dt_auto = stats_mode(np.diff(time_axis))[0]
 
                 min_dt = round(min(np.diff(time_axis)), 2)
                 max_dt = round(max(np.diff(time_axis)), 2)
@@ -1236,7 +1236,13 @@ def load_SpEC_data_from_disk(
     gkey = f"Extrapolated_N{extrap_order}.dir"
 
     wf_f0 = h5py.File(full_path)
-    wf_file = wf_f0[gkey]
+
+    try:
+        wf_file = wf_f0[gkey]
+    except KeyError as ke:
+        message('Reading as SpEC file in external extrap mode', message_verbosity=2)
+        wf_file = wf_f0
+
     all_keys = list(wf_file.keys())
 
     # Max available mode l.
@@ -1250,6 +1256,7 @@ def load_SpEC_data_from_disk(
 
     if ell_max == "auto":
         ell_max = ell_max_act
+
     if ell_max is None:
         message("ell_max not provided.")
 
@@ -1315,7 +1322,7 @@ def load_SpEC_data_from_disk(
     # flag = None
 
     # get auto dt
-    from scipy.stats import mode
+    from scipy.stats import mode as stats_mode
 
     # Load modes
     for ell, emm_list in modes_list:
@@ -1327,6 +1334,8 @@ def load_SpEC_data_from_disk(
             # Input waveform from disk
             wf_data = wf_file[this_key]
             wf_time = wf_data[:, 0]
+            # print('wf time', wf_time)
+
             wf_data_re = wf_data[:, 1]
             wf_data_im = wf_data[:, 2]
             wf_data_c = wf_data_re + 1j * wf_data_im
@@ -1334,7 +1343,7 @@ def load_SpEC_data_from_disk(
             # wf_amp, wf_phase = xtract_camp_phase(wf_data_re, wf_data_im)
 
             # message(type(wfa.modes_data))
-            if wfa.modes_data.all() == np.array(None):
+            if (wfa.modes_data == np.array(None)).all():
                 time_axis = wf_time
                 message("Creating modes data")
 
@@ -1342,8 +1351,12 @@ def load_SpEC_data_from_disk(
                 # max_dt = round(max(np.diff(wf_psi4_time)), 2)
                 # dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
                 # dt_auto = int(dt_auto*100)/100
-                # dt_auto = round(mode(np.diff(time_axis))[0][0], 4)
-                dt_auto = mode(np.diff(time_axis))[0][0]
+                # dt_auto = round(stats_mode(np.diff(time_axis))[0][0], 4)
+
+                # print('diff time', np.diff(time_axis))
+                # print('mode time', stats_mode(np.diff(time_axis)))
+
+                dt_auto = stats_mode(np.diff(time_axis))[0]
 
                 # message(f'Default dt is {dt_auto}')
 
@@ -1382,7 +1395,7 @@ def load_SpEC_data_from_disk(
                 # message(data_len)
 
                 wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
-                # message(wfa.mode(0,0).shape)
+                # message(wfa.stats_mode(0,0).shape)
                 wfa.time_axis = time_axis
 
             # Interpolate and resamplea
@@ -1625,7 +1638,7 @@ def load_SpEC_non_extrap_data_from_disk(
     # flag = None
 
     # get auto dt
-    from scipy.stats import mode
+    from scipy.stats import mode as stats_mode
 
     # Load modes
     for ell, emm_list in modes_list:
@@ -1652,8 +1665,8 @@ def load_SpEC_non_extrap_data_from_disk(
                 # max_dt = round(max(np.diff(wf_psi4_time)), 2)
                 # dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
                 # dt_auto = int(dt_auto*100)/100
-                # dt_auto = round(mode(np.diff(time_axis))[0][0], 4)
-                dt_auto = mode(np.diff(time_axis), keepdims=True)[0][0]
+                # dt_auto = round(stats_mode(np.diff(time_axis))[0][0], 4)
+                dt_auto = stats_mode(np.diff(time_axis), keepdims=True)[0]
 
                 # message(f'Default dt is {dt_auto}')
 
@@ -1875,7 +1888,7 @@ def load_SpECTRE_data_from_disk(
 
     # flag = None
 
-    from scipy.stats import mode
+    from scipy.stats import mode as stats_mode
 
     for ell, emm_list in modes_list:
         for emm in emm_list:
@@ -1894,7 +1907,7 @@ def load_SpECTRE_data_from_disk(
                 # max_dt = round(max(np.diff(wf_psi4_time)), 2)
                 # dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
                 # dt_auto = int(dt_auto*100)/100
-                dt_auto = mode(np.diff(time_axis))[0][0]
+                dt_auto = stats_mode(np.diff(time_axis))[0]
                 # message(f'Default dt is {dt_auto}')
 
                 # min_dt = round(min(np.diff(time_axis)), 2)
@@ -2081,7 +2094,7 @@ def save_modes_data_to_gen(
             for emm_value in emm_list:
                 # For every (ell, emm) mode.
 
-                data = wfa.mode(ell_value, emm_value)
+                data = wfa.stats_mode(ell_value, emm_value)
                 # set the time and data axis
                 data_re = data.real
                 data_im = data.imag
