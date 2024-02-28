@@ -37,10 +37,11 @@ import scri
 import numpy as np
 from pathlib import Path
 
+
 class DiscoverWaveforms:
-    """ Discover simulations and waveforms 
-    that havent been processed yet. 
-    
+    """Discover simulations and waveforms
+    that havent been processed yet.
+
     Attributes
     ----------
 
@@ -50,25 +51,22 @@ class DiscoverWaveforms:
 
     """
 
-    def __init__(self,
-                 search_dir,
-                 history_file):
-        
+    def __init__(self, search_dir, history_file):
         self._search_dir = search_dir
         self._history_file = history_file
-        
+
         self._sim_dirs = []
         self._done_sims = []
         self._done_sims_full_path = []
-        
+
     @property
     def search_dir(self):
         return self._search_dir
-    
+
     @property
     def history_file(self):
         return self._history_file
-    
+
     @property
     def done_sims(self):
         return self._done_sims
@@ -76,41 +74,41 @@ class DiscoverWaveforms:
     @property
     def done_sims_full_path(self):
         return self._done_sims_full_path
-    
+
     @property
     def sim_dirs(self):
         return self._sim_dirs
 
     @property
     def sim_names(self):
-        return self._sim_names    
+        return self._sim_names
 
     @property
     def sims_to_be_processed(self):
-
         return self._sims_to_be_processed
-    
-    
-    def parse_simulations(self):
 
+    def parse_simulations(self):
         sims_in_search_dir = os.listdir(self.search_dir)
 
-        self._sim_names = [ name for name in os.listdir(self.search_dir) if os.path.isdir(os.path.join(self.search_dir, name)) ]
-
+        self._sim_names = [
+            name
+            for name in os.listdir(self.search_dir)
+            if os.path.isdir(os.path.join(self.search_dir, name))
+        ]
 
     def read_history(self):
-        
         done_sims_full_path = []
         done_sims = []
 
-        line=None
+        line = None
 
-        with open(self.history_file, 'r') as th:
-            
-            while line!='':
+        with open(self.history_file, "r") as th:
+            while line != "":
                 line = th.readline()
                 done_sims.append(line)
-                done_sims_full_path.append(self.search_dir.joinpath(Path(line.replace('\n', ''))))
+                done_sims_full_path.append(
+                    self.search_dir.joinpath(Path(line.replace("\n", "")))
+                )
 
         done_sims_full_path = done_sims_full_path[:-1]
         done_sims = done_sims[:-1]
@@ -119,23 +117,18 @@ class DiscoverWaveforms:
         self._done_sims_full_path = done_sims_full_path
 
     def compute_sims_to_be_processed(self):
-
         sims_to_be_processed = []
 
         for item in self.sim_names:
-            
             if item not in self.done_sims:
-
                 sims_to_be_processed.append(item)
 
         self._sims_to_be_processed = sims_to_be_processed
 
     def discover(self):
-
         self.parse_simulations()
 
         self.read_history()
-
 
 
 class PrepareSXSWaveform:
@@ -211,7 +204,7 @@ class PrepareSXSWaveform:
 
         else:
             self._out_dir = out_dir
-            
+
             print(f"Out directory is set to {self.out_dir}")
 
         if not os.path.isdir(self.out_dir):
@@ -290,7 +283,7 @@ class PrepareSXSWaveform:
     @property
     def history_file(self):
         return self._history_file
-    
+
     def join_waveform_h5_files(self, verbose=False):
         """Join the waveform h5 files"""
 
@@ -325,13 +318,11 @@ class PrepareSXSWaveform:
             else:
                 run_cmd = "JoinH5"
 
-            
             try:
                 run_cmd += (
                     f" -o {self.joined_waveform_outfile_path}"
                     f" -l {data_paths_insp} "
                 )
-
 
                 print(f"Running command\n {run_cmd}")
 
@@ -349,7 +340,6 @@ class PrepareSXSWaveform:
 
                 print("Command output \n", out)
             except Exception as ex:
-                
                 run_cmd += (
                     f" -o {self.joined_waveform_outfile_path}"
                     f" -l {data_paths_insp}"
@@ -453,7 +443,6 @@ class PrepareSXSWaveform:
                 print("Command output \n", out)
 
             except Exception as ex:
-
                 run_cmd += (
                     f" -o {self.joined_horizons_outfile_path}"
                     f" -l {data_paths_insp}"
@@ -553,11 +542,9 @@ class PrepareSXSWaveform:
         return True
 
     def write_history(self):
-
-        with open(self.history_file, 'a') as th:
-    
+        with open(self.history_file, "a") as th:
             for item in dirs:
                 th.write(item)
-                th.write('\n')
-        
-        #th.write('EOF')
+                th.write("\n")
+
+        # th.write('EOF')
