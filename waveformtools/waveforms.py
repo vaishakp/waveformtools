@@ -865,6 +865,8 @@ class spherical_array:
 class modes_array:
     """A class that holds mode array of waveforms
 
+    This can handle two index and three index modes.
+    
     Attributes
     ----------
     label :	str
@@ -1486,7 +1488,18 @@ class modes_array:
 
     def set_mode_data(self, ell_value, emm_value, data, r_index=None):
         """Set the mode array data
-        for the respective :math:`(\\ell, m)` mode.
+        for the respective :math:`(\\ell, m)` mode. If the modes array
+        has a mode axis of length more then one e.g. if one is dealing
+        with not two but three index modes, them one needs to specify
+        the third (r) axis index to which this data corresponds to.
+
+        If r_index is not given, then it is assumed that 
+        the supplied `data` is 2 dimensional (ell, emm, all r)
+
+        Else, only the (ell, emm, one r element) is updated.
+
+        If mode axis length is 1, then it corresponds to usual
+        two index modes like (l, m) and they are updated accordingly.
 
         Parameters
         ----------
@@ -1519,8 +1532,10 @@ class modes_array:
 
             else:
                 self._modes_data[ell_value, emm_index, r_index] = data
-        # Set the mode data.
-        # self._modes_data[ell_value, emm_index] = data
+        else:
+
+            # Set the mode data.
+            self._modes_data[ell_value, emm_index] = data
 
     def set_mode_data_at_t_step(
         self, t_step, time_stamp, ell, emm, data, r_index=None

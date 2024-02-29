@@ -1196,32 +1196,29 @@ def load_SpEC_data_from_disk(
 
     Parameters
     ----------
-    wfa : modes_array, optional
-                      The modes array to which to store the loaded waveform to. A new modes array will be returned
-                      if not provided.
-    data_dir :	string
-                                    A string containing the directory path where the mode files can be found.
-    file_name : string
-                                    The name of the file containing the waveform data.
-    label : string, optional
-                                    The label of the modes_array object.
-    ell_max : int, optional
-                                                    The maximum mode number to load. If not specified,
-                                                    then all available modes are loaded.
-    save_as_ma : bool, optional
-                                                     Save to disk again as a modes_array h5 file?
-    resam_type : string, float, optional
-                                                     The type of resampling to do. Options are finest and coarsest, and user input float.
-    interp_kind : string, optional
-                                                      The interpolation type to use. Default is cubic.
+    wfa: modes_array, optional
+          The modes array to which to store the loaded waveform to. A new modes array will be returned
+          if not provided.
+    data_dir: string
+              A string containing the directory path where the mode files can be found.
+    file_name: string
+               The name of the file containing the waveform data.
+    label: string, optional
+           The label of the modes_array object.
+    ell_max: int, optional
+             The maximum mode number to load. If not specified,
+             then all available modes are loaded.
+    save_as_ma: bool, optional
+                Save to disk again as a modes_array h5 file?
+    resam_type: string, float, optional
+                The type of resampling to do. Options are finest and coarsest, and user input float.
+    interp_kind: string, optional
+                 The interpolation type to use. Default is cubic.
 
     Returns
     -------
-
-    modes_array : modes_array
-                                                      A modes_array instance containing the loaded modes.
-
-
+    modes_array: modes_array
+                 A modes_array instance containing the loaded modes.
     """
     message("Loading SpEC data.", message_verbosity=1)
 
@@ -1332,7 +1329,7 @@ def load_SpEC_data_from_disk(
             this_key = f"Y_l{ell}_m{emm}.dat"
 
             # Input waveform from disk
-            wf_data = wf_file[this_key]
+            wf_data = wf_file[this_key][...]
             wf_time = wf_data[:, 0]
             # print('wf time', wf_time)
 
@@ -1419,6 +1416,9 @@ def load_SpEC_data_from_disk(
             # im_dat = im_int(time_axis)
 
             # wfa.set_mode_data(ell, emm, data=re_dat + 1j * im_dat)
+
+            # message(f"Setting mode Data {ell}, {emm} \n {wf_int} \n" )
+
             wfa.set_mode_data(ell, emm, data=wf_int)
 
     if debug is True:
