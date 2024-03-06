@@ -473,6 +473,59 @@ def compute_chirp_mass(a2_param):
     return chirp_mass
 
 
+
+def compute_chi_eff_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
+    ''' Compute the effective z-spin parameter 
+    :math:`\\chi_{eff}` 
+    
+    
+    Parameters
+    ----------
+    spin1,spin2: tuple of floats
+                 The spin vector of the two
+                 black holes
+    larger_mass_ratio: float, >1
+                The SpEC convention mass-ratio
+                :math:`\dfrac{M_1}{M_2}`
+    '''
+
+    _, _, s1z = spin1
+    _, _, s2z = spin2
+
+    chi_eff = (s1z * larger_mass_ratio + s2z) / (1 + larger_mass_ratio)
+    
+    return chi_eff
+
+def compute_chi_prec_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
+    ''' Compute the effective spin-precession parameter 
+    :math:`\\chi_{prec}` 
+    
+    
+    Parameters
+    ----------
+    spin1,spin2: tuple of floats
+                 The spin vector of the two
+                 black holes
+    larger_mass_ratio: float,
+                The SpEC convention mass-ratio,
+                usually greater than 1
+    '''
+
+    mass1, mass2 = compute_masses_from_mass_ratio_and_total_mass(larger_mass_ratio)
+
+    s1x, s1y, s1z = spin1
+    s2x, s2y, s2z = spin2
+
+    s1p = mass1**2 * np.sqrt(s1x**2 + s1y**2)
+    s2p = mass2**2 * np.sqrt(s2x**2 + s2y**2)
+
+    A1 = 2 + 3 / (2 * larger_mass_ratio)
+    A2 = 2 + 3 * larger_mass_ratio / (2)
+
+    chi_prec = max(A1 * s1p, A2 * s2p) / (A1 * mass1**2)
+    
+    return chi_prec
+
 def lengtheq(data_a, data_b, delta_t=None, is_ts=False):
     """Equalize the length of two timeseries/array by
     appending zeros at the end of the array. No tapering.
@@ -491,26 +544,26 @@ def lengtheq(data_a, data_b, delta_t=None, is_ts=False):
 
     Parameters
     ----------
-    data_a :    list
-                            The input waveform A
-    data_b :    list
-                            The input waveform B.
-    delta_t :   float
-                            The time steping. Defaults to `None`.
-    is_ts :     bool
-                            To determine whether the given data
-                            is a pycbc TimeSeries.
+    data_a: list
+            The input waveform A
+    data_b: list
+            The input waveform B.
+    delta_t: float
+             The time steping. Defaults to `None`.
+    is_ts: bool
+           To determine whether the given data
+           is a pycbc TimeSeries.
     Returns
     -------
-    equalized_signals : list
-                                            The Tapered, length equalized waveforms data_a and data_b,
-                                            and a flag denoting which waveform was changed, `a` or `b`.
+    equalized_signals: list
+                       The Tapered, length equalized waveforms data_a and data_b,
+                       and a flag denoting which waveform was changed, `a` or `b`.
 
     Notes
     -----
     Recommended usage:
 
-            Change length of waveform `a` to match with that of waveform `b`.
+    Change length of waveform `a` to match with that of waveform `b`.
 
     """
 
