@@ -1,15 +1,16 @@
-import numpy as np
 import os
+import re
 from pathlib import Path
+
+import numpy as np
+
+from waveformtools.sxs.prepare_waveforms import PrepareSXSWaveform
 from waveformtools.waveformtools import (
-    message,
-    compute_masses_from_mass_ratio_and_total_mass,
     compute_chi_eff_from_masses_and_spins,
     compute_chi_prec_from_masses_and_spins,
+    compute_masses_from_mass_ratio_and_total_mass,
+    message,
 )
-from waveformtools.sxs.prepare_waveforms import PrepareSXSWaveform
-
-import re
 
 
 class SimulationExplorer:
