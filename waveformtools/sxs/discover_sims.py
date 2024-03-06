@@ -5,7 +5,7 @@ from waveformtools.waveformtools import (
     message,
     compute_masses_from_mass_ratio_and_total_mass,
     compute_chi_eff_from_masses_and_spins,
-    compute_chi_prec_from_masses_and_spins
+    compute_chi_prec_from_masses_and_spins,
 )
 from waveformtools.sxs.prepare_waveforms import PrepareSXSWaveform
 
@@ -13,11 +13,11 @@ import re
 
 
 class SimulationExplorer:
-    ''' Find and load simulations in a given directory.
-    Use this to 
+    """Find and load simulations in a given directory.
+    Use this to
 
     1. find available, running, and failed simulations,
-    2. parse their parameters, 
+    2. parse their parameters,
     3. compute secondary parameters
     4. export parameter tables to Markdown
     5. Keep a track of already processed waveforms
@@ -50,9 +50,9 @@ class SimulationExplorer:
                          using methods in this class.
     prepared_waveforms_dir: str/Path
                             The full path to the directory
-                            where all processed waveforms are 
+                            where all processed waveforms are
                             being saved.
-    
+
 
     Methods
     -------
@@ -61,7 +61,7 @@ class SimulationExplorer:
     search_simulations
         Search for simulations
     find_highest_ecc
-        Given the full path to a sim, 
+        Given the full path to a sim,
         find the highest available Ecc directory
     discover_levels
         find all available levels given the full path
@@ -75,7 +75,7 @@ class SimulationExplorer:
     get_ecc_dirs
         get all ecc dirs given the full path to a simulation
     find_highest_ecc_dirs
-        Discover the highest ecc dirs across all available simulations 
+        Discover the highest ecc dirs across all available simulations
     parse_sim_params_input_file
         Load parameters of all the discovered simulations from their
         Params.input file
@@ -101,11 +101,11 @@ class SimulationExplorer:
     compute_masses
         COmpute the masses of all BHs from their mass ratios.
     compute_chi_eff
-        Compute the :math:`\\chi_{eff}` parameters of all the 
+        Compute the :math:`\\chi_{eff}` parameters of all the
         simulations
     compute_chi_prec
-        Compute the :math:`\\chi_{prec}` parameters of all the 
-        simulations 
+        Compute the :math:`\\chi_{prec}` parameters of all the
+        simulations
     get_all_chi_eff
         Fetch the :math:`\\chi_{eff}` parameter of all simulations
     get_all_chi_prec
@@ -114,7 +114,8 @@ class SimulationExplorer:
         Fetch the mass-ratio :math:`q` parameter of all simulations
     write_history
         Write processed waveforms in this session to a history file.
-    '''
+    """
+
     def __init__(
         self,
         search_dir="./",
@@ -291,7 +292,7 @@ class SimulationExplorer:
         import os
 
         all_segments = {}
-   
+
         available_dirs = os.listdir(ecc_dir)
 
         available_lev_dirs = [item for item in available_dirs if "Lev" in item]
@@ -337,7 +338,7 @@ class SimulationExplorer:
         return all_data
 
     def get_ecc_dirs(self, sim_path):
-        ''' Get all ecc directories within a sim dir '''
+        """Get all ecc directories within a sim dir"""
         subdirs = os.listdir(sim_path)
 
         ecc_dirs = [item for item in subdirs if "Ecc" in item]
@@ -414,7 +415,7 @@ class SimulationExplorer:
     def parse_sim_target_params_input_file(
         self, path_to_target_params_input_file
     ):
-        ''' Parse a TargetParams.input file given a sim '''
+        """Parse a TargetParams.input file given a sim"""
 
         if not os.path.exists(path_to_target_params_input_file):
             return None
@@ -488,8 +489,8 @@ class SimulationExplorer:
         self._all_sim_params = all_sim_params
 
     def strip_sim_name_from_waveform_dir(self, wdir):
-        ''' Extract the sim name from its processed waveform 
-        dir name '''
+        """Extract the sim name from its processed waveform
+        dir name"""
         result = re.search("[A-Za-z]+[0-9]+_", wdir)
 
         if result is not None:
@@ -524,7 +525,7 @@ class SimulationExplorer:
         self._prepared_waveforms = sim_names
 
     def get_sim_names_from_prepared_waveform_dirs(self, prepared_waveform_dirs):
-        ''' Get all sim names from prepared waveform dirs '''
+        """Get all sim names from prepared waveform dirs"""
         prepared_waveform_sim_names = []
 
         for item in prepared_waveform_dirs:
@@ -607,7 +608,7 @@ class SimulationExplorer:
         self._processed_waveforms = processed_waveforms
 
     def compute_masses(self):
-        ''' Compute the individual masses of all sims '''
+        """Compute the individual masses of all sims"""
         for sim_name in self.found_sim_names:
             mass1, mass2 = compute_masses_from_mass_ratio_and_total_mass(
                 self.all_sim_params[sim_name]["MassRatio"]
@@ -618,32 +619,35 @@ class SimulationExplorer:
             )
 
     def compute_chi_eff(self):
-        ''' Compute the :math:`\\chi_{eff} parameter` across all sims '''
+        """Compute the :math:`\\chi_{eff} parameter` across all sims"""
         for sim_name in self.found_sim_names:
             mass_ratio = self.all_sim_params[sim_name]["MassRatio"]
 
             spin1 = self.all_sim_params[sim_name]["ChiA"]
             spin2 = self.all_sim_params[sim_name]["ChiB"]
 
-            chi_eff = compute_chi_eff_from_masses_and_spins(spin1, spin2, mass_ratio)
+            chi_eff = compute_chi_eff_from_masses_and_spins(
+                spin1, spin2, mass_ratio
+            )
 
             self.all_sim_params[sim_name].update({"ChiEff": chi_eff})
 
     def compute_chi_prec(self):
-        ''' Compute the :math:`\\chi_{prec}` parameters across all sims '''
+        """Compute the :math:`\\chi_{prec}` parameters across all sims"""
         for sim_name in self.found_sim_names:
-
             mass_ratio = self.all_sim_params[sim_name]["MassRatio"]
 
             spin1 = self.all_sim_params[sim_name]["ChiA"]
             spin2 = self.all_sim_params[sim_name]["ChiB"]
 
-            chi_prec = compute_chi_prec_from_masses_and_spins(spin1, spin2, mass_ratio)
+            chi_prec = compute_chi_prec_from_masses_and_spins(
+                spin1, spin2, mass_ratio
+            )
 
             self.all_sim_params[sim_name].update({"ChiPrec": chi_prec})
 
     def get_all_chi_eff(self):
-        ''' Fetch all :math:`\\chi_{eff}` parameters '''
+        """Fetch all :math:`\\chi_{eff}` parameters"""
         all_chi_eff = []
 
         for sim_name in self.found_sim_names:
@@ -652,7 +656,7 @@ class SimulationExplorer:
         return all_chi_eff
 
     def get_all_mass_ratios(self):
-        ''' Fetch all mass-ratios '''
+        """Fetch all mass-ratios"""
 
         all_mass_ratios = []
 
@@ -669,7 +673,7 @@ class SimulationExplorer:
 
 
 def re_fetch_float(line):
-    ''' Fetch a float value from .input file '''
+    """Fetch a float value from .input file"""
     result = re.search("= -?[0-9]*[.]?[0-9]*", line)
 
     val = float(result.group()[2:])
@@ -678,7 +682,7 @@ def re_fetch_float(line):
 
 
 def re_fetch_string(line):
-    ''' Fetch a string value from .input file '''
+    """Fetch a string value from .input file"""
     result = re.search('".*";', line)
 
     val = str(result.group()[1:-2])
@@ -687,7 +691,7 @@ def re_fetch_string(line):
 
 
 def re_fetch_vector(line):
-    ''' Fetch a vector value from a .input file'''
+    """Fetch a vector value from a .input file"""
     # result = re.search('\(-?[0-9]*[.]?[0-9]*,-?[0-9]*[.]?[0-9]*,-?[0-9]*[.]?[0-9]*\)' ,line)
 
     result1 = re.search("\(-?[0-9]*[.]?[0-9]*,", line)

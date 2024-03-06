@@ -54,13 +54,13 @@ class PrepareSXSWaveform:
               The root directory containing
               the simulation directory
     sim_name: str
-              The alias of the simulation whose 
+              The alias of the simulation whose
               waveform is to be processed
     out_dir: str/Path
-             The directory in which to save extrapolated 
+             The directory in which to save extrapolated
              waveforms
     joined_outfile_dir: str/Path
-                        The directory in which to save joined 
+                        The directory in which to save joined
                         waveforms from across segments
     joined_waveform_outfile_name: str/Path
                                   The filename of the processed
@@ -391,7 +391,7 @@ class PrepareSXSWaveform:
         file_format="NRAR",
         extrap_enn_list=[-1, 2, 3, 4, 5, 6],
     ):
-        ''' Apply CoM correction to a waveform '''
+        """Apply CoM correction to a waveform"""
         from scri.SpEC.com_motion import remove_avg_com_motion
 
         try:
@@ -433,7 +433,7 @@ class PrepareSXSWaveform:
                 )
 
     def upload_output_dir(self):
-        ''' Upload the outut directory to a cloud '''
+        """Upload the outut directory to a cloud"""
         raise NotImplementedError
 
     def prepare_waveform(
@@ -447,7 +447,7 @@ class PrepareSXSWaveform:
         extrap_enn_list=[-1, 2, 3, 4, 5, 6],
         upload=False,
     ):
-        ''' Carry out extrapolation + CoM correction '''
+        """Carry out extrapolation + CoM correction"""
         self.join_waveform_h5_files(verbose=verbose)
 
         self.extrapolate(ChMass=ChMass, UseStupidNRARFormat=UseStupidNRARFormat)
@@ -471,7 +471,7 @@ class PrepareSXSWaveform:
         return True
 
     def write_history(self):
-        ''' Write processing history to a file '''
+        """Write processing history to a file"""
         with open(self.history_file, "a") as th:
             for item in dirs:
                 th.write(item)
