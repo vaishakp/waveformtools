@@ -145,7 +145,7 @@ pages:
     #- pip install -U sphinx sphinx-rtd-theme rinohtype numpydoc
     #- pip install rinohtype numpydoc
     #- pip install -r requirements.txt
-    - pip install -U 'sphinx' 'sphinx-rtd-theme' 'rinohtype' numpydoc 'jinja2' statistics
+    - pip install -U sphinx sphinx-rtd-theme rinohtype numpydoc jinja2 statistics
     #- conda install -y numpy
     #- pip install sphinx-rtd-theme rinohtype
     #- sphinx-build -b html docs/source public
