@@ -33,102 +33,10 @@ Script to
 """
 
 import os
-import scri
-import numpy as np
 from pathlib import Path
 
-
-class DiscoverWaveforms:
-    """Discover simulations and waveforms
-    that havent been processed yet.
-
-    Attributes
-    ----------
-
-
-    Methods
-    -------
-
-    """
-
-    def __init__(self, search_dir, history_file):
-        self._search_dir = search_dir
-        self._history_file = history_file
-
-        self._sim_dirs = []
-        self._done_sims = []
-        self._done_sims_full_path = []
-
-    @property
-    def search_dir(self):
-        return self._search_dir
-
-    @property
-    def history_file(self):
-        return self._history_file
-
-    @property
-    def done_sims(self):
-        return self._done_sims
-
-    @property
-    def done_sims_full_path(self):
-        return self._done_sims_full_path
-
-    @property
-    def sim_dirs(self):
-        return self._sim_dirs
-
-    @property
-    def sim_names(self):
-        return self._sim_names
-
-    @property
-    def sims_to_be_processed(self):
-        return self._sims_to_be_processed
-
-    def parse_simulations(self):
-        sims_in_search_dir = os.listdir(self.search_dir)
-
-        self._sim_names = [
-            name
-            for name in os.listdir(self.search_dir)
-            if os.path.isdir(os.path.join(self.search_dir, name))
-        ]
-
-    def read_history(self):
-        done_sims_full_path = []
-        done_sims = []
-
-        line = None
-
-        with open(self.history_file, "r") as th:
-            while line != "":
-                line = th.readline()
-                done_sims.append(line)
-                done_sims_full_path.append(
-                    self.search_dir.joinpath(Path(line.replace("\n", "")))
-                )
-
-        done_sims_full_path = done_sims_full_path[:-1]
-        done_sims = done_sims[:-1]
-
-        self._done_sims = done_sims
-        self._done_sims_full_path = done_sims_full_path
-
-    def compute_sims_to_be_processed(self):
-        sims_to_be_processed = []
-
-        for item in self.sim_names:
-            if item not in self.done_sims:
-                sims_to_be_processed.append(item)
-
-        self._sims_to_be_processed = sims_to_be_processed
-
-    def discover(self):
-        self.parse_simulations()
-
-        self.read_history()
+import numpy as np
+import scri
 
 
 class PrepareSXSWaveform:
@@ -143,28 +51,47 @@ class PrepareSXSWaveform:
 
     Attributes
     ----------
-    sim_dir : str/POSIXPath
+    sim_dir: str/POSIXPath
               The root directory containing
               the simulation directory
-    sim_name :
-    out_dir
-    joined_outfile_dir
-    joined_waveform_outfile_name
-    joined_waveform_outfile_path
-    joined_horizons_outfile_name
-    joined_waveform_outfile_path
-    lev
-    ecc
-    extrap_out_dir
+    sim_name: str
+              The alias of the simulation whose
+              waveform is to be processed
+    out_dir: str/Path
+             The directory in which to save extrapolated
+             waveforms
+    joined_outfile_dir: str/Path
+                        The directory in which to save joined
+                        waveforms from across segments
+    joined_waveform_outfile_name: str/Path
+                                  The filename of the processed
+                                  waveform.
+    joined_waveform_outfile_path: The full path to the processed
+                                  waveform file.
+    joined_horizons_outfile_name: str/Path
+                                  The filename of the joined horizon file
+    lev: int
+         The sim resolution level to process
+    ecc: int
+         The Ecc dir number to process
+    extrap_out_dir: str/Path
+                    The full path to the output dir.
 
     Methods
     -------
     join_waveform_h5_files
+        Join the waveform h5 files from across segments
     extrapolate
+        Extrapolate a joined waveform to infinity
     join_horizons
+        Join the Horizons.h5 files from across segments
     transform_to_CoM_frame
+        Apply CoM correction
     upload_output_dir
+        Upload the output directory to a cloud
     prepare_waveform
+        Process the waveform by extrapolating and
+        applying CoM correction
     """
 
     def __init__(
@@ -465,6 +392,7 @@ class PrepareSXSWaveform:
         file_format="NRAR",
         extrap_enn_list=[-1, 2, 3, 4, 5, 6],
     ):
+        """Apply CoM correction to a waveform"""
         from scri.SpEC.com_motion import remove_avg_com_motion
 
         try:
@@ -506,6 +434,7 @@ class PrepareSXSWaveform:
                 )
 
     def upload_output_dir(self):
+        """Upload the outut directory to a cloud"""
         raise NotImplementedError
 
     def prepare_waveform(
@@ -519,6 +448,7 @@ class PrepareSXSWaveform:
         extrap_enn_list=[-1, 2, 3, 4, 5, 6],
         upload=False,
     ):
+        """Carry out extrapolation + CoM correction"""
         self.join_waveform_h5_files(verbose=verbose)
 
         self.extrapolate(ChMass=ChMass, UseStupidNRARFormat=UseStupidNRARFormat)
@@ -542,6 +472,7 @@ class PrepareSXSWaveform:
         return True
 
     def write_history(self):
+        """Write processing history to a file"""
         with open(self.history_file, "a") as th:
             for item in dirs:
                 th.write(item)

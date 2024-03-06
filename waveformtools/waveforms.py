@@ -2486,3 +2486,26 @@ class modes_array:
             wts = rotate_polarizations(wts, alpha)
 
         return taxis, wts.real, -wts.imag
+    
+    def plot_modes(self, modes_to_plot=[(2,2), (3,3)]):
+        ''' Plot the requested set of modes '''
+
+        import matplotlib.pyplot as plt
+
+        try:
+            import config
+            config.conf_matplolib()
+        except Exception as excep:
+            excep('Unable to conf matplotlib')
+
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        for one_mode in modes_to_plot:
+            ell, emm = one_mode
+
+            ax.plot(self.time_axis, self.mode(ell, emm).real, label=f'Re( ({ell}, {emm}) )')
+        
+        ax.set_xlabel('t/M')
+        ax.set_ylabel(r'$\Psi_{(\ell, m)}$')
+        plt.legend()
+        plt.show()

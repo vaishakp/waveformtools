@@ -19,7 +19,8 @@ Welcome to waveformtools' documentation!
    transforms
    waveforms
    waveformtools
-
+   sphinx-quickstart
+   
 Indices and tables
 ==================
 
