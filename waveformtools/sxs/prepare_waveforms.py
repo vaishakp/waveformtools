@@ -37,6 +37,7 @@ from pathlib import Path
 
 import numpy as np
 import scri
+from waveformtools.waveformtools import message
 
 
 class PrepareSXSWaveform:
@@ -153,6 +154,8 @@ class PrepareSXSWaveform:
                 sim_name + f"Lev{self.lev}JoinedHorizons.h5"
             )
 
+        self.setup_env()
+
     @property
     def sim_dir(self):
         """The full path to the directory containing the
@@ -211,6 +214,16 @@ class PrepareSXSWaveform:
     def history_file(self):
         return self._history_file
 
+    def setup_env(self):
+        ''' Setup the environment '''
+
+        # exec(open('/mnt/pfs/vaishak.p/soft/modules-5.2.0/init/python.py').read())
+
+        # module('unload', 'gcc/11.1.0')
+
+        # module('load', 'gcc/11.1.0')
+
+
     def join_waveform_h5_files(self, verbose=False):
         """Join the waveform h5 files"""
 
@@ -223,7 +236,7 @@ class PrepareSXSWaveform:
             data_paths_insp = os.path.join(
                 self.sim_dir,
                 Path(
-                    f"{self.sim_name}/Ecc{self.ecc}"
+                    f"Ecc{self.ecc}"
                     f"/Ev/Lev{self.lev}*/Run/GW2/"
                     "rh_FiniteRadii_CodeUnits.h5"
                 ),
@@ -232,7 +245,7 @@ class PrepareSXSWaveform:
             data_paths_rdown = os.path.join(
                 self.sim_dir,
                 Path(
-                    f"{self.sim_name}/Ecc{self.ecc}"
+                    f"Ecc{self.ecc}"
                     f"/Ev/Lev{self.lev}_Ringdown/"
                     f"Lev{self.lev}*/Run/GW2/"
                     "rh_FiniteRadii_CodeUnits.h5"
@@ -248,7 +261,7 @@ class PrepareSXSWaveform:
             try:
                 run_cmd += (
                     f" -o {self.joined_waveform_outfile_path}"
-                    f" -l {data_paths_insp} "
+                    f" {data_paths_insp} "
                 )
 
                 print(f"Running command\n {run_cmd}")
@@ -269,7 +282,7 @@ class PrepareSXSWaveform:
             except Exception as ex:
                 run_cmd += (
                     f" -o {self.joined_waveform_outfile_path}"
-                    f" -l {data_paths_insp}"
+                    f" {data_paths_insp}"
                 )
 
                 print(f"Running command\n {run_cmd}")
@@ -331,24 +344,29 @@ class PrepareSXSWaveform:
         else:
             print("Joining Horizon h5 files...")
 
-            input_insp_dat_rel_loc = Path(
-                f"{self.sim_name}/Ecc{self.ecc}"
-                f"/Ev/Lev{self.lev}*/Run/"
+            input_insp_dat_rel_loc = f"Ecc{self.ecc}"\
+                f"/Ev/Lev{self.lev}*/Run/"\
                 "ApparentHorizons/Horizons.h5"
-            )
 
-            input_rdown_dat_rel_loc = Path(
-                f"{self.sim_name}/Ecc{self.ecc}"
-                f"/Ev/Lev{self.lev}_Ringdown/"
-                f"Lev{self.lev}*/Run/"
+            input_rdown_dat_rel_loc = f"Ecc{self.ecc}"\
+                f"/Ev/Lev{self.lev}_Ringdown/"\
+                f"Lev{self.lev}*/Run/"\
                 "ApparentHorizons/Horizons.h5"
-            )
 
-            data_paths_insp = os.path.join(self.sim_dir, input_insp_dat_rel_loc)
+            #data_paths_insp = os.path.join(self.sim_dir, input_insp_dat_rel_loc)
+            
+            data_paths_insp = self.sim_dir.joinpath(input_insp_dat_rel_loc)
 
-            data_paths_rdown = os.path.join(
-                self.sim_dir, input_rdown_dat_rel_loc
-            )
+            message("data paths insp", data_paths_insp, message_verbosity=2)
+
+            #data_paths_rdown = os.path.join(
+            #    self.sim_dir, input_rdown_dat_rel_loc
+            #)
+
+            data_paths_rdown = self.sim_dir.joinpath(input_rdown_dat_rel_loc)
+
+            message("data paths rdown", data_paths_rdown, message_verbosity=2)
+            
             if verbose:
                 run_cmd = "JoinH5 -v"
 
@@ -358,7 +376,7 @@ class PrepareSXSWaveform:
             try:
                 run_cmd += (
                     f" -o {self.joined_horizons_outfile_path}"
-                    f" -l {data_paths_insp} "
+                    f" {data_paths_insp} {data_paths_rdown}"
                 )
 
                 print(f"Running command\n {run_cmd}")
@@ -372,7 +390,7 @@ class PrepareSXSWaveform:
             except Exception as ex:
                 run_cmd += (
                     f" -o {self.joined_horizons_outfile_path}"
-                    f" -l {data_paths_insp}"
+                    f" {data_paths_insp}"
                 )
 
                 print(f"Running command\n {run_cmd}")

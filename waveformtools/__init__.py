@@ -28,11 +28,15 @@ def read_git_version():
     # Open the file
     vers = "-1"
     try:
-        with open(package_directory + "/../public/version", "r") as vers_file:
+        with open(
+            package_directory + "/../public/version", "r", encoding="utf-8"
+        ) as vers_file:
             vers = vers_file.readlines()[0]
     except Exception as excep:
         print(
-            "This is not a git repo! please use the version attribute instead!"
+            excep,
+            "\n",
+            "This is not a git repo! please use the version attribute instead!",
         )
     # with open(package_directory + "/../public/date.txt", "r") as vers_file:
     # vers = vers_file.read()[:10]

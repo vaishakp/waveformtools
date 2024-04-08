@@ -944,6 +944,7 @@ class modes_array:
         key_ex=None,
         spin_weight=-2,
         actions="empty",
+        areal_radii=[],
     ):
         self.label = label
         self.data_dir = data_dir
@@ -964,7 +965,7 @@ class modes_array:
         self._spin_weight = spin_weight
         self._actions = actions
         self._extra_mode_axis_len = extra_mode_axis_len
-
+        self._areal_radii = areal_radii
     @property
     def extra_mode_axis_len(self):
         return self._extra_mode_axis_len
