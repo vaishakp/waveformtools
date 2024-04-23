@@ -29,8 +29,9 @@ except Exception as ex:
     print(ex)
     import waveformtools.config as config
 
+
 import numpy as np
-from numba import njit
+#from numba import njit
 
 # from scipy import signal
 
@@ -1056,7 +1057,7 @@ def shiftmatched(hdat, ind, delta_t=None, is_ts=False):
     return shifted_wf
 
 
-@njit
+#@njit
 def unwrap_phase(phi0):
     """Unwrap the phase by finding turning points in phi0.
     Finding turning points for unwrapping arctan2 function
