@@ -136,6 +136,7 @@ class PrepareSXSWaveform:
             print(f"Out directory is set to {self.out_dir}")
 
         if not os.path.isdir(self.out_dir):
+            message(f"Creating directory {self.out_dir}")
             os.mkdir(self.out_dir)
 
         joined_outfile_dir = os.path.join(self.out_dir, Path(f"joined"))
