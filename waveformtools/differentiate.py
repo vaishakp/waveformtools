@@ -8,7 +8,7 @@ Tools for differentiating data.
 
 import matplotlib.pyplot as plt
 import numpy as np
-from numba import jit, njit
+#from numba import jit, njit
 
 from waveformtools.waveformtools import message
 
@@ -802,7 +802,7 @@ def differentiate5_vec_nonumba(data, delta_t):
     return np.transpose(der_data, (1, 2, 0))
 
 
-@njit(parallel=True)
+#@njit(parallel=True)
 def differentiate5_vec_numba(data, delta_t):
     """Eleven point difference derivative calculator. Not accurate near the boundaries.
 

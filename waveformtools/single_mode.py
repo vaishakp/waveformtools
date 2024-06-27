@@ -1,4 +1,5 @@
 import numpy as np
+from spectral.spherical.swsh import Yslm, Yslm_vec
 from waveformtools.dataIO import construct_mode_list
 from waveformtools.waveformtools import message
 
@@ -18,6 +19,7 @@ class SingleMode:
         tol=1e-8,
         extra_mode_axis_len=1,
         Grid=None,
+        vec_modes=None,
     ):
         self._modes_data = modes_data
         self._zero_modes = zero_modes
@@ -28,6 +30,7 @@ class SingleMode:
         self._tol = tol
         self._extra_mode_axis_len = extra_mode_axis_len
         self._Grid = Grid
+        self._vec_modes = vec_modes
 
         created = False
         if isinstance(modes_dict, dict):
@@ -62,10 +65,22 @@ class SingleMode:
         if not created:
             self.create_modes_array()
         if Grid is None:
-            from waveformtools.grids import GLGrid
+            from spectral.spherical.grids import GLGrid
 
             self._Grid = GLGrid(L=ell_max)
 
+        self._modes_spherepack = None
+
+
+        if not (np.array(self.vec_modes) ==np.array(None)).all():
+
+            self.construct_from_vec_modes()
+
+
+    @property
+    def vec_modes(self):
+        return self._vec_modes
+    
     @property
     def extra_mode_axis_len(self):
         return self._extra_mode_axis_len
@@ -78,6 +93,17 @@ class SingleMode:
     def Grid(self):
         return self._Grid
 
+    @property
+    def modes_spherepack(self):
+        ''' Get the modes in spherepack convention. Note that
+        this assumes expansion of a real function in real spherical
+        harmonics '''
+        if (np.array(self._modes_spherepack)==np.array(None)).any():
+
+            self.get_in_spherepack_convention()
+
+        return self._modes_spherepack
+    
     def get_modes_dict(self, modes_list=None):
         """Get a dictionary representation of the
         modes requested"""
@@ -237,7 +263,7 @@ class SingleMode:
                 raise NameError("Please supply ell_max")
 
         if self.modes_list is None:
-            self.modes_list = construct_mode_list(
+            self._modes_list = construct_mode_list(
                 ell_max=ell_max, spin_weight=self.spin_weight
             )
 
@@ -250,6 +276,22 @@ class SingleMode:
             self._modes_data = np.zeros(
                 (ell_max + 1, 2 * (ell_max) + 1), dtype=np.complex128
             )
+
+    def construct_from_vec_modes(self, vec_modes):
+        ''' Load the single modes object using the modes vec '''
+
+        ell_max_vec_modes = int(np.sqrt(len(vec_modes)) - 1)
+
+        if (ell_max_vec_modes+1)**2 != len(vec_modes):
+            raise ValueError("The length of vec_modes does not match the filled modes array") 
+    
+        for ell in range(ell_max_vec_modes+1):
+            for emm in rang(-ell, ell+1):
+
+                vec_index = (ell)**2 + emm + ell
+
+                self.set_mode_data(ell=ell, emm=emm, value=vec_modes[vec_index])
+
 
     def set_mode_data(self, ell, emm, value):
         """Set the mode array data for the respective :math:`(\\ell, m)` mode.
@@ -452,8 +494,6 @@ class SingleMode:
     def get_expansion_residues(self, orig_func):
         """Get the expansion residues"""
 
-        from waveformtools.transforms import Yslm_vec
-
         residues = [np.sum(orig_func**2)]
 
         modes_list = construct_mode_list(ell_max=self.ell_max, spin_weight=0)
@@ -487,6 +527,80 @@ class SingleMode:
 
         return residues
 
+    def get_in_spherepack_convention(self):
+        ''' Convert the modes into spherepack convention. This 
+         returns a set of complex modes but only the real part
+          is to be used. The imaginary part may be useful for 
+          error checking and should be small '''
+
+        Rlm = []
+
+        for emm in range(self.ell_max+1):
+            for ell in range(self.ell_max+1):
+
+                if abs(emm)>ell:
+                    continue
+
+                val_pm = self.mode(ell, emm)
+                val_mm = self.mode(ell, -emm)
+
+                if emm==0:
+                    factor = 1/np.sqrt(2*np.pi)
+                    #val_sp*=np.sqrt(2*np.pi)
+                    re_Ylm_val = val_pm.real
+
+                else:
+                    #val_sp*=np.sqrt(4*np.pi)
+                    factor = 1/np.sqrt(4*np.pi) #(-1)**emm * 5/2 #(-1)**emm * np.sqrt(4*np.pi)
+
+                    re_Ylm_val = 1 * (val_mm + (-1)**emm * val_pm)/np.sqrt(2)
+
+                re_Ylm_val *=factor
+
+                Rlm.append(re_Ylm_val)
+
+        self._modes_spherepack = Rlm
+
+    def vector(self):
+        ''' return the vector of modes in ell - emm format 
+        (opposite to spherepack's emm - ell format'''
+
+        vec = []
+        for ell in range(self.ell_max+1):
+            for emm in range(-ell, ell+1):
+                vec.append(self.mode(ell, emm))
+
+        return np.array(vec)
+
+    def evaluate(self, theta, phi, ell_max=None):
+        ''' Evaluate the expansion at requested angular coordinates '''
+
+        if ell_max is None:
+            ell_max = self.ell_max
+    
+        val = 0
+
+        for ell in range(ell_max+1):
+            for emm in range(-ell, ell+1):
+
+                Ylm = Yslm_vec(spin_weight=0, theta_grid=theta, phi_grid=phi, ell=ell, emm=emm, cache=False)
+                
+                val += self.mode(ell, emm) * Ylm
+
+        return val
+
+    def compute_spatial_detivatives(self):
+        ''' Given the modes, compute its spatial derivatives '''
+
+        assert self.spin_weight == 0, "Derivatives have only been implemented for spin weight zero harmonics "
+
+        from qlmtools.differentiation import DerivSHFromSpec
+
+        from waveformtools.diagnostics import method_info
+
+        minfo = method_info(diff_method='SH', ell_max=self.ell_max, int_method='GL')
+
+        return DerivSHFromSpec(self, minfo)
 
 def plot_residues(self, orig_func):
     """Plot the residues of this expanion"""

@@ -22,7 +22,7 @@ from waveformtools.dataIO import (
     sort_keys,
 )
 from waveformtools.grids import UniformGrid
-from waveformtools.transforms import Yslm_vec
+from spectral.spherical.swsh import Yslm_vec
 from waveformtools.waveformtools import interp_resam_wfs, message
 
 """ Units """

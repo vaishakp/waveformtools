@@ -136,15 +136,21 @@ class SimulationExplorer:
         prepared_waveforms_dir=None,
         bfi_project_name=None,
         bfi_home_dir=None,
+        ref_time=None,
     ):
         self._search_dir = Path(search_dir)
 
         self._prepared_waveforms_dir = Path(prepared_waveforms_dir)
+        self._ref_time = ref_time
 
         self._bfi_project_name = bfi_project_name
         self._bfi_home_dir = Path(bfi_home_dir)
         self._sim_basename = None
         self._bfi_sim_params = {}
+
+    @property
+    def ref_time(self):
+        return self._ref_time
 
     @property
     def search_dir(self):
@@ -1284,3 +1290,14 @@ def re_fetch_vector(line):
     val3 = float(result3.group()[1:-1])
 
     return (val1, val2, val3)
+
+def get_ref_time(self):
+    ''' Get the reference time 
+    as the light crossing time 
+    to the smallest waveform 
+    extraction sphere '''
+
+    #self.avail
+
+    #for sim_path 
+    #wext_file_path = 
