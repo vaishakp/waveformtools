@@ -7,15 +7,21 @@ class method_info:
     """The methods for integration ,differential to be passed on
     for operations."""
 
-    def __init__(
-        self, int_method="MP", diff_method="SH", ell_max=8, degree=8, reg=True
-    ):
+    def __init__(self, 
+                 int_method="MP", 
+                 diff_method="SH", 
+                 ell_max=8, 
+                 degree=8, 
+                 reg=True,
+                 swsh_routine='waveformtools',
+                 ):
+        
         self.int_method = int_method
         self.diff_method = diff_method
         self.ell_max = ell_max
         self.reg = reg
         self.degree = degree
-
+        self.swsh_routine = swsh_routine
 
 def RMSerrs(func1, func2, info):
     """Compute and return the RMS error between two arrays

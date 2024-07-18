@@ -2,7 +2,7 @@ import numpy as np
 from spectral.spherical.swsh import Yslm, Yslm_vec
 from waveformtools.dataIO import construct_mode_list
 from waveformtools.waveformtools import message
-
+from waveformtools.diagnostics import method_info
 
 class SingleMode:
     """Storage and handling of a single mode"""
@@ -572,7 +572,7 @@ class SingleMode:
 
         return np.array(vec)
 
-    def evaluate(self, theta, phi, ell_max=None):
+    def evaluate_old(self, theta, phi, ell_max=None):
         ''' Evaluate the expansion at requested angular coordinates '''
 
         if ell_max is None:
@@ -583,11 +583,85 @@ class SingleMode:
         for ell in range(ell_max+1):
             for emm in range(-ell, ell+1):
 
-                Ylm = Yslm_vec(spin_weight=0, theta_grid=theta, phi_grid=phi, ell=ell, emm=emm, cache=False)
+                Ylm = Yslm_vec(spin_weight=0, 
+                                theta_grid=theta, 
+                                phi_grid=phi, 
+                                ell=ell, 
+                                emm=emm, 
+                                cache=False)
                 
                 val += self.mode(ell, emm) * Ylm
+        
+        #val = np.sum(self._modes_data * sYlm._modes_data)
 
         return val
+    
+
+    def evaluate(self, theta, phi, ell_max=None):
+        ''' Evaluate the expansion at requested angular coordinates '''
+
+        from spectral.spherical.transforms import SHContract
+
+        if ell_max is None:
+            ell_max = self.ell_max
+    
+        #val = 0
+        
+        #from spectral.spherical.swsh import create_Yslm_modes_array
+        from spectral.spherical.Yslm_mp import Yslm_mp
+
+        sYlm = Yslm_mp(ell_max=ell_max, 
+                        spin_weight=self.spin_weight, 
+                        theta=float(theta), 
+                        phi=float(phi))
+        sYlm.run()
+
+        #sYlm = create_Ylm_modes_array(theta=float(theta), 
+        #                              phi=float(phi), 
+        #                              ell_max=ell_max,
+        #                              spin_weight=self.spin_weight)
+
+
+        '''
+        if method=='waveformtools':
+            for ell in range(ell_max+1):
+                for emm in range(-ell, ell+1):
+
+                    Ylm = Yslm_vec(spin_weight=0, 
+                                   theta_grid=theta, 
+                                   phi_grid=phi, 
+                                   ell=ell, 
+                                   emm=emm, 
+                                   cache=False)
+                    
+                    val += self.mode(ell, emm) * Ylm
+        '''
+        val = np.sum(self._modes_data * sYlm.sYlm_modes._modes_data)
+
+        #elif method=='spherepack':
+        return val
+
+    def evaluate_sp(self, theta, phi, ell_max=None):
+        ''' Evaluate the expansion at requested angular coordinates '''
+
+        from spectral.spherical.transforms import SHContract
+
+        if ell_max is None:
+            ell_max = self.ell_max
+    
+        #val = 0
+        
+        from spectral.spherical.swsh import create_spherical_Yslm_modes_array
+        
+        sYlm = create_spherical_Yslm_modes_array(theta=float(theta), 
+                                      phi=float(phi), 
+                                      ell_max=ell_max,
+                                      spin_weight=self.spin_weight)
+
+        val = np.sum(self._modes_data * sYlm._modes_data)
+
+        return val
+    
 
     def compute_spatial_detivatives(self):
         ''' Given the modes, compute its spatial derivatives '''
@@ -596,7 +670,7 @@ class SingleMode:
 
         from qlmtools.differentiation import DerivSHFromSpec
 
-        from waveformtools.diagnostics import method_info
+        
 
         minfo = method_info(diff_method='SH', ell_max=self.ell_max, int_method='GL')
 

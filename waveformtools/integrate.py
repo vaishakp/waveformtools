@@ -126,19 +126,19 @@ def fixed_frequency_integrator(
 #############################################
 
 
-def TwoDIntegral(func, info, method=None):
+def TwoDIntegral(func, grid_info, int_method=None):
     """Integrate a function over a sphere.
 
     Parameters
     ----------
-    func : function
+    func: function
             The function to be integrated
-    NTheta, NPhi : int
+    NTheta, NPhi: int
              The number of grid points in the theta and phi directions.
              Note that NTheta must be even.
-    ht, hp : float
+    ht, hp: float
              The grid spacings.
-    method : string
+    int_method: string
              The method to use for the integration. Options are DH (Driscoll Healy), SP (Simpson's), MP (Midpoint).
 
     Returns
@@ -147,19 +147,11 @@ def TwoDIntegral(func, info, method=None):
             The function f integrated over the sphere.
     """
 
-    # NTheta = info.ntheta_act
-    # NPhi  = info.nphi_act
-
-    # NTheta, NPhi = func.shape
-
-    # ht = info.dtheta
-    # hp = info.dphi
-
-    if method is None:
+    if int_method is None:
         if info.grid_type == "GL":
-            method = "GL"
+            int_method = "GL"
         elif info.grid_type == "Uniform":
-            method = "MP"
+            int_method = "MP"
         else:
             raise KeyError(
                 "Unable to discern default integration"
@@ -167,14 +159,14 @@ def TwoDIntegral(func, info, method=None):
                 "method explicitely"
             )
 
-    if method == "DH":
-        integral = DriscollHealy2DInteg(func, info)
-    elif method == "MP":
-        integral = MidPoint2DInteg(func, info)
-    elif method == "SP":
-        integral = Simpson2DInteg(func, info)
-    elif method == "GL":
-        integral = GaussLegendre2DInteg(func, info)
+    if int_method == "DH":
+        integral = DriscollHealy2DInteg(func, grid_info)
+    elif int_method == "MP":
+        integral = MidPoint2DInteg(func, grid_info)
+    elif int_method == "SP":
+        integral = Simpson2DInteg(func, grid_info)
+    elif int_method == "GL":
+        integral = GaussLegendre2DInteg(func, grid_info)
 
     else:
         raise ValueError("Unknown method!")
