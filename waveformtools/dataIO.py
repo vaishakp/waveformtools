@@ -528,23 +528,23 @@ def load_RIT_Psi4_data_from_disk(
 
             wfa.set_mode_data(ell, emm, wfmode)
 
-    wfa.actions += "->load_modes"
+    wfa._actions += "->load_modes"
 
     if crop is not False or centre is True:
         # Trim or recenter
         if crop is True or centre is True:
             wfa.trim(trim_upto_time=0)
             wfa.centered = True
-            wfa.actions += "->recenter"
+            wfa._actions += "->recenter"
 
         elif isinstance(crop, float):
             wfa.trim(trim_upto_time=crop)
-            wfa.actions += "->crop"
+            wfa._actions += "->crop"
 
         if save_as_ma is True:
             # Save the modes array as waveforms hdf file
             wfa.save_modes(out_file_name="{label}_resam.h5")
-            wfa.actions += "->save_as_wfh5"
+            wfa._actions += "->save_as_wfh5"
     return wfa
 
 
@@ -850,21 +850,21 @@ def load_RIT_Strain_data_from_disk(
     #####################
     # Finishing touches
     #####################
-    wfa.actions += "->load_modes"
+    wfa._actions += "->load_modes"
 
     # Trim or recenter
     if centre is True:
         wfa.trim(trim_upto_time=0)
-        wfa.actions += "->center"
+        wfa._actions += "->center"
 
     if isinstance(crop, float):
         wfa.trim(trim_upto_time=crop)
-        wfa.actions += "->crop"
+        wfa._actions += "->crop"
 
     if save_as_ma is True:
         # Save the modes array as waveforms hdf file
         wfa.save_modes(out_file_name=f"{label}_resam.h5")
-        wfa.actions += "->save_as_wfh5"
+        wfa._actions += "->save_as_wfh5"
 
     if debug is True:
         return wfa, wf_nl
