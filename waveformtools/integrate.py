@@ -126,7 +126,7 @@ def fixed_frequency_integrator(
 #############################################
 
 
-def TwoDIntegral(func, info, method=None):
+def TwoDIntegral(func, info, int_method=None):
     """Integrate a function over a sphere.
 
     Parameters
@@ -155,7 +155,7 @@ def TwoDIntegral(func, info, method=None):
     # ht = info.dtheta
     # hp = info.dphi
 
-    if method is None:
+    if int_method is None:
         if info.grid_type == "GL":
             method = "GL"
         elif info.grid_type == "Uniform":
@@ -167,13 +167,13 @@ def TwoDIntegral(func, info, method=None):
                 "method explicitely"
             )
 
-    if method == "DH":
+    if int_method == "DH":
         integral = DriscollHealy2DInteg(func, info)
-    elif method == "MP":
+    elif int_method == "MP":
         integral = MidPoint2DInteg(func, info)
-    elif method == "SP":
+    elif int_method == "SP":
         integral = Simpson2DInteg(func, info)
-    elif method == "GL":
+    elif int_method == "GL":
         integral = GaussLegendre2DInteg(func, info)
 
     else:
