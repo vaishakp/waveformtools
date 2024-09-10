@@ -2,6 +2,24 @@ import numpy as np
 from spectral.spherical.swsh import Yslm, Yslm_vec
 from waveformtools.dataIO import construct_mode_list
 from waveformtools.waveformtools import message
+from waveformtools.diagnostics import method_info
+#from numba import int32, float64, complex128, uint16, types, typed,
+#from numba.types import List, Dict
+
+
+# key and value types
+#emode_list = [[2, 2], [0, 0]]
+#emode_dict = {''}
+
+#spec =[
+#    ('modes_data', complex128[:]),
+#    ('zero_modes', List),
+#    ('non_zero_modes', List),
+#    ('spin_weight', int32),
+#    ('ell_max', uint16),
+#    ('modes_list', list),
+#    ('modes_dict', ) 
+#]
 
 
 class SingleMode:
@@ -17,7 +35,7 @@ class SingleMode:
         modes_list=None,
         modes_dict=None,
         tol=1e-8,
-        extra_mode_axis_len=1,
+        extra_mode_axis_shape=None,
         Grid=None,
         vec_modes=None,
     ):
@@ -28,7 +46,7 @@ class SingleMode:
         self._ell_max = ell_max
         self._modes_list = modes_list
         self._tol = tol
-        self._extra_mode_axis_len = extra_mode_axis_len
+        self._extra_mode_axis_shape = extra_mode_axis_shape
         self._Grid = Grid
         self._vec_modes = vec_modes
 
@@ -60,7 +78,7 @@ class SingleMode:
             for ell, emm_list in self.modes_list:
                 for emm in emm_list:
                     value = modes_dict[f"l{ell}"][f"m{emm}"]
-                    self.set_mode_data(ell, emm, value)
+                    self.set_mode_data(ell=ell, emm=emm, value=value)
 
         if not created:
             self.create_modes_array()
@@ -82,8 +100,8 @@ class SingleMode:
         return self._vec_modes
     
     @property
-    def extra_mode_axis_len(self):
-        return self._extra_mode_axis_len
+    def extra_mode_axis_shape(self):
+        return self._extra_mode_axis_shape
 
     @property
     def tol(self):
@@ -227,9 +245,9 @@ class SingleMode:
                 "Please request a valid mode ( abs(emm) > abs(ell) here)"
             )
 
-        emm_index = ell + emm
+        vec_idx = ell**2 + emm + ell
 
-        return self._modes_data[ell, emm_index]
+        return self._modes_data[vec_idx]
 
     def create_modes_array(self):
         """Create a modes array and initialize it with zeros.
@@ -267,33 +285,31 @@ class SingleMode:
                 ell_max=ell_max, spin_weight=self.spin_weight
             )
 
-        if self.extra_mode_axis_len > 1:
-            self._modes_data = np.zeros(
-                (ell_max + 1, 2 * (ell_max) + 1, self.extra_mode_axis_len),
-                dtype=np.complex128,
-            )
+        if type(self.extra_mode_axis_shape) is tuple:
+            self._modes_data = np.zeros(    (
+                                            (ell_max + 1)**2, 
+                                            *self.extra_mode_axis_shape
+                                            ),
+                                        dtype=np.complex128,
+                                       )
         else:
             self._modes_data = np.zeros(
-                (ell_max + 1, 2 * (ell_max) + 1), dtype=np.complex128
-            )
+                                        (ell_max + 1)**2,
+                                        dtype=np.complex128
+                                       )
 
     def construct_from_vec_modes(self, vec_modes):
-        ''' Load the single modes object using the modes vec '''
+        ''' Load the single modes object using the modes vector '''
 
         ell_max_vec_modes = int(np.sqrt(len(vec_modes)) - 1)
 
         if (ell_max_vec_modes+1)**2 != len(vec_modes):
             raise ValueError("The length of vec_modes does not match the filled modes array") 
     
-        for ell in range(ell_max_vec_modes+1):
-            for emm in rang(-ell, ell+1):
-
-                vec_index = (ell)**2 + emm + ell
-
-                self.set_mode_data(ell=ell, emm=emm, value=vec_modes[vec_index])
+        self._modes_data = vec_modes
 
 
-    def set_mode_data(self, ell, emm, value):
+    def set_mode_data(self, value, ell=None, emm=None):
         """Set the mode array data for the respective :math:`(\\ell, m)` mode.
 
         Parameters
@@ -306,14 +322,21 @@ class SingleMode:
                The value of the mode data of the corresponding mode.
 
         """
-        # Compute the emm index given ell.
-        emm_index = emm + ell
+        if (ell is None) and (emm is None):
+            self._modes_data = np.array(value)
+            #if len(value.shape)>1:
+            #    self._extra_mode_axis_shape = 
+        else:
+        #elif int(ell)==ell and int(emm)==emm:
+            # Compute the linear vector index
+            vec_idx = (ell)**2 + emm + ell
+            message(f"Setting l{ell} m{emm} data {value}", message_verbosity=4)
 
-        message(f"Setting l{ell} m{emm} data {value}", message_verbosity=4)
-
-        # Set the mode data.
-        self._modes_data[ell, emm_index] = value
-        message(f"Set mode data {self.mode(ell, emm)}", message_verbosity=4)
+            # Set the mode data.
+            self._modes_data[vec_idx] = value
+            message(f"Set mode data {self.mode(ell, emm)}", message_verbosity=4)
+        #else:
+        #    raise TypeError("Please provide integer values for ell and emm")
 
     def compute_zero_modes(self, tol=1e-8):
         """Get the details of the zero modes in
@@ -348,24 +371,24 @@ class SingleMode:
         only_modes_above_tol=False,
         tol=None,
     ):
-        """Contract the modes to get corrdinate space representation
-        of the function.
+        """Contract the modes to get co-ordinate space 
+        representation of the function.
 
         Parameters
         ----------
-        ell_max : int, optional
-                  The max :math:`\\ell` upto which to contract
-                  the modes to. If None, then the available
-                  `ell_max` will be chosen.
+        ell_max: int, optional
+                 The max :math:`\\ell` upto which to contract
+                 the modes to. If None, then the available
+                 `ell_max` will be chosen.
 
-        all_available_modes : bool,optional
-                              Wheter or not to use all available modes.
+        all_available_modes: bool,optional
+                             Wheter or not to use all available modes.
 
         Returns
         -------
-        func : 2darray
-               The function on the sphere in coordinate space
-               representation.
+        func: 2darray
+              The function on the sphere in coordinate space
+              representation.
         """
 
         if ell_max is None:
@@ -481,7 +504,7 @@ class SingleMode:
             ell_max=ell_max_choice,
             spin_weight=self.spin_weight,
             Grid=self.Grid,
-            extra_mode_axis_len=self.extra_mode_axis_len,
+            extra_mode_axis_shape=self.extra_mode_axis_shape,
             tol=self.tol,
         )
 
@@ -565,15 +588,18 @@ class SingleMode:
         ''' return the vector of modes in ell - emm format 
         (opposite to spherepack's emm - ell format'''
 
-        vec = []
-        for ell in range(self.ell_max+1):
-            for emm in range(-ell, ell+1):
-                vec.append(self.mode(ell, emm))
+        vec = self._modes_data.copy()
+        #for ell in range(self.ell_max+1):
+        #    for emm in range(-ell, ell+1):
+        #        vec.append(self.mode(ell, emm))
 
         return np.array(vec)
 
-    def evaluate(self, theta, phi, ell_max=None):
-        ''' Evaluate the expansion at requested angular coordinates '''
+    def evaluate_old(self, theta, phi, ell_max=None):
+        ''' Evaluate the expansion at requested angular coordinates 
+         by looping over SWSH and summing. SWSHs are generated using
+        `Yslm_vec` 
+        '''
 
         if ell_max is None:
             ell_max = self.ell_max
@@ -583,11 +609,88 @@ class SingleMode:
         for ell in range(ell_max+1):
             for emm in range(-ell, ell+1):
 
-                Ylm = Yslm_vec(spin_weight=0, theta_grid=theta, phi_grid=phi, ell=ell, emm=emm, cache=False)
+                Ylm = Yslm_vec(spin_weight=0, 
+                                theta_grid=theta, 
+                                phi_grid=phi, 
+                                ell=ell, 
+                                emm=emm, 
+                                cache=False)
                 
                 val += self.mode(ell, emm) * Ylm
+        
+        #val = np.sum(self._modes_data * sYlm._modes_data)
 
         return val
+    
+    def evaluate_old_1(self, theta, phi, ell_max=None):
+        ''' Evaluate the expansion at requested angular coordinates 
+        by generating SWSHs in serial and vectorizing the 
+        summation '''
+
+        from spectral.spherical.transforms import SHContract
+
+        if ell_max is None:
+            ell_max = self.ell_max
+    
+
+        
+        from spectral.spherical.swsh import create_Yslm_modes_array
+
+        Yslm = create_Yslm_modes_array(theta=float(theta), 
+                                      phi=float(phi), 
+                                      ell_max=ell_max,
+                                      spin_weight=self.spin_weight)
+
+
+        val = np.sum(self._modes_data * Yslm.sYlm_modes._modes_data)
+
+        return val
+    
+
+    def evaluate(self, theta, phi, ell_max=None):
+        ''' Evaluate the expansion at requested angular coordinates 
+        by generating SWSHs in parallel and vectorizing the 
+        summation '''
+
+        from spectral.spherical.transforms import SHContract
+
+        if ell_max is None:
+            ell_max = self.ell_max
+    
+        from spectral.spherical.Yslm_mp import Yslm_mp
+
+        sYlm = Yslm_mp(ell_max=ell_max, 
+                        spin_weight=self.spin_weight, 
+                        theta=theta, 
+                        phi=phi)
+        sYlm.run()
+        Ylm_vec = sYlm.sYlm_modes._modes_data
+        modes_data_len = len(Ylm_vec)
+
+        val = np.tensordot(self._modes_data[:modes_data_len], Ylm_vec, axes=((0), (0)))
+
+        return val
+
+    def evaluate_sp(self, theta, phi, ell_max=None):
+        ''' Evaluate the expansion at requested angular coordinates 
+        by computing SWSHs using the spherical package '''
+
+        from spectral.spherical.transforms import SHContract
+
+        if ell_max is None:
+            ell_max = self.ell_max
+        
+        from spectral.spherical.swsh import create_spherical_Yslm_modes_array
+        
+        sYlm = create_spherical_Yslm_modes_array(theta=float(theta), 
+                                      phi=float(phi), 
+                                      ell_max=ell_max,
+                                      spin_weight=self.spin_weight)
+
+        val = np.sum(self._modes_data * sYlm._modes_data)
+
+        return val
+    
 
     def compute_spatial_detivatives(self):
         ''' Given the modes, compute its spatial derivatives '''
@@ -596,8 +699,7 @@ class SingleMode:
 
         from qlmtools.differentiation import DerivSHFromSpec
 
-        from waveformtools.diagnostics import method_info
-
+    
         minfo = method_info(diff_method='SH', ell_max=self.ell_max, int_method='GL')
 
         return DerivSHFromSpec(self, minfo)

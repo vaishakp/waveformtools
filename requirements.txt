@@ -10,5 +10,6 @@ datetime
 sympy
 numpydoc
 config @ git+https://gitlab.com/vaishakp/config@master
+spectral @ git+https://github.com/vaishakp/spectral
 recommonmark
 sphinx-rtd-theme

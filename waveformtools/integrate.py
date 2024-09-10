@@ -126,19 +126,19 @@ def fixed_frequency_integrator(
 #############################################
 
 
-def TwoDIntegral(func, info, int_method=None):
+def TwoDIntegral(func, grid_info, int_method=None):
     """Integrate a function over a sphere.
 
     Parameters
     ----------
-    func : function
+    func: function
             The function to be integrated
-    NTheta, NPhi : int
+    NTheta, NPhi: int
              The number of grid points in the theta and phi directions.
              Note that NTheta must be even.
-    ht, hp : float
+    ht, hp: float
              The grid spacings.
-    method : string
+    int_method: string
              The method to use for the integration. Options are DH (Driscoll Healy), SP (Simpson's), MP (Midpoint).
 
     Returns
@@ -147,19 +147,11 @@ def TwoDIntegral(func, info, int_method=None):
             The function f integrated over the sphere.
     """
 
-    # NTheta = info.ntheta_act
-    # NPhi  = info.nphi_act
-
-    # NTheta, NPhi = func.shape
-
-    # ht = info.dtheta
-    # hp = info.dphi
-
     if int_method is None:
         if info.grid_type == "GL":
-            method = "GL"
+            int_method = "GL"
         elif info.grid_type == "Uniform":
-            method = "MP"
+            int_method = "MP"
         else:
             raise KeyError(
                 "Unable to discern default integration"
@@ -168,13 +160,12 @@ def TwoDIntegral(func, info, int_method=None):
             )
 
     if int_method == "DH":
-        integral = DriscollHealy2DInteg(func, info)
+        integral = DriscollHealy2DInteg(func, grid_info)
     elif int_method == "MP":
-        integral = MidPoint2DInteg(func, info)
+        integral = MidPoint2DInteg(func, grid_info)
     elif int_method == "SP":
-        integral = Simpson2DInteg(func, info)
+        integral = Simpson2DInteg(func, grid_info)
     elif int_method == "GL":
-        integral = GaussLegendre2DInteg(func, info)
 
     else:
         raise ValueError("Unknown method!")
@@ -200,8 +191,8 @@ def MidPoint2DInteg(func, info):
     hp = info.dphi
 
     theta_grid, _ = info.meshgrid
-
-    integral = np.sum(func * np.sin(theta_grid)) * ht * hp
+    
+    integral = np.tensordot(func, np.sin(theta_grid), axes=((-2, -1), (0, 1))) * ht * hp
 
     return integral
 
@@ -225,7 +216,9 @@ def DriscollHealy2DInteg(func, info):
     integ : float
             The function f integrated over the sphere.
     """
-
+    if len(func.shape)>2:
+        raise NotImplementedError("Driscoll-Healy's method cannot currently handle 3d arrays")
+    
     NTheta = info.ntheta_act
     NPhi = info.nphi_act
 
@@ -318,6 +311,9 @@ def DriscollHealy2DInteg_v2(func, info):
             The function f integrated over the sphere.
     """
 
+    if len(func.shape)>2:
+        raise NotImplementedError("Driscoll-Healy's method cannot currently handle 3d arrays")
+    
     NTheta = info.ntheta_act
     NPhi = info.nphi_act
 
@@ -389,6 +385,9 @@ def Simpson2DInteg(func, info):
             The function f integrated over the sphere.
     """
 
+    if len(func.shape)>2:
+        raise NotImplementedError("Simpson's method cannot currently handle 3d arrays")
+    
     NTheta = info.ntheta_act
     NPhi = info.nphi_act
 
@@ -489,25 +488,7 @@ def GaussLegendre2DInteg(func, info):
             The function f integrated over the sphere.
     """
 
-    # NTheta = info.ntheta_act
-    # NPhi  = info.nphi_act
-
-    # NTheta, NPhi = func.shape
-
-    # ht = info.dtheta
-    # hp = info.dphi
-
-    # theta_grid, _ = info.meshgrid
-    # Norm = 1#(info.L +1)/4
-    # if len(func.shape)==2:
-    # integral = np.sum(func * info.weights_grid) * info.dphi
-    # print("Shape", func.shape, info.weights_grid.shape)
-
     integral = (
-        np.tensordot(func, info.weights_grid, axes=((0, 1), (0, 1))) * info.dphi
+        np.tensordot(func, info.weights_grid, axes=((-2, -1), (0, 1))) * info.dphi
     )
-
-    # elif len(func.shape)==3:
-    #    integral = np.tensordot()
-
     return integral
