@@ -166,6 +166,7 @@ def TwoDIntegral(func, grid_info, int_method=None):
     elif int_method == "SP":
         integral = Simpson2DInteg(func, grid_info)
     elif int_method == "GL":
+        integral = GaussLegendre2DInteg(func, grid_info)
 
     else:
         raise ValueError("Unknown method!")
