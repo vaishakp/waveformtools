@@ -704,19 +704,19 @@ class SingleMode:
 
         return DerivSHFromSpec(self, minfo)
 
-def plot_residues(self, orig_func):
-    """Plot the residues of this expanion"""
+    def plot_residues(self, orig_func):
+        """Plot the residues of this expanion"""
 
-    residues = self.get_expansion_residues(orig_func)
+        residues = self.get_expansion_residues(orig_func)
 
-    ell_axis = np.arange(-1, self.ell_max + 1)
+        ell_axis = np.arange(-1, self.ell_max + 1)
 
-    import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots()
-    ax.set_yscale("log")
-    ax.scatter(ell_axis, residues, s=1)
-    ax.set_title(r"Residues vs $\ell$")
-    ax.set_ylabel("Residues")
-    ax.set_xlabel(r"$\ell$")
-    plt.show()
+        fig, ax = plt.subplots()
+        ax.set_yscale("log")
+        ax.scatter(ell_axis, residues, s=1)
+        ax.set_title(r"Residues vs $\ell$")
+        ax.set_ylabel("Residues")
+        ax.set_xlabel(r"$\ell$")
+        plt.show()
