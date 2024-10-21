@@ -1405,7 +1405,7 @@ def norm(hdat, psd=1.0):
     return norm_f
 
 
-def flatten(nflist):
+def flatten_3l(nflist):
     """Flatten a (3rd order) list of list of lists.
     i.e. a three tier list [[[],[]], [[],[]] ---> [].
     This is useful e.g. when combining the data from
@@ -1432,7 +1432,37 @@ def flatten(nflist):
     # Return the 1d flattened list
     return flattened_list
 
+def flatten_l(nflist):
+    """Flatten a (3rd order) list of list of lists.
+    i.e. a three tier list [[[],[]], [[],[]] ---> [].
+    This is useful e.g. when combining the data from
+    the list output of multiple MPI ranks.
 
+    Parameters
+    ----------
+    nflist : a third tier list
+             A list of list of lists (a list of depth three).
+
+    Returns
+    -------
+    flattened_list : a list
+                     The flattened list i.e. a tier one list.
+    """
+
+    if len(nflist)==1:
+        return nflist
+
+    else:
+        flattened_list = []
+
+        for item in nflist:
+            for sub_item in item:
+                flattened_list.append(sub_item)
+
+        message("list length: (%d)" % (len(flattened_list)))
+        # Return the 1d flattened list
+        return flattened_list
+    
 def startend(data):
     """Identify the start and endpoints of the data.
 

@@ -38,6 +38,7 @@ class SingleMode:
         extra_mode_axis_shape=None,
         Grid=None,
         vec_modes=None,
+        func=None,
     ):
         self._modes_data = modes_data
         self._zero_modes = zero_modes
@@ -49,6 +50,7 @@ class SingleMode:
         self._extra_mode_axis_shape = extra_mode_axis_shape
         self._Grid = Grid
         self._vec_modes = vec_modes
+        self._func = func
 
         created = False
         if isinstance(modes_dict, dict):
@@ -111,6 +113,10 @@ class SingleMode:
     def Grid(self):
         return self._Grid
 
+    @property
+    def func(self):
+        return self._func
+    
     @property
     def modes_spherepack(self):
         ''' Get the modes in spherepack convention. Note that
@@ -496,6 +502,19 @@ class SingleMode:
                     mode1, mode2, prec, f"The l{ell} m{emm} mode must equal"
                 )
 
+    def compare_modes_dict(self, other_modes_dict, prec=18):
+        ''' Compare the Single modes object against a given modes 
+        dictionary '''
+
+        for ell_key, ell_modes in other_modes_dict.items():
+            ell = int(ell_key[1:])
+            for emm_key, other_mode in ell_modes.items():
+                emm=int(emm_key[1:])
+                np.testing.assert_almost_equal(
+                    self.mode(ell, emm), other_mode, prec, f"The l{ell} m{emm} mode must equal at precision {prec}"
+                )
+
+
     def truncate_modes(self, ell_max_choice):
         """Returns a new SingleModes object containing
         only modes upto the given `ell_max_choice`"""
@@ -704,9 +723,12 @@ class SingleMode:
 
         return DerivSHFromSpec(self, minfo)
 
-    def plot_residues(self, orig_func):
+    def plot_residues(self, orig_func=None):
         """Plot the residues of this expanion"""
 
+        if np.array(orig_func==None).all():
+            orig_func = self.func
+            
         residues = self.get_expansion_residues(orig_func)
 
         ell_axis = np.arange(-1, self.ell_max + 1)

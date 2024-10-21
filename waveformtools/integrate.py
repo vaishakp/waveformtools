@@ -242,23 +242,17 @@ def DriscollHealy2DInteg(func, info):
     func *= np.sin(theta_grid)
 
     # Skip the poles (ix=0 and ix=NTheta), as the weight there is zero
-
     # theta_1d = np.pi* np.arange(1, NTheta)/NTheta
     # ell_weight_axis = np.arange(int(NTheta/2))
-
     # theta_2d, ell_2d = np.meshgrid(theta_1d, ell_weight_axis)
-
     # weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / (2 * ell_2d + 1)
-
     # weights_axis = np.sum(weights_grid, axis=1)
-
     # latitude_sum_axis = np.sum(func, axis=1)
-
     # integrand_axis = latitude_sum_axis * weights_axis
 
     for theta_index in range(1, NTheta):
         # These weights lead to an almost spectral convergence
-        this_theta = np.pi * index_theta / NTheta
+        this_theta = np.pi * theta_index / NTheta
 
         # this_theta = theta_1d[theta_index]
 
@@ -283,7 +277,7 @@ def DriscollHealy2DInteg(func, info):
 
         for index_phi in range(NPhi):
             # for (int iy = 0; iy < NPhi; ++ iy)
-            latitude_sum += func[index_theta, index_phi]
+            latitude_sum += func[theta_index, index_phi]
 
         # latitude_sum = np.sum(func[index_theta, :])
 
@@ -392,6 +386,7 @@ def Simpson2DInteg(func, info):
     NTheta = info.ntheta_act
     NPhi = info.nphi_act
 
+    theta_grid, _ = info.meshgrid
     # NTheta, NPhi = func.shape
 
     ht = info.dtheta

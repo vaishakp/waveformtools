@@ -278,8 +278,18 @@ def check_Yslm_theta(theta_grid, threshold=1e-6):
 
     locs = np.where(abs(theta_list) < threshold)
 
-    for index in locs:
-        sign = theta_list[index] / abs(theta_list[index])
+    # print("Locs", locs, locs[0])
+
+    for index in locs[0]:
+
+        theta = theta_list[index]
+
+        #print("Theta val \t ", theta, "\n")
+        
+        if theta==0:
+            sign=1
+        else:
+            sign = theta_list[index] / abs(theta_list[index])
 
         theta_list[index] = theta_list[index] + sign * threshold
 
