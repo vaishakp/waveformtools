@@ -52,7 +52,11 @@ class SingleMode:
         self._vec_modes = vec_modes
         self._func = func
 
-        created = False
+        if (np.array(modes_data)==None).all():
+            created = False
+        else:
+            created = True
+
         if isinstance(modes_dict, dict):
             message(
                 "Creating SingleMode obj from modes dict...",
@@ -84,6 +88,7 @@ class SingleMode:
 
         if not created:
             self.create_modes_array()
+            
         if Grid is None:
             from spectral.spherical.grids import GLGrid
 
