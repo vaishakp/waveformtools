@@ -717,9 +717,8 @@ class SingleMode:
         assert self.spin_weight == 0, "Derivatives have only been implemented for spin weight zero harmonics "
 
         from qlmtools.differentiation import DerivSHFromSpec
-
     
-        minfo = method_info(diff_method='SH', ell_max=self.ell_max, int_method='GL')
+        minfo = method_info(diff_method='SH', ell_max=self.ell_max, int_method='GL', reg=False)
 
         return DerivSHFromSpec(self, minfo)
 
