@@ -671,17 +671,17 @@ class SingleMode:
         return val
     
 
-    def evaluate(self, theta, phi, ell_max=None):
+    def evaluate(self, theta=None, phi=None, ell_max=None):
         ''' Evaluate the expansion at requested angular coordinates 
         by generating SWSHs in parallel and vectorizing the 
         summation '''
-
-        from spectral.spherical.transforms import SHContract
+        from spectral.spherical.Yslm_mp import Yslm_mp
 
         if ell_max is None:
             ell_max = self.ell_max
-    
-        from spectral.spherical.Yslm_mp import Yslm_mp
+        
+        if (np.array(theta)==None).all() or (np.array(phi)==None).all():
+            theta, phi = self.Grid.meshgrid
 
         sYlm = Yslm_mp(ell_max=ell_max, 
                         spin_weight=self.spin_weight, 
