@@ -60,7 +60,7 @@ def RMSerrs(func1, func2, info):
     Amax = np.amax(diff)
     Amin = np.amin(diff)
 
-    RMS = np.sqrt(np.sum(np.absolute(diff) ** 2) / info.npix_act)
+    RMS = np.sqrt(np.sum(np.absolute(diff) ** 2, axis=(-2, -1)) / info.npix_act)
 
     return RMS, Amin, Amax
 

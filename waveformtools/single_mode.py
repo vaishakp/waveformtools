@@ -39,7 +39,10 @@ class SingleMode:
         Grid=None,
         vec_modes=None,
         func=None,
+        label=None,
+        sine_power=0,
     ):
+        self._label = label
         self._modes_data = modes_data
         self._zero_modes = zero_modes
         self._non_zero_modes = non_zero_modes
@@ -51,6 +54,7 @@ class SingleMode:
         self._Grid = Grid
         self._vec_modes = vec_modes
         self._func = func
+        self._sine_power=sine_power
 
         if (np.array(modes_data)==None).all():
             created = False
@@ -96,12 +100,15 @@ class SingleMode:
 
         self._modes_spherepack = None
 
-
         if not (np.array(self.vec_modes) ==np.array(None)).all():
-
             self.construct_from_vec_modes()
 
+        self.St, _ = self.Grid.meshgrid
 
+    @property
+    def label(self):
+        return self._label
+    
     @property
     def vec_modes(self):
         return self._vec_modes
@@ -121,6 +128,12 @@ class SingleMode:
     @property
     def func(self):
         return self._func
+    
+    @property
+    def sine_power(self):
+        ''' This is just kept for 
+        bookkeeping purposes.'''
+        return self._sine_power
     
     @property
     def modes_spherepack(self):
@@ -538,10 +551,13 @@ class SingleMode:
 
         return trunc_modes
 
-    def get_expansion_residues(self, orig_func):
+    def get_expansion_residues(self, func=None):
         """Get the expansion residues"""
 
-        residues = [np.sum(orig_func**2)]
+        if (np.array(func)==np.array(None)).all():
+            func = self.func
+
+        residues = [np.sum(func**2)]
 
         modes_list = construct_mode_list(ell_max=self.ell_max, spin_weight=0)
 
@@ -568,7 +584,7 @@ class SingleMode:
                     phi_grid=phi_grid,
                 )
 
-            res = np.sum((recon_func - orig_func) ** 2)
+            res = np.sum((recon_func - func) ** 2)
 
             residues.append(res)
 
