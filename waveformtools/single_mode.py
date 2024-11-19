@@ -136,6 +136,10 @@ class SingleMode:
         return self._sine_power
     
     @property
+    def modes_data(self):
+        return self._modes_data
+    
+    @property
     def modes_spherepack(self):
         ''' Get the modes in spherepack convention. Note that
         this assumes expansion of a real function in real spherical
