@@ -871,7 +871,7 @@ class modes_array:
     """A class that holds mode array of waveforms
 
     This can handle two index and three index modes.
-    
+
     Attributes
     ----------
     label :	str
@@ -972,7 +972,6 @@ class modes_array:
         self._extra_mode_axes_shape = extra_mode_axes_shape
         self._areal_radii = areal_radii
 
-
         if (np.array(self.extra_mode_axes_shape) == np.array(None)).all():
             self.extra_mode_axes = False
         else:
@@ -1040,7 +1039,7 @@ class modes_array:
         ang_mode_data = self.modes_data[vec_index]
 
         if self.extra_mode_axes:
-            if not (np.array(extra_indices)==np.array(None)).all():
+            if not (np.array(extra_indices) == np.array(None)).all():
                 message(f"Extra indices supplied {extra_indices}...")
                 return self.modes_data[*extra_indices, :]
 
@@ -1121,7 +1120,7 @@ class modes_array:
 
             self._modes_data = np.zeros(
                 (
-                    (ell_max + 1)**2,
+                    (ell_max + 1) ** 2,
                     *self.extra_mode_axes_shape,
                     data_len,
                 ),
@@ -1132,7 +1131,7 @@ class modes_array:
             message("Creating modes array", message_verbosity=3)
 
             self._modes_data = np.zeros(
-                (ell_max + 1)**2, data_len, dtype=np.complex128
+                (ell_max + 1) ** 2, data_len, dtype=np.complex128
             )
 
         # Set the time metadata
@@ -1297,7 +1296,7 @@ class modes_array:
 
         if debug is False:
             wfs_nl = 1
-            
+
         if not data_dir:
             data_dir = self.data_dir
         else:
@@ -1390,7 +1389,7 @@ class modes_array:
                 r_ext_factor,
                 debug,
             )
-            
+
         elif ftype == "SpEC_raw":
             wfs_nl = dataIO.load_SpEC_non_extrap_data_from_disk(
                 self,
@@ -1408,7 +1407,7 @@ class modes_array:
                 r_ext_factor,
                 debug,
             )
-            
+
         elif ftype == "SpECTRE":
             dataIO.load_SpECTRE_data_from_disk(
                 self,
@@ -1498,7 +1497,7 @@ class modes_array:
         with not two but three index modes, them one needs to specify
         the third (r) axis index to which this data corresponds to.
 
-        If r_index is not given, then it is assumed that 
+        If r_index is not given, then it is assumed that
         the supplied `data` is 2 dimensional (ell, emm, all r)
 
         Else, only the (ell, emm, one r element) is updated.
@@ -1640,7 +1639,7 @@ class modes_array:
         # Set the time-axis
         try:
             waveform_sp._time_axis = self.time_axis
-            
+
         except Exception as ex:
             message(ex)
             waveform_sp._frequency_axis = self.frequency_axis
@@ -1676,15 +1675,15 @@ class modes_array:
                 # message(sp_data)
         # Set the data of the spherical array.
         waveform_sp._data = sp_data
-        
+
         waveform_sp._areal_radii = self._areal_radii
-        
-        #try:
+
+        # try:
         #    waveform_sp._time_axis = self.time_axis
-        #except Exception as ex:
+        # except Exception as ex:
         #    message(ex)
         #    waveform_sp._frequency_axis = self.frequency_axis
-        
+
         return waveform_sp
 
     def trim(self, trim_upto_time=None):
@@ -2491,52 +2490,62 @@ class modes_array:
             wts = rotate_polarizations(wts, alpha)
 
         return taxis, wts.real, -wts.imag
-    
 
-    def evaluate_angular(self, theta=None, phi=None, ell_max=None, max_t_steps=None):
-        ''' Evaluate the expansion at requested angular coordinates 
-        by generating SWSHs in parallel and vectorizing the 
-        summation '''
+    def evaluate_angular(
+        self, theta=None, phi=None, ell_max=None, max_t_steps=None
+    ):
+        """Evaluate the expansion at requested angular coordinates
+        by generating SWSHs in parallel and vectorizing the
+        summation"""
         from spectral.spherical.Yslm_mp import Yslm_mp
 
         if ell_max is None:
             ell_max = self.ell_max
-        
-        if (np.array(theta)==np.array(None)).all() or (np.array(phi)==np.array(None)).all():
+
+        if (np.array(theta) == np.array(None)).all() or (
+            np.array(phi) == np.array(None)
+        ).all():
             theta, phi = self.Grid.meshgrid
 
-        sYlm = Yslm_mp(ell_max=ell_max, 
-                        spin_weight=self.spin_weight, 
-                        theta=theta, 
-                        phi=phi)
+        sYlm = Yslm_mp(
+            ell_max=ell_max, spin_weight=self.spin_weight, theta=theta, phi=phi
+        )
         sYlm.run()
         Ylm_vec = sYlm.sYlm_modes._modes_data
         modes_data_len = len(Ylm_vec)
 
-        val = np.tensordot(self._modes_data[:modes_data_len, ..., :max_t_steps], Ylm_vec, axes=((0), (0)))
+        val = np.tensordot(
+            self._modes_data[:modes_data_len, ..., :max_t_steps],
+            Ylm_vec,
+            axes=((0), (0)),
+        )
 
         return val
-    
 
-    def plot_modes(self, modes_to_plot=[(2,2), (3,3)]):
-        ''' Plot the requested set of modes '''
+    def plot_modes(self, modes_to_plot=[(2, 2), (3, 3)]):
+        """Plot the requested set of modes"""
 
         import matplotlib.pyplot as plt
 
         try:
             import config
+
             config.conf_matplolib()
         except Exception as excep:
-            excep('Unable to conf matplotlib')
+            excep("Unable to conf matplotlib")
 
         fig, ax = plt.subplots(figsize=(12, 6))
 
         for one_mode in modes_to_plot:
             ell, emm = one_mode
 
-            ax.plot(self.time_axis, self.mode(ell, emm).real, label=f'Re( ({ell}, {emm}) )')
-        
-        ax.set_xlabel('t/M')
-        ax.set_ylabel(r'$\Psi_{(\ell, m)}$')
+            ax.plot(
+                self.time_axis,
+                self.mode(ell, emm).real,
+                label=f"Re( ({ell}, {emm}) )",
+            )
+
+        ax.set_xlabel("t/M")
+        ax.set_ylabel(r"$\Psi_{(\ell, m)}$")
         plt.legend()
         plt.show()

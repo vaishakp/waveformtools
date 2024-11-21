@@ -192,8 +192,12 @@ def MidPoint2DInteg(func, info):
     hp = info.dphi
 
     theta_grid, _ = info.meshgrid
-    
-    integral = np.tensordot(func, np.sin(theta_grid), axes=((-2, -1), (0, 1))) * ht * hp
+
+    integral = (
+        np.tensordot(func, np.sin(theta_grid), axes=((-2, -1), (0, 1)))
+        * ht
+        * hp
+    )
 
     return integral
 
@@ -217,9 +221,11 @@ def DriscollHealy2DInteg(func, info):
     integ : float
             The function f integrated over the sphere.
     """
-    if len(func.shape)>2:
-        raise NotImplementedError("Driscoll-Healy's method cannot currently handle 3d arrays")
-    
+    if len(func.shape) > 2:
+        raise NotImplementedError(
+            "Driscoll-Healy's method cannot currently handle 3d arrays"
+        )
+
     NTheta = info.ntheta_act
     NPhi = info.nphi_act
 
@@ -306,9 +312,11 @@ def DriscollHealy2DInteg_v2(func, info):
             The function f integrated over the sphere.
     """
 
-    if len(func.shape)>2:
-        raise NotImplementedError("Driscoll-Healy's method cannot currently handle 3d arrays")
-    
+    if len(func.shape) > 2:
+        raise NotImplementedError(
+            "Driscoll-Healy's method cannot currently handle 3d arrays"
+        )
+
     NTheta = info.ntheta_act
     NPhi = info.nphi_act
 
@@ -380,9 +388,11 @@ def Simpson2DInteg(func, info):
             The function f integrated over the sphere.
     """
 
-    if len(func.shape)>2:
-        raise NotImplementedError("Simpson's method cannot currently handle 3d arrays")
-    
+    if len(func.shape) > 2:
+        raise NotImplementedError(
+            "Simpson's method cannot currently handle 3d arrays"
+        )
+
     NTheta = info.ntheta_act
     NPhi = info.nphi_act
 
@@ -485,6 +495,7 @@ def GaussLegendre2DInteg(func, info):
     """
 
     integral = (
-        np.tensordot(func, info.weights_grid, axes=((-2, -1), (0, 1))) * info.dphi
+        np.tensordot(func, info.weights_grid, axes=((-2, -1), (0, 1)))
+        * info.dphi
     )
     return integral

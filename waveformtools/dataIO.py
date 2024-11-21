@@ -1237,7 +1237,9 @@ def load_SpEC_data_from_disk(
     try:
         wf_file = wf_f0[gkey]
     except KeyError as ke:
-        message('Reading as SpEC file in external extrap mode', message_verbosity=2)
+        message(
+            "Reading as SpEC file in external extrap mode", message_verbosity=2
+        )
         wf_file = wf_f0
 
     all_keys = list(wf_file.keys())
@@ -1458,6 +1460,7 @@ def load_SpEC_data_from_disk(
     else:
         return wfa
 
+
 def load_SpEC_non_extrap_data_from_disk(
     wfa=None,
     label="SXS Strain",
@@ -1474,44 +1477,44 @@ def load_SpEC_non_extrap_data_from_disk(
     r_ext_factor=1,
     debug=False,
 ):
-    """Load the SpEC waveform at finite radii 
+    """Load the SpEC waveform at finite radii
     to modes_array, from hdf5 files from disk.
 
     Parameters
     ----------
     wfa : modes_array, optional
-          The modes array to which to store 
-          the loaded waveform to. A new 
+          The modes array to which to store
+          the loaded waveform to. A new
           modes array will be returned
           if not provided.
     data_dir : string
-               A string containing 
-               the directory path where 
+               A string containing
+               the directory path where
                the mode files can be found.
     file_name : string
-                The name of the file 
+                The name of the file
                 containing the waveform data.
     label : string, optional
             The label of the modes_array object.
     ell_max : int, optional
-              The maximum mode number to load. 
+              The maximum mode number to load.
               If not specified,
               then all available modes are loaded.
     save_as_ma : bool, optional
-                 Save to disk again 
+                 Save to disk again
                  as a modes_array h5 file?
     resam_type : string, float, optional
-                 The type of resampling to do. 
-                 Options are finest and coarsest, 
+                 The type of resampling to do.
+                 Options are finest and coarsest,
                  and user input float.
     interp_kind : string, optional
-                  The interpolation type to use. 
+                  The interpolation type to use.
                   Default is cubic.
 
     Returns
     -------
     modes_array : modes_array
-                  A modes_array instance 
+                  A modes_array instance
                   containing the loaded modes.
 
 
@@ -1525,8 +1528,6 @@ def load_SpEC_non_extrap_data_from_disk(
 
     full_path = f"{data_dir}/{file_name}"
 
-    
-
     wf_file = h5py.File(full_path)
     all_keys = list(wf_file.keys())
     # Key pattern
@@ -1535,28 +1536,24 @@ def load_SpEC_non_extrap_data_from_disk(
     # Search for detector
     if r_ext is None:
         raise ValueError("Please provide r_ext")
-    
+
     all_radii = np.array([int(item[1:-4]) for item in all_keys])
-    
-    message('All available radii:', all_radii, message_verbosity=1)
-    
-    req_key_loc = np.where(all_radii==r_ext)[0][0]
-    #print(req_key_loc)
-    
+
+    message("All available radii:", all_radii, message_verbosity=1)
+
+    req_key_loc = np.where(all_radii == r_ext)[0][0]
+    # print(req_key_loc)
+
     req_key = all_keys[req_key_loc]
-    
+
     dset = wf_file[req_key]
-    
-    #one_Rkey = all_keys[0]
+
+    # one_Rkey = all_keys[0]
     ell_keys = list(dset.keys())
-    
-    
+
     # Max available mode l.
     ell_max_act = get_ell_max_from_keys(ell_keys)
-    
-    
-    
-    
+
     # message(ell_max_act)
 
     ####################################
@@ -1587,19 +1584,18 @@ def load_SpEC_non_extrap_data_from_disk(
         # Create a modes array
         wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
     # wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
-    
-    wfa._areal_radii = dset['ArealRadius.dat'][...]
-    
+
+    wfa._areal_radii = dset["ArealRadius.dat"][...]
+
     if debug is True:
         wf_nl = modes_array(
             label=label + "_nl", ell_max=ell_max, modes_list=modes_list
         )
 
-    wf_nl._areal_radii = dset['ArealRadius.dat'][...]
-    
-    
-    wfa.extrap_order = 'None'
-    
+    wf_nl._areal_radii = dset["ArealRadius.dat"][...]
+
+    wfa.extrap_order = "None"
+
     message(f"Using detector radius {r_ext}")
 
     if not data_dir:
@@ -1749,9 +1745,7 @@ def load_SpEC_non_extrap_data_from_disk(
                     wf_nl.time_axis = wf_time
                     wf_nl.data_len = len(wf_time)
 
-                wf_nl.set_mode_data(
-                    ell, emm, data=wf_data_re + 1j * wf_data_im
-                )
+                wf_nl.set_mode_data(ell, emm, data=wf_data_re + 1j * wf_data_im)
 
     if centre:
         wfa.trim(trim_upto_time=0)
@@ -1767,9 +1761,11 @@ def load_SpEC_non_extrap_data_from_disk(
 
     if debug is True:
         return wfa, wf_nl
-    
+
     else:
         return wfa
+
+
 ########################################################################################################################
 # SpECTRE
 ########################################################################################################################

@@ -7,6 +7,7 @@
 import numpy as np
 from spectral.spherical.swsh import Yslm_vec
 
+
 def decompose_in_SWSHs(
     waveform, gridinfo, spin_weight=-2, ell_max=8, emm_list="all"
 ):

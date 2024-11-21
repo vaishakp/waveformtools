@@ -284,10 +284,10 @@ def check_Yslm_theta(theta_grid, threshold=1e-6):
 
         theta = theta_list[index]
 
-        #print("Theta val \t ", theta, "\n")
-        
-        if theta==0:
-            sign=1
+        # print("Theta val \t ", theta, "\n")
+
+        if theta == 0:
+            sign = 1
         else:
             sign = theta_list[index] / abs(theta_list[index])
 
@@ -1230,6 +1230,7 @@ def SHExpandSimple(
             message("Residue warning!", message_verbosity=0)
 
     return result
+
 
 def SHExpandSimpleSPack(
     func,
