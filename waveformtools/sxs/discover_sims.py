@@ -779,14 +779,7 @@ class SimulationExplorer:
 
     def update_pandas_dataframe(self):
         import pandas as pd
-        self._all_sim_params_df = pd.DataFrame(self.all_sim_params).T
-
-        self._all_sim_params_df = all_params_df.T
-
-    def update_pandas_dataframe(self):
-        import pandas as pd
-        self._all_sim_params_df = pd.DataFrame(self.all_sim_params).T
-
+        self._all_sim_params_df = pd.DataFrame(self.all_sim_params).T.sort_index()
 
     def strip_sim_name_from_waveform_dir(self, wdir):
         """Extract the sim name from its processed waveform
@@ -1460,12 +1453,8 @@ class SimulationExplorer:
                 aha_dat = hhf["AhA.dir"]
                 ahb_dat = hhf["AhB.dir"]
 
-                #print(aha_dat.keys())
-                #print(ahb_dat.keys())
-
                 irr_mass1_arr = aha_dat['ArealMass.dat'][...]
                 chr_mass1_arr = aha_dat['ChristodoulouMass.dat'][...]
-
                 chr_mass1 = get_val_at_t_ref(chr_mass1_arr[:,0], chr_mass1_arr[:,1], req_tref)
                 
                 irr_mass2_arr = ahb_dat['ArealMass.dat'][...]
@@ -1488,7 +1477,7 @@ class SimulationExplorer:
                 chi_1y = get_val_at_t_ref(chi_1_arr[:,0], chi_1_arr[:,2], req_tref)
                 chi_1z = get_val_at_t_ref(chi_1_arr[:,0], chi_1_arr[:,3], req_tref)
 
-                chi_2_arr =  aha_dat['chiInertial.dat'][...]
+                chi_2_arr =  ahb_dat['chiInertial.dat'][...]
                 chi_2x = get_val_at_t_ref(chi_2_arr[:,0], chi_2_arr[:,1], req_tref)
                 chi_2y = get_val_at_t_ref(chi_2_arr[:,0], chi_2_arr[:,2], req_tref)
                 chi_2z = get_val_at_t_ref(chi_2_arr[:,0], chi_2_arr[:,3], req_tref)
@@ -1530,7 +1519,6 @@ class SimulationExplorer:
 
                 j1_mag = np.sqrt(j_1x**2 + j_1y**2 + j_1z**2)
                 j2_mag = np.sqrt(j_2x**2 + j_2y**2 + j_2z**2)
-
                 
                 hmass1 = np.sqrt(chr_mass1**2 + j1_mag**2/(4*chr_mass1**2))
                 hmass2 = np.sqrt(chr_mass2**2 + j2_mag**2/(4*chr_mass2**2))
@@ -1654,6 +1642,6 @@ def get_val_at_t_ref(time_axis, val_axis, time):
 
     val_at_t_ref = float(int_func(time))
 
-    print(val_at_t_ref, type(val_at_t_ref))
+    #print(val_at_t_ref, type(val_at_t_ref))
 
     return round(val_at_t_ref, 5)
