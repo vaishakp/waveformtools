@@ -13,6 +13,7 @@ from waveformtools.waveformtools import (
 )
 import subprocess
 
+
 class SimulationExplorer:
     """Find and load simulations in a given directory.
     Use this to
@@ -56,7 +57,7 @@ class SimulationExplorer:
                             where all processed waveforms are
                             being saved.
     bfi_home_dir: str/Path
-                  The full path to the BFI home dir 
+                  The full path to the BFI home dir
     bfi_project_name: str
                       The name of the BFI project
     bfi_sim_params: dict
@@ -136,15 +137,21 @@ class SimulationExplorer:
         prepared_waveforms_dir=None,
         bfi_project_name=None,
         bfi_home_dir=None,
+        ref_time=None,
     ):
         self._search_dir = Path(search_dir)
 
         self._prepared_waveforms_dir = Path(prepared_waveforms_dir)
+        self._ref_time = ref_time
 
         self._bfi_project_name = bfi_project_name
         self._bfi_home_dir = Path(bfi_home_dir)
         self._sim_basename = None
         self._bfi_sim_params = {}
+
+    @property
+    def ref_time(self):
+        return self._ref_time
 
     @property
     def search_dir(self):
@@ -153,11 +160,11 @@ class SimulationExplorer:
     @property
     def sim_basename(self):
         return self._sim_basename
-    
+
     @property
     def bfi_project_name(self):
         return self._bfi_project_name
-    
+
     @property
     def bfi_home_dir(self):
         return self._bfi_home_dir
@@ -165,7 +172,7 @@ class SimulationExplorer:
     @property
     def bfi_sim_params(self):
         return self._bfi_sim_params
-        
+
     @property
     def available_sim_names(self):
         return self._available_sim_names
@@ -185,7 +192,7 @@ class SimulationExplorer:
     @property
     def all_sim_params_df(self):
         return self._all_sim_params_df
-    
+
     @property
     def prepared_waveforms(self):
         return self._prepared_waveforms
@@ -209,23 +216,23 @@ class SimulationExplorer:
     @property
     def inspiral_segments(self):
         return self._inspiral_segments
-    
+
     @property
     def ringdown_segments(self):
         return self._ringdown_segments
-    
+
     @property
     def sim_status(self):
         return self._sim_status
-    
+
     @property
     def ncycles(self):
         return self._ncycles
-    
+
     @property
     def ncycles_wf(self):
         return self._ncycles_wf
-    
+
     def check_for_ecc_dir(self, path_of_dir_to_check):
         """Check if the given directory is an Ecc directory"""
 
@@ -291,7 +298,9 @@ class SimulationExplorer:
             flag = self.check_for_ecc_dir(possible_sim_path)
 
             if flag:
-                available_sim_paths.update({possible_sim_name: possible_sim_path})
+                available_sim_paths.update(
+                    {possible_sim_name: possible_sim_path}
+                )
 
                 available_sim_names.append(possible_sim_name)
 
@@ -358,7 +367,7 @@ class SimulationExplorer:
         all_levs = {}
 
         for sim_name in self.available_sim_names:
-            
+
             sim_levs = []
 
             for sim_lev in self.inspiral_segments[sim_name].keys():
@@ -367,10 +376,9 @@ class SimulationExplorer:
 
                 sim_levs.append(this_lev)
 
-            all_levs.update({sim_name : sim_levs})
+            all_levs.update({sim_name: sim_levs})
 
         self._available_sim_levs = all_levs
-
 
     def discover_segments(self):
         """Find all the segments across all simulations"""
@@ -380,15 +388,19 @@ class SimulationExplorer:
         all_ringdown_segments = {}
 
         for sim_name in self.available_sim_names:
-            
-            message(f'Loading segments in {sim_name}', message_verbosity=2)
-            ecc_ev_dir = self.available_sim_paths[sim_name].joinpath(f'Ecc{self.highest_ecc_nums[sim_name]}/Ev')
 
-            inspiral_segments, ringdown_segments = self.get_all_one_sim_segments(ecc_ev_dir)
+            message(f"Loading segments in {sim_name}", message_verbosity=2)
+            ecc_ev_dir = self.available_sim_paths[sim_name].joinpath(
+                f"Ecc{self.highest_ecc_nums[sim_name]}/Ev"
+            )
 
-            all_inspiral_segments.update({sim_name : inspiral_segments})
+            inspiral_segments, ringdown_segments = (
+                self.get_all_one_sim_segments(ecc_ev_dir)
+            )
 
-            all_ringdown_segments.update({sim_name : ringdown_segments})
+            all_inspiral_segments.update({sim_name: inspiral_segments})
+
+            all_ringdown_segments.update({sim_name: ringdown_segments})
 
         self._inspiral_segments = all_inspiral_segments
         self._ringdown_segments = all_ringdown_segments
@@ -401,25 +413,46 @@ class SimulationExplorer:
         ringdown_segments = {}
 
         available_dirs = os.listdir(ecc_ev_dir)
-        available_dirs = [item for item in available_dirs if '.bak' not in item]
+        available_dirs = [item for item in available_dirs if ".bak" not in item]
 
         message("Available dirs", available_dirs, message_verbosity=2)
 
         available_lev_dirs = [item for item in available_dirs if "Lev" in item]
-        available_lev_dirs = [item for item in available_lev_dirs if "Ringdown" not in item]
-        available_lev_dirs = [item for item in available_lev_dirs if re.search("Lev[0-9]_[A-Z]+", item) is not None]
+        available_lev_dirs = [
+            item for item in available_lev_dirs if "Ringdown" not in item
+        ]
+        available_lev_dirs = [
+            item
+            for item in available_lev_dirs
+            if re.search("Lev[0-9]_[A-Z]+", item) is not None
+        ]
         message("Available lev dirs", available_lev_dirs, message_verbosity=2)
-        
-        available_ringdown_lev_dirs = [item for item in available_dirs if "_Ringdown" in item]
-        available_ringdown_lev_dirs = [item for item in available_ringdown_lev_dirs \
-                                       if re.search("Lev[0-9]_Ringdown", item) is not None]
-        message("Available ringdown lev dirs", available_ringdown_lev_dirs, message_verbosity=2)
-        
+
+        available_ringdown_lev_dirs = [
+            item for item in available_dirs if "_Ringdown" in item
+        ]
+        available_ringdown_lev_dirs = [
+            item
+            for item in available_ringdown_lev_dirs
+            if re.search("Lev[0-9]_Ringdown", item) is not None
+        ]
+        message(
+            "Available ringdown lev dirs",
+            available_ringdown_lev_dirs,
+            message_verbosity=2,
+        )
+
         available_levs = set([int(item[3:-3]) for item in available_lev_dirs])
         message("Available levs", available_levs, message_verbosity=2)
 
-        available_ringdown_levs = set([int(item[3:-9]) for item in available_ringdown_lev_dirs])
-        message("Available ringdown levs", available_ringdown_levs, message_verbosity=2)
+        available_ringdown_levs = set(
+            [int(item[3:-9]) for item in available_ringdown_lev_dirs]
+        )
+        message(
+            "Available ringdown levs",
+            available_ringdown_levs,
+            message_verbosity=2,
+        )
 
         # Fetch segments
         for lev in available_levs:
@@ -430,13 +463,24 @@ class SimulationExplorer:
             this_lev_segments = sorted([item[5:] for item in this_lev_segments])
             inspiral_segments.update({f"Lev{lev}": this_lev_segments})
 
-            if lev in available_ringdown_levs:            
-                inside_ringdown_dirs = os.listdir(ecc_ev_dir.joinpath(f'Lev{lev}_Ringdown')
-                                                )
-                inside_ringdown_segments = [item for item in inside_ringdown_dirs if "Lev" in item]
-                inside_ringdown_segments = [item for item in inside_ringdown_segments if re.search("Lev[0-9]_[A-Z]+", item) is not None]
-                this_lev_ringdown_segments = sorted([item[5:] for item in inside_ringdown_segments])
-                ringdown_segments.update({f"Lev{lev}": this_lev_ringdown_segments})
+            if lev in available_ringdown_levs:
+                inside_ringdown_dirs = os.listdir(
+                    ecc_ev_dir.joinpath(f"Lev{lev}_Ringdown")
+                )
+                inside_ringdown_segments = [
+                    item for item in inside_ringdown_dirs if "Lev" in item
+                ]
+                inside_ringdown_segments = [
+                    item
+                    for item in inside_ringdown_segments
+                    if re.search("Lev[0-9]_[A-Z]+", item) is not None
+                ]
+                this_lev_ringdown_segments = sorted(
+                    [item[5:] for item in inside_ringdown_segments]
+                )
+                ringdown_segments.update(
+                    {f"Lev{lev}": this_lev_ringdown_segments}
+                )
 
         return inspiral_segments, ringdown_segments
 
@@ -484,13 +528,13 @@ class SimulationExplorer:
         self._highest_ecc_nums = highest_ecc_nums
 
     def compute_sim_basename(self):
-        ''' Compute the sim basename from the dir names '''
+        """Compute the sim basename from the dir names"""
 
         one_sim_name = self.available_sim_names[-1]
 
-        r1 = re.search('[a-zA-Z][0-9]+', one_sim_name)
+        r1 = re.search("[a-zA-Z][0-9]+", one_sim_name)
 
-        end_ind = r1.start()+1
+        end_ind = r1.start() + 1
 
         self._sim_basename = one_sim_name[:end_ind]
 
@@ -590,9 +634,9 @@ class SimulationExplorer:
                         eof = True
 
             return target_params
-        
+
     def parse_bfi_params_file(self):
-        ''' Parse parameters from a BFI params file '''
+        """Parse parameters from a BFI params file"""
 
         bfi_sim_params = {}
 
@@ -600,61 +644,67 @@ class SimulationExplorer:
 
         if self.sim_basename != bfi_sim_basename:
 
-            message(f'sim base name: {self.sim_basename} \t bfi project name: {bfi_sim_basename}')
+            message(
+                f"sim base name: {self.sim_basename} \t bfi project name: {bfi_sim_basename}"
+            )
 
-            raise KeyError("The BFI project name " 
-                           "do not match sim basenames found in search dir")
-        
+            raise KeyError(
+                "The BFI project name "
+                "do not match sim basenames found in search dir"
+            )
 
-        else: 
-            projects_rel_dir = Path(f'ParamFiles/{self.bfi_project_name}/params')
+        else:
+            projects_rel_dir = Path(
+                f"ParamFiles/{self.bfi_project_name}/params"
+            )
             bfi_params_file = self.bfi_home_dir.joinpath(projects_rel_dir)
 
-            with open(bfi_params_file, 'r', encoding='utf-8') as pf:
+            with open(bfi_params_file, "r", encoding="utf-8") as pf:
                 for line in pf:
                     if line is not None:
                         # Get params
-                        results = re.findall('[a-zA-Z]+=[0-9]+[.]?[0-9]*',line)
-                        fresults = [item for item in results if 'chi' not in item]
-                        fresults = [item for item in fresults if 'q' not in item]
+                        results = re.findall("[a-zA-Z]+=[0-9]+[.]?[0-9]*", line)
+                        fresults = [
+                            item for item in results if "chi" not in item
+                        ]
+                        fresults = [
+                            item for item in fresults if "q" not in item
+                        ]
 
-                        if len(fresults)==0:
+                        if len(fresults) == 0:
                             continue
 
-                        message('fresults', fresults, message_verbosity=1)
+                        message("fresults", fresults, message_verbosity=1)
                         # Assuming that ID is the first element
-                        sim_name = self.sim_basename + fresults[0].split('=')[1]
+                        sim_name = self.sim_basename + fresults[0].split("=")[1]
 
-                        bfi_sim_params.update({sim_name : {}})
+                        bfi_sim_params.update({sim_name: {}})
 
                         for item in fresults[1:]:
 
-                            key, value = item.split('=')
+                            key, value = item.split("=")
                             value = float(value)
 
-                            bfi_sim_params[sim_name].update({key : value})
-                        
-        self._bfi_sim_params = bfi_sim_params
+                            bfi_sim_params[sim_name].update({key: value})
 
+        self._bfi_sim_params = bfi_sim_params
 
         self.append_bfi_sim_params_to_all_params()
 
-
     def append_bfi_sim_params_to_all_params(self):
-        ''' Append the contents of the BFI sim params to the master
-        params dict '''
+        """Append the contents of the BFI sim params to the master
+        params dict"""
 
         for sim_name, sim_params in self.bfi_sim_params.items():
-            
+
             available_sim_param_keys = self.all_sim_params[sim_name].keys()
-            
+
             for key, value in sim_params.items():
 
                 if key not in available_sim_param_keys:
 
-                    self._all_sim_params[sim_name].update({key : value})
+                    self._all_sim_params[sim_name].update({key: value})
 
-        
     def fetch_sim_params(self):
         """Get all the simulations' parameters"""
 
@@ -689,7 +739,6 @@ class SimulationExplorer:
 
         self._all_sim_params = all_sim_params
 
-
         self.parse_bfi_params_file()
 
         self.compute_chi_eff()
@@ -698,8 +747,8 @@ class SimulationExplorer:
         self.prepare_pandas_dataframe()
 
     def prepare_pandas_dataframe(self):
-        ''' Prepare a pandas dataframe from the sim params 
-        found '''
+        """Prepare a pandas dataframe from the sim params
+        found"""
 
         import pandas as pd
 
@@ -709,7 +758,7 @@ class SimulationExplorer:
 
         all_params_df = all_params_df.sort_index()
 
-        all_params_df.insert(0, 'Sl. No.', range(1, 1+len(all_params_df)))
+        all_params_df.insert(0, "Sl. No.", range(1, 1 + len(all_params_df)))
 
         self.discover_segments()
 
@@ -717,13 +766,13 @@ class SimulationExplorer:
 
         self.construct_simulation_status()
 
-        all_params_df.insert(1, 'Status', self.sim_status)
-        
+        all_params_df.insert(1, "Status", self.sim_status)
+
         self.compute_ncycles()
         self.compute_ncycles_from_waveform()
 
-        all_params_df.insert(3, 'Ncycles', self.ncycles)
-        all_params_df.insert(4, 'Ncycles (2,2)', self.ncycles_wf)
+        all_params_df.insert(3, "Ncycles", self.ncycles)
+        all_params_df.insert(4, "Ncycles (2,2)", self.ncycles_wf)
 
         self._all_sim_params_df = all_params_df
 
@@ -827,7 +876,8 @@ class SimulationExplorer:
                         sim_name=sim_name,
                         sim_dir=self.available_sim_paths[sim_name],
                         lev=lev,
-                        out_dir=self.prepared_waveforms_dir/ f'{sim_name}_waveforms_Lev{lev}',
+                        out_dir=self.prepared_waveforms_dir
+                        / f"{sim_name}_waveforms_Lev{lev}",
                     )
 
                     flag = wfp.prepare_waveform()
@@ -905,16 +955,19 @@ class SimulationExplorer:
 
     def write_history(self):
         raise NotImplementedError
-    
+
         with open(self.history_file, "a") as th:
             for item in dirs:
                 th.write(item)
                 th.write("\n")
-    
-    def get_last_segment(self, sim_name, lev):
-        ''' Get the last available segment of a sim '''
 
-        message(f'Fetching last segment for sim {sim_name}, lev{lev}', message_verbosity=2)
+    def get_last_segment(self, sim_name, lev):
+        """Get the last available segment of a sim"""
+
+        message(
+            f"Fetching last segment for sim {sim_name}, lev{lev}",
+            message_verbosity=2,
+        )
 
         RINGDOWN_INITIATED = False
 
@@ -922,44 +975,46 @@ class SimulationExplorer:
 
         if ringdown_segments:
 
-            lev_key = f'Lev{lev}'
+            lev_key = f"Lev{lev}"
 
-            if lev_key in ringdown_segments.keys() and len(ringdown_segments[lev_key])>0:
-                RINGDOWN_INITIATED=True
+            if (
+                lev_key in ringdown_segments.keys()
+                and len(ringdown_segments[lev_key]) > 0
+            ):
+                RINGDOWN_INITIATED = True
                 last_segment = sorted(ringdown_segments[lev_key])[-1]
                 last_segment_path = self.available_sim_paths[sim_name].joinpath(
-                    f'Ecc{self.highest_ecc_nums[sim_name]}/Ev/Lev{lev}_Ringdown/Lev{lev}_{last_segment}'
+                    f"Ecc{self.highest_ecc_nums[sim_name]}/Ev/Lev{lev}_Ringdown/Lev{lev}_{last_segment}"
                 )
-                
+
             else:
-                RINGDOWN_INITIATED=False
+                RINGDOWN_INITIATED = False
 
         if RINGDOWN_INITIATED is False:
             inspiral_segments = self.inspiral_segments[sim_name]
 
             if inspiral_segments:
-                last_segment = sorted(inspiral_segments[f'Lev{lev}'])[-1]
+                last_segment = sorted(inspiral_segments[f"Lev{lev}"])[-1]
                 last_segment_path = self.available_sim_paths[sim_name].joinpath(
-                    f'Ecc{self.highest_ecc_nums[sim_name]}/Ev/Lev{lev}_{last_segment}'
-                    )
-                
+                    f"Ecc{self.highest_ecc_nums[sim_name]}/Ev/Lev{lev}_{last_segment}"
+                )
+
             else:
                 raise KeyError(f"No segments in sim {sim_name}")
-            
+
         return last_segment, last_segment_path, RINGDOWN_INITIATED
-    
 
     def check_if_segment_running(self, last_segment_path):
-        ''' Check if a segment is runnning '''
+        """Check if a segment is runnning"""
 
         # Check if segment is running
         # Get Jobid
-        message('Checking if the sim is running...', message_verbosity=2)
+        message("Checking if the sim is running...", message_verbosity=2)
         all_jobids = []
 
-        spec_jobid_file = last_segment_path.joinpath('SpEC.jobid')
-        
-        with open(spec_jobid_file, 'r', encoding='utf-8') as sjf:
+        spec_jobid_file = last_segment_path.joinpath("SpEC.jobid")
+
+        with open(spec_jobid_file, "r", encoding="utf-8") as sjf:
             for line in sjf:
                 one_jobid = line.split()[0]
                 all_jobids.append(int(one_jobid))
@@ -967,129 +1022,148 @@ class SimulationExplorer:
         latest_jobid = all_jobids[-1]
 
         # Get running jobs
-        cmd_stdout = subprocess.run(["squeue | awk '{print $1}'"], shell=True, stdout = subprocess.PIPE).stdout
+        cmd_stdout = subprocess.run(
+            ["squeue | awk '{print $1}'"], shell=True, stdout=subprocess.PIPE
+        ).stdout
 
-        running_jobs = cmd_stdout.decode().split('\n')[1:-1]
+        running_jobs = cmd_stdout.decode().split("\n")[1:-1]
         running_jobs = [int(item) for item in running_jobs]
 
-        message('Running jobs ', running_jobs, message_verbosity=2)
-        message('sim job id', latest_jobid, message_verbosity=2)
+        message("Running jobs ", running_jobs, message_verbosity=2)
+        message("sim job id", latest_jobid, message_verbosity=2)
 
         if latest_jobid in running_jobs:
             message("Segment running", message_verbosity=2)
-            SEGMENT_RUNNING=True
+            SEGMENT_RUNNING = True
         else:
-            SEGMENT_RUNNING=False
+            SEGMENT_RUNNING = False
 
         return SEGMENT_RUNNING
 
     def check_for_errors(self, last_segment_path):
-        ''' Check for error files to learn about the status '''
+        """Check for error files to learn about the status"""
 
         # Check for errors
-        run_dir = last_segment_path.joinpath('Run')
+        run_dir = last_segment_path.joinpath("Run")
 
         files_in_run_dir = os.listdir(run_dir)
 
-        error_files = [item for item in files_in_run_dir if 'Errors000' in item]
+        error_files = [item for item in files_in_run_dir if "Errors000" in item]
 
-        message('Error files', error_files, message_verbosity=2)
+        message("Error files", error_files, message_verbosity=2)
 
-        if len(error_files)>0:
-            SEGMENT_ERROR=True
+        if len(error_files) > 0:
+            SEGMENT_ERROR = True
         else:
-            SEGMENT_ERROR=False
+            SEGMENT_ERROR = False
             message("Sim status is unknown", message_verbosity=2)
-            status='Unknown'
+            status = "Unknown"
 
         return SEGMENT_ERROR
-        
 
     def read_last_segment_status(self, sim_name, lev):
-        ''' Find out the status of the last segment of a particular sim '''
+        """Find out the status of the last segment of a particular sim"""
 
-        last_segment, last_segment_path, RINGDOWN_INITIATED = self.get_last_segment(sim_name, lev)
+        last_segment, last_segment_path, RINGDOWN_INITIATED = (
+            self.get_last_segment(sim_name, lev)
+        )
 
         SIM_COMPLETE = False
-        SEGMENT_ERROR=False
+        SEGMENT_ERROR = False
         status = None
         # SEGMENT_RUNNING=False
 
         # Check if terminated
-        spec_out_file = last_segment_path.joinpath('Run/SpEC.out')
-        
+        spec_out_file = last_segment_path.joinpath("Run/SpEC.out")
+
         if not os.path.exists(spec_out_file):
             SEGMENT_COMPLETE = False
-            SIM_COMPLETE=False
-            SEGMENT_RUNNING=False
+            SIM_COMPLETE = False
+            SEGMENT_RUNNING = False
 
-            segment_status_comment = 'Waiting to be launched'
+            segment_status_comment = "Waiting to be launched"
 
         else:
-            with open(spec_out_file, 'r', encoding='utf-8') as sof:
+            with open(spec_out_file, "r", encoding="utf-8") as sof:
                 lines = sof.readlines()[-3:]
-                
-                message('Lines from SpEC.out', lines, message_verbosity=2)
 
-                SEGMENT_RUNNING = self.check_if_segment_running(last_segment_path)
-                message('Segment runnint 2', SEGMENT_RUNNING, message_verbosity=2)
+                message("Lines from SpEC.out", lines, message_verbosity=2)
+
+                SEGMENT_RUNNING = self.check_if_segment_running(
+                    last_segment_path
+                )
+                message(
+                    "Segment runnint 2", SEGMENT_RUNNING, message_verbosity=2
+                )
                 SEGMENT_ERROR = self.check_for_errors(last_segment_path)
 
-                if 'To be continued...\n' in lines:
-                    SEGMENT_COMPLETE=True
-                    SIM_COMPLETE=False
-                    assert SEGMENT_RUNNING == False, "Segment was found to be completed. It cant be running!"
-                    assert SEGMENT_ERROR == False, "Segment was found to have errors but also complete!"
+                if "To be continued...\n" in lines:
+                    SEGMENT_COMPLETE = True
+                    SIM_COMPLETE = False
+                    assert (
+                        SEGMENT_RUNNING == False
+                    ), "Segment was found to be completed. It cant be running!"
+                    assert (
+                        SEGMENT_ERROR == False
+                    ), "Segment was found to have errors but also complete!"
 
-                    segment_status_comment = [item for item in lines if 'Termination condition' in item][-1]
+                    segment_status_comment = [
+                        item
+                        for item in lines
+                        if "Termination condition" in item
+                    ][-1]
 
-                    status = 'Halted'
+                    status = "Halted"
 
-                elif 'Termination condition FinalTime\n' in lines:
-                    SEGMENT_COMPLETE=True
-                    SIM_COMPLETE=True
-                    assert SEGMENT_RUNNING == False, "Segment was found to be completed. It cant be running!"
+                elif "Termination condition FinalTime\n" in lines:
+                    SEGMENT_COMPLETE = True
+                    SIM_COMPLETE = True
+                    assert (
+                        SEGMENT_RUNNING == False
+                    ), "Segment was found to be completed. It cant be running!"
 
                     # assert SEGMENT_ERROR == False, "Segment was found to have errors but also complete!"
                     if SEGMENT_ERROR == True:
-                        message("Segment was found to have errors but also complete!")
+                        message(
+                            "Segment was found to have errors but also complete!"
+                        )
 
-                    segment_status_comment = 'Termination condition FinalTime'
-                    
-                    status='Completed'
+                    segment_status_comment = "Termination condition FinalTime"
 
-                elif 't=' in lines[-1]:
-                    SEGMENT_COMPLETE=False
-                    SIM_COMPLETE=False
+                    status = "Completed"
+
+                elif "t=" in lines[-1]:
+                    SEGMENT_COMPLETE = False
+                    SIM_COMPLETE = False
 
                     if SEGMENT_RUNNING:
-                        status='Running'
+                        status = "Running"
                     elif SEGMENT_ERROR:
-                        status='Error'
+                        status = "Error"
                     else:
-                        status='Halted'
-                
+                        status = "Halted"
+
                 else:
                     if SEGMENT_ERROR:
-                        status = 'Error'
+                        status = "Error"
                     else:
-                        status='Unknown'
-        
+                        status = "Unknown"
+
         return status
-    
+
     def construct_simulation_status(self):
-        ''' Construct the simulation status of all the sims found
-        
+        """Construct the simulation status of all the sims found
+
         Check if Ringdown segment
             Check TerminationCondition
                 If finished
                 If not CheckRunning
         Elseif Check Runnung
         Else NotRunning
-        
+
         NotRunning:
             CheckFailed
-        '''
+        """
 
         sim_status = {}
 
@@ -1100,17 +1174,18 @@ class SimulationExplorer:
 
                 one_status = self.read_last_segment_status(sim_name, lev)
 
-                one_sim_status.update({lev : one_status})
-            
-            sim_status.update({sim_name : one_sim_status})
-        
+                one_sim_status.update({lev: one_status})
+
+            sim_status.update({sim_name: one_sim_status})
+
         self._sim_status = sim_status
 
     def compute_ncycles(self):
-        ''' Compute the number of cycles using the orbital
-         revolutions '''
-        
+        """Compute the number of cycles using the orbital
+        revolutions"""
+
         import h5py
+
         all_sim_ncycles = {}
 
         for sim_name in self.available_sim_names:
@@ -1118,9 +1193,10 @@ class SimulationExplorer:
 
             for lev in self.available_sim_levs[sim_name]:
 
-                
-                message(f"Computing ncycles for {sim_name} Lev{lev}", message_verbosity=2)
-
+                message(
+                    f"Computing ncycles for {sim_name} Lev{lev}",
+                    message_verbosity=2,
+                )
 
                 path_to_joined_h5 = self.join_horizons_file(sim_name, lev)
 
@@ -1130,8 +1206,8 @@ class SimulationExplorer:
                     message(excep, f"Skipping {sim_name} Lev{lev}")
                     continue
 
-                CA = hf['AhA.dir']['CoordCenterInertial.dat'][...]
-                CB = hf['AhB.dir']['CoordCenterInertial.dat'][...]
+                CA = hf["AhA.dir"]["CoordCenterInertial.dat"][...]
+                CB = hf["AhB.dir"]["CoordCenterInertial.dat"][...]
 
                 tA = CA[:, 0]
                 xA = CA[:, 1]
@@ -1143,40 +1219,41 @@ class SimulationExplorer:
                 yB = CB[:, 2]
                 zB = CB[:, 3]
 
-
                 dx = xA - xB
                 dy = yA - yB
-                dz = zA - zB                
+                dz = zA - zB
 
                 # Assuming low precession of orbital plane
 
-                dRxy = dx + 1j*dy
+                dRxy = dx + 1j * dy
 
                 phase = np.unwrap(np.angle(dRxy))
 
-                if np.mean(np.diff(phase)) <0:
+                if np.mean(np.diff(phase)) < 0:
                     phase = -phase
-                
-                assert min(phase) == phase[0], "Phase must be min at the beginning"
+
+                assert (
+                    min(phase) == phase[0]
+                ), "Phase must be min at the beginning"
                 assert max(phase) == phase[-1], "Phase must be max at the end"
 
                 phase = phase - min(phase)
 
+                ncycles = max(phase / (2 * np.pi))
 
-                ncycles = max(phase/(2*np.pi))
-
-                one_sim_ncycles.update({ lev : ncycles*2 })
+                one_sim_ncycles.update({lev: ncycles * 2})
 
                 hf.close()
-                
-            all_sim_ncycles.update({sim_name : one_sim_ncycles})
+
+            all_sim_ncycles.update({sim_name: one_sim_ncycles})
 
         self._ncycles = all_sim_ncycles
 
     def compute_ncycles_from_waveform(self):
-        ''' Compute the ncycles from the 2,2 mode waveform '''
+        """Compute the ncycles from the 2,2 mode waveform"""
 
         import h5py
+
         all_wf_ncycles = {}
 
         for sim_name in self.available_sim_names:
@@ -1184,10 +1261,14 @@ class SimulationExplorer:
 
             for lev in self.available_sim_levs[sim_name]:
 
-                message(f"Computing ncycles for {sim_name} Lev{lev}", message_verbosity=2)
+                message(
+                    f"Computing ncycles for {sim_name} Lev{lev}",
+                    message_verbosity=2,
+                )
 
-
-                path_to_extrap_waveform_h5 = self.get_waveform_out_path(sim_name, lev)
+                path_to_extrap_waveform_h5 = self.get_waveform_out_path(
+                    sim_name, lev
+                )
 
                 try:
                     hf = h5py.File(path_to_extrap_waveform_h5)
@@ -1196,62 +1277,70 @@ class SimulationExplorer:
                     message(excep, f"Skipping {sim_name} Lev{lev}")
                     continue
 
-                h22 = hf['Y_l2_m2.dat'][...]
+                h22 = hf["Y_l2_m2.dat"][...]
 
                 h22_re = h22[:, 1]
                 h22_im = h22[:, 2]
 
-                h22_cmplx = h22_re + 1j*h22_im
+                h22_cmplx = h22_re + 1j * h22_im
 
                 h22_maxloc = np.argmax(abs(h22_cmplx))
 
                 phase_22 = np.unwrap(np.angle(h22_cmplx[:h22_maxloc]))
-                
-                if np.mean(np.diff(phase_22)) <0:
+
+                if np.mean(np.diff(phase_22)) < 0:
                     phase_22 = -phase_22
-                
+
                 phase_22 = phase_22 - min(phase_22)
 
-                ncycles = max(phase_22/(2*np.pi))
+                ncycles = max(phase_22 / (2 * np.pi))
 
-                one_wf_ncycles.update({ lev : ncycles})
+                one_wf_ncycles.update({lev: ncycles})
 
                 hf.close()
 
-            all_wf_ncycles.update({sim_name : one_wf_ncycles})
+            all_wf_ncycles.update({sim_name: one_wf_ncycles})
 
         self._ncycles_wf = all_wf_ncycles
 
-
     def get_waveform_out_path(self, sim_name, lev, N=2):
-        ''' Fetch the waveform output path '''
+        """Fetch the waveform output path"""
 
-        wpath = self.prepared_waveforms_dir / f'{sim_name}_waveforms_Lev{lev}/extrapolated/rhOverM_Extrapolated_N{N}_CoM.h5'
+        wpath = (
+            self.prepared_waveforms_dir
+            / f"{sim_name}_waveforms_Lev{lev}/extrapolated/rhOverM_Extrapolated_N{N}_CoM.h5"
+        )
 
         return wpath
 
     def join_horizons_file(self, sim_name, lev):
-        ''' Join the horizons.h5 file across segments for 
-        a simulation and return the path '''
+        """Join the horizons.h5 file across segments for
+        a simulation and return the path"""
 
-        path_to_joined_h5 = self.prepared_waveforms_dir / f'{sim_name}_waveforms_Lev{lev}/joined/{sim_name}Lev{lev}JoinedHorizons.h5'
+        path_to_joined_h5 = (
+            self.prepared_waveforms_dir
+            / f"{sim_name}_waveforms_Lev{lev}/joined/{sim_name}Lev{lev}JoinedHorizons.h5"
+        )
 
         if os.path.exists(path_to_joined_h5):
-            message(f'Joined Horizons.h5 file already found in {path_to_joined_h5}')
+            message(
+                f"Joined Horizons.h5 file already found in {path_to_joined_h5}"
+            )
 
         else:
             wfp = PrepareSXSWaveform(
-                            sim_name=sim_name,
-                            sim_dir=self.available_sim_paths[sim_name],
-                            lev=lev,
-                            out_dir=self.prepared_waveforms_dir,
-                        )
+                sim_name=sim_name,
+                sim_dir=self.available_sim_paths[sim_name],
+                lev=lev,
+                out_dir=self.prepared_waveforms_dir,
+            )
 
             wfp.join_horizons()
 
             path_to_joined_h5 = wfp.joined_horizons_outfile_path
-        
+
         return path_to_joined_h5
+
 
 def re_fetch_float(line):
     """Fetch a float value from .input file"""
@@ -1284,3 +1373,15 @@ def re_fetch_vector(line):
     val3 = float(result3.group()[1:-1])
 
     return (val1, val2, val3)
+
+
+def get_ref_time(self):
+    """Get the reference time
+    as the light crossing time
+    to the smallest waveform
+    extraction sphere"""
+
+    # self.avail
+
+    # for sim_path
+    # wext_file_path =

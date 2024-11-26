@@ -8,13 +8,35 @@ class method_info:
     for operations."""
 
     def __init__(
-        self, int_method="MP", diff_method="SH", ell_max=8, degree=8, reg=True
+        self,
+        int_method="MP",
+        diff_method="SH",
+        ell_max=8,
+        eval_ell_max=8,
+        degree=8,
+        reg=True,
+        swsh_routine="waveformtools",
+        atol=1e-4,
+        rtol=1e-2,
+        ode_solver="solve_ivp",
+        ivp_method="RK45",
+        vectorized=True,
+        error_info=False,
     ):
+
         self.int_method = int_method
         self.diff_method = diff_method
         self.ell_max = ell_max
+        self.eval_ell_max = eval_ell_max
         self.reg = reg
         self.degree = degree
+        self.swsh_routine = swsh_routine
+        self.atol = atol
+        self.rtol = rtol
+        self.ode_solver = ode_solver
+        self.vectorized = vectorized
+        self.ivp_method = ivp_method
+        self.error_info = error_info
 
 
 def RMSerrs(func1, func2, info):
@@ -40,7 +62,7 @@ def RMSerrs(func1, func2, info):
     Amax = np.amax(diff)
     Amin = np.amin(diff)
 
-    RMS = np.sqrt(np.sum(np.absolute(diff) ** 2) / info.npix_act)
+    RMS = np.sqrt(np.sum(np.absolute(diff) ** 2, axis=(-2, -1)) / info.npix_act)
 
     return RMS, Amin, Amax
 

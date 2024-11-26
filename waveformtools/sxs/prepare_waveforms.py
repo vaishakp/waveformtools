@@ -215,14 +215,13 @@ class PrepareSXSWaveform:
         return self._history_file
 
     def setup_env(self):
-        ''' Setup the environment '''
+        """Setup the environment"""
 
         # exec(open('/mnt/pfs/vaishak.p/soft/modules-5.2.0/init/python.py').read())
 
         # module('unload', 'gcc/11.1.0')
 
         # module('load', 'gcc/11.1.0')
-
 
     def join_waveform_h5_files(self, verbose=False):
         """Join the waveform h5 files"""
@@ -344,29 +343,33 @@ class PrepareSXSWaveform:
         else:
             print("Joining Horizon h5 files...")
 
-            input_insp_dat_rel_loc = f"Ecc{self.ecc}"\
-                f"/Ev/Lev{self.lev}*/Run/"\
+            input_insp_dat_rel_loc = (
+                f"Ecc{self.ecc}"
+                f"/Ev/Lev{self.lev}*/Run/"
                 "ApparentHorizons/Horizons.h5"
+            )
 
-            input_rdown_dat_rel_loc = f"Ecc{self.ecc}"\
-                f"/Ev/Lev{self.lev}_Ringdown/"\
-                f"Lev{self.lev}*/Run/"\
+            input_rdown_dat_rel_loc = (
+                f"Ecc{self.ecc}"
+                f"/Ev/Lev{self.lev}_Ringdown/"
+                f"Lev{self.lev}*/Run/"
                 "ApparentHorizons/Horizons.h5"
+            )
 
-            #data_paths_insp = os.path.join(self.sim_dir, input_insp_dat_rel_loc)
-            
+            # data_paths_insp = os.path.join(self.sim_dir, input_insp_dat_rel_loc)
+
             data_paths_insp = self.sim_dir.joinpath(input_insp_dat_rel_loc)
 
             message("data paths insp", data_paths_insp, message_verbosity=2)
 
-            #data_paths_rdown = os.path.join(
+            # data_paths_rdown = os.path.join(
             #    self.sim_dir, input_rdown_dat_rel_loc
-            #)
+            # )
 
             data_paths_rdown = self.sim_dir.joinpath(input_rdown_dat_rel_loc)
 
             message("data paths rdown", data_paths_rdown, message_verbosity=2)
-            
+
             if verbose:
                 run_cmd = "JoinH5 -v"
 

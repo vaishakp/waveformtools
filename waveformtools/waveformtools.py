@@ -30,7 +30,8 @@ except Exception as ex:
     import waveformtools.config as config
 
 import numpy as np
-from numba import njit
+
+# from numba import njit
 
 # from scipy import signal
 
@@ -445,12 +446,13 @@ def massratio(chirp_mass):
 
 
 def compute_masses_from_mass_ratio_and_total_mass(mass_ratio, M=1):
-    ''' Compute the individual masses from mass-ratio and total mass '''
+    """Compute the individual masses from mass-ratio and total mass"""
 
-    mass2 = M/(mass_ratio+1)
-    mass1 = mass_ratio*mass2
+    mass2 = M / (mass_ratio + 1)
+    mass1 = mass_ratio * mass2
 
     return mass1, mass2
+
 
 # Defining function for calculating Chirpmass from a2
 
@@ -473,12 +475,11 @@ def compute_chirp_mass(a2_param):
     return chirp_mass
 
 
-
 def compute_chi_eff_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
-    ''' Compute the effective z-spin parameter 
-    :math:`\\chi_{eff}` 
-    
-    
+    """Compute the effective z-spin parameter
+    :math:`\\chi_{eff}`
+
+
     Parameters
     ----------
     spin1,spin2: tuple of floats
@@ -487,20 +488,21 @@ def compute_chi_eff_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
     larger_mass_ratio: float, >1
                 The SpEC convention mass-ratio
                 :math:`\dfrac{M_1}{M_2}`
-    '''
+    """
 
     _, _, s1z = spin1
     _, _, s2z = spin2
 
     chi_eff = (s1z * larger_mass_ratio + s2z) / (1 + larger_mass_ratio)
-    
+
     return chi_eff
 
+
 def compute_chi_prec_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
-    ''' Compute the effective spin-precession parameter 
-    :math:`\\chi_{prec}` 
-    
-    
+    """Compute the effective spin-precession parameter
+    :math:`\\chi_{prec}`
+
+
     Parameters
     ----------
     spin1,spin2: tuple of floats
@@ -509,9 +511,11 @@ def compute_chi_prec_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
     larger_mass_ratio: float,
                 The SpEC convention mass-ratio,
                 usually greater than 1
-    '''
+    """
 
-    mass1, mass2 = compute_masses_from_mass_ratio_and_total_mass(larger_mass_ratio)
+    mass1, mass2 = compute_masses_from_mass_ratio_and_total_mass(
+        larger_mass_ratio
+    )
 
     s1x, s1y, s1z = spin1
     s2x, s2y, s2z = spin2
@@ -523,8 +527,9 @@ def compute_chi_prec_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
     A2 = 2 + 3 * larger_mass_ratio / (2)
 
     chi_prec = max(A1 * s1p, A2 * s2p) / (A1 * mass1**2)
-    
+
     return chi_prec
+
 
 def lengtheq(data_a, data_b, delta_t=None, is_ts=False):
     """Equalize the length of two timeseries/array by
@@ -1056,7 +1061,7 @@ def shiftmatched(hdat, ind, delta_t=None, is_ts=False):
     return shifted_wf
 
 
-@njit
+# @njit
 def unwrap_phase(phi0):
     """Unwrap the phase by finding turning points in phi0.
     Finding turning points for unwrapping arctan2 function
@@ -1405,7 +1410,7 @@ def norm(hdat, psd=1.0):
     return norm_f
 
 
-def flatten(nflist):
+def flatten_3l(nflist):
     """Flatten a (3rd order) list of list of lists.
     i.e. a three tier list [[[],[]], [[],[]] ---> [].
     This is useful e.g. when combining the data from
@@ -1431,6 +1436,38 @@ def flatten(nflist):
     message("list length: (%d)" % (len(flattened_list)))
     # Return the 1d flattened list
     return flattened_list
+
+
+def flatten_l(nflist):
+    """Flatten a (3rd order) list of list of lists.
+    i.e. a three tier list [[[],[]], [[],[]] ---> [].
+    This is useful e.g. when combining the data from
+    the list output of multiple MPI ranks.
+
+    Parameters
+    ----------
+    nflist : a third tier list
+             A list of list of lists (a list of depth three).
+
+    Returns
+    -------
+    flattened_list : a list
+                     The flattened list i.e. a tier one list.
+    """
+
+    if len(nflist) == 1:
+        return nflist
+
+    else:
+        flattened_list = []
+
+        for item in nflist:
+            for sub_item in item:
+                flattened_list.append(sub_item)
+
+        message("list length: (%d)" % (len(flattened_list)))
+        # Return the 1d flattened list
+        return flattened_list
 
 
 def startend(data):

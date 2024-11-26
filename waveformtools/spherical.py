@@ -5,6 +5,7 @@
 #################################
 
 import numpy as np
+from spectral.spherical.swsh import Yslm_vec
 
 
 def decompose_in_SWSHs(
@@ -105,8 +106,6 @@ def decompose_in_SWSHs(
         integrand_ij = integrand_data
 
         darea = sqrt_met_det * gridinfo.dtheta * gridinfo.dphi
-
-        from waveformtools.transforms import Yslm_vec
 
         for ell_index in range(ell_max):
             multipoles_ell = {}

@@ -4,6 +4,8 @@ import numpy as np
 import math
 from waveformtools.waveformtools import message
 from waveformtools.integrate import TwoDIntegral
+
+
 from waveformtools.single_mode import SingleMode
 
 # from numba import jit, njit
@@ -276,8 +278,18 @@ def check_Yslm_theta(theta_grid, threshold=1e-6):
 
     locs = np.where(abs(theta_list) < threshold)
 
-    for index in locs:
-        sign = theta_list[index] / abs(theta_list[index])
+    # print("Locs", locs, locs[0])
+
+    for index in locs[0]:
+
+        theta = theta_list[index]
+
+        # print("Theta val \t ", theta, "\n")
+
+        if theta == 0:
+            sign = 1
+        else:
+            sign = theta_list[index] / abs(theta_list[index])
 
         theta_list[index] = theta_list[index] + sign * threshold
 
@@ -1034,6 +1046,193 @@ def SHExpandAuto(
 
 
 def SHExpandSimple(
+    func,
+    info,
+    method_info,
+    err_info=False,
+    reg=False,
+    reg_order=1,
+    check_reg=None,
+):
+    """Expand a given function in spin weight 0 spherical harmonics
+    upto a user prescribed :math:`\\ell_{max}`.
+
+    Additionally, if requested, this routine can:
+
+    1. regularize a function and expand and return the
+       modes of the regularized function and the associated
+       regularization details.
+    2. Compute diagnostic information in terms of residue
+       per mode.
+    3. The RMS deviation of the reconstructed expansion from the
+       original function.
+
+
+    Parameters
+    ----------
+    func : ndarray
+           The function to be expanded.
+    info : Grid
+           An instance of the Spherical grid class
+           that stores the details of the structure
+           of a grid on a topological sphere.
+    method_info : MethodInfo
+                  An instance of the method info
+                  class that contains informations
+                  about the numerical methods
+                  to be used during the following
+                  operations.
+    err_info : bool
+               Whether or not to compute and return
+               the error measures related to the
+               SH representation.
+
+    check_reg : list, optional
+                A list of two integers (0,1)
+                that depicts whether or not to
+                regularize the input function
+                at the poles.
+
+    Returns
+    -------
+    modes : dict
+            The modes as a dictionary whose keys are lm.
+
+    Notes
+    -----
+    When regularization is requested,
+        1. To compute the total RMS deviation,
+           the orginal form is used.
+        2. To compute the rms deviation per mode,
+           regularized expression is used.
+
+
+    """
+    # from scipy.special import sph_harm
+    import sys
+
+    # from waveformtools.single_mode import SingleMode
+
+    orig_func = func.copy()
+
+    theta_grid, phi_grid = info.meshgrid
+
+    ell_max = method_info.ell_max
+
+    method = method_info.int_method
+
+    message(
+        f"SHExpandSimple: expansion ell max is {ell_max}", message_verbosity=3
+    )
+
+    # Good old Modes dict
+    # modes = {}
+
+    # if method != "GL":
+    #    SinTheta = np.sin(theta_grid)
+    # else:
+    #    SinTheta = 1
+
+    if reg:
+        if check_reg is None:
+            check_reg = CheckRegReq(func)
+
+        if np.array(check_reg).any() > 0:
+            message("Regularizing function", message_verbosity=2)
+            func = SHRegularize(func, theta_grid, check_reg, order=reg_order)
+
+    result = SingleMode(ell_max=ell_max)
+
+    recon_func = np.zeros(func.shape, dtype=np.complex128)
+
+    res1 = np.sqrt(np.mean(np.absolute(func - recon_func) ** 2))
+
+    all_res = [res1]
+
+    for ell in range(ell_max + 1):
+        emm_list = np.arange(-ell, ell + 1)
+
+        # Subdict of modes
+        # emmCoeffs = {}
+
+        for emm in emm_list:
+            Ylm = Yslm_vec(
+                spin_weight=0,
+                emm=emm,
+                ell=ell,
+                theta_grid=theta_grid,
+                phi_grid=phi_grid,
+            )
+
+            integrand = func * np.conjugate(Ylm)
+
+            uu = np.isnan(integrand.any())
+
+            # print(uu)
+            if uu:
+                raise ValueError("Nan found!")
+
+            Clm = TwoDIntegral(integrand, info, method=method)
+
+            recon_func += Clm * Ylm
+
+            # emmCoeffs.update({f"m{emm}": Clm})
+            # print(Clm)
+            # message("Clm ", Clm, message_verbosity=2)
+
+            result.set_mode_data(ell, emm, Clm)
+
+        res = np.sqrt(np.mean(np.absolute(func - recon_func) ** 2))
+        all_res.append(res)
+
+        # modes.update({f"l{ell}": emmCoeffs})
+
+    # result2 = SingleMode(modes_dict=modes)
+
+    # message(f"result2 ell max {result2.ell_max}", message_verbosity=1)
+
+    result._Grid = info
+
+    if reg:
+        result.reg_order = reg_order
+        result.reg_details = check_reg
+
+    else:
+        result.reg_order = 0
+        result.reg_details = "NA"
+
+    if err_info:
+        from waveformtools.diagnostics import RMSerrs
+
+        recon_func = SHContract(result, info, ell_max)
+
+        if reg:
+            if np.array(check_reg).any() > 0:
+                message(
+                    "De-regularizing function"
+                    " for total RMS deviation"
+                    " computation",
+                    message_verbosity=2,
+                )
+
+                recon_func = SHDeRegularize(
+                    recon_func, theta_grid, check_reg, order=reg_order
+                )
+
+        Rerr, Amin, Amax = RMSerrs(orig_func, recon_func, info)
+        err_info_dict = {"RMS": Rerr, "Amin": Amin, "Amax": Amax}
+
+        result.error_info = err_info_dict
+        result.residuals = all_res
+        result.residual_axis = np.arange(-1, ell_max + 1)
+
+        if Rerr > 0.1:
+            message("Residue warning!", message_verbosity=0)
+
+    return result
+
+
+def SHExpandSimpleSPack(
     func,
     info,
     method_info,
