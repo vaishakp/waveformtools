@@ -128,12 +128,13 @@ class PrepareSXSWaveform:
 
             cwd = Path(os.getcwd())
             message(f"Current working directory {cwd}")
-            self._out_dir = cwd/f"processed_waveforms/{sim_name}_waveforms_Lev{self.lev}"
+            self._out_dir = (
+                cwd / f"processed_waveforms/{sim_name}_waveforms_Lev{self.lev}"
+            )
             message(f"Setting out-directory to ({self.out_dir})...")
         else:
             self._out_dir = out_dir
 
-        
         message(f"Out directory is set to {self.out_dir}")
 
         if not os.path.isdir(self.out_dir):
@@ -308,7 +309,9 @@ class PrepareSXSWaveform:
         """Extrapolate the waveform"""
 
         try:
-            message("\tChecking if extrapolated files from a previous run exists...")
+            message(
+                "\tChecking if extrapolated files from a previous run exists..."
+            )
             files = os.listdir(self.extrap_out_dir)
 
             exists = np.array(
