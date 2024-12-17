@@ -12,6 +12,8 @@ from waveformtools.waveformtools import (
     message,
 )
 import subprocess
+import h5py
+import pandas as pd
 
 
 class SimulationExplorer:
@@ -138,24 +140,44 @@ class SimulationExplorer:
         bfi_project_name=None,
         bfi_home_dir=None,
         ref_time=None,
+        filter_items=[
+            "Sl. No",
+            "Status",
+            "ReqRefTime",
+            "Omega0",
+            "Omega_ref",
+            "Ncycles",
+            "Ncycles (2,2)",
+            "D0",
+            "MassRatio",
+            "ChiA",
+            "ChiA_ref",
+            "ChiB",
+            "ChiB_ref",
+            "ChiEff",
+            "ChiPrec",
+        ],
     ):
         self._search_dir = Path(search_dir)
 
         self._prepared_waveforms_dir = Path(prepared_waveforms_dir)
         self._ref_time = ref_time
+        self._filter_items = filter_items
 
         self._bfi_project_name = bfi_project_name
         self._bfi_home_dir = Path(bfi_home_dir)
         self._sim_basename = None
         self._bfi_sim_params = {}
-
-    @property
-    def ref_time(self):
-        return self._ref_time
+        self._all_req_ref_times = {}
+        self._all_req_ref_time_segments = []
 
     @property
     def search_dir(self):
         return self._search_dir
+
+    @property
+    def filter_items(self):
+        return self._filter_items
 
     @property
     def sim_basename(self):
@@ -232,6 +254,22 @@ class SimulationExplorer:
     @property
     def ncycles_wf(self):
         return self._ncycles_wf
+
+    @property
+    def ref_time(self):
+        return self._ref_time
+
+    @property
+    def all_req_ref_times(self):
+        return self._all_req_ref_times
+
+    @property
+    def all_req_ref_time_segments(self):
+        return self._all_req_ref_time_segments
+
+    @property
+    def deleted_sims(self):
+        return self._deleted_sims
 
     def check_for_ecc_dir(self, path_of_dir_to_check):
         """Check if the given directory is an Ecc directory"""
@@ -347,6 +385,7 @@ class SimulationExplorer:
                 continue
 
             levs = [item for item in subdirs if "Lev" in item]
+            levs = [item for item in levs if "SysInit" not in item]
 
             for item in levs:
                 result = re.search("Lev[0-9]_Ringdown", item)
@@ -419,6 +458,10 @@ class SimulationExplorer:
 
         available_lev_dirs = [item for item in available_dirs if "Lev" in item]
         available_lev_dirs = [
+            item for item in available_lev_dirs if "SysInit" not in item
+        ]
+
+        available_lev_dirs = [
             item for item in available_lev_dirs if "Ringdown" not in item
         ]
         available_lev_dirs = [
@@ -426,6 +469,7 @@ class SimulationExplorer:
             for item in available_lev_dirs
             if re.search("Lev[0-9]_[A-Z]+", item) is not None
         ]
+
         message("Available lev dirs", available_lev_dirs, message_verbosity=2)
 
         available_ringdown_lev_dirs = [
@@ -469,6 +513,11 @@ class SimulationExplorer:
                 )
                 inside_ringdown_segments = [
                     item for item in inside_ringdown_dirs if "Lev" in item
+                ]
+                inside_ringdown_segments = [
+                    item
+                    for item in inside_ringdown_segments
+                    if "SysInit" not in item
                 ]
                 inside_ringdown_segments = [
                     item
@@ -674,7 +723,8 @@ class SimulationExplorer:
                         if len(fresults) == 0:
                             continue
 
-                        message("fresults", fresults, message_verbosity=1)
+                        message("fresults", fresults, message_verbosity=3)
+
                         # Assuming that ID is the first element
                         sim_name = self.sim_basename + fresults[0].split("=")[1]
 
@@ -686,8 +736,12 @@ class SimulationExplorer:
                             value = float(value)
 
                             bfi_sim_params[sim_name].update({key: value})
-
         self._bfi_sim_params = bfi_sim_params
+
+        # Delete empty sims from bfi file
+        for item in self.deleted_sims:
+
+            self._bfi_sim_params.pop(item)
 
         self.append_bfi_sim_params_to_all_params()
 
@@ -696,6 +750,9 @@ class SimulationExplorer:
         params dict"""
 
         for sim_name, sim_params in self.bfi_sim_params.items():
+            # for sim_name in self.available_sim_names:
+
+            sim_params = self.bfi_sim_params[sim_name]
 
             available_sim_param_keys = self.all_sim_params[sim_name].keys()
 
@@ -738,12 +795,9 @@ class SimulationExplorer:
             all_sim_params.update({sim_name: one_sim_params})
 
         self._all_sim_params = all_sim_params
-
         self.parse_bfi_params_file()
-
         self.compute_chi_eff()
         self.compute_chi_prec()
-
         self.prepare_pandas_dataframe()
 
     def prepare_pandas_dataframe(self):
@@ -761,10 +815,7 @@ class SimulationExplorer:
         all_params_df.insert(0, "Sl. No.", range(1, 1 + len(all_params_df)))
 
         self.discover_segments()
-
         self.discover_levels()
-
-        self.construct_simulation_status()
 
         all_params_df.insert(1, "Status", self.sim_status)
 
@@ -774,7 +825,14 @@ class SimulationExplorer:
         all_params_df.insert(3, "Ncycles", self.ncycles)
         all_params_df.insert(4, "Ncycles (2,2)", self.ncycles_wf)
 
-        self._all_sim_params_df = all_params_df
+        self._all_sim_params_df = all_params_df.T
+
+    def update_pandas_dataframe(self):
+        import pandas as pd
+
+        self._all_sim_params_df = pd.DataFrame(
+            self.all_sim_params
+        ).T.sort_index()
 
     def strip_sim_name_from_waveform_dir(self, wdir):
         """Extract the sim name from its processed waveform
@@ -869,7 +927,13 @@ class SimulationExplorer:
             success_sims = []
 
             for lev in available_sim_levs:
-                message("Preparing waveform for sim ", sim_name, "Lev ", lev)
+                message(
+                    "Preparing waveform for sim ",
+                    sim_name,
+                    "Lev ",
+                    lev,
+                    message_verbosity=2,
+                )
 
                 try:
                     wfp = PrepareSXSWaveform(
@@ -1004,15 +1068,16 @@ class SimulationExplorer:
 
         return last_segment, last_segment_path, RINGDOWN_INITIATED
 
-    def check_if_segment_running(self, last_segment_path):
-        """Check if a segment is runnning"""
-
+    def get_segment_jobid(self, last_segment_path):
         # Check if segment is running
         # Get Jobid
-        message("Checking if the sim is running...", message_verbosity=2)
+
         all_jobids = []
 
         spec_jobid_file = last_segment_path.joinpath("SpEC.jobid")
+
+        if not os.path.exists(spec_jobid_file):
+            return -1
 
         with open(spec_jobid_file, "r", encoding="utf-8") as sjf:
             for line in sjf:
@@ -1020,25 +1085,74 @@ class SimulationExplorer:
                 all_jobids.append(int(one_jobid))
 
         latest_jobid = all_jobids[-1]
+        return latest_jobid
+
+    def check_if_job_is_running(self, jobid):
+        """Check if a segment is runnning"""
+
+        message(
+            f"Checking if the job {jobid} is running...", message_verbosity=2
+        )
 
         # Get running jobs
         cmd_stdout = subprocess.run(
-            ["squeue | awk '{print $1}'"], shell=True, stdout=subprocess.PIPE
+            ["squeue -u ${USER} | awk '{print $1}'"],
+            shell=True,
+            stdout=subprocess.PIPE,
+        ).stdout
+
+        cmd_stdout_status = subprocess.run(
+            ["squeue -u ${USER} | awk '{print $5}'"],
+            shell=True,
+            stdout=subprocess.PIPE,
+        ).stdout
+
+        cmd_stdout_nodes = subprocess.run(
+            ["squeue -u ${USER} | awk '{print $8}'"],
+            shell=True,
+            stdout=subprocess.PIPE,
         ).stdout
 
         running_jobs = cmd_stdout.decode().split("\n")[1:-1]
         running_jobs = [int(item) for item in running_jobs]
 
+        # Get status
+        jobs_status = cmd_stdout_status.decode().split("\n")[1:-1]
+
+        nodes = cmd_stdout_nodes.decode().split("\n")[1:-1]
+
+        jobs = {}
+
+        for index in range(len(running_jobs)):
+            one_jobid = running_jobs[index]
+            one_status = jobs_status[index]
+            one_node = nodes[index]
+
+            jobs.update({one_jobid: {"Status": one_status, "Node": one_node}})
+
+        # jobs = dict(zip(running_jobs, jobs_status))
+
         message("Running jobs ", running_jobs, message_verbosity=2)
-        message("sim job id", latest_jobid, message_verbosity=2)
+        message("sim job id", jobid, message_verbosity=2)
 
-        if latest_jobid in running_jobs:
+        if jobid in running_jobs:
+            status = jobs[jobid]["Status"]
             message("Segment running", message_verbosity=2)
-            SEGMENT_RUNNING = True
-        else:
-            SEGMENT_RUNNING = False
 
-        return SEGMENT_RUNNING
+            if status == "R":
+                SEGMENT_STATUS = "Running"
+            elif status == "PD":
+                SEGMENT_STATUS = "Queued"
+            else:
+                SEGMENT_STATUS = "Unknown"
+        else:
+            SEGMENT_STATUS = "Not Running"
+
+        try:
+            jobs[jobid]["Status"] = SEGMENT_STATUS
+            return jobs[jobid]
+        except:
+            return None
 
     def check_for_errors(self, last_segment_path):
         """Check for error files to learn about the status"""
@@ -1064,36 +1178,72 @@ class SimulationExplorer:
     def read_last_segment_status(self, sim_name, lev):
         """Find out the status of the last segment of a particular sim"""
 
+        one_sim_status = {}
+
         last_segment, last_segment_path, RINGDOWN_INITIATED = (
             self.get_last_segment(sim_name, lev)
         )
 
+        if RINGDOWN_INITIATED:
+            last_segment = "RD_" + last_segment
+
+        sim_key = f"{sim_name}_Lev{lev}"
+        one_sim_status.update({sim_key: {"Segment": last_segment}})
+
         SIM_COMPLETE = False
         SEGMENT_ERROR = False
         status = None
+        SEGMENT_TO_SUBMIT = False
         # SEGMENT_RUNNING=False
-
-        # Check if terminated
+        allocation = None
+        # Check not submitted
+        spec_run_dir = last_segment_path.joinpath("Run")
         spec_out_file = last_segment_path.joinpath("Run/SpEC.out")
 
-        if not os.path.exists(spec_out_file):
+        if not os.path.exists(spec_run_dir):
             SEGMENT_COMPLETE = False
             SIM_COMPLETE = False
-            SEGMENT_RUNNING = False
+            # SEGMENT_RUNNING = SEGMENT_RUNNING_STATUS
+            SEGMENT_TO_SUBMIT = True
 
-            segment_status_comment = "Waiting to be launched"
+            SEGMENT_RUNNING_STATUS = "Not Running"
+            status = "To be submitted"
+            # else:
+            # status = SEGMENT_RUNNING_STATUS
+            segment_status_comment = "No Run dir"
+        elif not os.path.exists(spec_out_file):
+            SEGMENT_COMPLETE = False
+            SIM_COMPLETE = False
+            SEGMENT_RUNNING = "Not Running"
 
+            segment_status_comment = "SpEC.out not found"
+            status = "Halted"
+
+        # Check if terminated
         else:
+
+            segment_jobid = self.get_segment_jobid(last_segment_path)
+
+            if segment_jobid < 0:
+                SEGMENT_RUNNING_STATUS = "Not Running"
+            else:
+                seg_status = self.check_if_job_is_running(segment_jobid)
+
+                if seg_status is not None:
+                    SEGMENT_RUNNING_STATUS = seg_status["Status"]
+                    allocation = seg_status["Node"]
+                else:
+                    SEGMENT_RUNNING_STATUS = "Not Running"
+
             with open(spec_out_file, "r", encoding="utf-8") as sof:
                 lines = sof.readlines()[-3:]
 
                 message("Lines from SpEC.out", lines, message_verbosity=2)
 
-                SEGMENT_RUNNING = self.check_if_segment_running(
-                    last_segment_path
-                )
                 message(
-                    "Segment runnint 2", SEGMENT_RUNNING, message_verbosity=2
+                    "Segment runnint 2",
+                    SEGMENT_RUNNING_STATUS,
+                    message_verbosity=2,
                 )
                 SEGMENT_ERROR = self.check_for_errors(last_segment_path)
 
@@ -1101,7 +1251,7 @@ class SimulationExplorer:
                     SEGMENT_COMPLETE = True
                     SIM_COMPLETE = False
                     assert (
-                        SEGMENT_RUNNING == False
+                        SEGMENT_RUNNING_STATUS == "Not Running"
                     ), "Segment was found to be completed. It cant be running!"
                     assert (
                         SEGMENT_ERROR == False
@@ -1119,7 +1269,7 @@ class SimulationExplorer:
                     SEGMENT_COMPLETE = True
                     SIM_COMPLETE = True
                     assert (
-                        SEGMENT_RUNNING == False
+                        SEGMENT_RUNNING_STATUS == "Not Running"
                     ), "Segment was found to be completed. It cant be running!"
 
                     # assert SEGMENT_ERROR == False, "Segment was found to have errors but also complete!"
@@ -1129,27 +1279,35 @@ class SimulationExplorer:
                         )
 
                     segment_status_comment = "Termination condition FinalTime"
-
                     status = "Completed"
 
                 elif "t=" in lines[-1]:
                     SEGMENT_COMPLETE = False
                     SIM_COMPLETE = False
 
-                    if SEGMENT_RUNNING:
+                    if SEGMENT_RUNNING_STATUS == "Running":
                         status = "Running"
                     elif SEGMENT_ERROR:
                         status = "Error"
                     else:
                         status = "Halted"
 
+                    segment_status_comment = status
                 else:
                     if SEGMENT_ERROR:
                         status = "Error"
+
                     else:
                         status = "Unknown"
+                segment_status_comment = status
 
-        return status
+        one_sim_status[sim_key].update({"Status": status})
+
+        one_sim_status[sim_key].update({"Comment": segment_status_comment})
+
+        one_sim_status[sim_key].update({"Allocation": allocation})
+
+        return one_sim_status
 
     def construct_simulation_status(self):
         """Construct the simulation status of all the sims found
@@ -1168,17 +1326,15 @@ class SimulationExplorer:
         sim_status = {}
 
         for sim_name in self.available_sim_names:
-            one_sim_status = {}
-
+            # one_sim_status = {}
             for lev in self.available_sim_levs[sim_name]:
-
                 one_status = self.read_last_segment_status(sim_name, lev)
+                print(one_status)
+                sim_status.update(one_status)
 
-                one_sim_status.update({lev: one_status})
+            # sim_status.update({sim_name: one_sim_status})
 
-            sim_status.update({sim_name: one_sim_status})
-
-        self._sim_status = sim_status
+        self._sim_status = pd.DataFrame(sim_status).transpose().sort_index()
 
     def compute_ncycles(self):
         """Compute the number of cycles using the orbital
@@ -1324,7 +1480,8 @@ class SimulationExplorer:
 
         if os.path.exists(path_to_joined_h5):
             message(
-                f"Joined Horizons.h5 file already found in {path_to_joined_h5}"
+                f"Joined Horizons.h5 file already found in {path_to_joined_h5}",
+                message_verbosity=2,
             )
 
         else:
@@ -1340,6 +1497,328 @@ class SimulationExplorer:
             path_to_joined_h5 = wfp.joined_horizons_outfile_path
 
         return path_to_joined_h5
+
+    def discover_ref_time(self):
+        """Discover ref time as the light travel time to the
+        innermost waveform extraction sphere"""
+
+        all_req_ref_times = {}
+
+        for sim_name, sim_path in self.available_sim_paths.items():
+
+            try:
+                one_sim_lev = self.available_sim_levs[sim_name][0]
+            except IndexError:
+                continue
+
+            one_sim_ecc = self.get_ecc_dirs(sim_path)[0]
+
+            sub_path = f"{one_sim_ecc}/Ev/Lev{one_sim_lev}_AA/Run/GW2/rh_FiniteRadii_CodeUnits.h5"
+
+            wf_file_path = sim_path.joinpath(sub_path)
+
+            with h5py.File(wf_file_path) as wf:
+
+                print(sim_name)
+
+                print(wf.keys())
+
+                rkeys = [item for item in wf.keys() if ".dir" in item]
+
+                ref_time = 2 * min([int(item[1:-4]) for item in rkeys])
+
+                print(ref_time)
+
+                all_req_ref_times.update({sim_name: ref_time})
+                self._all_sim_params[sim_name].update(
+                    {"RequestedReferenceTime": ref_time}
+                )
+
+        self._all_req_ref_times = all_req_ref_times
+
+    def get_segment_at_req_ref_time(self):
+        """Get the segments corresponding to the requested reference time"""
+
+        all_req_ref_time_segments = {}
+
+        for sim_name, sim_path in self.available_sim_paths.items():
+
+            message(f"Looking in sim {sim_name}", message_verbosity=2)
+            # try:
+
+            sim_lev = 3
+            if sim_lev not in self.available_sim_levs[sim_name]:
+                sim_lev = min(self.available_sim_levs[sim_name])
+
+            # highest_sim_lev = max(self.available_sim_levs[sim_name])
+            highest_sim_ecc = max(self.get_ecc_dirs(sim_path))
+            # except IndexError:
+            #    continue
+
+            seg_count = 0
+
+            for seg in self.inspiral_segments[sim_name][f"Lev{sim_lev}"]:
+
+                message(f"Searching in Lev{sim_lev}_{seg}", message_verbosity=2)
+
+                path_to_traj = f"{highest_sim_ecc}/Ev/Lev{sim_lev}_{seg}/Run/ApparentHorizons/Trajectory_AhA.dat"
+
+                try:
+                    traj_dat = np.genfromtxt(
+                        self.available_sim_paths[sim_name].joinpath(
+                            path_to_traj
+                        )
+                    )
+                    avail_seg_times = traj_dat[:, 0]
+                except (FileNotFoundError, IndexError) as fe:
+                    message(f"Skipping segment {seg} as Traj file is missing")
+                    seg_count += 1
+                    continue
+
+                # print(avail_seg_times)
+
+                if (
+                    self.all_req_ref_times[sim_name] < max(avail_seg_times)
+                ) and (self.all_req_ref_times[sim_name] > min(avail_seg_times)):
+                    prev_seg = self.inspiral_segments[sim_name][
+                        f"Lev{sim_lev}"
+                    ][seg_count]
+                    all_req_ref_time_segments.update(
+                        {sim_name: f"Lev{sim_lev}_{prev_seg}"}
+                    )
+                    message(
+                        f"Segment found for {sim_name}", message_verbosity=2
+                    )
+                    break
+
+                seg_count += 1
+
+        self._all_req_ref_time_segments = all_req_ref_time_segments
+
+    def parse_sim_params_at_req_ref_times(self):
+        """Parse the masses, spins and Orbital freq at requested ref times"""
+
+        from waveformtools.differentiate import derivative
+
+        for sim_name, sim_seg in self.all_req_ref_time_segments.items():
+
+            sim_path = self.available_sim_paths[sim_name]
+
+            # for sim_name, sim_path in self.available_sim_paths.items():
+
+            highest_sim_lev = max(self.available_sim_levs[sim_name])
+            highest_sim_ecc = max(self.get_ecc_dirs(sim_path))
+
+            req_ref_seg = self.all_req_ref_time_segments[sim_name]
+            req_tref = self.all_req_ref_times[sim_name]
+
+            sub_path_to_h = f"{highest_sim_ecc}/Ev/{req_ref_seg}/Run/ApparentHorizons/Horizons.h5"
+
+            full_path_to_h = self.available_sim_paths[sim_name].joinpath(
+                sub_path_to_h
+            )
+
+            with h5py.File(full_path_to_h) as hhf:
+
+                message(sim_name)
+
+                # print(hhf.keys())
+
+                aha_dat = hhf["AhA.dir"]
+                ahb_dat = hhf["AhB.dir"]
+
+                irr_mass1_arr = aha_dat["ArealMass.dat"][...]
+                chr_mass1_arr = aha_dat["ChristodoulouMass.dat"][...]
+                chr_mass1 = get_val_at_t_ref(
+                    chr_mass1_arr[:, 0], chr_mass1_arr[:, 1], req_tref
+                )
+
+                irr_mass2_arr = ahb_dat["ArealMass.dat"][...]
+                chr_mass2_arr = ahb_dat["ChristodoulouMass.dat"][...]
+                chr_mass2 = get_val_at_t_ref(
+                    chr_mass2_arr[:, 0], chr_mass2_arr[:, 1], req_tref
+                )
+
+                spin_1_arr = aha_dat["DimensionfulInertialSpin.dat"][...]
+                spin_2_arr = ahb_dat["DimensionfulInertialSpin.dat"][...]
+
+                j_1x = get_val_at_t_ref(
+                    spin_1_arr[:, 0], spin_1_arr[:, 1], req_tref
+                )
+                j_1y = get_val_at_t_ref(
+                    spin_1_arr[:, 0], spin_1_arr[:, 2], req_tref
+                )
+                j_1z = get_val_at_t_ref(
+                    spin_1_arr[:, 0], spin_1_arr[:, 3], req_tref
+                )
+
+                j_2x = get_val_at_t_ref(
+                    spin_2_arr[:, 0], spin_2_arr[:, 1], req_tref
+                )
+                j_2y = get_val_at_t_ref(
+                    spin_2_arr[:, 0], spin_2_arr[:, 2], req_tref
+                )
+                j_2z = get_val_at_t_ref(
+                    spin_2_arr[:, 0], spin_2_arr[:, 3], req_tref
+                )
+
+                chi_1_arr = aha_dat["chiInertial.dat"][...]
+                chi_1x = get_val_at_t_ref(
+                    chi_1_arr[:, 0], chi_1_arr[:, 1], req_tref
+                )
+                chi_1y = get_val_at_t_ref(
+                    chi_1_arr[:, 0], chi_1_arr[:, 2], req_tref
+                )
+                chi_1z = get_val_at_t_ref(
+                    chi_1_arr[:, 0], chi_1_arr[:, 3], req_tref
+                )
+
+                chi_2_arr = ahb_dat["chiInertial.dat"][...]
+                chi_2x = get_val_at_t_ref(
+                    chi_2_arr[:, 0], chi_2_arr[:, 1], req_tref
+                )
+                chi_2y = get_val_at_t_ref(
+                    chi_2_arr[:, 0], chi_2_arr[:, 2], req_tref
+                )
+                chi_2z = get_val_at_t_ref(
+                    chi_2_arr[:, 0], chi_2_arr[:, 3], req_tref
+                )
+
+                # print('Spin1 shape', spin_1_arr.shape)
+                # print('Chi1 shape', chi_1_arr.shape)
+
+                # print("Diff1", irr_mass1_arr[:, 1] - chr_mass1_arr[:, 1])
+                # print("Diff2", irr_mass2_arr[:, 1] - chr_mass2_arr[:, 1])
+
+                subpath_to_traj1 = Path(
+                    f"{highest_sim_ecc}/Ev/{req_ref_seg}/Run/ApparentHorizons/Trajectory_AhA.dat"
+                )
+                subpath_to_traj2 = Path(
+                    f"{highest_sim_ecc}/Ev/{req_ref_seg}/Run/ApparentHorizons/Trajectory_AhB.dat"
+                )
+
+                full_path_to_traj1 = self.available_sim_paths[
+                    sim_name
+                ].joinpath(subpath_to_traj1)
+                full_path_to_traj2 = self.available_sim_paths[
+                    sim_name
+                ].joinpath(subpath_to_traj2)
+
+                traj1 = np.genfromtxt(full_path_to_traj1)
+                traj2 = np.genfromtxt(full_path_to_traj2)
+
+                x1 = traj1[:, 1]
+                y1 = traj1[:, 2]
+
+                x2 = traj2[:, 1]
+                y2 = traj2[:, 2]
+
+                r = (x2 - x1) + 1j * (y2 - y1)
+
+                orb_phase = np.unwrap(np.angle(r))
+
+                np.testing.assert_array_almost_equal(
+                    traj1[:, 0],
+                    traj2[:, 0],
+                    12,
+                    "Time axis from trajectory A and B must agree!",
+                )
+
+                orb_freq = derivative(traj1[:, 0], orb_phase, degree=5)
+
+                omega_init = get_val_at_t_ref(traj1[:, 0], orb_freq, req_tref)
+
+                chi1_mag = np.sqrt(chi_1x**2 + chi_1y**2 + chi_1z**2)
+                chi2_mag = np.sqrt(chi_2x**2 + chi_2y**2 + chi_2z**2)
+
+                j1_mag = np.sqrt(j_1x**2 + j_1y**2 + j_1z**2)
+                j2_mag = np.sqrt(j_2x**2 + j_2y**2 + j_2z**2)
+
+                hmass1 = np.sqrt(chr_mass1**2 + j1_mag**2 / (4 * chr_mass1**2))
+                hmass2 = np.sqrt(chr_mass2**2 + j2_mag**2 / (4 * chr_mass2**2))
+
+                message(f"Reference parameters at tref= {req_tref} are")
+                message("------------------------")
+                message(f" Christodlou Masses : M1 {chr_mass1} M2 {chr_mass2}")
+                message(f" Horizon Masses : M1 {hmass1} M2 {hmass2}")
+                message(
+                    f" Chi magnitudes : |Chi1| {chi1_mag} |Chi2| {chi2_mag}"
+                )
+                message(f" J magnitudes : |J1| {j1_mag} |J2| {j2_mag}")
+                message(
+                    f" Chi : Chi1 ({chi_1x}, {chi_1y}, {chi_1z}) Chi2 ({chi_2x}, {chi_2y}, {chi_2z})"
+                )
+                message(
+                    f" J : J1 ({j_1x}, {j_1y}, {j_1z}) Chi2 ({j_2x}, {j_2y}, {j_2z})"
+                )
+                message(f" Omega_i : {omega_init}")
+                message("------------------------")
+
+                import matplotlib.pyplot as plt
+
+                # plt.plot(traj1[:, 0], orb_freq)
+                # plt.show()
+
+                # Update params
+
+                self.all_sim_params[sim_name].update(
+                    {"ReqRefTime": self.all_req_ref_times[sim_name]}
+                )
+                self.all_sim_params[sim_name].update({"Omega_ref": omega_init})
+                self.all_sim_params[sim_name].update(
+                    {"ChiA_ref": (chi_1x, chi_1y, chi_1z)}
+                )
+                self.all_sim_params[sim_name].update(
+                    {"ChiB_ref": (chi_2x, chi_2y, chi_2z)}
+                )
+                self.all_sim_params[sim_name].update({"MA_ref": hmass1})
+                self.all_sim_params[sim_name].update({"MB_ref": hmass2})
+
+    def delete_empty_sims(self):
+        """Delete sims that have no levels in them"""
+
+        to_delete = []
+
+        for sim_name, avail_levs in self.available_sim_levs.items():
+
+            if avail_levs == []:
+
+                to_delete.append(sim_name)
+
+                try:
+                    self._available_sim_names.remove(sim_name)
+                    self._available_sim_paths.pop(sim_name)
+                    # self._available_sim_levs.pop(sim_name)
+                    self._all_sim_params.pop(sim_name)
+                    self._all_sim_params_df.pop(sim_name)
+
+                except Exception as ex:
+                    message(ex, "Data not loaded")
+
+        for item in to_delete:
+            self._available_sim_levs.pop(item)
+
+        self._deleted_sims = to_delete
+
+    def run(self):
+        """Run the pipeline"""
+        self.search_simulations()
+        self.discover_segments()
+        self.discover_levels()
+        self.delete_empty_sims()
+        self.construct_simulation_status()
+
+        self.fetch_sim_params()
+        self.discover_ref_time()
+        self.get_segment_at_req_ref_time()
+        self.parse_sim_params_at_req_ref_times()
+
+        self.update_pandas_dataframe()
+
+    def get_filtered_dataframe(self):
+        """Get only a subset of the data"""
+
+        return self.all_sim_params_df.filter(items=self.filter_items)
 
 
 def re_fetch_float(line):
@@ -1375,13 +1854,19 @@ def re_fetch_vector(line):
     return (val1, val2, val3)
 
 
-def get_ref_time(self):
-    """Get the reference time
-    as the light crossing time
-    to the smallest waveform
-    extraction sphere"""
+def re_fetch_ext_rad(line):
+    """Fetch the ext radius from the key"""
 
-    # self.avail
 
-    # for sim_path
-    # wext_file_path =
+def get_val_at_t_ref(time_axis, val_axis, time):
+    """Interpolate and get the value at the requested time"""
+
+    from scipy.interpolate import interp1d
+
+    int_func = interp1d(time_axis, val_axis, kind="cubic")
+
+    val_at_t_ref = float(int_func(time))
+
+    # print(val_at_t_ref, type(val_at_t_ref))
+
+    return round(val_at_t_ref, 5)
