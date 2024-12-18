@@ -25,14 +25,14 @@ def write_git_version():
 
     # write to __init__.py
     ee = os.popen(
-        f"sed -i '/__version__/c\__version__ = \"{vers}\"' {source_directory}/waveformtools/__init__.py"
+        f"sed -i '/__version__/c\\__version__ = \"{vers}\"' {source_directory}/waveformtools/__init__.py"
     )
     # with open(package_directory+'/waveformtools/__init__.py', 'r') as init_file:
     # with open(package_directory + "/../public/date.txt", "r") as vers_file:
     # vers = vers_file.read()[:10]
 
     ee = os.popen(
-        f"sed -i '/version/c\ \tversion=\"{vers}\",' {source_directory}/setup.py"
+        f"sed -i '/version/c\\ \tversion=\"{vers}\",' {source_directory}/setup.py"
     )
     print("Version", vers)
 
