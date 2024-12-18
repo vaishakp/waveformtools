@@ -1132,9 +1132,10 @@ class modes_array:
 
             self._modes_data = np.zeros(
                 (
-                (ell_max + 1) ** 2, data_len, 
+                    (ell_max + 1) ** 2,
+                    data_len,
                 ),
-                dtype=np.complex128
+                dtype=np.complex128,
             )
 
         # Set the time metadata

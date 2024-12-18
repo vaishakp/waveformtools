@@ -8,7 +8,7 @@
 
 import json
 import re
-import sys,os
+import sys, os
 
 import h5py, tarfile
 import numpy as np
@@ -279,8 +279,9 @@ def get_iteration_numbers_from_keys(keys_list):
 
     return iteration_numbers
 
+
 def get_files_in_tar_gz(file_path):
-    ''' Get the files in a tar.gz 
+    """Get the files in a tar.gz
 
     Parameters
     ----------
@@ -288,7 +289,7 @@ def get_files_in_tar_gz(file_path):
     file_path: str,pathlib.Path
                 The full path to the tar file
 
-    '''
+    """
     with tarfile.open(file_path, "r:gz") as tf:
         all_files = [one_file.name for one_file in tf.getmembers()]
 
@@ -296,7 +297,7 @@ def get_files_in_tar_gz(file_path):
 
 
 def get_ell_max_from_tar_gz_file(file_path):
-    ''' Get the ell_max from files in a tar.gz 
+    """Get the ell_max from files in a tar.gz
 
     Parameters
     ----------
@@ -309,7 +310,7 @@ def get_ell_max_from_tar_gz_file(file_path):
              The l max of the modes available
     filtered_fnames: list of str
                      A list contaning the names of the modes files.
-    '''
+    """
 
     all_fnames = get_files_in_tar_gz(file_path)
     filtered_fnames = [item for item in all_fnames if "_l" in item]
@@ -322,8 +323,8 @@ def get_ell_max_from_tar_gz_file(file_path):
 
 
 def read_data_from_tar_gz_subfile(tar_gz_file_handle, subfile_name):
-    ''' Extract and read the data in a subfile inside the given open 
-    tar gz file handle '''
+    """Extract and read the data in a subfile inside the given open
+    tar gz file handle"""
 
     with tar_gz_file_handle.extractfile(subfile_name) as df:
         data = np.genfromtxt(df)
@@ -332,13 +333,13 @@ def read_data_from_tar_gz_subfile(tar_gz_file_handle, subfile_name):
 
 
 def reorder_modes_list(modes_list):
-    ''' Reorder a modes list '''
+    """Reorder a modes list"""
 
     modes_dict = {}
     ordered_modes_list = []
 
     for ell, emm_list in modes_list:
-        modes_dict.update({ell : sorted(emm_list)})
+        modes_dict.update({ell: sorted(emm_list)})
 
     sorted_ells = sorted(list(modes_dict.keys()))
 
@@ -346,7 +347,6 @@ def reorder_modes_list(modes_list):
         ordered_modes_list.append([ell, modes_dict[ell]])
 
     return ordered_modes_list
-
 
 
 def construct_mode_list(ell_max, spin_weight):
@@ -457,7 +457,7 @@ def load_RIT_Psi4_data_from_disk(
                  The spin weight of the object. Used for filtering modes.
                  Defaults to -2.
     resam_type: string, float, optional
-                The type of resampling to do. Options are finest and coarsest, 
+                The type of resampling to do. Options are finest and coarsest,
                 and user input float.
     interp_kind: string, optional
                  The interpolation type to use. Default is cubic.
@@ -470,11 +470,11 @@ def load_RIT_Psi4_data_from_disk(
     time_axis, modes_data: ndarray
                            Time axis and an array whose first axis is time and second is
                            flatened modes index consistent with ModesArray
-                     
+
     Notes
     -----
-    It seems like the time axis of individual modes are identical to each other. 
-    Hence, one need not worry about choosing the time domain. This may change 
+    It seems like the time axis of individual modes are identical to each other.
+    Hence, one need not worry about choosing the time domain. This may change
     in future.
     """
     tar_file_name_prefix = os.path.basename(data_file_path)[:-7]
@@ -482,9 +482,10 @@ def load_RIT_Psi4_data_from_disk(
     # For interpolation
     from scipy.interpolate import interp1d
 
-
     message("Loading RIT Psi4 type data.", message_verbosity=1)
-    available_ell_max, available_modes_files = get_ell_max_from_tar_gz_file(data_file_path)
+    available_ell_max, available_modes_files = get_ell_max_from_tar_gz_file(
+        data_file_path
+    )
 
     # Create a modes array
     if modes_list is None:
@@ -494,9 +495,12 @@ def load_RIT_Psi4_data_from_disk(
 
         else:
             if ell_max > available_ell_max:
-                message(f"ell_max {ell_max} requested but maximum available ell_max is {available_ell_max}", message_verbosity=1)
+                message(
+                    f"ell_max {ell_max} requested but maximum available ell_max is {available_ell_max}",
+                    message_verbosity=1,
+                )
                 ell_max = available_ell_max
-        
+
         # Construct a modes list
         wf_modes_list = construct_mode_list(
             ell_max=ell_max, spin_weight=spin_weight
@@ -508,7 +512,7 @@ def load_RIT_Psi4_data_from_disk(
         modes_list = reorder_modes_list(modes_list)
         ell_max = max([item[0] for item in modes_list])
         wf_modes_list = modes_list
-    
+
     ##########################################
     # Read in the data
     #########################################
@@ -517,40 +521,60 @@ def load_RIT_Psi4_data_from_disk(
     with tarfile.open(data_file_path, "r:gz") as open_tar_file_handle:
         for ell, emm_list in wf_modes_list:
             for emm in emm_list:
-                mode_idx = ell*2 + ell + emm
+                mode_idx = ell * 2 + ell + emm
 
                 message("Loading", ell, emm, message_verbosity=2)
 
                 # Construct file path
-                wf_psi4_mode_data = read_data_from_tar_gz_subfile(open_tar_file_handle, f"{tar_file_name_prefix}/rPsi4_l{ell}_m{emm}_rInf.asc")
+                wf_psi4_mode_data = read_data_from_tar_gz_subfile(
+                    open_tar_file_handle,
+                    f"{tar_file_name_prefix}/rPsi4_l{ell}_m{emm}_rInf.asc",
+                )
 
                 # Get time axis
                 wf_psi4_time = wf_psi4_mode_data[:, 0]
-                
+
                 if not created:
                     message("\t Inferring time axis", message_verbosity=2)
 
                     min_dt = round(min(np.diff(wf_psi4_time)), 2)
                     max_dt = round(max(np.diff(wf_psi4_time)), 2)
 
-                    message(f"Min dt {min_dt} and Max dt {max_dt}", message_verbosity=2)
+                    message(
+                        f"Min dt {min_dt} and Max dt {max_dt}",
+                        message_verbosity=2,
+                    )
 
                     if resam_type == "finest":
                         # Choose finest available timestep
                         # for upto 3 decimal digits.
                         m_dt = min_dt
-                        message("\tResampling at the finest timestep", m_dt, message_verbosity=2)
+                        message(
+                            "\tResampling at the finest timestep",
+                            m_dt,
+                            message_verbosity=2,
+                        )
                     elif resam_type == "coarsest":
                         m_dt = max_dt
-                        message("\tResampling at the coarsest timestep", m_dt, message_verbosity=2)
+                        message(
+                            "\tResampling at the coarsest timestep",
+                            m_dt,
+                            message_verbosity=2,
+                        )
 
                     elif isinstance(resam_type, float):
                         m_dt = resam_type
-                        message("\tResampling at user defined timestep", m_dt, message_verbosity=2)
+                        message(
+                            "\tResampling at user defined timestep",
+                            m_dt,
+                            message_verbosity=2,
+                        )
 
                     else:
-                        raise KeyError(f"Unrecognized resampling type {resam_type}")
-                    
+                        raise KeyError(
+                            f"Unrecognized resampling type {resam_type}"
+                        )
+
                     # New (resampled) time axis
                     time_axis = np.arange(
                         wf_psi4_time[0], wf_psi4_time[-1] + m_dt, m_dt
@@ -559,14 +583,18 @@ def load_RIT_Psi4_data_from_disk(
                     # Length of data.
                     data_len = len(time_axis)
                     # To hold the loaded data
-                    modes_data = np.zeros((data_len, (ell_max+1)**2), dtype=np.complex128)
+                    modes_data = np.zeros(
+                        (data_len, (ell_max + 1) ** 2), dtype=np.complex128
+                    )
                     created = True
 
                 ###############################
                 # Load the phase data
                 ##############################
                 Yphase = wf_psi4_mode_data[:, 4]
-                Yphase_interp_fun = interp1d(wf_psi4_time, Yphase, kind=interp_kind)
+                Yphase_interp_fun = interp1d(
+                    wf_psi4_time, Yphase, kind=interp_kind
+                )
 
                 # Resample
                 Yphase_resam = Yphase_interp_fun(time_axis)
@@ -586,12 +614,18 @@ def load_RIT_Psi4_data_from_disk(
                 ###################################
                 modes_data[:, mode_idx] = wfmode
 
-    if output_modes_array==True:
+    if output_modes_array == True:
         from waveformtools.waveforms import modes_array
+
         data_dir = os.path.dirname(data_file_path)
 
         if not wfa:
-            wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list, extra_mode_axes_shape=None)
+            wfa = modes_array(
+                label=label,
+                data_dir=data_dir,
+                modes_list=modes_list,
+                extra_mode_axes_shape=None,
+            )
 
             # Create a modes array object
             wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
@@ -603,7 +637,7 @@ def load_RIT_Psi4_data_from_disk(
         wfa.r_ext = np.inf
         wfa._actions += "->load_modes"
         wfa._modes_data = modes_data.T
-        
+
         if crop is not False or centre is True:
             # Trim or recenter
             if crop is True or centre is True:
@@ -623,6 +657,7 @@ def load_RIT_Psi4_data_from_disk(
 
     else:
         return time_axis, modes_data
+
 
 def load_RIT_Strain_data_from_disk(
     wfa=None,
@@ -2181,5 +2216,3 @@ def save_modes_data_to_gen(
                 wfile.create_dataset(key, data=save_data)
 
     return 1
-
-
