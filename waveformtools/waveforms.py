@@ -1102,7 +1102,7 @@ class modes_array:
                 message(ex)
                 raise NameError("Please supply data_len")
 
-        if np.array(self.time_axis).all() == np.array(None):
+        if (np.array(self.time_axis) == np.array(None)).all():
             self.create_time_axis(data_len)
 
         if self.modes_list is None:
@@ -1131,7 +1131,10 @@ class modes_array:
             message("Creating modes array", message_verbosity=3)
 
             self._modes_data = np.zeros(
-                (ell_max + 1) ** 2, data_len, dtype=np.complex128
+                (
+                (ell_max + 1) ** 2, data_len, 
+                ),
+                dtype=np.complex128
             )
 
         # Set the time metadata

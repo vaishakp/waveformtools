@@ -8,9 +8,9 @@
 
 import json
 import re
-import sys
+import sys,os
 
-import h5py
+import h5py, tarfile
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline as interp
 from scipy.interpolate import interp1d
@@ -279,6 +279,75 @@ def get_iteration_numbers_from_keys(keys_list):
 
     return iteration_numbers
 
+def get_files_in_tar_gz(file_path):
+    ''' Get the files in a tar.gz 
+
+    Parameters
+    ----------
+
+    file_path: str,pathlib.Path
+                The full path to the tar file
+
+    '''
+    with tarfile.open(file_path, "r:gz") as tf:
+        all_files = [one_file.name for one_file in tf.getmembers()]
+
+    return all_files
+
+
+def get_ell_max_from_tar_gz_file(file_path):
+    ''' Get the ell_max from files in a tar.gz 
+
+    Parameters
+    ----------
+    file_path: str,pathlib.Path
+                The full path to the tar file
+
+    Returns
+    -------
+    ell_max: int
+             The l max of the modes available
+    filtered_fnames: list of str
+                     A list contaning the names of the modes files.
+    '''
+
+    all_fnames = get_files_in_tar_gz(file_path)
+    filtered_fnames = [item for item in all_fnames if "_l" in item]
+
+    message("All files found", filtered_fnames, message_verbosity=3)
+
+    ell_max = get_ell_max_from_keys(filtered_fnames)
+
+    return ell_max, filtered_fnames
+
+
+def read_data_from_tar_gz_subfile(tar_gz_file_handle, subfile_name):
+    ''' Extract and read the data in a subfile inside the given open 
+    tar gz file handle '''
+
+    with tar_gz_file_handle.extractfile(subfile_name) as df:
+        data = np.genfromtxt(df)
+
+    return data
+
+
+def reorder_modes_list(modes_list):
+    ''' Reorder a modes list '''
+
+    modes_dict = {}
+    ordered_modes_list = []
+
+    for ell, emm_list in modes_list:
+        modes_dict.update({ell : sorted(emm_list)})
+
+    sorted_ells = sorted(list(modes_dict.keys()))
+
+    for ell in sorted_ells:
+        ordered_modes_list.append([ell, modes_dict[ell]])
+
+    return ordered_modes_list
+
+
 
 def construct_mode_list(ell_max, spin_weight):
     """
@@ -350,9 +419,13 @@ def sort_keys(modes_keys_list):
     return sorted_modes_keys_list
 
 
+from matplotlib.style import available
+from zipp import Path
+
+
 def load_RIT_Psi4_data_from_disk(
+    data_file_path,
     wfa=None,
-    data_dir="./",
     label="RIT_rPsi4inf",
     ell_max=None,
     modes_list=None,
@@ -362,191 +435,194 @@ def load_RIT_Psi4_data_from_disk(
     interp_kind="cubic",
     crop=False,
     centre=False,
+    output_modes_array=False,
 ):
     """Load the Psi4 waveforms from the RIT catalogue
     from ASCII files from disk.
 
     Parameters
     ----------
-    wfa  :	waveforms
-                                    An instance of the waveforms class. Updates this instance if provided, else creates a new instance.
-    data_dir :	string
-                                    A string containing the directory path where the mode files can be found.
-    label : string, optional
-                                    The label of the modes_array object.
-    ell_max : int, optional
-                                                    The maximum mode number to load. If not specified,
-                                                    then all available modes are loaded.
-    save_as_ma : bool, optional
-                                                     Save to disk again as a modes_array h5 file?
-    spin_weight : int, optional
-                                                      The spin weight of the object. Used for filtering modes.
-                                                      Defaults to -2.
-    resam_type : string, float, optional
-                                                     The type of resampling to do. Options are finest and coarsest, and user input float.
-    interp_kind : string, optional
-                                                      The interpolation type to use. Default is cubic.
+    wfa: ModesArray
+        An instance of the waveforms ModesArray class. Updates this instance if provided, else creates a new instance.
+    data_file_path: string/pathlib.Path
+                    A string containing the directory path where the mode files can be found.
+    label: string, optional
+           The label of the modes_array object.
+    ell_max: int, optional
+             The maximum mode number to load. If not specified,
+             then all available modes are loaded.
+    save_as_ma: bool, optional
+                Save to disk again as a modes_array h5 file?
+    spin_weight: int, optional
+                 The spin weight of the object. Used for filtering modes.
+                 Defaults to -2.
+    resam_type: string, float, optional
+                The type of resampling to do. Options are finest and coarsest, 
+                and user input float.
+    interp_kind: string, optional
+                 The interpolation type to use. Default is cubic.
 
     Returns
     -------
-
-    rit_modes_array : modes_array
-                                                                                    A modes_array instance containing the loaded modes.
-
+    rit_modes_array: modes_array
+                     A modes_array instance containing the loaded modes if
+                     `output_modes_array` is True
+    time_axis, modes_data: ndarray
+                           Time axis and an array whose first axis is time and second is
+                           flatened modes index consistent with ModesArray
+                     
     Notes
     -----
-    It seems like the time axis of individual modes are identical to each other. Hence, one need not worry about
-    choosing the time domain. This may change in future.
+    It seems like the time axis of individual modes are identical to each other. 
+    Hence, one need not worry about choosing the time domain. This may change 
+    in future.
     """
+    tar_file_name_prefix = os.path.basename(data_file_path)[:-7]
+
+    # For interpolation
+    from scipy.interpolate import interp1d
+
+
     message("Loading RIT Psi4 type data.", message_verbosity=1)
-    from waveformtools.waveforms import modes_array
+    available_ell_max, available_modes_files = get_ell_max_from_tar_gz_file(data_file_path)
 
-    if not wfa:
-        wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
-
+    # Create a modes array
     if modes_list is None:
         # Max available mode l.
         if ell_max is None:
-            ell_max, _ = get_ell_max_from_file(data_dir)
+            ell_max = available_ell_max
 
+        else:
+            if ell_max > available_ell_max:
+                message(f"ell_max {ell_max} requested but maximum available ell_max is {available_ell_max}", message_verbosity=1)
+                ell_max = available_ell_max
+        
         # Construct a modes list
         wf_modes_list = construct_mode_list(
             ell_max=ell_max, spin_weight=spin_weight
         )
 
-        message("The modes list is", wf_modes_list, message_verbosity=4)
+        message("The modes list is", wf_modes_list, message_verbosity=3)
 
     else:
+        modes_list = reorder_modes_list(modes_list)
         ell_max = max([item[0] for item in modes_list])
         wf_modes_list = modes_list
-
-    wfa.ell_max = ell_max
-    wfa.modes_list = wf_modes_list
-    wfa.r_ext = np.inf
-    # For interpolation
-    from scipy.interpolate import interp1d
-
-    # Alias of the modes_array
-    # label = 'q1a0_a'
-    # Create a modes array
-    # Enforce only l>2 modes.
-    wf_modes_list = [
-        item for item in wf_modes_list if item[0] >= abs(spin_weight)
-    ]
-
-    # tend = []
-    # tstart = []
-
+    
     ##########################################
     # Read in the data
     #########################################
+    message("Reading in modes...", message_verbosity=2)
+    created = False
+    with tarfile.open(data_file_path, "r:gz") as open_tar_file_handle:
+        for ell, emm_list in wf_modes_list:
+            for emm in emm_list:
+                mode_idx = ell*2 + ell + emm
 
-    message("Reading in modes...")
-    for ell, emm_list in wf_modes_list:
-        for emm in emm_list:
-            message("Loading", ell, emm)
-            # Construct file path
-            wf_psi4_file_path = data_dir + f"/rPsi4_l{ell}_m{emm}_rInf.asc"
-            # Read in the data
-            wf_psi4_file = np.genfromtxt(wf_psi4_file_path)
+                message("Loading", ell, emm, message_verbosity=2)
 
-            # Get time axis
-            wf_psi4_time = wf_psi4_file[:, 0]
-            # tend.append(len(wf_psi4_time))
-            # tstart.append(wf_psi4_time[0])
-            # tend.append(wf_psi4_time[-1])
+                # Construct file path
+                wf_psi4_mode_data = read_data_from_tar_gz_subfile(open_tar_file_handle, f"{tar_file_name_prefix}/rPsi4_l{ell}_m{emm}_rInf.asc")
 
-            # message(f'Tmin {wf_psi4_time[0]}, tmax{wf_psi4_time[-1]}')
-            # Create modes_array on first run
+                # Get time axis
+                wf_psi4_time = wf_psi4_mode_data[:, 0]
+                
+                if not created:
+                    message("\t Inferring time axis", message_verbosity=2)
 
-            # message(wfa.modes_data)
-            if wfa.modes_data.all() == np.array(None):
-                message("Creating modes data")
+                    min_dt = round(min(np.diff(wf_psi4_time)), 2)
+                    max_dt = round(max(np.diff(wf_psi4_time)), 2)
 
-                min_dt = round(min(np.diff(wf_psi4_time)), 2)
-                max_dt = round(max(np.diff(wf_psi4_time)), 2)
-                message(f"Min dt {min_dt} and Max dt {max_dt}")
+                    message(f"Min dt {min_dt} and Max dt {max_dt}", message_verbosity=2)
 
-                if resam_type == "finest":
-                    # Choose finest available timestep
-                    # for upto 3 decimal digits.
-                    m_dt = min_dt
-                    message("Resampling at the finest timestep", m_dt)
-                if resam_type == "coarsest":
-                    m_dt = max_dt
-                    message("Resampling at the coarsest timestep", m_dt)
+                    if resam_type == "finest":
+                        # Choose finest available timestep
+                        # for upto 3 decimal digits.
+                        m_dt = min_dt
+                        message("\tResampling at the finest timestep", m_dt, message_verbosity=2)
+                    elif resam_type == "coarsest":
+                        m_dt = max_dt
+                        message("\tResampling at the coarsest timestep", m_dt, message_verbosity=2)
 
-                if isinstance(resam_type, float):
-                    m_dt = resam_type
-                    message("Resampling at user defined timestep", m_dt)
+                    elif isinstance(resam_type, float):
+                        m_dt = resam_type
+                        message("\tResampling at user defined timestep", m_dt, message_verbosity=2)
 
-                # New (resampled) time axis
-                time_axis = np.arange(
-                    wf_psi4_time[0], wf_psi4_time[-1] + m_dt, m_dt
-                )
+                    else:
+                        raise KeyError(f"Unrecognized resampling type {resam_type}")
+                    
+                    # New (resampled) time axis
+                    time_axis = np.arange(
+                        wf_psi4_time[0], wf_psi4_time[-1] + m_dt, m_dt
+                    )
 
-                # Length of data.
-                data_len = len(time_axis)
+                    # Length of data.
+                    data_len = len(time_axis)
+                    # To hold the loaded data
+                    modes_data = np.zeros((data_len, (ell_max+1)**2), dtype=np.complex128)
+                    created = True
 
-                # Create a modes array object
-                wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
+                ###############################
+                # Load the phase data
+                ##############################
+                Yphase = wf_psi4_mode_data[:, 4]
+                Yphase_interp_fun = interp1d(wf_psi4_time, Yphase, kind=interp_kind)
 
-                # Assign to it the time axis
-                wfa.time_axis = time_axis
+                # Resample
+                Yphase_resam = Yphase_interp_fun(time_axis)
 
-            # message(wfa.time_axis - wf_psi4_time)
-            # continue
-            ###################################
-            # Uniform sampling
-            ###################################
-            # message('Wfa time axis', wfa.time_axis)
+                ###########################
+                # Load the amplitude data
+                ###########################
+                Yamp = wf_psi4_mode_data[:, 3]
+                Yamp_interp_fun = interp1d(wf_psi4_time, Yamp, kind=interp_kind)
 
-            ###############################
-            # Load the phase data
-            ##############################
+                # Resample
+                Yamp_resam = Yamp_interp_fun(time_axis)
+                wfmode = Yamp_resam * np.exp(1j * Yphase_resam)
 
-            Yphase = wf_psi4_file[:, 4]
-            Yphase_interp_fun = interp1d(wf_psi4_time, Yphase, kind=interp_kind)
+                ###################################
+                # Set the modes data
+                ###################################
+                modes_data[:, mode_idx] = wfmode
 
-            # Resample
+    if output_modes_array==True:
+        from waveformtools.waveforms import modes_array
+        data_dir = os.path.dirname(data_file_path)
 
-            Yphase_resam = Yphase_interp_fun(time_axis)
+        if not wfa:
+            wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list, extra_mode_axes_shape=None)
 
-            ###########################
-            # Load the amplitude data
-            ###########################
-            Yamp = wf_psi4_file[:, 3]
-            Yamp_interp_fun = interp1d(wf_psi4_time, Yamp, kind=interp_kind)
+            # Create a modes array object
+            wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
 
-            # Resample
-            Yamp_resam = Yamp_interp_fun(time_axis)
-            wfmode = Yamp_resam * np.exp(1j * Yphase_resam)
+        # Assign to it the time axis
+        wfa.time_axis = time_axis
+        wfa.ell_max = ell_max
+        wfa.modes_list = wf_modes_list
+        wfa.r_ext = np.inf
+        wfa._actions += "->load_modes"
+        wfa._modes_data = modes_data.T
+        
+        if crop is not False or centre is True:
+            # Trim or recenter
+            if crop is True or centre is True:
+                wfa.trim(trim_upto_time=0)
+                wfa.centered = True
+                wfa._actions += "->recenter"
 
-            ###################################
-            # Load the modes data
-            ###################################
+            elif isinstance(crop, float):
+                wfa.trim(trim_upto_time=crop)
+                wfa._actions += "->crop"
 
-            wfa.set_mode_data(ell, emm, wfmode)
+            if save_as_ma is True:
+                # Save the modes array as waveforms hdf file
+                wfa.save_modes(out_file_name="{label}_resam.h5")
+                wfa._actions += "->save_as_wfh5"
+        return wfa
 
-    wfa._actions += "->load_modes"
-
-    if crop is not False or centre is True:
-        # Trim or recenter
-        if crop is True or centre is True:
-            wfa.trim(trim_upto_time=0)
-            wfa.centered = True
-            wfa._actions += "->recenter"
-
-        elif isinstance(crop, float):
-            wfa.trim(trim_upto_time=crop)
-            wfa._actions += "->crop"
-
-        if save_as_ma is True:
-            # Save the modes array as waveforms hdf file
-            wfa.save_modes(out_file_name="{label}_resam.h5")
-            wfa._actions += "->save_as_wfh5"
-    return wfa
-
+    else:
+        return time_axis, modes_data
 
 def load_RIT_Strain_data_from_disk(
     wfa=None,
@@ -2105,3 +2181,5 @@ def save_modes_data_to_gen(
                 wfile.create_dataset(key, data=save_data)
 
     return 1
+
+
