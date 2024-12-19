@@ -434,7 +434,7 @@ class SingleMode:
 
             modes = self.non_zero_modes(tol=tol)
 
-        from waveformtools.transforms import SHContract
+        from spectral.shperical.transforms import SHContract
 
         func = SHContract(modes, self.Grid, ell_max)
 

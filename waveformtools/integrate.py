@@ -58,7 +58,7 @@ def fixed_frequency_integrator(
         # Compute the FFT of data
         from numpy.fft import ifft
 
-        from waveformtools.transforms import compute_fft, unset_fft_conven
+        from spectral.fourier.fft import compute_fft, unset_fft_conven
 
         # from waveformtools import taper
         # udata_x_re = taper(u_time.real, delta_t=delta_t)

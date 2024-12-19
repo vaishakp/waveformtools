@@ -5,6 +5,7 @@ from waveformtools.diagnostics import method_info
 from waveformtools.waveformtools import message
 import unittest, pytest
 
+
 class TestGLGridYlm(unittest.TestCase):
     def test_ylm_single_mode_recovery(self):
         """Test single mode recovery for every mode
@@ -419,7 +420,7 @@ class TestGLGridYlm(unittest.TestCase):
         # info = GLGrid(L=24)
         # minfo = method_info(ell_max=24, int_method='GL')
 
-        ell_max = 24 # Warning: Very expensive. Tested upto 84
+        ell_max = 24  # Warning: Very expensive. Tested upto 84
 
         from waveformtools.transforms import Yslm_vec, Yslm_prec
 

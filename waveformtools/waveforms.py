@@ -1737,7 +1737,7 @@ class modes_array:
             ell_max=self.ell_max, data_len=self.data_len
         )
 
-        from waveformtools.transforms import compute_fft
+        from spectral.fourier.fft import compute_fft
 
         for mode in self.modes_list:
             # Extrapolate every mode
@@ -1775,7 +1775,7 @@ class modes_array:
             ell_max=self.ell_max, data_len=self.data_len
         )
 
-        from waveformtools.transforms import compute_ifft
+        from spectral.fourier.fft import compute_ifft
 
         for mode in self.modes_list:
             # Extrapolate every mode
@@ -2453,10 +2453,10 @@ class modes_array:
 
         if method == "fast":
             message("Using fast SWSH method")
-            from waveformtools.transforms import Yslm
+            from spectral.spherical.yslm import Yslm_vec as Yslm
         elif method == "precise":
             message("Using precise SWSH method")
-            from waveformtools.transforms import Yslm_prec as Yslm
+            from spectral.spherical.yslm import Yslm_prec as Yslm
         else:
             raise NotImplementedError(f"Unknown method {method}")
 

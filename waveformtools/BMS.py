@@ -94,7 +94,7 @@ def compute_supertransl_alpha(supertransl_alpha_modes, theta, phi):
 
     # Import the Spherical Harmonic function
 
-    from waveformtools.transforms import Yslm
+    from spectral.spherical.yslm import Yslm_vec
 
     spin_weight = 0
     # Ylm = partial(Yslm, spin_weight=0)

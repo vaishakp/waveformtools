@@ -2369,7 +2369,7 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
         )
         # message(time_axis, wf1, wf2)
 
-    from waveformtools.transforms import compute_fft, compute_ifft
+    from spectral.fourier.fft import compute_fft, compute_ifft
 
     # The Fspace waveforms
     faxis, wf1_tilde = compute_fft(wf1, delta_t)
@@ -2521,7 +2521,7 @@ def match_wfs_pycbc(all_time_axes, all_waveforms):
     mid = int(len(time_axis2) / 2)
     phase_shift = np.mean(delta_phase[mid - 100 : mid + 100])
 
-    from waveformtools.transforms import compute_fft, compute_ifft
+    from spectral.fourier.fft import compute_fft, compute_ifft
 
     faxis0, wf1_tilde = compute_fft(waveform1, delta_t_1)
 
