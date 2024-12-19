@@ -1,6 +1,6 @@
 import numpy as np
 from spectral.spherical.transforms import SHExpand
-from waveformtools.grids import GLGrid
+from spectral.spherical.grids import GLGrid
 from waveformtools.diagnostics import method_info
 from waveformtools.waveformtools import message
 import unittest, pytest
@@ -14,7 +14,7 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=11)
         minfo = method_info(ell_max=11, int_method="GL")
 
-        from waveformtools.transforms import Yslm_vec
+        from spectral.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -56,7 +56,7 @@ class TestGLGridYlm(unittest.TestCase):
             info = GLGrid(L=11)
             minfo = method_info(ell_max=11, int_method="GL")
 
-            from waveformtools.transforms import Yslm_vec
+            from spectral.spherical.swsh import Yslm_vec
 
             theta_grid, phi_grid = info.meshgrid
 
@@ -189,7 +189,7 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=11)
         minfo = method_info(ell_max=11, int_method="GL")
 
-        from waveformtools.transforms import Yslm_vec
+        from spectral.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -282,7 +282,7 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=11)
         minfo = method_info(ell_max=11, int_method="GL")
 
-        from waveformtools.transforms import Yslm_vec
+        from spectral.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -379,7 +379,7 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=24)
         minfo = method_info(ell_max=24, int_method="GL")
 
-        from waveformtools.transforms import Yslm_vec
+        from spectral.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -422,7 +422,7 @@ class TestGLGridYlm(unittest.TestCase):
 
         ell_max = 16  # Warning: Very expensive. Tested upto 84
 
-        from waveformtools.transforms import Yslm_vec, Yslm_prec
+        from spectral.spherical.swsh import Yslm_vec, Yslm_prec
 
         # theta_grid, phi_grid = info.meshgrid
 
@@ -468,9 +468,9 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=24)
         # minfo = method_info(ell_max=24, int_method='GL')
 
-        ell_max = 16 # Warning: very expensive. Tested upto 84
+        ell_max = 16  # Warning: very expensive. Tested upto 84
 
-        from waveformtools.transforms import Yslm_vec, Yslm_prec_grid
+        from spectral.spherical.swsh import Yslm_vec, Yslm_prec_grid
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -532,7 +532,7 @@ class TestGLGridYlm(unittest.TestCase):
 
         ell_max = 24
 
-        from waveformtools.transforms import Yslm_vec
+        from spectral.spherical.swsh import Yslm_vec
 
         # theta_grid, phi_grid = info.meshgrid
 
@@ -596,7 +596,7 @@ class TestGLGridYlm(unittest.TestCase):
 
         ell_max = 24
 
-        from waveformtools.transforms import Yslm_vec
+        from spectral.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -661,7 +661,7 @@ class TestGLGridYlm(unittest.TestCase):
 
         ell_max = 24
 
-        from waveformtools.transforms import Yslm_prec_grid
+        from spectral.spherical.swsh import Yslm_prec_grid
 
         theta_grid, phi_grid = info.meshgrid
 

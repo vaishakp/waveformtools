@@ -21,7 +21,7 @@ from waveformtools.dataIO import (
     get_iteration_numbers_from_keys,
     sort_keys,
 )
-from waveformtools.grids import UniformGrid
+from spectral.spherical.grids import UniformGrid
 from spectral.spherical.swsh import Yslm_vec
 from waveformtools.waveformtools import interp_resam_wfs, message
 
@@ -2051,7 +2051,7 @@ class modes_array:
                            that contains the boosted waveform.
         """
 
-        from waveformtools.grids import UniformGrid
+        from spectral.spherical.grids import UniformGrid
 
         # Construct a spherical grid.
         if grid_info is None:
@@ -2453,10 +2453,10 @@ class modes_array:
 
         if method == "fast":
             message("Using fast SWSH method")
-            from spectral.spherical.yslm import Yslm_vec as Yslm
+            from spectral.spherical.swsh import Yslm_vec as Yslm
         elif method == "precise":
             message("Using precise SWSH method")
-            from spectral.spherical.yslm import Yslm_prec as Yslm
+            from spectral.spherical.swsh import Yslm_prec as Yslm
         else:
             raise NotImplementedError(f"Unknown method {method}")
 

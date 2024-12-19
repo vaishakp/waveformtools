@@ -1172,7 +1172,7 @@ def SHExpandSimple(
             if uu:
                 raise ValueError("Nan found!")
 
-            Clm = TwoDIntegral(integrand, info, method=method)
+            Clm = TwoDIntegral(integrand, info, int_method=method)
 
             recon_func += Clm * Ylm
 
@@ -1180,7 +1180,7 @@ def SHExpandSimple(
             # print(Clm)
             # message("Clm ", Clm, message_verbosity=2)
 
-            result.set_mode_data(ell, emm, Clm)
+            result.set_mode_data(ell=ell, emm=emm, value=Clm)
 
         res = np.sqrt(np.mean(np.absolute(func - recon_func) ** 2))
         all_res.append(res)

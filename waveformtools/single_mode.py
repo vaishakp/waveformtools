@@ -428,15 +428,21 @@ class SingleMode:
 
         if all_available_modes:
             modes = self  # self.get_modes_dict()
+        else:
+            raise NotImplementedError
 
         if only_modes_above_tol:
             raise NotImplementedError
-
             modes = self.non_zero_modes(tol=tol)
 
-        from spectral.shperical.transforms import SHContract
+        from spectral.spherical.transforms import SHContract
+        from waveformtools.diagnostics import method_info
 
-        func = SHContract(modes, self.Grid, ell_max)
+        minfo = method_info()
+
+        func = SHContract(
+            modes, self.Grid, ell_max, method_info=minfo, vectorize=True
+        )
 
         return func
 
