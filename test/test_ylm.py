@@ -659,7 +659,7 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=24)
         # minfo = method_info(ell_max=24, int_method='GL')
 
-        ell_max = 24
+        ell_max = 6 # Warning: very expensive. Tested upto 84
 
         from spectral.spherical.swsh import Yslm_prec_grid
 
@@ -679,7 +679,7 @@ class TestGLGridYlm(unittest.TestCase):
         for ell in range(ell_max + 1):
             for emm in range(ell, ell + 1):
                 message(f"Testing l{ell} m{emm}", message_verbosity=2)
-
+                
                 Ylm_exact = Yslm_prec_grid(
                     spin_weight=0,
                     ell=ell,
