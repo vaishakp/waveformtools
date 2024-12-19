@@ -478,7 +478,9 @@ class PrepareSXSWaveform:
         """Carry out extrapolation + CoM correction"""
         self.join_waveform_h5_files(verbose=verbose)
 
-        self.extrapolate(ChMass=ChMass, UseStupidNRARFormat=UseStupidNRARFormat)
+        self.extrapolate(
+            ChMass=ChMass, UseStupidNRARFormat=UseStupidNRARFormat
+        )
 
         self.join_horizons(verbose=verbose)
 

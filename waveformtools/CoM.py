@@ -12,12 +12,12 @@ def X_com_moments(time_axis, Xcom, order):
 
     Parameters
     ----------
-    time_axis :	1d array
+    time_axis : 1d array
                 The time axis.
     Xcom : list
            A list of three 1d arrays, each a 1d array containing the
            time series of the x, y and z co-ordinates in that order.
-    order :	int
+    order : int
             The order of the moment.
 
     Returns
@@ -91,7 +91,7 @@ def compute_com_alpha(time_i, time_f, Xcom_0, Xcom_1):
 
     Returns
     -------
-    com_alpha :	list
+    com_alpha : list
                 The list containig the alpha parameter vector
 
     """
@@ -106,26 +106,24 @@ def compute_com_alpha(time_i, time_f, Xcom_0, Xcom_1):
 
 def compute_com_beta(time_i, time_f, Xcom_0, Xcom_1):
     """Computes the CoM beta parameter: the mean drift of the system,
-    of the COM correction as defined in Woodford et al. 2019 (Phys. Rev. D 100, 124010).
+    of the COM correction as defined in
+    Woodford et al. 2019 (Phys. Rev. D 100, 124010).
 
     Parameters
     ----------
-
-    time_i:	 float
-                             initial time
-    time_f:	float
-                            final time
-    Xcom_0:	list
-                            A list containing the zeroth order moments of the COM.
-    Xcom_1:	list
-                            A list containing the first order moments of the COM.
+    time_i: float
+            initial time
+    time_f: float
+            final time
+    Xcom_0: list
+            A list containing the zeroth order moments of the COM.
+    Xcom_1: list
+            A list containing the first order moments of the COM.
 
     Returns
     -------
-
-    com_beta:		list
-                            The list containig the alpha parameter vector
-
+    com_beta: list
+              The list containig the alpha parameter vector
     """
 
     com_beta = (12 * (Xcom_1) - 6 * (time_f + time_i) * Xcom_0) / (
@@ -137,30 +135,31 @@ def compute_com_beta(time_i, time_f, Xcom_0, Xcom_1):
 
 def compute_conformal_k(vec_v, info, spin_phase=0):
     """Compute the conformal factor for the boost transformation
-            :math:`k = \\exp(-2i \\lambda) \\gamma^3 (1 - \\mathbf{v} \\cdot \\mathbf{r})^3
+            :math:`k = \\exp(-2i \\lambda) \\gamma^3 (1 -
+            \\mathbf{v} \\cdot \\mathbf{r})^3
 
-    Inputs
-    ------
+    Parameters
+    ----------
+    vec_v: list
+           A list of 2d arrays containing
+           the velocity vector in the form
+           [vec_x, vec_y, vec_z].
 
-    vec_v:		list
-                            A list of 2d arrays containing
-                            the velocity vector in the form
-                            [vec_x, vec_y, vec_z].
+    spin_phase: float, optional
+                The spin phase :math:`\\lambda'. Defaults to 0.
 
-    spin_phase:	float, optional
-                                    The spin phase :math:`\\lambda'. Defaults to 0.
+    info: obj
+          An instance of the class `grids.sp_grid`
+          that contains information about the
+          spherical grid being used for the
+          transformations.
 
-    info:		class instance
-                            An instance of the class `grids.sp_grid`
-                            that contains information about the
-                            spherical grid being used for the
-                            transformations.
     Returns
-    --------
+    -------
 
-    conformal_k:	2d array
-                                    The conformal factor for the boost transformation
-                                    as defined above.
+    conformal_k: 2d array
+                 The conformal factor for the boost transformation
+                 as defined above.
 
 
     """
@@ -198,20 +197,20 @@ def compute_translation_alpha_modes(time_axis, com_alpha, com_beta):
 
     Parameters
     ----------
-
-    time_axis:		1d array
-                                    The 1D array containing the time axis of the simulation.
-    alpha:		1d array
-                            The 1D array containing the mean co-ordinate displacement of the COM of the system.
-    beta:		1d array
-                            The 1D array containing the mean co-ordinate velocity of the COM.
+    time_axis: 1d array
+               The 1D array containing the time axis of the simulation.
+    alpha: 1d array
+           The 1D array containing the mean co-ordinate displacement
+           of the COM of the system.
+    beta: 1d array
+          The 1D array containing the mean co-ordinate velocity of the COM.
 
     Returns
     -------
 
-    alpha_modes :   modes_array
-                    A `waveforms.modes_array` object containing the SH
-                    decomposition of the 'Alpha' supertranslation variable.
+    alpha_modes: modes_array
+                 A `waveforms.modes_array` object containing the SH
+                 decomposition of the 'Alpha' supertranslation variable.
 
     """
 
@@ -246,7 +245,7 @@ def compute_translation_alpha_modes(time_axis, com_alpha, com_beta):
     alpha_modes.set_mode_data(ell_value=1, emm_value=1, data=Alpha_11)
 
     # Combine into one list
-    # modes	   = { 'l0' : [Alpha_00], 'l1' : [Alpha_1m1, Alpha_10, Alpha_11]}
+    # modes    = { 'l0' : [Alpha_00], 'l1' : [Alpha_1m1, Alpha_10, Alpha_11]}
     modes_list = [[0, [0]], [1, [-1, 0, 1]]]
     alpha_modes.modes_list = modes_list
     alpha_modes.time_axis = time_axis
@@ -256,42 +255,43 @@ def compute_translation_alpha_modes(time_axis, com_alpha, com_beta):
 
 
 def boost_waveform(unboosted_waveform, conformal_factor):
-    """Boost the waveform given the unboosted waveform and the boost conformal factor.
+    """Boost the waveform given the unboosted waveform
+    and the boost conformal factor.
 
     Parameters
     ----------
+    unboosted_waveform: spherical_array
+                        A class instance of `spherical array`.
 
-    unboosted_waveform:		spherical_array
-                                                            A class instance of `spherical array`.
+    conformal_factor: 2d array
+                      The conformal factor for the Lorentz transformation.
+                      It may be a single floating point number or an array
+                      on a spherical grid. The array will be of dimensions
+                      [ntheta, nphi].
 
-    conformal_factor:		2d array
-                            The conformal factor for the Lorentz transformation.
-                            It may be a single floating point number or an array
-                            on a spherical grid. The array will be of dimensions
-                            [ntheta, nphi].
-
-    gridinfo:		class instance
-                    The class instance that contains the properties of the spherical grid.
+    gridinfo: class instance
+              The class instance that contains the properties
+              of the spherical grid.
 
 
     Returns
     -------
-
-    boosted_waveform:	  sp_array
-                                              The class instance `sp_array` that
-                                              contains the boosted waveform.
+    boosted_waveform: sp_array
+                      The class instance `sp_array` that
+                      contains the boosted waveform.
     """
 
     from waveforms import spherical_array
 
     # Compute the meshgrid for theta and phi.
     # theta, phi = unboosted_waveform.gridinfo.meshgrid
-    # 	= unboosted_waveform.gridinfo.phi
+    #   = unboosted_waveform.gridinfo.phi
     # A list to store the boosted waveform.
     boosted_waveform_data = []
 
     for item in unboosted_waveform.data:
-        # Compute the boosted waveform on the spherical grid on all the elements.
+        # Compute the boosted waveform on the spherical grid
+        # on all the elements.
 
         # conformal_k_on_sphere = compute_conformal_k(vec_v, theta, phi)
         boosted_waveform_item = conformal_factor * item

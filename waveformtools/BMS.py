@@ -91,9 +91,7 @@ def compute_supertransl_alpha(supertransl_alpha_modes, theta, phi):
 
     # ell_min = int(keys_list[0][1])
     # ell_max = int(keys_list[-1][1])
-
     # Import the Spherical Harmonic function
-
     from spectral.spherical.swsh import Yslm_vec
 
     spin_weight = 0
@@ -110,7 +108,7 @@ def compute_supertransl_alpha(supertransl_alpha_modes, theta, phi):
             message("ell is", ell, type(ell), "emm is ", emm)
             supertransl_alpha_sphere += supertransl_alpha_modes[item][
                 m_index
-            ] * Yslm(spin_weight, ell, emm, theta, phi)
+            ] * Yslm_vec(spin_weight, ell, emm, theta, phi)
 
     return supertransl_alpha_sphere
 

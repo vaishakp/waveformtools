@@ -4,7 +4,10 @@ from spectral.spherical.grids import GLGrid
 from waveformtools.diagnostics import method_info
 from waveformtools.waveformtools import message
 import unittest, pytest
+from config.verbosity import levels
 
+lv = levels()
+lv.set_print_verbosity(2)
 
 class TestGLGridYlm(unittest.TestCase):
     def test_ylm_single_mode_recovery(self):
@@ -36,8 +39,6 @@ class TestGLGridYlm(unittest.TestCase):
                 test_modes = SHExpand(
                     func=test_dist, method_info=minfo, info=info
                 )
-
-                # print(ell, emm, test_modes.mode(ell, emm))
 
                 # Test mode coefficient
                 np.testing.assert_almost_equal(
@@ -432,7 +433,6 @@ class TestGLGridYlm(unittest.TestCase):
         for ell in range(ell_max + 1):
             for emm in range(ell, ell + 1):
                 message(f"Testing l{ell} m{emm}", message_verbosity=2)
-                print(f"Testing l{ell} m{emm}", message_verbosity=2)
 
                 Ylm_this_module = Yslm_vec(
                     spin_weight=0,

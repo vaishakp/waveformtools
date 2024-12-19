@@ -132,14 +132,17 @@ def TwoDIntegral(func, grid_info, int_method=None):
     Parameters
     ----------
     func: function
-            The function to be integrated
+          The function to be integrated
     NTheta, NPhi: int
-             The number of grid points in the theta and phi directions.
-             Note that NTheta must be even.
+                  The number of grid points in the theta and phi directions.
+                  Note that NTheta must be even.
     ht, hp: float
-             The grid spacings.
+            The grid spacings.
     int_method: string
-             The method to use for the integration. Options are DH (Driscoll Healy), SP (Simpson's), MP (Midpoint).
+                The method to use for the integration. 
+                Options are DH (Driscoll Healy), 
+                SP (Simpson's), 
+                MP (Midpoint).
 
     Returns
     -------
@@ -148,9 +151,9 @@ def TwoDIntegral(func, grid_info, int_method=None):
     """
 
     if int_method is None:
-        if info.grid_type == "GL":
+        if grid_info.grid_type == "GL":
             int_method = "GL"
-        elif info.grid_type == "Uniform":
+        elif grid_info.grid_type == "Uniform":
             int_method = "MP"
         else:
             raise KeyError(
@@ -178,14 +181,15 @@ def MidPoint2DInteg(func, info):
 
     Parameters
     ----------
-    func : ndarray
-           The data to be integrated
-    info : surface_grid_info
-            An instance of the surface grid info class containing information about the grid.
+    func: ndarray
+          The data to be integrated
+    info: surface_grid_info
+          An instance of the surface grid info class 
+          containing information about the grid.
     Returns
     -------
-     integ : float
-            The function f integrated over the sphere.
+    integ: float
+           The function f integrated over the sphere.
     """
 
     ht = info.dtheta
@@ -251,7 +255,8 @@ def DriscollHealy2DInteg(func, info):
     # theta_1d = np.pi* np.arange(1, NTheta)/NTheta
     # ell_weight_axis = np.arange(int(NTheta/2))
     # theta_2d, ell_2d = np.meshgrid(theta_1d, ell_weight_axis)
-    # weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / (2 * ell_2d + 1)
+    # weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / 
+    # (2 * ell_2d + 1)
     # weights_axis = np.sum(weights_grid, axis=1)
     # latitude_sum_axis = np.sum(func, axis=1)
     # integrand_axis = latitude_sum_axis * weights_axis
@@ -270,7 +275,8 @@ def DriscollHealy2DInteg(func, info):
             # for (int l = 0; l < NTheta/2; ++ l)
             weight += np.sin((2 * ell + 1) * this_theta) / (2 * ell + 1)
 
-        # weight_axis = np.sin((2 * ell_weight_axis + 1) * this_theta) / (2 * ell_weight_axis + 1)
+        # weight_axis = np.sin((2 * ell_weight_axis + 1) 
+        # * this_theta) / (2 * ell_weight_axis + 1)
 
         weight *= 4.0 / np.pi
         latitude_sum = 0
@@ -484,14 +490,15 @@ def GaussLegendre2DInteg(func, info):
 
     Parameters
     ----------
-    func : ndarray
-           The data to be integrated
-    info : surface_grid_info
-            An instance of the surface grid info class containing information about the grid.
+    func: ndarray
+          The data to be integrated
+    info: surface_grid_info
+           An instance of the surface grid info class 
+           containing information about the grid.
     Returns
     -------
-     integ : float
-            The function f integrated over the sphere.
+    integ: float
+           The function f integrated over the sphere.
     """
 
     integral = (

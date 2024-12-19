@@ -22,27 +22,27 @@ def derivative(x_data, y_data, method="FD", degree=3):
 
     Parameters
     ----------
-    x_data, y_data : 1d array
-                                     The x and y data. x_data is assumed
-                                     to be sorted.
-    method : str
-                     The method to use for differentiation.
-                     Presently supported values are
-                     'SP' : Spline
-                     'CS' : Chebyshev
-                     'FS' : Fourier
-                     'FD' : Finite difference
-    degree : int
-                    The algorithm degree to use for differentiating. This
-                    is applicable when dealing with the 'CS'
-                    method, which is the number of basis functions
-                    to use and 'FD' method, which is the number
-                    of points on either side to use.
+    x_data, y_data: 1d array
+                    The x and y data. x_data is assumed
+                    to be sorted.
+    method: str
+            The method to use for differentiation.
+            Presently supported values are
+            'SP' : Spline
+            'CS' : Chebyshev
+            'FS' : Fourier
+            'FD' : Finite difference
+    degree: int
+            The algorithm degree to use for differentiating. This
+            is applicable when dealing with the 'CS'
+            method, which is the number of basis functions
+            to use and 'FD' method, which is the number
+            of points on either side to use.
 
     Returns
     -------
-    dydx : 1d array
-               The first order derivative of y w.r.t. x.
+    dydx: 1d array
+          The first order derivative of y w.r.t. x.
     """
 
     if method == "SP":
@@ -144,25 +144,20 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
 
     Parameters
     ----------
+    x_data: 1d array
+            The x data.
+    y_data: 1d array
+            The y data.
+    order: int
+           The number of times to differentiate.
 
-
-    x_data:	1d array
-                                                    The x data.
-    y_data:	1d array
-                                    The y data.
-
-    order:	int
-                                    The number of times to differentiate.
-
-    degree:	int
-                                                    The number of basis functions to use.
-
+    degree: int
+            The number of basis functions to use.
 
     Returns
     -------
-
-    dydx_data:	1d array
-                                                    The differentiated data.
+    dydx_data: 1d array
+               The differentiated data.
 
     """
 
@@ -172,14 +167,16 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
     # L2errs = []
     # p_res = 1e21
     # for deg_index in range(degree):
-    # 	cheb_coeffs, result = chebfit(x_data, y_data, deg=deg_index, full=True)
-    # 	res = result[0][0]
+    #   cheb_coeffs, result = chebfit(x_data, y_data, deg=deg_index, full=True)
+    #   res = result[0][0]
     # if res%2==0:
-    # 	L2errs.append(res)
+    #   L2errs.append(res)
     # print(x_data, y_data)
     cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)
 
-    message("\n CS derivative Result\n", result, result[0], message_verbosity=4)
+    message(
+        "\n CS derivative Result\n", result, result[0], message_verbosity=4
+    )
 
     res = result[0][0]
 
@@ -190,11 +187,11 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
     # plt.plot(L2errs)
     # plt.show()
 
-    # 	print(f'Optimizing degree to {best_deg}')
-    # 	degree=best_deg
-    # 	cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)
+    #   print(f'Optimizing degree to {best_deg}')
+    #   degree=best_deg
+    #   cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)
 
-    # 	res = result[0][0]
+    #   res = result[0][0]
     if res >= 1e-3:
         if res <= 1e-1 and res >= 1e-3:
             message(f"Residue warning {res}")
@@ -246,44 +243,43 @@ def Fourier_differential(
 
     Parameters
     ----------
-    xaxis:	1d array
-                    The co-ordinate space axis.
-    udata_x:	1d array
-                            The data to be differentiated,
-                            expressed in coordinate space.
-    omega0:	float, optional
-                    The cutoff angular frequency in the integration.
-                    Must be lower than the starting angular frequency
-                    of the input waveform.
-    order:	int, optional
-                    The number of times to differentiate
-                    the integrand in time.
-    zero_mode:	float, optional
-                            The zero mode amplitude of the FFT required.
-    taper:	bool
-                    Whether or not to taper the real co-ordinate space data.
+    xaxis: 1d array
+           The co-ordinate space axis.
+    udata_x: 1d array
+             The data to be differentiated,
+             expressed in coordinate space.
+    omega0: float, optional
+            The cutoff angular frequency in the integration.
+            Must be lower than the starting angular frequency
+            of the input waveform.
+    order: int, optional
+           The number of times to differentiate
+           the integrand in time.
+    zero_mode: float, optional
+               The zero mode amplitude of the FFT required.
+    taper: bool
+           Whether or not to taper the real co-ordinate space data.
 
     Returns
     -------
-    udata_differentiated:	1d array
-                                                    The input waveform in time-space, integrated
-                                                    in frequency space using FFI.
+    udata_differentiated: 1d array
+                          The input waveform in time-space, integrated
+                          in frequency space using FFI.
 
-    utilde_differentiated:	1d array
-                                                    The FFT of the frixed frequency
-                                                    differentiated array in good conventions.
+    utilde_differentiated: 1d array
+                           The FFT of the frixed frequency
+                           differentiated array in good conventions.
 
 
-    new_x_axis:	1d array
-                            The new x-axis, assuming the
-                            data may have been changed in length
+    new_x_axis: 1d array
+                The new x-axis, assuming the
+                data may have been changed in length
 
-    freq_axis:	1d array
-                            The frequency axis of the FFT of data.
+    freq_axis: 1d array
+               The frequency axis of the FFT of data.
 
     Notes
     -----
-
     The returned differentiated function of a real udata_x
     in real co-ordinate space is a complex number
     due to the numerical inaccuracies. Take
@@ -339,7 +335,8 @@ def Fourier_differential(
                     sign = 1
 
                 # print(sign)
-                # Change the angular frequency if its magnitude is below a given omega0.
+                # Change the angular frequency 
+                # if its magnitude is below a given omega0.
                 if abs(element) > omega0:
                     omega_axis[index] = sign * omega0
 
@@ -368,22 +365,21 @@ def Fourier_differential(
 
 
 def differentiate(data, delta_t):
-    """Central difference derivative calculator. Forward/ backward Euler near the boundaries.
+    """Central difference derivative calculator.
+    Forward/ backward Euler near the boundaries.
 
     Parameters
     ----------
 
-    data:	1d array
-                                    The 1d data.
-    delta_t:	float
-                                                    The time step in units of t/M.
+    data: 1d array
+          The 1d data.
+    delta_t: float
+             The time step in units of t/M.
 
     Returns
     -------
-
-    dAdt:	1d array
-                                    The derivative.
-
+    dAdt: 1d array
+          The derivative.
     """
 
     # A list to hold the derivatives.
@@ -407,23 +403,21 @@ def differentiate(data, delta_t):
 
 
 def differentiate2(data, delta_t):
-    """Five point difference derivative calculator.  Not accurate near the boundaries.
+    """Five point difference derivative calculator.
+    Not accurate near the boundaries.
 
 
     Parameters
     ----------
-
-    data:	1d array
-                                    The 1d data.
-    delta_t:	float
-                                                    The time step in t/M.
+    data: 1d array
+          The 1d data.
+    delta_t: float
+             The time step in t/M.
 
     Returns
     -------
-
-    dAdt:	1d array
-                                    The derivative.
-
+    dAdt: 1d array
+          The derivative.
     """
 
     # Number of points on right side.
@@ -462,23 +456,21 @@ def differentiate2(data, delta_t):
 
 
 def differentiate3(data, delta_t):
-    """Seven point difference derivative calculator. Not accurate near the boundaries.
+    """Seven point difference derivative calculator.
+    Not accurate near the boundaries.
 
 
     Parameters
     ----------
-
-    data:	1d array
-                                    The 1d data.
-    delta_t:	float
-                                                    The time step in t/M.
+    data: 1d array
+          The 1d data.
+    delta_t: float
+             The time step in t/M.
 
     Returns
     -------
-
-    dAdt:	1d array
-                                    The derivative.
-
+    dAdt: 1d array
+          The derivative.
     """
 
     # The number of points on one direction.
@@ -528,22 +520,20 @@ def differentiate3(data, delta_t):
 
 
 def differentiate4(data, delta_t):
-    """Nine point difference derivative calculator. Not accurate near the boundaries.
-
+    """Nine point difference derivative calculator.
+    Not accurate near the boundaries.
 
     Parameters
     ----------
-
-    data:	1d array
-                                    The 1d data.
-    delta_t:	float
-                                                    The time step in t/M.
+    data: 1d array
+          The 1d data.
+    delta_t: float
+             The time step in t/M.
 
     Returns
     -------
-
-    dAdt:	1d array
-                                    The derivative.
+    dAdt: 1d array
+          The derivative.
 
     """
 
@@ -610,22 +600,20 @@ def differentiate4(data, delta_t):
 
 
 def differentiate5(data, delta_t):
-    """Eleven point difference derivative calculator. Not accurate near the boundaries.
-
+    """Eleven point difference derivative calculator.
+    Not accurate near the boundaries.
 
     Parameters
     ----------
-
-    data:	1d array
-                                    The 1d data.
-    delta_t:	float
-                                                    The time step in t/M.
+    data: 1d array
+          The 1d data.
+    delta_t: float
+             The time step in t/M.
 
     Returns
     -------
-
-    dAdt:	1d array
-                                    The derivative of the data.
+    dAdt: 1d array
+          The derivative of the data.
 
     """
 
@@ -644,13 +632,11 @@ def differentiate5(data, delta_t):
     # n=0, N-1
     der0 = (data[1] - data[0]) / delta_t
     derNm1 = (data[-1] - data[-2]) / delta_t
-
     der_data.append(der0)
 
     # for n=1, N-2
     der1 = (data[2] - data[0]) / (2 * delta_t)
     derNm2 = (data[-1] - data[-3]) / (2 * delta_t)
-
     der_data.append(der1)
 
     # For n=2, N-3
@@ -658,37 +644,29 @@ def differentiate5(data, delta_t):
     data_vec = data[:5]
 
     der2 = np.dot(stencil, data_vec) / delta_t
-
     data_vec = data[-5:]
 
     derNm3 = np.dot(stencil, data_vec) / delta_t
-
     der_data.append(der2)
 
     # For n=3, N-4
     stencil = np.array([-1, 9, -45, 0, 45, -9, 1]) / 60
-
     data_vec = data[:7]
 
     der3 = np.dot(stencil, data_vec) / delta_t
-
     data_vec = data[-7:]
 
     derNm4 = np.dot(stencil, data_vec) / delta_t
-
     der_data.append(der3)
 
     # For n=4, N-5
     stencil = np.array([3, -32, 168, -672, 0, 672, -168, 32, 3]) / 840
-
     data_vec = data[:9]
 
     der4 = np.dot(stencil, data_vec) / delta_t
-
     data_vec = data[-9:]
 
     derNm5 = np.dot(stencil, data_vec) / delta_t
-
     der_data.append(der4)
 
     for index in range(order, len(data) - order):
@@ -714,7 +692,7 @@ def differentiate5_vec_nonumba(data, delta_t):
 
     Parameters
     ----------
-    data:	3d array
+    data:   3d array
             The axis order being (theta, phi, time)
 
     delta_t: float
@@ -783,7 +761,8 @@ def differentiate5_vec_nonumba(data, delta_t):
     der_data[4] = der4
     for index in range(order, len(data) - order):
         data_subarray = data[index - order : index + order + 1]
-        # der_data = np.append(der_data, [np.tensordot(coeffs, data_subarray, axes=((0), (0)))
+        # der_data = np.append(der_data,
+        # [np.tensordot(coeffs, data_subarray, axes=((0), (0)))
         # / (divide * delta_t)], axis=aax)
         der_data[index] = np.tensordot(
             coeffs, data_subarray, axes=((0), (0))
@@ -806,22 +785,21 @@ def differentiate5_vec_nonumba(data, delta_t):
 
 # @njit(parallel=True)
 def differentiate5_vec_numba(data, delta_t):
-    """Eleven point difference derivative calculator. Not accurate near the boundaries.
+    """Eleven point difference derivative calculator.
+    Not accurate near the boundaries.
 
 
     Parameters
     ----------
-
-    data:	1d array
-                                    The 1d data.
-    delta_t:	float
-                                                    The time step in t/M.
+    data: 1d array
+          The 1d data.
+    delta_t: float
+             The time step in t/M.
 
     Returns
     -------
-
-    dAdt:	1d array
-                                    The derivative of the data.
+    dAdt: 1d array
+          The derivative of the data.
 
     """
 
@@ -917,9 +895,11 @@ def differentiate5_vec_numba(data, delta_t):
     for index in range(order, len(data) - order):
         # For the interior points.
         data_subarray = data[index - order : index + order + 1]
-        # der_data = np.append(der_data, [np.tensordot(coeffs, data_subarray, axes=((0), (0)))
+        # der_data = np.append(der_data,
+        # [np.tensordot(coeffs, data_subarray, axes=((0), (0)))
         # / (divide * delta_t)], axis=aax)
-        # der_data[index] = np.tensordot(coeffs, data_subarray, axes=((0), (0))) / (divide * delta_t)
+        # der_data[index] = np.tensordot(coeffs, data_subarray,
+        # axes=((0), (0))) / (divide * delta_t)
         for inner_index, val in enumerate(coeffs):
             der_data[index] += (
                 val * data_subarray[inner_index] / (divide * delta_t)
@@ -940,26 +920,27 @@ def differentiate5_vec_numba(data, delta_t):
     return np.transpose(der_data, (1, 2, 0))
 
 
-######################################################################################
+############################################
 # Complex Amplitude-Phase differentiation
-######################################################################################
+############################################
 
 
 def differentiate_cwaveform(time_axis, waveform, method="SP", degree=5):
-    """Differentiate a given waveform by differentiating the Amplitude-Phase form.
+    """Differentiate a given waveform by differentiating
+    the Amplitude-Phase form.
 
     Parameters
     ----------
-    time_axis:	1d array
+    time_axis:  1d array
                 The time axis of the waveform.
 
-    waveform:	1d array
+    waveform:   1d array
                 The complex 1d array of the waveform timeseries.
 
 
     Returns
     -------
-    differentiated_waveform:	1d array
+    differentiated_waveform:    1d array
                                 The waveform differentiated in time.
 
     """

@@ -1739,7 +1739,9 @@ def taper_tanh(
         np.tanh(3 * (new_time_axis - duration / 2) / (duration / 2)) + 1
     ) / 2
     end_win = (
-        np.tanh(3 * (-new_time_axis + (tfinal - duration / 2)) / (duration / 2))
+        np.tanh(
+            3 * (-new_time_axis + (tfinal - duration / 2)) / (duration / 2)
+        )
         + 1
     ) / 2
 
@@ -2396,7 +2398,9 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
         "-----------------------------------\n Shift information for waveform 2 against 1 \n"
     )
     message(f"Recovered Time shift: {Tshift_rec}")
-    message(f"Recovered Phase shift: {Pshift_rec}, {Pshift_rec_rad} in radians")
+    message(
+        f"Recovered Phase shift: {Pshift_rec}, {Pshift_rec_rad} in radians"
+    )
     message("-----------------------------------")
 
     # Apply the time shift to the second waveform
@@ -3027,7 +3031,9 @@ def resample(interp_data, new_delta_t, epoch, length, old_delta_t=None):
             )
 
         # Prepare timeaxis
-        timeaxis = np.linspace(epoch, epoch + length, int(length / new_delta_t))
+        timeaxis = np.linspace(
+            epoch, epoch + length, int(length / new_delta_t)
+        )
         # Append the timeseries to the data list
         ydata = interp_data[i](timeaxis)
         data.append(

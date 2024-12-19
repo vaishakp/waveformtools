@@ -62,7 +62,9 @@ def RMSerrs(func1, func2, info):
     Amax = np.amax(diff)
     Amin = np.amin(diff)
 
-    RMS = np.sqrt(np.sum(np.absolute(diff) ** 2, axis=(-2, -1)) / info.npix_act)
+    RMS = np.sqrt(
+        np.sum(np.absolute(diff) ** 2, axis=(-2, -1)) / info.npix_act
+    )
 
     return RMS, Amin, Amax
 
@@ -72,15 +74,16 @@ def IsModesEqual(modes1, modes2, modes_list):
 
     Parameters
     ----------
-    modes1, modes2 : dict
-                   A dictionary of modes. For each mode, the data could be an array.
+    modes1, modes2: dict
+                    A dictionary of modes.
+                    For each mode, the data could be an array.
 
-    modes_list : list
-                 A list of list of mode numbers
+    modes_list: list
+                A list of list of mode numbers
     Returns
     -------
-    modes_err : float
-                The error of each mode as a dict
+    modes_err: float
+               The error of each mode as a dict
     """
 
     modes_err = {}

@@ -1,4 +1,4 @@
-"""Methods for waveform extrapolation."""
+""" Methods for waveform extrapolation. """
 
 ##############################################
 # Imports
@@ -13,37 +13,43 @@ import waveformtools
 
 
 def r_to_ra_conversion(coord_radius, mass=1, spin=0):
-    """Convert the isotropic co-ordinate radius parameter `r` in the ETK
-    simulations into the approximate areal radius.
+    """Convert the isotropic co-ordinate radius parameter `r` in the ETK simulations
+            into the approximate areal radius.
 
     Parameters
     ----------
-    coord_radius: float
-                  The coordinate radius in the Einstein toolkit
 
-    mass: float, optional
-          The sum of the quasi-local horizon (Christodolou) masses 
-          of the black holes. Defaults to 1.
+    coord_radius:	float
+                                    The coordinate radius in the Einstein toolkit
 
-    spin: float, optional
-          The magnitude of the spin of the system, 
-          as approximated by a single Kerr black hole
-          far away from the system. Defaults to 0.
+    mass:	float, optional
+                    The sum of the quasi-local horizon (Christodolou) masses of the black holes.
+                    Defaults to 1.
+
+    spin:	float, optional
+                    The magnitude of the spin of the system, as approximated by a single Kerr black hole
+                    far away from the system. Defaults to 0.
+
 
     Returns
     -------
-    areal_radius: float
-                  The appriximate areal radius of the sphere.
+
+    areal_radius:	float
+                                    The appriximate areal radius of the sphere.
+
 
     Notes
     -----
-    Assumes that the system interoir to the sphere 
-    at co-ordinate radius `r_coord` is well approximated by a
+
+    Assumes that the system interoir to the sphere at co-ordinate radius `r_coord` is well approximated by a
     Kerr black hole.
+
+
 
     References
     ----------
-    Nakano et al., (2015), Phys. Rev. D 91, 104022, in-text below Eq.[30].
+
+    Nakano et al., (2015),	Phys. Rev. D 91, 104022, in-text below Eq.[30].
     """
 
     areal_radius = (
@@ -71,45 +77,47 @@ def waveextract_to_inf_perturbative_twop5_order(
     degree=24,
     method="CS",
 ):
-    """Extract a numerical waveform to null infinity using perturbative
-    techniques.
-
-    This is:
+    """Extract a numerical waveform to null infinity using perturbative techniques. This is :
             * accurate to second order in :math:`1/r`.
             * accurate to first order in Kerr mass and spin.
             * corrects for spheroidal harmonics
 
+
+
     Parameters
     ----------
 
-    rPsi4_rlm: 1d array
-               The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array
-    delta_t: float
-             The time stepping.
-    areal_radius: 1d array
-                  The areal radius of the extraction sphere.
-    mass: float
-          The total horizon mass of the system.
-    spin: float, optional
-          The effective spin of the spacetime. Defaults to 0.
-    ell: int
-         The polar quantum number :math:`\\ell`.
-    emm: int
-         The azimuthal quantum number :math:`m`.
-    method: str
-            The method to use for differentiation.
-    degree: int
-            The degree to use for dfferentiation.
+    rPsi4_rlm:	1d array
+                            The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array
+    delta_t:	float
+                            The time stepping.
+    areal_radius:	1d array
+                                    The areal radius of the extraction sphere.
+    mass:	float
+                    The total horizon mass of the system.
+    spin:	float, optional
+                    The effective spin of the spacetime. Defaults to 0.
+    ell:	int
+                    The polar quantum number :math:`\\ell`.
+    emm:	int
+                    The azimuthal quantum number :math:`m`.
+        method: str
+                        The method to use for differentiation.
+        degree: int
+                        The degree to use for dfferentiation.
     Returns
     -------
-    rPsi4_inflm: 1d array
-                 The waveform extracted to 
-                 null infninity :math:`\\mathcal{I}^+`
+
+    rPsi4_inflm:	1d array
+                            The waveform extracted to null infninity :math:`\\mathcal{I}^+`
+
 
     References
     ----------
-    This implements the definition in 
-    Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].
+
+    This implements the definition in Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].
+
+
     """
 
     from waveformtools.differentiate import differentiate_cwaveform
@@ -118,8 +126,7 @@ def waveextract_to_inf_perturbative_twop5_order(
     # Timeaxis
 
     timeaxis = np.arange(0, len(rPsi4_rlm) * delta_t, delta_t)
-    # Assigning the terms. Each set of subterms in 
-    # a pair of paranthesis is a term.
+    # Assigning the terms. Each set of subterms in a pair of paranthesis is a term.
     term_1_prefac = 1 - 2 * mass / areal_radius
     subterm_1_1 = rPsi4_rlm
     subterm_1_2_prefac = (ell - 1) * (ell + 2) / (2 * areal_radius)
@@ -172,52 +179,56 @@ def waveextract_to_inf_perturbative_twop5_order(
 def waveextract_to_inf_perturbative_two_order(
     rPsi4_rlm, delta_t, areal_radius=500, mass=1, ell=2
 ):
-    """Extract a numerical waveform to null infinity using perturbative
-    techniques.
-
-    This is:
+    """Extract a numerical waveform to null infinity using perturbative techniques. This is :
             * accurate to second order in :math:`1/r`.
             * accurate to first order in Kerr mass and spin.
             * corrects for spheroidal harmonics
 
+
+
     Parameters
     ----------
-    rPsi4_rlm: 1d array
-               The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array.
 
-    delta_t: float
-             The time stepping.
+    rPsi4_rlm:	1d array
+                            The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array.
 
-    areal_radius: 1d array
-                  The areal radius of the extraction sphere.
+    delta_t:	float
+                            The time stepping.
 
-    mass: float
-          The total horizon mass of the system.
+    areal_radius:	1d array
+                                    The areal radius of the extraction sphere.
 
-    spin: float, optional
-          The effective spin of the spacetime. Defaults to 0.
 
-    ell: int
-         The polar quantum number :math:`\\ell`.
+    mass:	float
+                    The total horizon mass of the system.
 
-    emm: int
-         The azimuthal quantum number :math:`m`.
+    spin:	float, optional
+                    The effective spin of the spacetime. Defaults to 0.
+
+    ell:	int
+                    The polar quantum number :math:`\\ell`.
+
+    emm:	int
+                    The azimuthal quantum number :math:`m`.
 
     Returns
     -------
-    rPsi4_inflm: 1d array
-                 The waveform extracted to null infninity :math:`\\mathcal{I}^+`
+
+    rPsi4_inflm:	1d array
+                            The waveform extracted to null infninity :math:`\\mathcal{I}^+`
+
 
     References
     ----------
-    This implements the definition in Nakano et al., (2015),  
-    Phys. Rev. D 91, 104022 Eq.[29].
+
+    This implements the definition in Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].
+
+
     """
 
     from integrate import fixed_frequency_integrator
 
-    # Assigning the terms. Each set of subterms in 
-    # a pair of paranthesis is a term.
+    # Assigning the terms. Each set of subterms in a pair of paranthesis is a term.
     term_1 = rPsi4_rlm
 
     term_2_prefac = -(ell - 1) * (ell + 2) / (2 * areal_radius)
@@ -246,43 +257,48 @@ def waveextract_to_inf_perturbative_two_order(
 def waveextract_to_inf_perturbative_one_order(
     u_ret, rPsi4_rlm, areal_radius=500, ell=2
 ):
-    """Extract a numerical waveform to null infinity using perturbative
-    techniques.
-
-    This is:
+    """Extract a numerical waveform to null infinity using perturbative techniques. This is :
             * accurate to second order in :math:`1/r`.
             * accurate to first order in Kerr mass and spin.
             * corrects for spheroidal harmonics
 
+
+
     Parameters
     ----------
-    u_ret: 1d array
-           The retarted time array at the location r = areal_radius.
 
-    rPsi4_rlm: 1d array
-               The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array
+    u_ret:	1d array
+                    The retarted time array at the location r = areal_radius.
 
-    areal_radius: 1d array
-                  The areal radius of the extraction sphere.
+    rPsi4_rlm:	1d array
+                            The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array
 
-    mass: float
-          The total horizon mass of the system.
+    areal_radius:	1d array
+                                    The areal radius of the extraction sphere.
 
-    ell: int
-         The polar quantum number :math:`\\ell`.
 
-    emm: int
-         The azimuthal quantum number :math:`m`.
+    mass:	float
+                    The total horizon mass of the system.
+
+    ell:	int
+                    The polar quantum number :math:`\\ell`.
+
+    emm:	int
+                    The azimuthal quantum number :math:`m`.
 
     Returns
     -------
-    rPsi4_inflm: 1d array
-                 The waveform extracted to null infninity :math:`\\mathcal{I}^+`
+
+    rPsi4_inflm:	1d array
+                            The waveform extracted to null infninity :math:`\\mathcal{I}^+`
+
 
     References
     ----------
-    This implements the definition in 
-    Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].
+
+    This implements the definition in Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].
+
+
     """
 
     # Get the amplitude and phase
@@ -296,8 +312,7 @@ def waveextract_to_inf_perturbative_one_order(
         rPsi4_rlm, delta_t=delta_t, timeaxis=u_ret
     )
 
-    # Assigning the terms. Each set of subterms in 
-    # a pair of paranthesis is a term.
+    # Assigning the terms. Each set of subterms in a pair of paranthesis is a term.
 
     # The amplitude correction factor
     A_lm_correction = 0.5 * np.power(

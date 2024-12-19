@@ -44,27 +44,27 @@ def match_wfs_pycbc_old(waveforms, delt=None):
     Procedure
     ---------
     1. For each pair of waveforms as a list:
-                                                    a. Findout if delt has been specified.
+                a. Findout if delt has been specified.
 
-                                                    b. Findout if the object has attribute delta_t
-                                                    to discern whether it is a pycbc timeseries
-                                                    ( not exactly. ). If not then exit.
+                b. Findout if the object has attribute delta_t
+                to discern whether it is a pycbc timeseries
+                ( not exactly. ). If not then exit.
 
-                                                    c. Equalize the lengths.
+                c. Equalize the lengths.
 
-                                                    d. Compute the match score and shift using
-                                                        the pycbc shift function.
+                d. Compute the match score and shift using
+                    the pycbc shift function.
 
-                                                    e. Findout the start and the end of the waveform
-                                                        using handles.startend.
+                e. Findout the start and the end of the waveform
+                    using handles.startend.
 
-                                                    f. Reconstruct normalized and clipped
-                                                        pycbc.timeseries of the waveforms.
+                f. Reconstruct normalized and clipped
+                    pycbc.timeseries of the waveforms.
 
-                                                    g. Confirm the equalization of the lengths of
-                                                        the waveoforms.
-                                                    h. Append the match details to an array
-                                                    [ waveform list, [ match score, shift, start_index, end_index]]
+                g. Confirm the equalization of the lengths of
+                    the waveoforms.
+                h. Append the match details to an array
+                [ waveform list, [ match score, shift, start_index, end_index]]
     2. Retun the match details for all the waveforms.
 
 
@@ -91,7 +91,8 @@ def match_wfs_pycbc_old(waveforms, delt=None):
                 delt = waveformdat[0].delta_t
             except BaseException:
                 message(
-                    "Waveform is not a pycbc TimeSeries. Please provide the gridspacing delt"
+                    "Waveform is not a pycbc TimeSeries."
+                    "Please provide the gridspacing delt"
                 )
                 sys.exit(0)
         # Match procedure
@@ -213,7 +214,8 @@ def match_wfs_pycbc_old(waveforms, delt=None):
 
 
 def iscontinuous_old(timeaxis, delta_t=0):
-    """Check if the data has discontinuities. This checks for repetitive time rows and jumps.
+    """Check if the data has discontinuities.
+    This checks for repetitive time rows and jumps.
 
     Notes
     -----
@@ -293,7 +295,8 @@ def iscontinuous_old(timeaxis, delta_t=0):
 
 
 def cleandata_old(data, verbose=False):
-    """Old version. Check the data (time,datar,datai) for repetetive rows and remove them.
+    """Old version. Check the data (time,datar,datai)
+    for repetetive rows and remove them.
 
     Parameters
     ----------
@@ -561,7 +564,8 @@ def cleandata(data, toldt=1e-3, bridge="no"):
 
 
 def iscontinuous(data, delta_t=0, toldt=1e-3):
-    """Check if the data has discontinuities. This checks for repetitive time rows and jumps.
+    """Check if the data has discontinuities.
+    This checks for repetitive time rows and jumps.
 
     Notes
     -----
@@ -690,7 +694,8 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
                 discont = 2
                 discont_type = discont
                 message(
-                    "Jump discountinuity in data found at index:%d,timestamp:%f"
+                    "Jump discountinuity in data found at"
+                    "index:%d,timestamp:%f"
                     % (index, original_timestamp),
                     message_verbosity=2,
                 )
@@ -705,12 +710,12 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
                     message_verbosity=1,
                 )
                 discont_counter += 1
-            # message("timei: %f timef %f\n"%(timeaxis[index-1],timeaxis[index]),message_verbosity=3)
 
             # discont_type=repetition+discont
             discont_type_details.append([index, discont_type])
             # Append [index location,recentered timestamp
-            # discontinuity_details.append([index,recentered_timestamp,discontinuity_type])
+            # discontinuity_details.append([index,
+            # recentered_timestamp,discontinuity_type])
         # Increment the no. of total operations
         index += 1
         # message("Progress: %f%%\r"%(epoch_index*100./len(timeaxis)))
@@ -719,7 +724,9 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
     if discont_type:
         message("The data is not clean!", message_verbosity=1)
         global_discont_type = repetition + discont
-        message("Discontinuity type:", global_discont_type, message_verbosity=1)
+        message(
+            "Discontinuity type:", global_discont_type, message_verbosity=1
+        )
         if global_discont_type == 1:
             message(
                 "The data has repetitive rows at %d locations"
@@ -759,14 +766,14 @@ def remove_repeated_rows(data, delta_t, toldt=1e-3):
 
     delta_t: float
                      The tim stepping.
-    toldt : float
-                    The tolerance for error in checking. defaluts to toldt=1e-3.
+    toldt: float
+           The tolerance for error in checking. defaluts to toldt=1e-3.
 
     Returns
     -------
-    cleaned_data:	list
-                                                                    The cleaned data array with repetitive
-                                                                    rows removed.
+    cleaned_data: list
+                  The cleaned data array with repetitive
+                  rows removed.
 
     """
     message("Checking data for repetative rows...\n", message_verbosity=2)

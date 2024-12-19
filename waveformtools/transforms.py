@@ -250,7 +250,9 @@ def Yslm(spin_weight, ell, emm, theta, phi):
                 )
                 * np.power((-1), (ell - aar - abs_spin_weight))
                 * np.exp(1j * emm * phi)
-                / np.power(np.tan(theta / 2), (2 * aar + abs_spin_weight - emm))
+                / np.power(
+                    np.tan(theta / 2), (2 * aar + abs_spin_weight - emm)
+                )
             )
 
     Sum = complex(Sum)
@@ -682,7 +684,9 @@ def CheckRegReq(data):
     check_reg = [0, 0]
 
     toln = int(nlen / 10)
-    if np.argmax(np.absolute(first_half)) <= toln:  # Added tolerence Apr 8 2023
+    if (
+        np.argmax(np.absolute(first_half)) <= toln
+    ):  # Added tolerence Apr 8 2023
         check_reg[0] = 1
 
     if np.argmax(np.absolute(second_half)) >= nrlen - toln:  # Here as well
@@ -1465,7 +1469,9 @@ def SHContract(modes, info=None, ell_max=None):
             # Clm = modes[f"l{ell}"][f"m{emm}"]
 
             Clm = modes.mode(ell, emm)
-            message(f"Clm shape in SHContract {Clm.shape}", message_verbosity=4)
+            message(
+                f"Clm shape in SHContract {Clm.shape}", message_verbosity=4
+            )
 
             recon_func += Clm * Yslm_vec(
                 spin_weight=0,

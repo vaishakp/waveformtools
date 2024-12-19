@@ -3,10 +3,11 @@
 
 Classes
 -------
-spherical_array : A 2D data-type.
-				  Stores and manages two-dimensional data on surfaces of spherical topology.
-modes_array : A data-type.
-			  Handle and work with mode coefficients.
+spherical_array: A 2D data-type.
+                  Stores and manages two-dimensional data
+                  on surfaces of spherical topology.
+modes_array: A data-type.
+              Handle and work with mode coefficients.
 """
 
 import sys
@@ -44,34 +45,35 @@ class spherical_array:
 
     Attributes
     ----------
-    label :	str
+    label: str
             The label of the waveform data.
-    time_axis : 1d array
+    time_axis: 1d array
                 The time axis of the data.
-    frequency_axis : 1d array
+    frequency_axis: 1d array
                      The frequency axis if the data
                      is represented in frequency domain.
-    grid_info :	UniformGrid
+    grid_info: UniformGrid
                 An instance of the `UniformGrid` class.
-    data_len : int
+    data_len: int
                The length of the data along the time axis.
 
     Methods
     -------
-    delta_t :
+    delta_t:
               Fetch the time stepping `delta_t`.
-    to_modes_array :
+    to_modes_array:
                      Find the waveform expressed in the
                      SWSH basis.
-    boost :
+    boost:
            Boost the waveform.
-    supertranslate :
+    supertranslate:
                     Supertranslate the waveform.
 
 
     Notes
     -----
-    The modes array has the axis in the form (flattened_modes_1d, *shape of extra modes, )
+    The modes array has the axis in the form
+    (flattened_modes_1d, *shape of extra modes, )
     """
 
     def __init__(
@@ -89,7 +91,7 @@ class spherical_array:
     ):
         self._label = label
         self._data_len = data_len
-        # self.base_dir = base_dir	# The base directory containing the
+        # self.base_dir = base_dir  # The base directory containing the
         self._data = data
         self._file_name = file_name
         self._data_dir = data_dir
@@ -105,7 +107,7 @@ class spherical_array:
 
     @property
     def ell_max(self):
-        return self_ell_max
+        return self._ell_max
 
     @property
     def time_axis(self):
@@ -128,10 +130,6 @@ class spherical_array:
         return self._file_name
 
     @property
-    def grid_info(self):
-        return self._file_name
-
-    @property
     def spin_weight(self):
         return self._spin_weight
 
@@ -144,13 +142,13 @@ class spherical_array:
 
         Parameters
         ----------
-        value : float, optional
+        value: float, optional
                 The value of :math:`dt`
                 to set to the attribute.
 
         Returns
         -------
-        delta_t : float
+        delta_t: float
                   Sets the attribute.
         """
 
@@ -175,7 +173,7 @@ class spherical_array:
 
         Returns
         -------
-        data_len : int
+        data_len: int
                    The length of the time/frequency axis.
         """
 
@@ -197,20 +195,20 @@ class spherical_array:
 
         Parameters
         ----------
-        spin_weight : int, optional
+        spin_weight: int, optional
                       The spin weight of the waveform.
                       It defaults to -2 for a
                       gravitational waveform.
-        ell_max : int, optional
+        ell_max: int, optional
                   The maximum value of the :math:`\\ell`
                   polar quantum number. Defaults to 8.
-        grid_info : class instance
+        grid_info: class instance
                     The class instance that contains
                     the properties of the spherical grid.
 
         Returns
         -------
-        waveforms_modes : modes_array
+        waveforms_modes: modes_array
                           An instance of the `modes_array` class
                           containing the decomposed modes.
 
@@ -315,7 +313,7 @@ class spherical_array:
         theta, phi = self.grid_info.meshgrid
 
         # sqrt_met_det = np.sin(theta)
-        sqrt_met_det = np.sqrt(np.power(np.sin(theta), 2))
+        # sqrt_met_det = np.sqrt(np.power(np.sin(theta), 2))
 
         # darea = sqrt_met_det * grid_info.dtheta * grid_info.dphi
 
@@ -351,7 +349,8 @@ class spherical_array:
                 # )
 
                 # print("Shape", Ybasis_fun.shape, self.data.shape)
-                # integrand = np.tensordot(self.data, Ybasis_fun, axes=((0, 1), (0, 1)))
+                # integrand = np.tensordot(self.data,
+                # Ybasis_fun, axes=((0, 1), (0, 1)))
                 integrand = np.transpose(
                     np.transpose(self.data, (2, 0, 1)) * Ybasis_fun, (1, 2, 0)
                 )
@@ -373,24 +372,24 @@ class spherical_array:
 
         Parameters
         ----------
-        self : spherical_array
+        self: spherical_array
                A class instance of `spherical array`.
 
-        conformal_factor : 2d array
+        conformal_factor: 2d array
                            The conformal factor for the
                            Lorentz transformation.
                            It may be a single floating point number
                            or an array on a spherical grid. The array
                            will be of dimensions [ntheta, nphi]
 
-        grid_info :	class instance
+        grid_info: class instance
                     The class instance that contains
                     the properties of the spherical grid.
 
 
         Returns
         -------
-        boosted_waveform : sp_array
+        boosted_waveform: sp_array
                            The class instance `sp_array` that
                            contains the boosted waveform.
         """
@@ -400,14 +399,18 @@ class spherical_array:
         if grid_info is None:
             grid_info = self.grid_info
 
-        # Compute the boosted waveform on the spherical grid on all the elements.
+        # Compute the boosted waveform
+        # on the spherical grid
+        # on all the elements.
 
         boosted_waveform_data = (
             np.transpose(self.data, (2, 0, 1)) * conformal_factor
         )
-        # boosted_waveform_data = np.multiply(self.data, conformal_factor[:, :, None])
+        # boosted_waveform_data = np.multiply(self.data,
+        # conformal_factor[:, :, None])
         # boosted_waveform_data = boosted_waveform_item
-        # boosted_waveform_data = np.array([np.transpose(item)*conformal_factor
+        # boosted_waveform_data = np.array([np.transpose(item)
+        # *conformal_factor
         # for item in np.transpose(self.data)])
 
         # Construct a 2d waveform array object
@@ -428,24 +431,24 @@ class spherical_array:
 
         Parameters
         ----------
-        supertransl_alpha_modes : modes_array
+        supertransl_alpha_modes: modes_array
                                   The modes_array containing the
                                   supertranslation mode coefficients.
-        grid_info :	class instance
+        grid_info: class instance
                     The class instance that contains
                     the properties of the spherical grid
                     using which the computations are
                     carried out.
-        order :	int
+        order: int
                 The number of terms to use to
                 approximate the supertranslation.
 
         Returns
         -------
-        Psi4_supertransl : modes_array
+        Psi4_supertransl: modes_array
                            A class instance containg the
                            modes of the supertranslated
-                           waveform :math:`\\Psi_4`.
+                           waveform:math:`\\Psi_4`.
         """
 
         # Create a spherical_array to hold the supertranslated waveform
@@ -497,13 +500,13 @@ class spherical_array:
 
         Parameters
         ----------
-        file_name :	str
+        file_name: str
                     The name of the file containing data.
-        data_dir : str
+        data_dir: str
                    The name of the directory containing data.
-        grid_info : class instance
+        grid_info: class instance
                     An instance of the grid_info class.
-        bh : int
+        bh: int
              The black hole number (0, 1 or 2)
         """
 
@@ -718,26 +721,28 @@ class spherical_array:
 
         self.sqrt_met_det_data = sqrt_met_det
 
-    def to_shear_modes_array(self, grid_info=None, spin_weight=None, ell_max=8):
+    def to_shear_modes_array(
+        self, grid_info=None, spin_weight=None, ell_max=8
+    ):
         """Decompose a given spherical array function on a sphere
         into Spin Weighted Spherical Harmonic modes.
 
         Parameters
         ----------
-        spin_weight : int, optional
+        spin_weight: int, optional
                       The spin weight of the waveform.
                       It defaults to -2 for
                       a gravitational waveform.
-        ell_max : int, optional
+        ell_max: int, optional
                   The maximum value of the :math:`\\ell`
                   polar quantum number. Defaults to 8.
-        grid_info :	class instance
+        grid_info: class instance
                     The class instance that contains
                     the properties of the spherical grid.
 
         Returns
         -------
-        waveforms_modes : modes_array
+        waveforms_modes: modes_array
                           An instance of the `modes_array`
                           class containing the decomposed modes.
 
@@ -843,9 +848,11 @@ class spherical_array:
                         phi_grid=phi,
                     )
                 )
-                # Ybasis_fun = np.array([np.conj(Yslm_vec(spin_weight=spin_weight,
-                # ell=ell_value, emm=emm_value, theta_grid=theta[:, :, index],
-                # phi_grid=phi[:, :, index])) for index in range(self.data_len)])
+                # Ybasis_fun = np.array([np.conj(Yslm_vec(spin_weight=
+                # spin_weight, ell=ell_value, emm=emm_value,
+                # theta_grid=theta[:, :, index],
+                # phi_grid=phi[:, :, index])) for index in
+                # range(self.data_len)])
                 # Ybasis_fun = np.transpose(Ybasis_fun, (1, 2, 0))
                 # message('Ybasis_fun', Ybasis_fun.shape)
                 Ydarea = Ybasis_fun * darea
@@ -853,7 +860,8 @@ class spherical_array:
                 # message(full_integrand)
                 # Using quad
                 # message('self.data', self.data.shape)
-                # multipole_ell_emm = np.tensordot(self.data, Ydarea, axes=((0, 1), (0, 1)))
+                # multipole_ell_emm = np.tensordot(self.data, Ydarea,
+                # axes=((0, 1), (0, 1)))
                 multipole_ell_emm = np.sum(self.data * Ydarea, (0, 1))
 
                 # message(f'l{ell_value}m{emm_value}', multipole_ell_emm)
@@ -874,57 +882,57 @@ class modes_array:
 
     Attributes
     ----------
-    label :	str
+    label: str
             The label of the modes array.
-    r_ext : float
+    r_ext: float
             The extraction radius.
-    modes_list : list
+    modes_list: list
                  The list of available modes
                  in the format [l1, [m values], [l2, [m values], ...]]
-    ell_max : int
+    ell_max: int
               The maximum :math:`\\ell` mode available.
-    modes_data : 3d array
+    modes_data: 3d array
                  The three dimensional array
                  containing modes in time/frequency
                  space. The axis of the array is
                  (:math:`\\ell`, :math:`m`, time/freq).
-    base_dir : str
+    base_dir: str
                The base directory containing the
                modes data.
-    data_dir : str
+    data_dir: str
                The subdirectory in which to look
                for the data.
-    filename : str
+    filename: str
                The filename containg the modes data.
 
     Methods
     -------
-    get_metadata :
+    get_metadata:
                    Get the metadata associated with the modes_array.
-    mode :
+    mode:
            Get the data for the given :math:`\\ell, m` mode.
-    create_modes_array :
+    create_modes_array:
                          A private method to create an
                          empty `modes_array` of given shape.
-    delta_t :
+    delta_t:
               Set the attribute `delta_t` and/ or return its value.
-    load_modes :
+    load_modes:
                 Load the waveform modes from a specified h5 file.
-    save_modes :
+    save_modes:
                 Save the waveform modes to a specified h5 file.
-    set_mode_data :
+    set_mode_data:
                    Set the `mode` data of specified modes.
-    to_frequency_basis :
+    to_frequency_basis:
                         Get the `modes_array` in frequency basis
                         from its time basis representation.
-    to_time_basis :
+    to_time_basis:
                    Get the `modes_array` in temporal basis
                    from its frequency basis representation.
-    extrap_to_inf :
+    extrap_to_inf:
                    Extrapolate the modes to infinity.
-    supertranslate :
+    supertranslate:
                     Supertranslate the waveform modes.
-    boost :
+    boost:
            Boost the waveform modes.
     """
 
@@ -994,7 +1002,7 @@ class modes_array:
 
         Returns
         -------
-        metadata : dict
+        metadata: dict
                    A dictionary of metedata.
         """
         # The metadata dict
@@ -1022,16 +1030,16 @@ class modes_array:
 
         Parameters
         ----------
-        ell : int
+        ell: int
               The :math:`\\ell` index of the mode.
-        emm : int
+        emm: int
               The :math:`m` index of the mode.
-        r_index : int, optional
+        r_index: int, optional
                   The third mode axis index, if any
 
         Returns
         -------
-        mode_data : array
+        mode_data: array
                     The array of the requested mode.
         """
         vec_index = ell**2 + emm + ell
@@ -1073,15 +1081,15 @@ class modes_array:
 
         Parameters
         ----------
-        ell_max : int
+        ell_max: int
                   The maximum :math:`\\ell` value of the modes.
-        data_len : int
+        data_len: int
                    The number of points along
                    the third (time / frequency) axis.
 
         Returns
         -------
-        self.modes_array : modes_array
+        self.modes_array: modes_array
                            sets the `self.modes_array` attribute.
         """
         import datetime
@@ -1155,7 +1163,7 @@ class modes_array:
 
         Returns
         -------
-        data_len : int
+        data_len: int
                    The length of the time/frequency axis.
         """
 
@@ -1180,13 +1188,13 @@ class modes_array:
 
         Parameters
         ----------
-        value : float, optional
+        value: float, optional
                 The value of :math:`dt`
                 to set to the attribute.
 
         Returns
         -------
-        self.delta_t : float
+        self.delta_t: float
                        Sets the attribute.
         """
 
@@ -1210,13 +1218,13 @@ class modes_array:
 
         Parameters
         ----------
-        value : float, optional
+        value: float, optional
                 The value of :math:`df`
                 to set to the attribute.
 
         Returns
         -------
-        delta_f : float
+        delta_f: float
                   Sets the attribute.
         """
 
@@ -1261,28 +1269,28 @@ class modes_array:
 
         Parameters
         ----------
-        extrap_order : int, optional
+        extrap_order: int, optional
                        For SpEC waveforms only.
                        This is the order of extrapolation to use.
 
-        pre_key : str, optional
+        pre_key: str, optional
                   A string containing the key of the group in
                   the HDF file in which the modes` dataset exists.
                   It defaults to `None`.
-        mode_numbers : list
+        mode_numbers: list
                        The mode numbers to load from the file.
                        Each item in the list is a list that
                        contains two integrer numbers, one for
                        the mode index :math:`\\ell` and the
                        other for the mode index :math:`m`.
-        crop : bool
+        crop: bool
                Whether or not to crop the beginning of the input
                waveform. If yes, the first :math:`t=r_{ext}`
                length of data will be discarded.
 
         Returns
         -------
-        waveform_obj : 3d array
+        waveform_obj: 3d array
                        Sets the three dimensional array
                        `waveform.modes` that contains
                        the required :math:`\\ell, m` modes.
@@ -1449,11 +1457,11 @@ class modes_array:
 
         Parameters
         ----------
-        pre_key : str, optional
+        pre_key: str, optional
                   A string containing the key of the group in
                   the HDF file in which the modes` dataset exists.
                   It defaults to `None`.
-        mode_numbers : list
+        mode_numbers: list
                        The mode numbers to load from the file.
                        Each item in the list is a list that
                        contains two integrer numbers, one for
@@ -1462,7 +1470,7 @@ class modes_array:
 
         Returns
         -------
-        waveform_obj : 3d array
+        waveform_obj: 3d array
                        Sets the three dimensional array `waveform.modes`
                        that contains the required :math:`\\ell, m` modes.
 
@@ -1511,17 +1519,17 @@ class modes_array:
 
         Parameters
         ----------
-        ell_value :	int
+        ell_value: int
                     The :math:`\\ell` polar mode number.
-        emm_value : int
+        emm_value: int
                     The :math:`emm` azimuthal mode number.
-        data : 1d array
+        data: 1d array
                The array consisting of
                mode data for the requested mode.
 
         Returns
         -------
-        self.mode_data : modes_data
+        self.mode_data: modes_data
                          The updated modes data.
         """
 
@@ -1554,21 +1562,21 @@ class modes_array:
 
         Parameters
         ----------
-        t_step : int
+        t_step: int
                  The time step of the mode
-        ell_value :	int
+        ell_value: int
                     The :math:`\\ell` polar mode number.
-        emm_value : int
+        emm_value: int
                     The :math:`emm` azimuthal mode number.
-        r_index : int, optional
+        r_index: int, optional
                   The index of the third mode axis, if any
-        data : 1d array
+        data: 1d array
                The array consisting of
                mode data for the requested mode.
 
         Returns
         -------
-        self.mode_data : modes_data
+        self.mode_data: modes_data
                          The updated modes data.
         """
         # Compute the emm index given ell.
@@ -1582,8 +1590,11 @@ class modes_array:
                         "Setting mode data for all r indices",
                         message_verbosity=4,
                     )
-                    self._modes_data[ell, emm_index, :, t_step] = np.array(data)
-                    # print("Intercept mode data", self._modes_data[ell, emm_index, :, t_step])
+                    self._modes_data[ell, emm_index, :, t_step] = np.array(
+                        data
+                    )
+                    # print("Intercept mode data",
+                    # self._modes_data[ell, emm_index, :, t_step])
 
                 except Exception as ex:
                     message(ex)
@@ -1591,7 +1602,8 @@ class modes_array:
 
             else:
                 message(
-                    "Setting mode data at a single r_index", message_verbosity=4
+                    "Setting mode data at a single r_index",
+                    message_verbosity=4,
                 )
                 self._modes_data[ell, emm_index, r_index, t_step] = data
 
@@ -1612,10 +1624,10 @@ class modes_array:
 
         Parameters
         ----------
-        grid_info : cls instance
+        grid_info: cls instance
                     An instance of the "UniformGrid" class
                     to hold the grid info.
-        meth_info :	cls instance
+        meth_info: cls instance
                     An instance of the class
                     `waveformtools.diagnostics.method_info` that
                     provides information on
@@ -1623,7 +1635,7 @@ class modes_array:
 
         Returns
         -------
-        waveform_sp : spherical_array
+        waveform_sp: spherical_array
                       A member of the "spherical_array" class
                       constructed from the given "modes_rray".
         """
@@ -1696,7 +1708,7 @@ class modes_array:
 
         Parameters
         ----------
-        time : float
+        time: float
                The time unit upto which to discard.
 
         Returns
@@ -1724,7 +1736,7 @@ class modes_array:
 
         Returns
         -------
-        waveform_tilde_modes : modes_array
+        waveform_tilde_modes: modes_array
                                A modes_array containing the modes
                                in frequency basis.
         """
@@ -1764,7 +1776,7 @@ class modes_array:
 
         Returns
         -------
-        waveform_modes : modes_array
+        waveform_modes: modes_array
                          A modes_array containing the modes
                          in frequency basis.
         """
@@ -1817,29 +1829,29 @@ class modes_array:
 
         Parameters
         ----------
-        mass : float
+        mass: float
                The effective total mass of the system.
-        spin : float
+        spin: float
                The effective spin of the system.
-        modes : modes array, optional
+        modes: modes array, optional
                 The modes to extrapolate. Defaults
                 to `all` if not specified.
-        method : str
+        method: str
                  The method to use for extrapolation.
                  The available methods are:
 
         +------------+--------------------------------------+
-        | Method str | Name									|
+        | Method str | Name                                 |
         +------------+--------------------------------------+
-        |'FO'		 | First order							|
-        |'SO'		 | Second order							|
-        |'SIO'		 | Second improved order				|
-        |'NM'		 | Numerical method (not ready yet)		|
+        |'FO'        | First order                          |
+        |'SO'        | Second order                         |
+        |'SIO'       | Second improved order                |
+        |'NM'        | Numerical method (not ready yet)     |
         +------------+--------------------------------------+
 
         Returns
         -------
-        waveform_inf_modes : modes array
+        waveform_inf_modes: modes array
                              A new modes array
                              that contains
                              the extrapolated modes.
@@ -1938,20 +1950,20 @@ class modes_array:
 
         Parameters
         ----------
-        supertransl_alpha_modes : modes_array
+        supertransl_alpha_modes: modes_array
                                   The modes_array containing the
                                   supertranslation mode coefficients.
-        grid_info : class instance
+        grid_info: class instance
                     The class instance that contains
                     the properties of the spherical grid
                     using which the computations are carried out.
-        order :	int
+        order: int
                 The number of terms to use
                 to approximate the supertranslation.
 
         Returns
         -------
-        Psi4_supertransl : modes_array
+        Psi4_supertransl: modes_array
                            A class instance containg the
                            modes of the supertranslated
                            waveform :math:`\\Psi_4`.
@@ -2037,7 +2049,7 @@ class modes_array:
 
         Parameters
         ----------
-        conformal_factor : 2d array
+        conformal_factor: 2d array
                            The conformal factor for
                            the Lorentz transformation.
                            It may be a single floating point number
@@ -2046,7 +2058,7 @@ class modes_array:
 
         Returns
         -------
-        boosted_waveform : spherical_array
+        boosted_waveform: spherical_array
                            The class instance `spherical_array`
                            that contains the boosted waveform.
         """
@@ -2087,7 +2099,7 @@ class modes_array:
 
         Returns
         -------
-        strain_waveform : modes_array
+        strain_waveform: modes_array
                           The computed strain modes.
         """
 
@@ -2139,14 +2151,14 @@ class modes_array:
 
         Parameters
         ----------
-        omega0 : float, optional
+        omega0: float, optional
                  The lower cutoff angular frequency for FFI.
                  By default, it computes this as one tenth of
                  the starting frequency of the mode data.
 
         Returns
         -------
-        news_waveform :	modes_array
+        news_waveform: modes_array
                         The computed strain modes.
         """
 
@@ -2199,12 +2211,12 @@ class modes_array:
 
         Parameters
         ----------
-        zeros : int
+        zeros: int
                 The number of zeros to add at rach end
 
         Returns
         -------
-        tapered_modes :	modes_array
+        tapered_modes: modes_array
                         Modes array with tapered mode data.
         """
 
@@ -2274,12 +2286,12 @@ class modes_array:
 
         Parameters
         ----------
-        zeros : int
+        zeros: int
                 The number of zeros to add at rach end
 
         Returns
         -------
-        tapered_modes :	modes_array
+        tapered_modes: modes_array
                         Modes array with tapered mode data.
         """
 
@@ -2355,14 +2367,14 @@ class modes_array:
 
         Parameters
         ----------
-        order : int, optional
+        order: int, optional
                 The order of the butterworth filter.
-        omega0 : float, optional
+        omega0: float, optional
                  The cutoff frequency of the butterworth filter.
 
         Returns:
         --------
-        filtered_modes : modes_array
+        filtered_modes: modes_array
                          A modes array object containing filtered modes.
         """
 
@@ -2421,21 +2433,21 @@ class modes_array:
 
         Parameters
         ----------
-        theta, phi : float
+        theta, phi: float
                     The inclination and the azimuthal
                     angular position of the observer
                     in the NR coodinate system.
-        distance : float
+        distance: float
                    The distance to the source
 
-        method : str
+        method: str
                  The method to use to generate
                  the SWSH basis. This can be
                  `precise` or `fast`.
 
         Returns
         -------
-        taxis, hp, hc :	1d arrays
+        taxis, hp, hc: 1d arrays
                         The 1d arrays of the time axis and
                         the polarizations of the waveforms.
 

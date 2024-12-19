@@ -3,18 +3,16 @@
 
 Classes
 -------
-UniformGrid : grid info.
-              Stores information on the 2d grid in spherical polar coordinates.
-GLGrid : grid info
-         Stores a Gauss-Legendre type grid on a spherical surface.
+UniformGrid: grid info.
+             Stores information on the 2d grid in spherical polar coordinates.
+GLGrid: grid info
+        Stores a Gauss-Legendre type grid on a spherical surface.
 """
 
 import numpy as np
 
 # from numba import jit, njit
-
 # import numba as nb
-
 # from numba.experimental import jitclass
 
 
@@ -52,17 +50,23 @@ class UniformGrid:
 
     @property
     def npix(self):
-        # Return the total number of pixels, including the ghost zones present at one iteration.
+        # Return the total number of pixels, including the ghost zones present
+        # at one iteration.
         return (self.ntheta) * (self.nphi)
 
     @property
     def npix_act(self):
-        # Return the actual number of pixels, excluding the ghost zones present at one iteration.
-        return (self.ntheta - 2 * self.nghosts) * (self.nphi - 2 * self.nghosts)
+        # Return the actual number of pixels, excluding the ghost zones present
+        # at one iteration.
+        return (self.ntheta - 2 * self.nghosts) * (
+            self.nphi - 2 * self.nghosts
+        )
 
     @property
     def npix_max(self):
-        # Return the (max) total number of pixels, including the ghost and buffer zones at one iteration.
+        # Return the (max) total number of pixels,
+        # including the ghost and buffer
+        # zones at one iteration.
         return (self.nthetamax) * (self.nphimax)
 
     @property
@@ -118,7 +122,7 @@ class UniformGrid:
                    The coordinate(s) :math:`\\theta` on the sphere.
         """
 
-        if np.array(theta_index == None).all():
+        if (np.array(theta_index) == np.array(None)).all():
             theta_index = np.arange(self.nghosts, self.ntheta - self.nghosts)
 
         return (
@@ -146,7 +150,7 @@ class UniformGrid:
 
         """
 
-        if np.array(phi_index == None).all():
+        if (np.array(phi_index) == np.array(None)).all():
             phi_index = np.arange(self.nghosts, self.nphi - self.nghosts)
 
         return (
@@ -453,7 +457,7 @@ class GLGrid:
 
     @property
     def dphi(self):
-        """Return the uniform angular stepping in :math:`\phi` direction"""
+        """Return the uniform angular stepping in :math:`\\phi` direction"""
         return self._dphi
 
     @property

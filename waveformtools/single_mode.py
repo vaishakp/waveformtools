@@ -1,5 +1,5 @@
 import numpy as np
-from spectral.spherical.swsh import Yslm, Yslm_vec
+from spectral.spherical.swsh import Yslm_vec
 from waveformtools.dataIO import construct_mode_list
 from waveformtools.waveformtools import message
 from waveformtools.diagnostics import method_info
@@ -57,7 +57,7 @@ class SingleMode:
         self._func = func
         self._sine_power = sine_power
 
-        if (np.array(modes_data) == None).all():
+        if (np.array(modes_data) == np.array(None)).all():
             created = False
         else:
             created = True
@@ -74,7 +74,9 @@ class SingleMode:
 
             ell_max_dict = max(ell_keys_dict)
 
-            message("Parsed dict ell_max as", ell_max_dict, message_verbosity=2)
+            message(
+                "Parsed dict ell_max as", ell_max_dict, message_verbosity=2
+            )
 
             # if self._ell_max < ell_max:
             self._ell_max = ell_max_dict
@@ -183,7 +185,8 @@ class SingleMode:
                 self.ell_max, self.spin_weight
             )
 
-        # message(f"ell max of created modes list {max([item[0] for item in self._modes_list])}",
+        # message(f"ell max of created modes list {max([item[0]
+        # for item in self._modes_list])}",
         #        message_verbosity=4)
 
         return self._modes_list
@@ -320,7 +323,9 @@ class SingleMode:
                 dtype=np.complex128,
             )
         else:
-            self._modes_data = np.zeros((ell_max + 1) ** 2, dtype=np.complex128)
+            self._modes_data = np.zeros(
+                (ell_max + 1) ** 2, dtype=np.complex128
+            )
 
     def construct_from_vec_modes(self, vec_modes):
         """Load the single modes object using the modes vector"""
@@ -359,7 +364,9 @@ class SingleMode:
 
             # Set the mode data.
             self._modes_data[vec_idx] = value
-            message(f"Set mode data {self.mode(ell, emm)}", message_verbosity=4)
+            message(
+                f"Set mode data {self.mode(ell, emm)}", message_verbosity=4
+            )
         # else:
         #    raise TypeError("Please provide integer values for ell and emm")
 
@@ -569,8 +576,8 @@ class SingleMode:
         residues = [np.sum(func**2)]
 
         modes_list = construct_mode_list(ell_max=self.ell_max, spin_weight=0)
-
-        # message(f"Modes list in SHContract {modes_list}", message_verbosity=4)
+        # message(f"Modes list in SHContract
+        # {modes_list}", message_verbosity=4)
 
         theta_grid, phi_grid = self.Grid.meshgrid
 
@@ -682,8 +689,6 @@ class SingleMode:
         by generating SWSHs in serial and vectorizing the
         summation"""
 
-        from spectral.spherical.transforms import SHContract
-
         if ell_max is None:
             ell_max = self.ell_max
 
@@ -709,7 +714,9 @@ class SingleMode:
         if ell_max is None:
             ell_max = self.ell_max
 
-        if (np.array(theta) == None).all() or (np.array(phi) == None).all():
+        if (np.array(theta) == np.array(None)).all() or (
+            np.array(phi) == np.array(None)
+        ).all():
             theta, phi = self.Grid.meshgrid
 
         sYlm = Yslm_mp(
@@ -728,8 +735,6 @@ class SingleMode:
     def evaluate_sp(self, theta, phi, ell_max=None):
         """Evaluate the expansion at requested angular coordinates
         by computing SWSHs using the spherical package"""
-
-        from spectral.spherical.transforms import SHContract
 
         if ell_max is None:
             ell_max = self.ell_max
@@ -750,9 +755,10 @@ class SingleMode:
     def compute_spatial_detivatives(self):
         """Given the modes, compute its spatial derivatives"""
 
-        assert (
-            self.spin_weight == 0
-        ), "Derivatives have only been implemented for spin weight zero harmonics "
+        assert self.spin_weight == 0, (
+            "Derivatives have only been implemented"
+            "for spin weight zero harmonics "
+        )
 
         from qlmtools.differentiation import DerivSHFromSpec
 
@@ -765,7 +771,7 @@ class SingleMode:
     def plot_residues(self, orig_func=None):
         """Plot the residues of this expanion"""
 
-        if np.array(orig_func == None).all():
+        if (np.array(orig_func) == np.array(None)).all():
             orig_func = self.func
 
         residues = self.get_expansion_residues(orig_func)
