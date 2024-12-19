@@ -1041,7 +1041,7 @@ class modes_array:
         if self.extra_mode_axes:
             if not (np.array(extra_indices) == np.array(None)).all():
                 message(f"Extra indices supplied {extra_indices}...")
-                return self.modes_data[*extra_indices, :]
+                return ang_mode_data[*extra_indices, :]
 
         else:
             return ang_mode_data

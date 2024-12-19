@@ -36,7 +36,7 @@ class SingleMode:
         modes_list=None,
         modes_dict=None,
         tol=1e-8,
-        extra_mode_axis_shape=None,
+        extra_mode_axes_shape=None,
         Grid=None,
         vec_modes=None,
         func=None,
@@ -51,7 +51,7 @@ class SingleMode:
         self._ell_max = ell_max
         self._modes_list = modes_list
         self._tol = tol
-        self._extra_mode_axis_shape = extra_mode_axis_shape
+        self._extra_mode_axes_shape = extra_mode_axes_shape
         self._Grid = Grid
         self._vec_modes = vec_modes
         self._func = func
@@ -115,8 +115,8 @@ class SingleMode:
         return self._vec_modes
 
     @property
-    def extra_mode_axis_shape(self):
-        return self._extra_mode_axis_shape
+    def extra_mode_axes_shape(self):
+        return self._extra_mode_axes_shape
 
     @property
     def tol(self):
@@ -314,9 +314,9 @@ class SingleMode:
                 ell_max=ell_max, spin_weight=self.spin_weight
             )
 
-        if type(self.extra_mode_axis_shape) is tuple:
+        if type(self.extra_mode_axes_shape) is tuple:
             self._modes_data = np.zeros(
-                ((ell_max + 1) ** 2, *self.extra_mode_axis_shape),
+                ((ell_max + 1) ** 2, *self.extra_mode_axes_shape),
                 dtype=np.complex128,
             )
         else:
@@ -350,7 +350,7 @@ class SingleMode:
         if (ell is None) and (emm is None):
             self._modes_data = np.array(value)
             # if len(value.shape)>1:
-            #    self._extra_mode_axis_shape =
+            #    self._extra_mode_axes_shape =
         else:
             # elif int(ell)==ell and int(emm)==emm:
             # Compute the linear vector index
@@ -550,7 +550,7 @@ class SingleMode:
             ell_max=ell_max_choice,
             spin_weight=self.spin_weight,
             Grid=self.Grid,
-            extra_mode_axis_shape=self.extra_mode_axis_shape,
+            extra_mode_axes_shape=self.extra_mode_axes_shape,
             tol=self.tol,
         )
 

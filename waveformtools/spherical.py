@@ -28,7 +28,7 @@ def decompose_in_SWSHs(
 
     ell_max:	int, optional
                 The maximum value of the :math:`\\ell'
-                polar quantum number. Defaults to 6=8.
+                polar quantum number. Defaults to 8.
 
     gridinfo:		class instance
                     The class instance that contains
