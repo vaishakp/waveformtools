@@ -420,7 +420,7 @@ class TestGLGridYlm(unittest.TestCase):
         # info = GLGrid(L=24)
         # minfo = method_info(ell_max=24, int_method='GL')
 
-        ell_max = 24  # Warning: Very expensive. Tested upto 84
+        ell_max = 16  # Warning: Very expensive. Tested upto 84
 
         from waveformtools.transforms import Yslm_vec, Yslm_prec
 
@@ -468,7 +468,7 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=24)
         # minfo = method_info(ell_max=24, int_method='GL')
 
-        ell_max = 24
+        ell_max = 16 # Warning: very expensive. Tested upto 84
 
         from waveformtools.transforms import Yslm_vec, Yslm_prec_grid
 
