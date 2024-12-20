@@ -123,9 +123,11 @@ pages:
     - conda init
     - source ~/.bashrc
     - conda activate test
+  #  - pip install -r requirements.txt
+  #  - pip install quaternionic
+  #  - pip install spherical
+    - conda install -c conda-forge scipy numpy h5py matplotlib numba datetime spherical recommonmark sphinx-rtd-theme termcolor -y
     - pip install -r requirements.txt
-    - pip install quaternionic
-    - pip install spherical
     - conda info --env
     - which python
     - which conda
