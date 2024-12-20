@@ -4,6 +4,7 @@ import config
 import numpy as np
 
 from waveformtools.waveformtools import cleandata, message
+
 # import waveformtools
 
 
@@ -12,105 +13,83 @@ class sim:
 
     Arrtibutes
     ----------
-
-    ROOTDIR:	string
-                            Root directory as a string containing the simulation folders.
-
-    WAVDIR:	string
-                            Root directory as a string containing the simulation directies containing the wavefom data.
-
-    data_dir:	string
-                            The path of the folder containing data relative to the simulation direcory.
-
-    strain_dir:	string
-                                    The path of the folder containing the waveform data relative to the strain directory.
-
-    aliases:	a list of strings
-                            The names/aliases for the simulations.
-
-    multipoles:	dict of lists
-                                    The multipole moments of the simulation as a dictionary.
-                                    Each entry is a list of width 4 with axis 0 the timeaxis of multipoles.
-
-    mass1:	dict of floats
-                    The BH1 horizon mass.
-
-    mass2:	dict of floats)
-                    The BH2 horizon mass.
-
-    mass3:	dict of floats
-                    The BH3 horizon mass.
-
-    delta_t:	dict of floats
-                            The time stepping in simulation units (delta_t/M).
-
-    timeaxis:	dict of 1d arrays
-                            The timeaxis of the simulations.
-
-    distance:	dict of 1d arrays
-                            The distances of simulations.
-
-    merger_ind:	dict of ints
-                                    The merger index/ common horizon formation index of simulations.
-
-    dinit:	dict of floats
-                    The initial distances.
-
-    multipoles:	dict of lists
-                The two sets of  mass multipoles of the three horizons. Axis 0 is usuall the time array.
-
-    mass_multipoles:	dict of lists
-                                            The mass multipoles upto (ell=8).
-
-    spin_multipoles:	dict of lists
-                                            The spin multipoles upto (l=8).
-
-    data_length:	dict of float
-                                    The data length of the multipole simulation data loaded.
-
-    dist_data_length:	dict of ints
-                                            The data length of distances of simulations.
-
-    merger_distance:	dict of floats
-                                            The distance between the blackholes at the merger index.
-
-    true_merger_dist:	dict of floats
-                                            The true merger distance (non-normalized).
-
-    sampling_f:	dict of floats
-                                    The sampling frequency of simulations (1/delta_t).
-
-    merger_time:	dict of floats
-                                    The cctk_time stamp at merger.
-
-    massratio:	dict of floats
-                            The massratio of the simulations.
-
-    chirpmass:	dict of floats
-                            The chirpmass of the simulations.
-
-    totalmass:	dict of floats
-                            The total mass of the simulations.
-
-    log_multipoles:	dict of lists
+    ROOTDIR: string
+             Root directory as a string containing the simulation folders.
+    WAVDIR: string
+            Root directory as a string containing the simulation directies
+            containing the wavefom data.
+    data_dir: string
+              The path of the folder containing data relative to
+              the simulation direcory.
+    strain_dir: string
+                The path of the folder containing the waveform data
+                relative to the strain directory.
+    aliases: a list of strings
+             The names/aliases for the simulations.
+    multipoles: dict of lists
+                The multipole moments of the simulation as a dictionary.
+                Each entry is a list of width 4 with axis 0 the timeaxis
+                of multipoles.
+    mass1: dict of floats
+           The BH1 horizon mass.
+    mass2: dict of floats
+           The BH2 horizon mass.
+    mass3: dict of floats
+           The BH3 horizon mass.
+    delta_t: dict of floats
+             The time stepping in simulation units (delta_t/M).
+    timeaxis: dict of 1d arrays
+              The timeaxis of the simulations.
+    distance: dict of 1d arrays
+              The distances of simulations.
+    merger_ind: dict of ints
+                The merger index/ common horizon formation index
+                of simulations.
+    dinit: dict of floats
+           The initial distances.
+    multipoles: dict of lists
+                The two sets of  mass multipoles of the three horizons.
+                Axis 0 is usuall the time array.
+    mass_multipoles: dict of lists
+                     The mass multipoles upto (ell=8).
+    spin_multipoles: dict of lists
+                     The spin multipoles upto (l=8).
+    data_length: dict of float
+                 The data length of the multipole simulation data loaded.
+    dist_data_length: dict of ints
+                      The data length of distances of simulations.
+    merger_distance: dict of floats
+                     The distance between the blackholes at the merger index.
+    true_merger_dist: dict of floats
+                      The true merger distance (non-normalized).
+    sampling_f: dict of floats
+                The sampling frequency of simulations (1/delta_t).
+    merger_time: dict of floats
+                 The cctk_time stamp at merger.
+    massratio: dict of floats
+               The massratio of the simulations.
+    chirpmass: dict of floats
+               The chirpmass of the simulations.
+    totalmass: dict of floats
+               The total mass of the simulations.
+    log_multipoles: dict of lists
                     The natural logarithm of the negative
                     of the multipole moments as
-                    a list [time, multipole1, multipole2, multipole3(if exists)].
-
-    data_duration:	dict of floats
-                    The total cctk_time units of simulations present.
-    BH_locations:	dict of lists.
-                    A dictionary of values containing BH
-                    locations of every simulation. Each
-                    simulation has three lists, one for
-                    each black hole.
-
-    CoM_locations:	dict of lists
-                    A dictionary of lists containing the
-                    X, Y and Z locations of the CoM of the simulations.
-    NP_1d:	dict
-                    A dict of dicts of lists containig
-                    the 1d Newman Penrose data from simulations.
+                    a list [time, multipole1, multipole2,
+                    multipole3(if exists)].
+    data_duration: dict of floats
+                   The total cctk_time units of simulations present.
+    BH_locations: dict of lists.
+                  A dictionary of values containing BH
+                  locations of every simulation. Each
+                  simulation has three lists, one for
+                  each black hole.
+    CoM_locations: dict of lists
+                   A dictionary of lists containing the
+                   X, Y and Z locations of the CoM of the simulations.
+    NP_1d: dict
+           A dict of dicts of lists containig
+           the 1d Newman Penrose data from simulations.
 
     Methods
     -------
@@ -333,8 +312,8 @@ class sim:
                     )
                 else:
                     message(
-                        "%s :Distance upto merger not defined. Setting final value"
-                        % alias
+                        "%s :Distance upto merger not defined."
+                        "Setting final value" % alias
                     )
                     merger_dist.update({alias: self.distance[alias][-1]})
         return merger_dist
@@ -399,20 +378,19 @@ class sim:
 
         Parameters
         ----------
-
-        tjn:	float
-                        The definition of time end of junk radiation. Default is 200.
+        tjn: float
+             The definition of time end of junk radiation. Default is 200.
 
         Notes
         -----
         Computes:
 
-        self.indjn:	dict
-                                        A dictionary containing the index location
-                                        corresponding to timestamp tjn.
-        self.distjn:	dict
-                                        A dictionary containing the normalized co-ordinate
-                                        distance between the two BHs at tjn.
+        self.indjn: dict
+                    A dictionary containing the index location
+                    corresponding to timestamp tjn.
+        self.distjn: dict
+                     A dictionary containing the normalized co-ordinate
+                     distance between the two BHs at tjn.
         """
 
         # Find the starting distance at t = 200M.
@@ -431,7 +409,8 @@ class sim:
         return 1
 
     def calc_ref_multipoles(self):
-        """Compute and assign the reference (l=2) multuipoles to sim.ref_multipoles of the simulations."""
+        """Compute and assign the reference (l=2) multuipoles
+        to sim.ref_multipoles of the simulations."""
         refmult = {}
         # index = 0
         for alias in self.aliases:
@@ -458,7 +437,8 @@ class sim:
             self.ref_multipoles = refmult
 
     def calc_log_multipoles(self):
-        """Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations."""
+        """Compute and assign the natural logarithm of the (l=2)
+        multipoles to sim.log_multipoles of the simulations."""
         log_mult = {}
         for alias in self.aliases:
             message(alias)
@@ -538,7 +518,8 @@ class sim:
         self.log_deltamultipoles = log_deltmult
 
     def calc_log_multipoles2(self):
-        """Compute and assign the natural logarithm of the (l=2) multipoles to sim.log_multipoles of the simulations."""
+        """Compute and assign the natural logarithm of the (l=2)
+        multipoles to sim.log_multipoles of the simulations."""
         log_mult = {}
         for alias in self.aliases:
             message(alias)
@@ -608,20 +589,20 @@ class sim:
 
         Data is assigned to
 
-                        multipoles:	list
-                        mass_multipoles:	list
-                        spin_multipoles:	list
-                        timeaxis:	list
-                        mass1:	float
-                        mass2:	float
-                        mass3:	float
-                        delta_t:	float
-                        distance:	list
-                        merger_ind:	int
-                        actmerger_time:	float
-                        dinit:	float
-                        data_length:	int
-                        dist_data_length:	int
+                        multipoles: list
+                        mass_multipoles:    list
+                        spin_multipoles:    list
+                        timeaxis:   list
+                        mass1:  float
+                        mass2:  float
+                        mass3:  float
+                        delta_t:    float
+                        distance:   list
+                        merger_ind: int
+                        actmerger_time: float
+                        dinit:  float
+                        data_length:    int
+                        dist_data_length:   int
         """
         """Common variables."""
         multipoles_one = []
@@ -691,9 +672,9 @@ class sim:
 
             ###################################################################
             # I.
-            # 	1. Load multipole data.
-            # 	2. Mass data.
-            # 	3. Find merger index.
+            #   1. Load multipole data.
+            #   2. Mass data.
+            #   3. Find merger index.
             ###################################################################
 
             # Lists to hold mass multipole data of the three horizons of a
@@ -781,7 +762,8 @@ class sim:
             except BaseException:
                 merger_one = len(M1_one_all)
                 message(
-                    "Mass1 has no jumps. Merger has probably not happened. Reverting to data length."
+                    "Mass1 has no jumps. Merger has probably not happened."
+                    "Reverting to data length."
                 )
 
             message("Merger index (through jump in mass1):", merger_one)
@@ -808,7 +790,8 @@ class sim:
                 # accept the result from either.
 
                 message(
-                    "Merger index inconsistency found. Mergertime may not be correct"
+                    "Merger index inconsistency found."
+                    "Mergertime may not be correct"
                 )
 
                 try:
@@ -865,10 +848,11 @@ class sim:
             masses_one.append([M1_one, M2_one, M3_one])
             masses_one_all.append([M1_one_all, M2_one_all, M3_one_all])
 
-            ###################################################################
+            ################################################################
             # II . Load the distance data.
-            # Compute the distance using the coordinate positions in BHdiagnostics files.
-            ###################################################################
+            # Compute the distance using
+            # the coordinate positions in BHdiagnostics files.
+            ################################################################
             temp0 = np.genfromtxt(
                 self.ROOTDIR
                 + sim1[sim_index]
@@ -995,10 +979,10 @@ class sim:
             shape1 = temp1.shape
 
             # if shape0[0] < shape0[1]:
-            # 	 temp1 = np.transpose(temp1)
+            #    temp1 = np.transpose(temp1)
 
             # if shape1[0] < shape1[1]:
-            # 	 temp2 = np.transpose(temp2)
+            #    temp2 = np.transpose(temp2)
 
             # Assign the centroid locations to variables.
 
@@ -1010,17 +994,17 @@ class sim:
             x_coord_1 = x_coord_1_locs  # temp1[:, 1]
             y_coord_1 = y_coord_1_locs  # temp1[:, 2]
 
-            # t_coord_0		 =	 temp0[:, 0]
-            # x_coord_0		 =	 temp0[:, 1]
-            # y_coord_0		 =	 temp0[:, 2]
+            # t_coord_0      =   temp0[:, 0]
+            # x_coord_0      =   temp0[:, 1]
+            # y_coord_0      =   temp0[:, 2]
             #
-            # t_coord_1		 =	 temp1[:, 0]
-            # x1		 =	 temp1[:, 1]
-            # y1		 =	 temp1[:, 2]
+            # t_coord_1      =   temp1[:, 0]
+            # x1         =   temp1[:, 1]
+            # y1         =   temp1[:, 2]
 
             # if int((x_coord_0-x_coord_0_locs)[0])!=0:
-            # 	 message('ERRORRRRRRR!')
-            # 	 sys.exit(0)
+            #    message('ERRORRRRRRR!')
+            #    sys.exit(0)
             # Compute lengths
 
             len_0 = len(t_coord_0)
@@ -1058,11 +1042,14 @@ class sim:
             message("Initial true distance", d0_sim)
             d0_one.append(d0_sim)
             d_sim = d_sim / d0_sim
-            # d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-temp1[:act_shape_one[sim_index],1])**2
-            # + (temp0[:act_shape_one[sim_index],2]-temp1[:act_shape_one[sim_index],2])**2))
+            # d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-
+            # temp1[:act_shape_one[sim_index],1])**2
+            # + (temp0[:act_shape_one[sim_index],2]-
+            # temp1[:act_shape_one[sim_index],2])**2))
             d_one.append([t_coord_0, d_sim])
             message(
-                "ml_timeaxis_length: %d, Multipole data length: %d, BHdiag length: %d, Distance length: %d"
+                "ml_timeaxis_length: %d, Multipole data length: %d,"
+                "BHdiag length: %d, Distance length: %d"
                 % (
                     len(timeaxis_one[sim_index]),
                     ml_data_length[sim_index],
@@ -1085,8 +1072,10 @@ class sim:
 
         d_one = np.array(d_one)
         # d_one.shape
-        # d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-temp1[:act_shape_one[sim_index],1])**2
-        # + (temp0[:act_shape_one[sim_index],2]-temp1[:act_shape_one[sim_index],2])**2))
+        # d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-
+        # temp1[:act_shape_one[sim_index],1])**2
+        # + (temp0[:act_shape_one[sim_index],2]
+        # -temp1[:act_shape_one[sim_index],2])**2))
         # d_one=np.array(d_one)
 
         # d_one.shape
@@ -1164,14 +1153,16 @@ class sim:
         for alias in self.aliases:
             # Loop over simulations.
             # message(alias)
-            # self.timeaxis[alias] = [item[:self.dist_data_length[alias]] for item in self.timeaxis[alias]]
+            # self.timeaxis[alias] = [item[:self.dist_data_length[alias]]
+            # for item in self.timeaxis[alias]]
             # Resize the lengths of the data.
             self.multipoles[alias] = [
                 item[: self.dist_data_length[alias]]
                 for item in self.multipoles[alias]
             ]
             # self.data_length.update({alias : len(self.multipoles[alias][0])})
-            # self.mass_multipoles[alias] = [item[:self.dist_data_length[alias] for item in self.mass_multipoles[alias]]]
+            # self.mass_multipoles[alias] = [item[:self.dist_data_length[alias]
+            # for item in self.mass_multipoles[alias]]]
             # self.spin_multipoles[alias] = [item[:self.dist_data_length[alias]
             # for item in self.spin_multipoles[alias]]]
 
@@ -1331,7 +1322,8 @@ class sim:
         return 1
 
     def ret_horizon_radii(self):
-        """Retrieve the radius of the common horizon at the time of formation."""
+        """Retrieve the radius of the common horizon
+        at the time of formation."""
 
         # Dictionary to hold the areal radii of the horizons.
         self.areal_radii = {}
@@ -1454,21 +1446,18 @@ class sim:
 
         Parameters
         ----------
-
-        alias  :    str, optional.
-                                The simulation label. If not specified, then
-                                all available simulationswill be processed.
+        alias: str, optional.
+               The simulation label. If not specified, then
+               all available simulationswill be processed.
 
         Returns
         -------
-
-        self.CoM_locations :    dict
-                                                        A dictionary of lists containing
-                                                        CoM locations of the simulations.
+        self.CoM_locations: dict
+                            A dictionary of lists containing
+                            CoM locations of the simulations.
 
         Notes
         -----
-
         This fetches the location of the BHs from data files.
         """
 
@@ -1524,21 +1513,19 @@ class sim:
 
         Parameters
         ----------
-
-        alias  :    str, optional.
-                                The simulation label. If not specified, then
-                                all available simulationswill be processed.
+        alias: str, optional.
+               The simulation label. If not specified, then
+               all available simulationswill be processed.
 
         Returns
         -------
+        alpha: dict
+               A dictionary containing the
+               mean CoM displacement array.
 
-        alpha :     dict
-                                A dictionary containing the
-                                mean CoM displacement array.
-
-        beta :     dict
-                           A dictionary containing the
-                           mean CoM velocity array.
+        beta: dict
+              A dictionary containing the
+              mean CoM velocity array.
         """
         CoM_motion_params = {}
         # Aliases to run over.
@@ -1591,23 +1578,20 @@ class sim:
 
         Parameters
         ----------
+        alias: str, optional.
+               The simulation label. If not specified, then
+               all available simulationswill be processed.
 
-        alias  :    str, optional.
-                                The simulation label. If not specified, then
-                                all available simulationswill be processed.
-
-        string :    str
-                                The string of a part of a file name.
+        string: str
+                The string of a part of a file name.
 
         Returns
         -------
-
-        file_path : str
-                                The full path of the file
+        file_path: str
+                   The full path of the file
 
         Notes
         -----
-
         The first occuring instance of the file is returned
         if there are multiple files found.
         """
@@ -1641,10 +1625,13 @@ class sim:
 
         for alias in self.aliases:
             if source == "qlm":
-                file_string = f"{self.data_dir}quasilocalmeasures-qlm_newman_penrose..asc"
+                file_string = (
+                    f"{self.data_dir}quasilocalmeasures"
+                    "-qlm_newman_penrose..asc"
+                )
             elif source == "ih":
                 file_string = (
-                    f"{self.data_dir}isolatedhorizon-ih_newman_penrose..asc"
+                    f"{self.data_dir}isolatedhorizon" "-ih_newman_penrose..asc"
                 )
 
             full_file_path = self._get_file_path_from_str(

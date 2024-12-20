@@ -11,26 +11,27 @@ from spectral.spherical.swsh import Yslm_vec
 def decompose_in_SWSHs(
     waveform, gridinfo, spin_weight=-2, ell_max=8, emm_list="all"
 ):
-    """Decompose a given function on a sphere in Spin Weighted Spherical Harmonics
+    """Decompose a given function on a sphere
+    in Spin Weighted Spherical Harmonics
 
     Parameters
     ----------
 
-    waveform:		list
+    waveform:       list
                     A list that contains as its items the waveform
                     defined on the sphere as an array of shape
                     [ntheta, nphi]. Each item in the list may denote
                     an instant of time or frequency.
 
-    spin_weight:	 int, optional
+    spin_weight:     int, optional
                     The spin weight of the waveform.
                     It defaults to -2 for a gravitational waveform.
 
-    ell_max:	int, optional
+    ell_max:    int, optional
                 The maximum value of the :math:`\\ell'
                 polar quantum number. Defaults to 8.
 
-    gridinfo:		class instance
+    gridinfo:       class instance
                     The class instance that contains
                     the properties of the spherical grid.
 
@@ -38,7 +39,7 @@ def decompose_in_SWSHs(
     Returns
     -------
 
-    SWSH_coeffs:	list
+    SWSH_coeffs:    list
                     The SWSH coefficients of the waveform.
                     It may be a list composed of a single
                     floating point number or a 1d array
@@ -53,14 +54,16 @@ def decompose_in_SWSHs(
 
     Notes
     -----
-
-    Assumes that the sphere on which this decomposition is carried out is so far out
-    that the coordinate system is spherical polar and the poper area is the
+    Assumes that the sphere on which this decomposition
+    is carried out is so far out
+    that the coordinate system is spherical polar
+    and the poper area is the
     same as its co-ordinate area.
 
     """
 
-    # Find out if the unboosted waveform is a single number or defined on a spherical grid.
+    # Find out if the unboosted waveform is
+    # a single number or defined on a spherical grid.
     onepoint = isinstance(waveform[0], float)
 
     if not onepoint:
@@ -122,14 +125,15 @@ def decompose_in_SWSHs(
 
                 # Integrate to obtain the multipole of order l.
 
-                # Integration for real and imaginary parts of the data separately.
+                # Integration for real and imaginary parts of
+                # the data separately.
                 # Integrate the function
 
                 # Using quad
                 multipole_emm = quad_on_sphere(
                     integrand_ij * Ybasis_fun * darea, gridinfo
                 )
-                # multipole_emm	 =	 np.sum(integrand_ij * Ybasis_fun * darea)
+                # multipole_emm  = np.sum(integrand_ij * Ybasis_fun * darea)
 
                 multipoles_ell.update({emm_val: multipole_emm})
             multipoles_all.update({ell_index: multipoles_ell})
@@ -143,30 +147,27 @@ def quad_on_sphere(integrand, gridinfo, kind="third"):
 
     Parameters
     ----------
+    integrand: 2d array
+               The two dimensional integrand array defined on the sphere.
 
-    integrand:		2d array
-                                    The two dimensional integrand array defined on the sphere.
+    info: class instance
+          The class instance that contains
+          the properties of the spherical grid.
 
-    info:		class instance
-                            The class instance that contains the properties of the spherical grid.
+    kind: str
+          The interpolation order to use in integration.
 
-    kind:		str
-                            The interpolation order to use in integration.
     Returns
     -------
+    final_integral: float
+                    The given integrand integrated over the sphere.
 
-    final_integral : float
-                              The given integrand integrated over the sphere.
-
-    final_errs:	float
-                                    The accumulated errors.
+    final_errs: float
+                The accumulated errors.
 
     Notes
     -----
-
     Assumes that the sphere is a unit round sphere.
-
-
     """
 
     # Step 0: Get the grid properties

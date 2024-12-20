@@ -432,15 +432,18 @@ def Yslm_vec(spin_weight, ell, emm, theta_grid, phi_grid):
 
             if np.isnan(np.array(value)).any():
                 if (abs(np.array(theta_grid)) < 1e-14).any():
-                    # print("!!! Warning: setting to zero manually. Please check again !!!")
+                    # print("!!! Warning: setting to zero manually.
+                    # Please check again !!!")
                     # value = 0
                     raise ValueError(
-                        f"Possible zero value encountered due to small theta {np.amin(theta_grid)}"
+                        "Possible zero value encountered due to"
+                        f"small theta {np.amin(theta_grid)}"
                     )
 
                 else:
                     raise ValueError(
-                        "Although theta>1e-14, couldnt compute Yslm. Please check theta"
+                        "Although theta>1e-14, couldnt compute Yslm."
+                        "Please check theta"
                     )
 
     return value
@@ -874,7 +877,6 @@ def SHExpandAuto(
     orig_func = func.copy()
 
     # from scipy.special import sph_harm
-    import sys
 
     theta_grid, phi_grid = info.meshgrid
 
@@ -1113,7 +1115,6 @@ def SHExpandSimple(
 
     """
     # from scipy.special import sph_harm
-    import sys
 
     # from waveformtools.single_mode import SingleMode
 
@@ -1300,8 +1301,6 @@ def SHExpandSimpleSPack(
 
     """
     # from scipy.special import sph_harm
-    import sys
-
     # from waveformtools.single_mode import SingleMode
 
     orig_func = func.copy()
@@ -1441,7 +1440,8 @@ def SHContract(modes, info=None, ell_max=None):
     """
 
     # if isinstance(modes, SingleMode):
-    # message("SingleMode obj input. Converting to modes dictionary", message_verbosity=3)
+    # message("SingleMode obj input.
+    # Converting to modes dictionary", message_verbosity=3)
 
     # modes = modes.get_modes_dict()
     if info is None:

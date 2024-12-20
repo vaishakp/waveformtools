@@ -1,7 +1,10 @@
 # pylint: disable=C0301
-"""  This module contains a set of tools to handle data from numerical relativity simulations and gravitational waves.
-It consists of a bunch of functions that were frequently used for handling NR data.
-Notes
+"""  This module contains a set of tools to handle data
+from numerical relativity simulations and gravitational waves.
+It consists of a bunch of functions that were frequently used
+for handling NR data.
+
+Notes:
 1. Some functions here display plots. If you intend to use these on the
 cluster and if xterm is not adequately setup, you may have to
 either comment the plot codes or use the`Agg` mode for plotting
@@ -32,7 +35,6 @@ except Exception as ex:
 import numpy as np
 
 # from numba import njit
-
 # from scipy import signal
 
 try:
@@ -60,32 +62,32 @@ def message(
     -----
     Verbosity choices:
 
-    * message_verbosity :   Each message carries with it a verbosity level.
-                                                    More the verbosity less the priority.
-                                                    Default value is 2 i.e. informational.
-    * print_verbosity   :   prints all messages above this level of verbosity.
-    * log_verbosity     :   logs all messages above this level of verbosity.
+    * message_verbosity: Each message carries with it a verbosity level.
+                         More the verbosity less the priority.
+                         Default value is 2 i.e. informational.
+    * print_verbosity: prints all messages above this level of verbosity.
+    * log_verbosity: logs all messages above this level of verbosity.
 
-    Verbosity  levels:
+    Verbosity levels:
     * 0: Errors
     * 1: Warnings
     * 2: Information
 
     Parameters
     ----------
-    ``*args`            :   non-keyword arguments
-                                                    same arguments as to that of the print functions,
-    message_verbosity   :   int
-    print_verbosity     :   int
-    log_verbosity       :   int
-    ``**kwargs``        :   keyword arguments
-                                                    Same as that of the print function.
+    ``*args`: non-keyword arguments
+              same arguments as to that of the print functions,
+    message_verbosity: int
+    print_verbosity: int
+    log_verbosity: int
+    ``**kwargs``: keyword arguments
+                  Same as that of the print function.
 
     Returns
     -------
-    1                   :   int
-                                                    messages to stdout and logging of messages,
-                                                    while the function returns 1.
+    1: int
+       messages to stdout and logging of messages,
+       while the function returns 1.
     """
 
     # If message verbosity matches the global verbosity level, then print
@@ -153,14 +155,14 @@ def save_obj(obj, name, obj_dir="./", protocol=pickle.HIGHEST_PROTOCOL):
 
     Parameters
     ----------
-    obj :   object
-                    The python object to be saved.
-    name :  string
-                    The filename.
-    obj_dir :   string
-                            The path to directory to be saved in. Defaults to PWD
-    protocol :  int
-                            The protocol to be used to save. Default is binary.
+    obj: object
+         The python object to be saved.
+    name: string
+          The filename.
+    obj_dir: string
+             The path to directory to be saved in. Defaults to PWD
+    protocol: int
+              The protocol to be used to save. Default is binary.
 
     Notes
     -----
@@ -191,16 +193,16 @@ def load_obj(name, obj_dir="./"):
 
     Parameters
     ----------
-
-    name :  string
-                    The filename.
-    obj_dir :   string
-                            The path to directory in which file exists. Defaults to PWD.
+    name: string
+          The filename.
+    obj_dir: string
+             The path to directory in which file exists.
+             Defaults to PWD.
 
     Returns
     -------
-    obj :   object
-                    A python object with the contents of the file.
+    obj: object
+         A python object with the contents of the file.
     """
 
     # Load the pickled data
@@ -215,16 +217,15 @@ def removeNans(xdata, ydata):
 
     Parameters
     ----------
-    xdata : 1d array
-                    The x axis of the data.
-    ydata : 1d array
-                    The y axis of the data.
+    xdata: 1d array
+           The x axis of the data.
+    ydata: 1d array
+           The y axis of the data.
 
     Returns
     -------
-    x_no_nan :  1d array
-    y_no_nan :  1d,array
-                            The data pair x,y with Nans removed.
+    x_no_nan,y_no_nan:  1d,array
+                        The data pair x,y with Nans removed.
     """
 
     # Find the location of x Nans to be removed.
@@ -253,30 +254,32 @@ def removeNans(xdata, ydata):
 
 
 def differentiate(data, delta_t=None, TS=False):
-    """Differentiate a timeseries in time domain using the Simple Euler method
+    """Differentiate a timeseries in time domain
+    using the Simple Euler method
 
     Parameters
     ----------
-    data :  1d array
-                    a pycbc TimeSeries object
-                    The time series to be differentiated.
-    delta_t :   float
-                            The grid spacing delta_t.
-                            Supplying delta_t overrides
-                            the delta_t attribute of TimeSeries.
+    data: 1d array
+          a pycbc TimeSeries object
+          The time series to be differentiated.
+    delta_t: float
+             The grid spacing delta_t.
+             Supplying delta_t overrides
+             the delta_t attribute of TimeSeries.
 
     Returns
     -------
-    ddt_data :  pycbc TimeSeries object
-                            The differentiated 1d data
-                            as pycbc TimeSeries"""
+    ddt_data: pycbc TimeSeries object
+              The differentiated 1d data
+              as pycbc TimeSeries"""
 
     if not delta_t:
         try:
             delta_t = data.delta_t
         except BaseException:
             message(
-                "Input is not a TimeSeries. Please supply gridspacing as delta_t",
+                "Input is not a TimeSeries."
+                "Please supply gridspacing as delta_t",
                 message_verbosity=0,
             )
 
@@ -314,7 +317,8 @@ def integrate_first_order(
     int_data :  a pycbc TimeSeries object
                             TimeSeries of the time integrated data"""
 
-    # Check if object is pycbc timeseries. Recover delta_t, t_start, t_end if yes.
+    # Check if object is pycbc timeseries.
+    # Recover delta_t, t_start, t_end if yes.
     if not delta_t:
         try:
             # Find sampling time_step
@@ -359,9 +363,7 @@ def integrate_first_order(
     integdat[0] = 0.0  # dat[0]*delta_t
     # totinteg = np.sum(np.array(data)) * delta_t # commented on May 5 2022 to
     # conform with pep8 style. Not sure of it's use.
-
     # mean = np.mean(dat)
-
     data = np.array(data)
 
     for i in range(1, end_index - start_index):
@@ -382,17 +384,18 @@ def compute_frequencies(t_coal, t_val, chirp_mass):
 
     Parameters
     ----------
-    t_coal :    float
-                            The coalescence time,
-    t_val : 1d array
-                    The time,
-    chirp_mass :    float
-                                    The chirpmass.
+    t_coal: float
+            The coalescence time,
+    t_val: 1d array
+           The time,
+    chirp_mass: float
+                The chirpmass.
 
     Returns
     -------
-    freqs : float
-                    The instantaneous frequency of the strain waveform."""
+    freqs: float
+           The instantaneous frequency of the strain waveform.
+    """
     freqs = (
         (1.0 / (np.pi * chirp_mass))
         * (5.0 / 256) ** (3.0 / 8)
@@ -407,15 +410,15 @@ def totalmass(mass_ratio, chirp_mass):
 
     Parameters
     ----------
-    mass_ratio :    float
-                                    The mass ratio of the system.
-    mchirp :    float
-                            The chirp mass of the system.
+    mass_ratio: float
+                The mass ratio of the system.
+    mchirp: float
+            The chirp mass of the system.
 
     Returns
     -------
-    total_mass :    float
-                                    The total mass of the system.
+    total_mass: float
+                The total mass of the system.
     """
 
     return (chirp_mass * (1.0 + mass_ratio) ** (6.0 / 5)) / mass_ratio ** (
@@ -424,17 +427,18 @@ def totalmass(mass_ratio, chirp_mass):
 
 
 def massratio(chirp_mass):
-    """Compute the mass ratio from chirpmass. Assumes total mass to be 1.
+    """Compute the mass ratio from chirpmass.
+    Assumes total mass to be 1.
 
     Parameters
     ----------
-    mchirp :    float
-                            The chirp mass of the system.
+    mchirp: float
+            The chirp mass of the system.
 
     Returns
     -------
-    mass_ratio :    float
-                                    The Mass ratio of the system
+    mass_ratio: float
+                The Mass ratio of the system
     """
     mass_ratio = (
         chirp_mass ** (1.0 / 3)
@@ -458,18 +462,18 @@ def compute_masses_from_mass_ratio_and_total_mass(mass_ratio, M=1):
 
 
 def compute_chirp_mass(a2_param):
-    """Compute the chirpmass from a2, the coefficient of time of the Finn-Chernoff waform model.
+    """Compute the chirpmass from a2, the coefficient
+    of time of the Finn-Chernoff waform model.
 
     Parameters
     ----------
-
-    a2_param :  1d array \\ float
-                            The a2 parameter in the Finn Chernoff model.
+    a2_param: 1d array \\ float
+              The a2 parameter in the Finn Chernoff model.
 
     Returns
     -------
-    chirp_mass :    float
-                                    The chirp mass
+    chirp_mass: float
+                The chirp mass
     """
     chirp_mass = 2 ** (8.0 / 5) / (5 * np.array(a2_param) ** (8.0 / 5))
     return chirp_mass
@@ -478,7 +482,6 @@ def compute_chirp_mass(a2_param):
 def compute_chi_eff_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
     """Compute the effective z-spin parameter
     :math:`\\chi_{eff}`
-
 
     Parameters
     ----------
@@ -561,8 +564,9 @@ def lengtheq(data_a, data_b, delta_t=None, is_ts=False):
     Returns
     -------
     equalized_signals: list
-                       The Tapered, length equalized waveforms data_a and data_b,
-                       and a flag denoting which waveform was changed, `a` or `b`.
+                       The Tapered, length equalized waveforms
+                       data_a and data_b, and a flag denoting
+                       which waveform was changed, `a` or `b`.
 
     Notes
     -----
@@ -650,22 +654,23 @@ def taperlengtheq(data_a, data_b, delta_t=None):
 
     Parameters
     ----------
-    data_a :    list
-                            The input waveform A.
-    data_b :    list
-                            The input waveform B.
-    delta_t :   float
-                            The time steping.
+    data_a: list
+            The input waveform A.
+    data_b: list
+            The input waveform B.
+    delta_t: float
+             The time steping.
 
     Returns
     -------
-    equalized_signals : list
-                                            The Tapered, length equalized waveforms
-                                            data_a and data_b, and a flag denoting
-                                            which waveform was changed, `a` or `b`.
+    equalized_signals: list
+                       The Tapered, length equalized waveforms
+                       data_a and data_b, and a flag denoting
+                       which waveform was changed, `a` or `b`.
     """
 
-    # Check if input data is pycbc TimeSeries. If yes, then ectract delta_t.
+    # Check if input data is pycbc TimeSeries.
+    # If yes, then ectract delta_t.
     if not delta_t:
         signala = data_a
         signalb = data_b
@@ -689,13 +694,15 @@ def taperlengtheq(data_a, data_b, delta_t=None):
     # Taper waveform A.
     signala = np.array(taper(data_a, delta_t))
 
-    # equalize the length of a to match with b and return the length equalized
+    # equalize the length of a to match with b
+    # and return the length equalized
     # arrays.
     return lengtheq(signala, signalb, delta_t)
 
 
 def iscontinuous(time_axis, delta_t=None, toldt=1e-3):
-    """Check if the data has discontinuities. This checks for repetitive time rows and jumps.
+    """Check if the data has discontinuities.
+    This checks for repetitive time rows and jumps.
 
     Notes
     -----
@@ -707,21 +714,22 @@ def iscontinuous(time_axis, delta_t=None, toldt=1e-3):
 
     Parameters
     ----------
-    data:   list
-                    Input as a list of 1d arrays [time, data1, data2, ...].
-                    All the data share the common time axis `time`
-    delta_t:    float
-                            The time stepping.
-    toldt:  float
-                    The tolerance for error in checking. defaluts to toldt=1e-3.
+    data: list
+          Input as a list of 1d arrays [time, data1, data2, ...].
+          All the data share the common time axis `time`
+    delta_t: float
+             The time stepping.
+    toldt: float
+           The tolerance for error in checking. defaluts to toldt=1e-3.
 
     Returns
     -------
-    discontinuity_details:  a list.
-                                                    It contains:
-                                                            1. A list. details of discontinuity:  index location of original array,
-                                                            the corresponding discinbtinuity type.
-                                                    2. A float. the global discontinuity type.
+    discontinuity_details: list.
+                           It contains:
+                            1. A list. details of discontinuity.
+                               index location of original array,
+                               the corresponding discinbtinuity type.
+                            2. A float. the global discontinuity type.
     """
 
     time_axis = np.sort(time_axis)
@@ -804,25 +812,27 @@ def remove_repetitive_rows(data, delta_t=1, toldt=1e-3):
 
     Parameters
     ----------
-    data:   ndarray
-                    Data array where the first axis refers to different
-                    columns of data. The zeroth column is time axis.
-                    The second axis refers to entries at different time
-                    steps.
+    data: ndarray
+          Data array where the first axis refers to different
+          columns of data. The zeroth column is time axis.
+          The second axis refers to entries at different time
+          steps.
 
-    delta_t:    float
-                            The tim stepping.
-    toldt:  float
-                    The tolerance for error in checking. defaluts to toldt=1e-3.
+    delta_t: float
+             The tim stepping.
+    toldt: float
+           The tolerance for error in checking.
+           Defaluts to toldt=1e-3.
 
     Returns
     -------
-    cleaned_data:   list
-                                    The cleaned data array with repetitive
-                                    rows removed.
+    cleaned_data: list
+                  The cleaned data array with repetitive
+                  rows removed.
 
     """
-    message("Checking data for repetative rows...\n", message_verbosity=2)
+    message("Checking data for repetative rows...\n",
+            message_verbosity=2)
     data = sort_data(data)
 
     # message("Data shape:", (data.shape), message_verbosity=3)
@@ -866,17 +876,17 @@ def fill_gaps_in_data(data, k=5):
 
     Parameters
     ----------
-    data:   list
-                    Input as a list of 1d arrays [time, data1, data2, ...].
-                    All the data share the common time axis `time`
-    k:  int, optional
-            The interpolation order. Defaults to 5
+    data: list
+          Input as a list of 1d arrays [time, data1, data2, ...].
+          All the data share the common time axis `time`
+    k: int, optional
+       The interpolation order. Defaults to 5
 
     Returns
     -------
-    cleaned_data:   list
-                                    The cleaned data array with repetitive
-                                    rows and gaps (if bridge=True) removed.
+    cleaned_data: list
+                  The cleaned data array with repetitive
+                  rows and gaps (if bridge=True) removed.
 
     See Also
     --------
@@ -887,7 +897,7 @@ def fill_gaps_in_data(data, k=5):
     data = sort_data(data)
     time = data[0]
 
-    s1, l = data.shape
+    s1, ell = data.shape
 
     from scipy.stats import mode
 
@@ -895,10 +905,10 @@ def fill_gaps_in_data(data, k=5):
 
     discontinuities = iscontinuous(time)
 
-    gaps = bool(discontinuties["gaps"][0])
+    gaps = bool(discontinuities["gaps"][0])
 
     if gaps:
-        gap_rows = discontinuoties["gaps"][1]
+        gap_rows = discontinuities["gaps"][1]
         message(
             "The data will be interpolated to bridge the gaps",
             message_verbosity=2,
@@ -935,23 +945,22 @@ def cleandata(data, toldt=1e-3, bridge=False, k=5):
 
     Parameters
     ----------
-
-    data:   list
-                    Input as a list of 1d arrays [time, data1, data2, ...].
-                    All the data share the common time axis `time`
-    toldt:  float
-                    The tolerance for error in checking. defaluts to toldt=1e-3.
+    data: list
+          Input as a list of 1d arrays [time, data1, data2, ...].
+          All the data share the common time axis `time`
+    toldt: float
+           The tolerance for error in checking. defaluts to toldt=1e-3.
     bridge: bool
-                            A bridge flag to decide whether or not to interpolate and
-                            resample to fill in jump discontinuities.
-    k:  int, optional
-            The interpolation order. Defaults to 5
+            A bridge flag to decide whether or not to interpolate and
+            resample to fill in jump discontinuities.
+    k: int, optional
+       The interpolation order. Defaults to 5
 
     Returns
     -------
-    cleaned_data:   list
-                                    The cleaned data array with repetitive
-                                    rows and gaps (if bridge=True) removed.
+    cleaned_data: list
+                  The cleaned data array with repetitive
+                  rows and gaps (if bridge=True) removed.
 
     """
 
@@ -976,7 +985,7 @@ def cleandata(data, toldt=1e-3, bridge=False, k=5):
 
     time = np.sort(time)
     # delta_t = statistics.mode(np.diff(time))
-    delta_t = mode(np.diff(time))
+    delta_t = scipy.stat.mode(np.diff(time))
 
     message("shape of data:", (data.shape), message_verbosity=3)
 
@@ -999,18 +1008,18 @@ def shiftmatched(hdat, ind, delta_t=None, is_ts=False):
 
     Parameters
     ----------
-    hdat:   1d array or a pycbc TimeSeries object
-                    The input waveform to be shifted in time.
-    ind:    int
-                    The numper of places to shift the input waveform.
-    delta_t:    int
-                            the grid spacing in time.
+    hdat: 1d array or a pycbc TimeSeries object
+          The input waveform to be shifted in time.
+    ind: int
+         The numper of places to shift the input waveform.
+    delta_t: int
+             the grid spacing in time.
 
     Returns
     -------
     shifted_wf: a pycbc TimeSeries object
-                            The waveform array of same length timeshifted by
-                            `ind` units by prepending zeros.
+                The waveform array of same length timeshifted by
+                `ind` units by prepending zeros.
     """
 
     if is_ts:
@@ -1019,7 +1028,8 @@ def shiftmatched(hdat, ind, delta_t=None, is_ts=False):
                 delta_t = hdat.delta_t
             except BaseException:
                 message(
-                    "Input is not a TimeSeries. Please supply gridspacing as delta_t",
+                    "Input is not a TimeSeries."
+                    "Please supply gridspacing as delta_t",
                     message_verbosity=0,
                 )
 
@@ -1121,24 +1131,28 @@ def unwrap_phase(phi0):
 
 # Complex Phase-Amplitude representation of data
 def xtract_cphase(tsdata_p, tsdata_x, delta_t=None, to_plot=False):
-    """Given real and imaginary parts of a complex timeseries, extract the phase of the waveform :arctan_(Img(data)/Re(data))
+    """Given real and imaginary parts of a complex timeseries,
+    extract the phase of the waveform :arctan_(Img(data)/Re(data))
 
     Parameters
     ----------
     tsdata_p, tsdata_x: 1d array / a pycbc TimeSeries
-                                            The plus and cross polarized components of the waveforms.
-    delta_t:    float, optional
-                            The time step. Overrides the timestep from pycbc TS object if given.
-    to_plot:    bool, optional
-                            True or False. Whether to plot the data or not
+                        The plus and cross polarized components of
+                        the waveforms.
+    delta_t: float, optional
+             The time step. Overrides
+             the timestep from pycbc TS object if given.
+    to_plot: bool, optional
+             True or False. Whether to plot the data or not
 
     Returns
     -------
-    phic:   1d array
-                    The 1d array of the phase of the waveform.
+    phic: 1d array
+          The 1d array of the phase of the waveform.
     """
 
-    # Assign the timestep. Real and imaginary parts are assumed to have same timestep.
+    # Assign the timestep. Real and imaginary parts are
+    # assumed to have same timestep.
     # if not delta_t:
     #   try:
     #       delta_t = tsdata_p.delta_t
@@ -1146,9 +1160,11 @@ def xtract_cphase(tsdata_p, tsdata_x, delta_t=None, to_plot=False):
     #       try:
     #           delta_t = tsdata_x.delta_t
     #       except:
-    #           message("Input is not a TimeSeries. Please supply gridspacing as delta_t", message_verbosity=0)
+    #           message("Input is not a TimeSeries.
+    #           Please supply gridspacing as delta_t", message_verbosity=0)
 
-    # Assign the timestep. Real and imaginary parts are assumed to have same timestep.
+    # Assign the timestep. Real and imaginary parts
+    # are assumed to have same timestep.
     # Convert the data in numpy arrays
 
     datap = np.array(tsdata_p)
@@ -1181,7 +1197,8 @@ def xtract_cphase(tsdata_p, tsdata_x, delta_t=None, to_plot=False):
         plt.xlabel("cctk_time")
         plt.ylabel("Phase in radians")
         plt.grid()
-        # plt.savefig('../graphs/waveform_phase_complete_{}_q1a0.pdf'.format(name))
+        # plt.savefig('../graphs/waveform_phase_complete_{}_q1a0.pdf'
+        # .format(name))
         plt.show()
         # Return a 1d list containing the unwrapped phase
     return phic
@@ -1195,17 +1212,19 @@ def xtract_camp(tsdata_p, tsdata_x, to_plot=False):
     Parameters
     ----------
     tsdata_p, tsdata_x: pycbc TimeSeries/1darray
-                                            The plus and cross polarized components of the waveforms.
-    to_plot:    bool
-                            True or False. Whether to plot the data or not
+                        The plus and cross polarized components
+                        of the waveforms.
+    to_plot: bool
+             True or False. Whether to plot the data or not
 
     Returns
     -------
-    camp:   1d array
-                    The 1d array of extracted amplitudes of the waveform.
+    camp: 1d array
+          The 1d array of extracted amplitudes of the waveform.
     """
 
-    # Assign the timestep. Real and imaginary parts are assumed to have same timestep.
+    # Assign the timestep. Real and imaginary parts
+    # are assumed to have same timestep.
     # Complex modulous of the data
     camp = np.sqrt(np.array(tsdata_p) ** 2 + np.array(tsdata_x) ** 2)
 
@@ -1216,29 +1235,31 @@ def xtract_camp(tsdata_p, tsdata_x, to_plot=False):
         plt.xlabel("cctk_time")
         plt.ylabel("Amplitude")
         plt.grid()
-        # plt.savefig('../graphs/waveform_phase_complete_{}_q1a0.pdf'.format(name))
+        # plt.savefig('../graphs/waveform_phase_complete_{}_q1a0.pdf'
+        # .format(name))
         plt.show()
     # Returns the 1d numpy array amplitude
     return camp
 
 
 def xtract_camp_phase(tsdata_1, tsdata_2):
-    """Wrapper for extracting the amplitude and the phase of the complex vector.
+    """Wrapper for extracting the amplitude
+     and the phase of the complex vector.
 
     Parameters
     ----------
     tsdata_1, tsdata_2: 1d array or pycbc TimeSeries object
-                                            The two input waveforms as timeseries
-                                            vectors, the plus and cross polarized
-                                            components.
-    delta_t:    float
-                            The timestepping delta_t.
+                        The two input waveforms as timeseries
+                        vectors, the plus and cross polarized
+                        components.
+    delta_t: float
+             The timestepping delta_t.
 
     Returns
     -------
-    amplitude:  1d array
-                            A list containing complex amplitude
-                            (list) and phase (list).
+    amplitude: 1d array
+               A list containing complex amplitude
+               (list) and phase (list).
     """
 
     return xtract_camp(tsdata_1, tsdata_2), xtract_cphase(tsdata_1, tsdata_2)
@@ -1255,25 +1276,25 @@ def get_waveform_angular_frequency(
 
     Parameters
     ----------
-    waveform:   1d array
-                            The 1d complex array of the input waveform.
+    waveform: 1d array
+              The 1d complex array of the input waveform.
 
-    delta_t:    float
-                            The time step.
+    delta_t: float
+             The time step.
 
-    timeaxis:   1d array, optional
-                            The time axis of the waveform.
-                            Recommended especially when the sampling
-                            is non-uniform and Chebyshev method is chosen.
-    method:     str
-                            The method for computing the derivative.
-                            Can be `FD` or `CS`. See below for more
-                            information.
+    timeaxis: 1d array, optional
+              The time axis of the waveform.
+              Recommended especially when the sampling
+              is non-uniform and Chebyshev method is chosen.
+    method: str
+            The method for computing the derivative.
+            Can be `FD` or `CS`. See below for more
+            information.
 
     Returns
     -------
-    omega:      1d array
-                            The real instantaneous frequency of the waveform.
+    omega: 1d array
+           The real instantaneous frequency of the waveform.
 
 
 
@@ -1281,12 +1302,12 @@ def get_waveform_angular_frequency(
     -----
     Available methods
 
-    Chebyshev series (`CS`):    The phase is expanded in
-                                                            a Chebyshev series and
+    Chebyshev series (`CS`): The phase is expanded in
+                             a Chebyshev series and
     Finite Differencing (`FD`): A 11 point finite difference
-                                                            scheme is used to differentiate
-                                                            the phase, and is then smoothened
-                                                            using the Savgol filter.
+                                scheme is used to differentiate
+                                the phase, and is then smoothened
+                                using the Savgol filter.
     """
     # Get the real and imaginary parts.
     waveform_p = waveform.real
@@ -1304,7 +1325,8 @@ def get_waveform_angular_frequency(
         omega_rough = differentiate5(phase, delta_t)
         # Smoothen the derivative
         omega_sm = savgol_filter(omega_rough, 41, polyorder=3)
-        # Duplicate the last elements to bring the length to that of input waveform.
+        # Duplicate the last elements to bring
+        # the length to that of input waveform.
         len_omega_sm = len(omega_sm)
         while len_omega_sm != len(phase):
             omega_sm = np.concatenate((omega_sm, np.array([omega_sm[-1]])))
@@ -1359,7 +1381,8 @@ def get_starting_angular_frequency(waveform, delta_t, npoints=400):
 
 # Simple overlap. #Error. Add frequency domain overlap computation.
 def olap(data1, data2, psd=1):
-    """Calcuate the overlap between two data vectors weighted by the given psd.
+    """Calcuate the overlap between two data vectors
+    weighted by the given psd.
 
     Parameters
     ----------
@@ -1589,11 +1612,13 @@ def removezeros(data, delta_t):
     short_ts : a list
                A list containing waveforms with zeros
                removed on either sides,
-               the start and end indices in the format [short_ts, [start_index, end_index]]
+               the start and end indices in the format
+               [short_ts, [start_index, end_index]]
 
     """
 
-    # Assign the timestep. Real and imaginary parts are assumed to have same
+    # Assign the timestep.
+    # Real and imaginary parts are assumed to have same
     # timestep.
     if not delta_t:
         try:
@@ -1632,7 +1657,8 @@ def shorten(tsdata, start, end, delta_t=None):
     Returns
     -------
     short_ts : a pycbc TimeSeries object
-               The shortened data, clipped before start and after end.
+               The shortened data,
+               clipped before start and after end.
     """
     # Assign the timestep.
     # Real and imaginary parts
@@ -1756,7 +1782,8 @@ def taper_tanh(
         tapered_waveform = end_win * waveform_widened
     else:
         message(
-            "Please specify valid sides argument. Sides can be beg, end or both."
+            "Please specify valid sides argument."
+            "Sides can be beg, end or both."
         )
 
     # plt.scatter(new_time_axis, tapered_waveform, s=1)
@@ -1795,7 +1822,8 @@ def taper(data, delta_t=1, zeros=150):
         # flag = 1
         # Convert to numpy array
         data = np.array(data)
-        # First taper both sides of the data i.e. the start and end of the data.
+        # First taper both sides of the data
+        # i.e. the start and end of the data.
         # Convert to pycbc TimeSeries
         data = pycbc.types.timeseries.TimeSeries(data, delta_t)
     else:
@@ -1884,7 +1912,8 @@ def center(wvp, wvc=None, delta_t=None):
     Returns
     -------
     centered_wf : a pycbc TimeSeries object
-                  The two 1d centered waveform(s) as individual pycbc timeseries.
+                  The two 1d centered waveform(s)
+                  as individual pycbc timeseries.
 
     """
     # Flag to find out if both polarizations are supplied or not.
@@ -1893,7 +1922,8 @@ def center(wvp, wvc=None, delta_t=None):
     if not wvc:
         flag = 1
         wvc = wvp
-    # Assign the timestep. Real and imaginary parts are assumed to have same
+    # Assign the timestep.
+    # Real and imaginary parts are assumed to have same
     # timestep.
     if not delta_t:
         try:
@@ -1917,7 +1947,8 @@ def center(wvp, wvc=None, delta_t=None):
     ind = np.where(amp == np.max(amp))[0][0]
     # Calculate the epoch
     tlim = [-ind * delta_t, (len(datap) - ind) * delta_t]
-    # Returns the centered wvp and wvc if wvc was provided else returns just
+    # Returns the centered wvp and wvc
+    # if wvc was provided else returns just
     # the former.
 
     if flag == 1:
@@ -1950,7 +1981,8 @@ def get_centered_taxis(time_ax, amps):
     -------
     time_centered : 1d array
                     The centered time axis of the waveform.
-                    The maximum amplitude timestap will be at :math:`t=0`.
+                    The maximum amplitude timestamp
+                    will be at :math:`t=0`.
     """
 
     # Get the maximum amplitude
@@ -2061,16 +2093,21 @@ def coalignwfs(tsdata1, tsdata2, delta_t=None):
 
     # tsdata1 = shiftmatched(tsdata1, maxloc, delta_t, is_ts=True)
     # Phase shift ( rotate) the waveform 1 by multipying
-    # the frequency series of waveform 1 with the phase of the max element in acsnr
-    # Calculate the rotation (as phase of the max complex modulous element in
+    # the frequency series of waveform 1
+    # with the phase of the max element in acsnr
+    # Calculate the rotation (as phase of the
+    # max complex modulous element in
     # acsnr
     rotation = csnr[maxloc] / np.absolute(csnr[maxloc])
     # Rotate and take the inverse Fourier transform
     ctsdata1 = (rotation * tsdata1.to_frequencyseries()).to_timeseries()
-    # Return the time and phase shifted waveform 1 to coalign with 2 and waveform 2.
-    # Note that the max modulous element of acsnr is only used to compute the time
+    # Return the time and phase shifted waveform 1
+    # to coalign with 2 and waveform 2.
+    # Note that the max modulous element of acsnr
+    # is only used to compute the time
     # shift and is not used to normalize the
-    # waveforms. This therefore returns waveforms with their original
+    # waveforms. This therefore returns waveforms
+    # with their original
     # normalization.
 
     return ctsdata1, tsdata2
@@ -2218,23 +2255,27 @@ def resample_wfs(both_time_axes, both_waveforms, delta_t="auto", Plot=False):
     Parameters
     ----------
     both_time_axes : list
-                     A list containing two 1d arrays representing the time axes.
+                     A list containing two 1d arrays
+                     representing the time axes.
     both_waveforms : list
-                     A list containing two 1d arrays respresenting the waveforms.
+                     A list containing two 1d arrays
+                     respresenting the waveforms.
     delta_t : string, float
-              The time step to resample at. Auto uses the finest of the two available.
+              The time step to resample at.
+              Auto uses the finest of the two available.
               A float value can be provided by the user as well.
 
     Returns
     -------
     both_time_axes_resam : 1d array
-                           A 1d array representing the resampled time axes.
+                           A 1d array representing
+                           the resampled time axes.
     both_waveforms_resam : list
-                           A list containing two 1d arrays respresenting the resampled waveforms.
+                           A list containing two 1d arrays
+                           respresenting the resampled waveforms.
     """
 
     # from waveformtools.waveformtools import lengtheq
-
     # from scipy.interpolate import interp1d
 
     waveform1, waveform2 = both_waveforms
@@ -2259,7 +2300,8 @@ def resample_wfs(both_time_axes, both_waveforms, delta_t="auto", Plot=False):
             delta_t = delta_t2
 
     # time_axis = shear_1.time_axis
-    # waveform1, waveform2, flag = lengtheq(waveform1, waveform2, delta_t=delta_t)
+    # waveform1, waveform2, flag =
+    # lengtheq(waveform1, waveform2, delta_t=delta_t)
 
     new_time_axis = np.arange(min_t, max_t, delta_t)
 
@@ -2307,16 +2349,18 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
     Returns
     -------
     match_details : dict
-                                                                                                                                                                                                                                                                    A dictionary containing the
-                                                                                                                                                                                                                                                                    i). match coeffient
-                                                                                                                                                                                                                                                                    ii). time_shift
-                                                                                                                                                                                                                                                                    iii). phase shift in radians
-                                                                                                                                                                                                                                                                    iv). normalized, resampled, waveforms
-                           and their time-axes.
+                    A dictionary containing the
+                    i). match coeffient
+                    ii). time_shift
+                    iii). phase shift in radians
+                    iv). normalized, resampled, waveforms
+                         and their time-axes.
 
     Note
     ----
-    The shifts give by how much the first waveform has to be shifted to match with the second.
+    The shifts give by how much
+    the first waveform has to be shifted
+    to match with the second.
 
     """
 
@@ -2395,7 +2439,8 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
     Pshift_rec_rad = np.log(Pshift_rec) / (1j)
 
     message(
-        "-----------------------------------\n Shift information for waveform 2 against 1 \n"
+        "-----------------------------------\n Shift information for"
+        "waveform 2 against 1 \n"
     )
     message(f"Recovered Time shift: {Tshift_rec}")
     message(
@@ -2463,11 +2508,11 @@ def match_wfs_pycbc(all_time_axes, all_waveforms):
     Returns
     -------
     match_details : dict
-                                                                                                                                                                                                                                                                    A dictionary containing the
-                                                                                                                                                                                                                                                                    i). match coeffient
-                                                                                                                                                                                                                                                                    ii). time_shift
-                                                                                                                                                                                                                                                                    iii). phase shift
-                                                                                                                                                                                                                                                                    iv). normalized waveforms and their time-axes.
+                    A dictionary containing the
+                    i). match coeffient
+                    ii). time_shift
+                    iii). phase shift
+                    iv). normalized waveforms and their time-axes.
     """
 
     # Step 1: resample
@@ -2572,25 +2617,29 @@ def match_wfs_pycbc(all_time_axes, all_waveforms):
 
 
 def simplematch_wfs_old(waveforms, delta_t=None):
-    """Simple match the given waveforms. Does not clip the waveforms at either ends.
+    """Simple match the given waveforms.
+    Does not clip the waveforms at either ends.
 
     Parameters
     ----------
     waveforms : list
-                                A list of pairs [waveform A, waveform B] of waveforms.
+                A list of pairs
+                [waveform A, waveform B] of waveforms.
     delta_t : float, optional
-                          The time stepping.
+              The time stepping.
 
     Notes
     -----
-    The time stepping delta_t is the same for each pair of waveforms in the list.
+    The time stepping delta_t is the same
+    for each pair of waveforms in the list.
 
     Returns
     -------
     match : list
             A list of dicts [{ Aligned waveforms} ,
-                                                        {match score (float), shift (number)}]
-                        containing the match information for all the input waveform pairs.
+            {match score (float), shift (number)}]
+            containing the match information
+            for all the input waveform pairs.
     """
 
     match = []
@@ -2674,16 +2723,16 @@ def pmmatch_wfs(waveforms, offset=25, crop=None):
              Number of indices to shift the data.
     crop : string
            A string to decide how to crop the waveforms.
-                   The available Options are 1. `signal` 2. `template` 3. `both`.
+           The available Options are 1. `signal` 2. `template` 3. `both`.
 
     Returns
     -------
     matchdet : a list of dicts
-                           A list of dictionaries.
+               A list of dictionaries.
                Each contains
-                               1. the waveform pair,
-                   2. the match score,
-                   3. the shift index. to maximize the match.
+                1. the waveform pair,
+                2. the match score,
+                3. the shift index. to maximize the match.
 
     """
     matchdet = []
@@ -2691,7 +2740,6 @@ def pmmatch_wfs(waveforms, offset=25, crop=None):
         signal, template = waveformdat
 
         # message(type(signal), type(template))
-
         # message(type(signal), type(template), len(signal), len(template))
 
         signal, template, _ = lengtheq(signal, template)
@@ -2710,7 +2758,8 @@ def pmmatch_wfs(waveforms, offset=25, crop=None):
             template = template[np.argmax(np.array(template)) + offset :]
 
         # message(type(signal), type(template))
-        # message(np.amax(np.array(template_plus)), np.amax(np.array(signal_plus)))
+        # message(np.amax(np.array(template_plus)),
+        # np.amax(np.array(signal_plus)))
 
         # Normalize the waveforms to their peak amplitudes.
         signal = signal / norm(np.array(signal))
@@ -2741,7 +2790,8 @@ def pmmatch_wfs(waveforms, offset=25, crop=None):
             signal_al, template_al
         )
 
-        # message('+ The match score, shift are %f, %d'%(matchscore, finalshift))
+        # message('+ The match score, shift are %f,
+        # %d'%(matchscore, finalshift))
         matchdet.append(
             {
                 "Waveforms": [signal_al, template_al],
@@ -2754,19 +2804,21 @@ def pmmatch_wfs(waveforms, offset=25, crop=None):
 
 
 def roll(tsdata, i_roll, is_ts=False):
-    """Roll the data circularly. Circular counterpart of shiftmatched function.
+    """Roll the data circularly. Circular counterpart
+    of shiftmatched function.
 
     Parameters
     ----------
-    tsdata : 1d array or pycbc TimeSeries
-            1D data vector in the form of a list/ numpy array or timeseries.
-    i_roll : int
-             The number of indices to roll the array.
+    tsdata: 1d array or pycbc TimeSeries
+            1D data vector in the form of
+            a list/ numpy array or timeseries.
+    i_roll: int
+            The number of indices to roll the array.
 
     Returns
     -------
-    rolled_waveform : 1d array or(pycbc TimeSeries object
-                                          The rolled wavefrom.
+    rolled_waveform: 1d array or(pycbc TimeSeries object
+                     The rolled wavefrom.
     """
 
     flag = 0
@@ -2804,24 +2856,24 @@ def smoothen(func_x, win, order, xdata=None, to_plot=False):
     """Use the Savitzky-Golay Filter to smoothen the data.
         Show the plots if plot=`yes`.
 
-        Parameters
+    Parameters
     ----------
-    func_x : 1d array
-                         The y axis.
-        win :  int
-                  Window for smoothening. Must be odd.
-    order : int
-            The order of the polynomial used for interpolation.
-        x : 1d array, optional.
-                The 1D list or numpy array, to plot the smoothened function.
-                Only required if to_plot=True.
-        to_plot : bool
-              True or False. Whether or not to display the plot.
+    func_x: 1d array
+            The y axis.
+    win: int
+         Window for smoothening. Must be odd.
+    order: int
+           The order of the polynomial used for interpolation.
+    x: 1d array, optional.
+       The 1D list or numpy array, to plot the smoothened function.
+       Only required if to_plot=True.
+    to_plot: bool
+             True or False. Whether or not to display the plot.
 
     Returns
     -------
-    ydata : 1d array
-            The Savgol filtered list.
+    ydata: 1d array
+           The Savgol filtered list.
 
     """
 
@@ -2840,7 +2892,8 @@ def smoothen(func_x, win, order, xdata=None, to_plot=False):
 
 
 def bintp(xdata, func_x, width, order, to_plot=True):
-    """Function to bin the data and interpolate it at specified width and order.
+    """Function to bin the data and interpolate it
+    at specified width and order.
 
     Parameters
     ----------
@@ -2903,7 +2956,8 @@ def bintp(xdata, func_x, width, order, to_plot=True):
         plt.legend()
         plt.show()
     hist = [binloc, y_final]
-    # Returns a list consisting of bin loacations and the correspnding y values
+    # Returns a list consisting of bin loacations
+    # and the correspnding y values
     return hist
 
 
@@ -2946,21 +3000,21 @@ def interpolate_wfs(ts_data, interp_func, delta_t=None, **kwargs):
 
     Parameters
     ----------
-    ts_data : list
-                          The 1d data. A list of waveforms
-                          as a list or numpy array or
-                      pycbc TimeSeries.
-    interp_fun : function
+    ts_data: list
+             The 1d data. A list of waveforms
+             as a list or numpy array or
+             pycbc TimeSeries.
+    interp_fun: function
                 An interpolating function.
-    delta_t : float
-                          Timestep.
-    ``**kwargs`` : keyword arguments
-                                   additional arguments to the user specified interp_func.
+    delta_t: float
+             Timestep.
+    ``**kwargs``: keyword arguments
+                  additional arguments to the user specified interp_func.
 
     Returns
     -------
-    interp_data : list
-                                  A list containing interpolated data.
+    interp_data: list
+                 A list containing interpolated data.
 
     """
 
@@ -2976,7 +3030,8 @@ def interpolate_wfs(ts_data, interp_func, delta_t=None, **kwargs):
 
             except BaseException:
                 message(
-                    "Input is not a TimeSeries. Please supply gridspacing as delta_t",
+                    "Input is not a TimeSeries."
+                    "Please supply gridspacing as delta_t",
                     message_verbosity=0,
                 )
         else:
@@ -3022,7 +3077,8 @@ def resample(interp_data, new_delta_t, epoch, length, old_delta_t=None):
 
             except BaseException:
                 message(
-                    "Input is not a TimeSeries. Please supply gridspacing as delta_t",
+                    "Input is not a TimeSeries."
+                    "Please supply gridspacing as delta_t",
                     message_verbosity=0,
                 )
         else:
@@ -3092,7 +3148,8 @@ def interp_resam_wfs(wavf_data, old_taxis, new_taxis, kind="cubic", k=None):
 
 
 def progressbar(present_count, total_counts, normalize="yes"):
-    """Display the progress bar to std out from present_count and total_count.
+    """Display the progress bar to std out
+    from present_count and total_count.
 
     Parameters
     ----------
