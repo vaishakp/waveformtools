@@ -422,7 +422,7 @@ def sort_keys(modes_keys_list):
 
 
 from matplotlib.style import available
-from zipp import Path
+from pathlib import Path
 
 
 def load_RIT_Psi4_data_from_disk(
