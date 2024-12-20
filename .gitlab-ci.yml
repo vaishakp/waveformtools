@@ -61,7 +61,7 @@ pytest:
     # Setup conda environment
     - conda update -y -n base conda
     - conda update -y --all
-    - conda create -n test -c conda-forge -c defaults python=3 gxx_linux-64 fftw scipy numpy h5py matplotlib numba datetime spherical recommonmark sphinx-rtd-theme termcolor -y
+    - conda create -n test -c conda-forge -c defaults python=3 gxx_linux-64 fftw scipy numpy h5py matplotlib numba spherical recommonmark sphinx-rtd-theme termcolor -y
     #  - conda env create -f docs/environment.yml
     - conda init
     - source ~/.bashrc
@@ -118,7 +118,7 @@ pages:
   #   Setup conda environment
     - conda update -y -n base conda
     - conda update -y --all
-    - conda create -n test -c conda-forge -c defaults python=3 gxx_linux-64 fftw scipy numpy h5py matplotlib numba datetime spherical recommonmark sphinx-rtd-theme termcolor -y
+    - conda create -n test -c conda-forge -c defaults python=3 gxx_linux-64 fftw scipy numpy h5py matplotlib numba spherical recommonmark sphinx-rtd-theme termcolor -y
   #  - conda env create -f docs/environment.yml
     - conda init
     - source ~/.bashrc
