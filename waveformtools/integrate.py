@@ -6,6 +6,7 @@
 
 import numpy as np
 
+from spectral.fourier.fft import compute_ifft
 from waveformtools.waveformtools import message
 
 ##################################################
@@ -18,16 +19,15 @@ def fixed_frequency_integrator(
 ):
     """Fixed frequency integrator as presented in Reisswig et. al.
 
-
     Parameters
     ----------
     udata_time:	1d array
-                            The input data in time.
-    delta_t:	float
-                            The time stepping.
+                The input data in time.
+    delta_t: float
+             The time stepping.
 
-    utilde_conven:		1d array, optional
-                                            The conventional FFT of the samples udata_time.
+    utilde_conven: 1d array, optional
+                   The conventional FFT of the samples udata_time.
     omega0:	float, optional
             The cutoff angular frequency in the integration.
             Must be lower than the starting angular frequency
@@ -35,29 +35,28 @@ def fixed_frequency_integrator(
             value is below this value will be neglected.
             The default cutoff-value is 0.
 
-    order:		int, optional
-                The number of times to integrate
-                the integrand in time. Defaults to 1.
+    order: int, optional
+           The number of times to integrate
+           the integrand in time. Defaults to 1.
 
-    zero_mode:	float, optional
-                            The zero mode amplitude of the FFT required.
-                            Defaults to 0 i.e. the zero mode is removed.
+    zero_mode: float, optional
+               The zero mode amplitude of the FFT required.
+               Defaults to 0 i.e. the zero mode is removed.
 
     Returns
     -------
-
     u_integ_n_time:	1d array
-                                            The input waveform in time-space, integrated in frequency space using FFI.
+                    The input waveform in time-space, 
+                    integrated in frequency space using FFI.
 
-    u_integ_integ_n:	1d array
-                                            The integrated u samples in Fourier space.
+    u_integ_integ_n: 1d array
+                     The integrated u samples in Fourier space.
 
     """
 
     if not utilde_conven:
         # Compute the FFT of data
         from numpy.fft import ifft
-
         from spectral.fourier.fft import compute_fft, unset_fft_conven
 
         # from waveformtools import taper
@@ -67,6 +66,17 @@ def fixed_frequency_integrator(
         # x_axis = udata_x_re.sample_times
         # udata_x = np.array(udata_x)
         freq_axis, utilde_conven = compute_fft(udata_time, delta_t)
+
+        df = np.diff(freq_axis)[0]
+        print("df ", df)
+        print("Freq axis", freq_axis)
+        print("utilde", utilde_conven)
+
+        if np.isnan(utilde_conven).any():
+            print("Nan Found in utilde_conven!")
+
+        if np.isnan(freq_axis).any():
+            print("Nan Found in freq_axis!")
 
         # Find the length of the input data.
         Nlen = len(udata_time)
@@ -82,43 +92,55 @@ def fixed_frequency_integrator(
 
     # Construct the angular frequency axis.
     omega_axis = 2 * np.pi * freq_axis
+    #omega_axis[zero_index] = 1
 
-    # print("The chosen cutoff angular frequency is", omega0)
+    print("The chosen cutoff angular frequency is", omega0)
+    print("Omega axis", omega_axis)
+
 
     if omega0 > 0:
+        # Change the angular frequency if its magnitude is below a given omega0.
         for index, element in enumerate(omega_axis):
             # Loop over the samples.
 
             # Skip the zero index
             if index != zero_index:
                 # print(freq_integ[index])
-                try:
-                    # Get the sign of the angular frequency.
-                    sign = int(element / abs(element))
-                except Exception as excep:
-                    message(excep)
-                    sign = 1
+                #try:
+                # Get the sign of the angular frequency.
+                sign = int(element / abs(element))
+                #except Exception as excep:
+                #    message(excep)
 
-                # print(sign)
-                # Change the angular frequency if its magnitude is below a given omega0.
                 if abs(element) < omega0:
                     omega_axis[index] = sign * omega0
 
-    # Set the zero frequency element separately.
-    if not zero_mode:
-        utilde_conven[zero_index] = 0
+            else:
+                sign = 1
+                assert omega_axis[index]==0, "The zero mode element must be zero frequency"
+                omega_axis[index] = 1
+            
     else:
-        utilde_conven[zero_index] = zero_mode
+        raise ValueError("Please supply a non-zero positive value of cutoff angular frequency")
+            
+    # Set the zero frequency element separately.
+    utilde_conven[zero_index] = zero_mode
 
     # Integrate in frequency space
     utilde_integ_n = np.power((-1j / omega_axis), order) * utilde_conven
 
+    print("utilde_integ", utilde_integ_n)
+
+    if np.isnan(utilde_integ_n).any():
+        print("Nan Found in utilde_integ_n!")
+
     # Get the inverse fft
-    utilde_integ_n_orig = unset_fft_conven(utilde_integ_n)
+    #utilde_integ_n_orig = unset_fft_conven(utilde_integ_n)
 
-    u_integ_n_time = ifft(utilde_integ_n_orig)
+    #u_integ_n_time = ifft(utilde_integ_n_orig)
+    u_integ_n_time, u_integ = compute_ifft(utilde_integ_n, df)
 
-    return u_integ_n_time, utilde_integ_n
+    return u_integ_n_time, u_integ
 
 
 #############################################

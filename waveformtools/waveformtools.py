@@ -490,7 +490,7 @@ def compute_chi_eff_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
                  black holes
     larger_mass_ratio: float, >1
                 The SpEC convention mass-ratio
-                :math:`\dfrac{M_1}{M_2}`
+                :math:`\\dfrac{M_1}{M_2}`
     """
 
     _, _, s1z = spin1
