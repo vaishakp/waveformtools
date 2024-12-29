@@ -302,7 +302,8 @@ class SimulationExplorer:
         if "DoMultipleRuns.input" not in ecc0_dir:
             flag = False
             message(
-                f"{path_of_dir_to_check} does not contain DoMultipleRuns.input",
+                f"{path_of_dir_to_check} does not contain"
+                "DoMultipleRuns.input",
                 message_verbosity=3,
             )
 
@@ -597,7 +598,8 @@ class SimulationExplorer:
         sim_params = {}
 
         message(
-            f"Parsing simulation parameters.input file for {path_to_params_input_file}",
+            "Parsing simulation parameters.input file"
+            f"for {path_to_params_input_file}",
             message_verbosity=2,
         )
 
@@ -698,7 +700,8 @@ class SimulationExplorer:
         if self.sim_basename != bfi_sim_basename:
 
             message(
-                f"sim base name: {self.sim_basename} \t bfi project name: {bfi_sim_basename}"
+                f"sim base name: {self.sim_basename} \t"
+                f"bfi project name: {bfi_sim_basename}"
             )
 
             raise KeyError(
@@ -806,6 +809,10 @@ class SimulationExplorer:
         self.parse_bfi_params_file()
         self.compute_chi_eff()
         self.compute_chi_prec()
+
+        self.compute_ncycles()
+        self.compute_ncycles_from_waveform()
+
         self.prepare_pandas_dataframe()
 
     def prepare_pandas_dataframe(self):
@@ -815,25 +822,34 @@ class SimulationExplorer:
         import pandas as pd
 
         all_params_df = pd.DataFrame(self.all_sim_params)
-
         all_params_df = all_params_df.transpose()
-
         all_params_df = all_params_df.sort_index()
 
         all_params_df.insert(0, "Sl. No.", range(1, 1 + len(all_params_df)))
-
-        self.discover_segments()
-        self.discover_levels()
-
-        all_params_df.insert(1, "Status", self.sim_status)
-
-        self.compute_ncycles()
-        self.compute_ncycles_from_waveform()
-
+        # self.discover_segments()
+        # self.discover_levels()
+        all_params_df.insert(1, "Status", self.get_basic_sim_status())
         all_params_df.insert(3, "Ncycles", self.ncycles)
         all_params_df.insert(4, "Ncycles (2,2)", self.ncycles_wf)
 
-        self._all_sim_params_df = all_params_df.T
+        self._all_sim_params_df = all_params_df
+
+    def get_basic_sim_status(self):
+        """Insert status of individual sim levs
+        into the dataframe"""
+
+        basic_sim_status_dict = {}
+
+        for sim_name_with_lev, lev_status in self.sim_status["Status"].items():
+            sim_name, lev_name = sim_name_with_lev.split("_")
+            lev_num = int(lev_name[3:])
+
+            if not sim_name in basic_sim_status_dict.keys():
+                basic_sim_status_dict.update({sim_name: {lev_num: lev_status}})
+            else:
+                basic_sim_status_dict[sim_name].update({lev_num: lev_status})
+
+        return basic_sim_status_dict
 
     def update_pandas_dataframe(self):
         import pandas as pd
@@ -841,6 +857,8 @@ class SimulationExplorer:
         self._all_sim_params_df = pd.DataFrame(
             self.all_sim_params
         ).T.sort_index()
+
+        self.prepare_pandas_dataframe()
 
     def strip_sim_name_from_waveform_dir(self, wdir):
         """Extract the sim name from its processed waveform
@@ -854,8 +872,9 @@ class SimulationExplorer:
             return None
 
     def discover_extrapolated_sims(self):
-        """Read in all available waveform directories in the given directory
-        and create a list of sims whose waveforms have already been prepared"""
+        """Read in all available waveform directories
+        in the given directory and create a list of sims
+        whose waveforms have already been prepared"""
 
         waveforms_dir = self.prepared_waveforms_dir
 
@@ -962,7 +981,8 @@ class SimulationExplorer:
                 except Exception as excep:
                     message(excep)
                     message(
-                        f"Waveform processing failed sim {sim_name}, lev {lev}"
+                        "Waveform processing failed sim"
+                        f"{sim_name}, lev {lev}"
                     )
 
             processed_waveforms.update({sim_name: processed_levs})
@@ -1060,7 +1080,8 @@ class SimulationExplorer:
                 last_segment_path = self.available_sim_paths[
                     sim_name
                 ].joinpath(
-                    f"Ecc{self.highest_ecc_nums[sim_name]}/Ev/Lev{lev}_Ringdown/Lev{lev}_{last_segment}"
+                    f"Ecc{self.highest_ecc_nums[sim_name]}"
+                    f"/Ev/Lev{lev}_Ringdown/Lev{lev}_{last_segment}"
                 )
 
             else:
@@ -1074,7 +1095,8 @@ class SimulationExplorer:
                 last_segment_path = self.available_sim_paths[
                     sim_name
                 ].joinpath(
-                    f"Ecc{self.highest_ecc_nums[sim_name]}/Ev/Lev{lev}_{last_segment}"
+                    f"Ecc{self.highest_ecc_nums[sim_name]}"
+                    f"/Ev/Lev{lev}_{last_segment}"
                 )
 
             else:
@@ -1288,7 +1310,8 @@ class SimulationExplorer:
                         SEGMENT_RUNNING_STATUS == "Not Running"
                     ), "Segment was found to be completed. It cant be running!"
 
-                    # assert SEGMENT_ERROR == False, "Segment was found to have errors but also complete!"
+                    # assert SEGMENT_ERROR == False, "Segment was found
+                    # to have errors but also complete!"
                     if SEGMENT_ERROR == True:
                         message(
                             "Segment was found to have errors but also complete!"
@@ -1479,8 +1502,8 @@ class SimulationExplorer:
         """Fetch the waveform output path"""
 
         wpath = (
-            self.prepared_waveforms_dir
-            / f"{sim_name}_waveforms_Lev{lev}/extrapolated/rhOverM_Extrapolated_N{N}_CoM.h5"
+            self.prepared_waveforms_dir / f"{sim_name}_waveforms_Lev{lev}/"
+            f"extrapolated/rhOverM_Extrapolated_N{N}_CoM.h5"
         )
 
         return wpath
@@ -1491,12 +1514,14 @@ class SimulationExplorer:
 
         path_to_joined_h5 = (
             self.prepared_waveforms_dir
-            / f"{sim_name}_waveforms_Lev{lev}/joined/{sim_name}Lev{lev}JoinedHorizons.h5"
+            / f"{sim_name}_waveforms_Lev{lev}/joined/"
+            f"{sim_name}Lev{lev}JoinedHorizons.h5"
         )
 
         if os.path.exists(path_to_joined_h5):
             message(
-                f"Joined Horizons.h5 file already found in {path_to_joined_h5}",
+                f"Joined Horizons.h5 file "
+                "already found in {path_to_joined_h5}",
                 message_verbosity=2,
             )
 
@@ -1529,7 +1554,8 @@ class SimulationExplorer:
 
             one_sim_ecc = self.get_ecc_dirs(sim_path)[0]
 
-            sub_path = f"{one_sim_ecc}/Ev/Lev{one_sim_lev}_AA/Run/GW2/rh_FiniteRadii_CodeUnits.h5"
+            sub_path = f"{one_sim_ecc}/Ev/Lev{one_sim_lev}_AA/Run/GW2/"
+            "rh_FiniteRadii_CodeUnits.h5"
 
             wf_file_path = sim_path.joinpath(sub_path)
 
@@ -1553,7 +1579,8 @@ class SimulationExplorer:
         self._all_req_ref_times = all_req_ref_times
 
     def get_segment_at_req_ref_time(self):
-        """Get the segments corresponding to the requested reference time"""
+        """Get the segments corresponding
+        to the requested reference time"""
 
         all_req_ref_time_segments = {}
 
@@ -1579,7 +1606,8 @@ class SimulationExplorer:
                     f"Searching in Lev{sim_lev}_{seg}", message_verbosity=2
                 )
 
-                path_to_traj = f"{highest_sim_ecc}/Ev/Lev{sim_lev}_{seg}/Run/ApparentHorizons/Trajectory_AhA.dat"
+                path_to_traj = f"{highest_sim_ecc}/Ev/Lev{sim_lev}_{seg}"
+                "/Run/ApparentHorizons/Trajectory_AhA.dat"
 
                 try:
                     traj_dat = np.genfromtxt(
@@ -1632,7 +1660,8 @@ class SimulationExplorer:
             req_ref_seg = self.all_req_ref_time_segments[sim_name]
             req_tref = self.all_req_ref_times[sim_name]
 
-            sub_path_to_h = f"{highest_sim_ecc}/Ev/{req_ref_seg}/Run/ApparentHorizons/Horizons.h5"
+            sub_path_to_h = f"{highest_sim_ecc}/Ev/{req_ref_seg}/Run/"
+            "ApparentHorizons/Horizons.h5"
 
             full_path_to_h = self.available_sim_paths[sim_name].joinpath(
                 sub_path_to_h
@@ -1711,10 +1740,12 @@ class SimulationExplorer:
                 # print("Diff2", irr_mass2_arr[:, 1] - chr_mass2_arr[:, 1])
 
                 subpath_to_traj1 = Path(
-                    f"{highest_sim_ecc}/Ev/{req_ref_seg}/Run/ApparentHorizons/Trajectory_AhA.dat"
+                    f"{highest_sim_ecc}/Ev/{req_ref_seg}/Run/ApparentHorizons/"
+                    "Trajectory_AhA.dat"
                 )
                 subpath_to_traj2 = Path(
-                    f"{highest_sim_ecc}/Ev/{req_ref_seg}/Run/ApparentHorizons/Trajectory_AhB.dat"
+                    f"{highest_sim_ecc}/Ev/{req_ref_seg}/Run/ApparentHorizons/"
+                    "Trajectory_AhB.dat"
                 )
 
                 full_path_to_traj1 = self.available_sim_paths[
@@ -1766,10 +1797,12 @@ class SimulationExplorer:
                 )
                 message(f" J magnitudes : |J1| {j1_mag} |J2| {j2_mag}")
                 message(
-                    f" Chi : Chi1 ({chi_1x}, {chi_1y}, {chi_1z}) Chi2 ({chi_2x}, {chi_2y}, {chi_2z})"
+                    f" Chi : Chi1 ({chi_1x}, {chi_1y}, {chi_1z})"
+                    f"Chi2 ({chi_2x}, {chi_2y}, {chi_2z})"
                 )
                 message(
-                    f" J : J1 ({j_1x}, {j_1y}, {j_1z}) Chi2 ({j_2x}, {j_2y}, {j_2z})"
+                    f" J : J1 ({j_1x}, {j_1y}, {j_1z})"
+                    f"Chi2 ({j_2x}, {j_2y}, {j_2z})"
                 )
                 message(f" Omega_i : {omega_init}")
                 message("------------------------")
@@ -1829,6 +1862,7 @@ class SimulationExplorer:
         self.construct_simulation_status()
 
         self.fetch_sim_params()
+
         self.discover_ref_time()
         self.get_segment_at_req_ref_time()
         self.parse_sim_params_at_req_ref_times()
@@ -1861,7 +1895,8 @@ def re_fetch_string(line):
 
 def re_fetch_vector(line):
     """Fetch a vector value from a .input file"""
-    # result = re.search('\(-?[0-9]*[.]?[0-9]*,-?[0-9]*[.]?[0-9]*,-?[0-9]*[.]?[0-9]*\)' ,line)
+    # result = re.search('\(-?[0-9]*[.]?[0-9]*,
+    # -?[0-9]*[.]?[0-9]*,-?[0-9]*[.]?[0-9]*\)' ,line)
     result1 = re.search("\(-?[0-9]*[.]?[0-9]*,", line)
     result2 = re.search(",-?[0-9]*[.]?[0-9]*,", line)
     result3 = re.search(",-?[0-9]*[.]?[0-9]*\)", line)
