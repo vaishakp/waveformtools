@@ -739,7 +739,7 @@ def iscontinuous(time_axis, delta_t=None, toldt=1e-3):
     if not delta_t:
         from scipy.stats import mode
 
-        delta_t = mode(dt_axis)[0][0]
+        delta_t = mode(dt_axis)[0]
 
     discontinuity_type = 0
     discontinuity_dict = {}
@@ -985,7 +985,7 @@ def cleandata(data, toldt=1e-3, bridge=False, k=5):
 
     time = np.sort(time)
     # delta_t = statistics.mode(np.diff(time))
-    delta_t = scipy.stat.mode(np.diff(time))
+    delta_t = scipy.stats.mode(np.diff(time))
 
     message("shape of data:", (data.shape), message_verbosity=3)
 
@@ -2076,10 +2076,14 @@ def coalignwfs(tsdata1, tsdata2, delta_t=None):
                 )
 
     tsdata1, tsdata2, _ = lengtheq(tsdata1, tsdata2, delta_t, is_ts=True)
+    from pycbc.types.timeseries import TimeSeries
+    tsdata1 = TimeSeries(tsdata1, delta_t=delta_t)
+    tsdata2 = TimeSeries(tsdata2, delta_t=delta_t)
 
+    from pycbc.filter. matchedfilter import matched_filter
     # Calculate complex SNR using pycbc function. Note: This complex SNR is
     # actually the complex SNR * norm of the timeseries.
-    csnr = pycbc.filter.matchedfilter.matched_filter(tsdata1, tsdata2)
+    csnr = matched_filter(tsdata1, tsdata2)
     # Find the absolute value of the complex SNR timeseries
     acsnr = np.array(np.abs(csnr))
 

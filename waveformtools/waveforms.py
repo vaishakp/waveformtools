@@ -25,6 +25,7 @@ from waveformtools.dataIO import (
 from spectral.spherical.grids import UniformGrid
 from spectral.spherical.swsh import Yslm_vec
 from waveformtools.waveformtools import interp_resam_wfs, message
+from pathlib import Path
 
 """ Units """
 
@@ -1313,6 +1314,8 @@ class modes_array:
         else:
             self.data_dir = data_dir
 
+        data_dir = Path(data_dir)
+
         if not file_name:
             file_name = self.file_name
         else:
@@ -1335,25 +1338,27 @@ class modes_array:
 
         if ftype == "generic":
             dataIO.load_gen_data_from_disk(
-                self,
-                label,
-                data_dir,
-                file_name,
-                r_ext,
-                ell_max,
-                pre_key,
-                modes_list,
-                crop,
-                centre,
-                key_ex,
-                r_ext_factor,
+                wfa=self,
+                label=label,
+                data_dir=data_dir,
+                file_name=file_name,
+                r_ext=r_ext,
+                ell_max=ell_max,
+                pre_key=pre_key,
+                modes_list=modes_list,
+                crop=crop,
+                centre=centre,
+                key_ex=key_ex,
+                r_ext_factor=r_ext_factor,
             )
 
         elif (ftype) == "RIT" or (ftype == "GT"):
             if var_type == "Psi4":
+                data_file_path = data_dir/file_name
+
                 dataIO.load_RIT_Psi4_data_from_disk(
                     wfa=self,
-                    data_dir=data_dir,
+                    data_file_path=data_file_path,
                     resam_type=resam_type,
                     interp_kind=interp_kind,
                     ell_max=ell_max,
@@ -1361,6 +1366,7 @@ class modes_array:
                     crop=crop,
                     centre=centre,
                 )
+
             elif var_type == "Strain":
                 # message(file_name)
                 dataIO.load_RIT_Strain_data_from_disk(
@@ -1535,7 +1541,9 @@ class modes_array:
         # Compute the emm index given ell.
         emm_index = emm_value + ell_value
 
-        if self.extra_mode_axes > 1:
+        vec_idx = (ell_value) ** 2 + emm_value + ell_value
+
+        if self.extra_mode_axes:
             if r_index is None:
                 try:
                     # Set the mode data.
@@ -1548,9 +1556,10 @@ class modes_array:
             else:
                 self._modes_data[ell_value, emm_index, r_index] = data
         else:
-
+            
             # Set the mode data.
-            self._modes_data[ell_value, emm_index] = data
+            self._modes_data[vec_idx] = data
+            #self._modes_data[ell_value, emm_index] = data
 
     def set_mode_data_at_t_step(
         self, t_step, time_stamp, ell, emm, data, r_index=None

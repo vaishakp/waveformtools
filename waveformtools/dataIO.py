@@ -153,7 +153,6 @@ def get_ell_max_from_file(data_dir, var_type="Psi4", file_name="*.h5"):
 
 def _get_modes_list_from_keys(keys_list, r_ext):
     """Get the modes list from the keys list.
-
     of an hdf file.
 
     Parameters
@@ -173,6 +172,8 @@ def _get_modes_list_from_keys(keys_list, r_ext):
     # modes list structure.
     keys_list_orig = sorted(keys_list)
 
+    message('List of keys received', keys_list, message_verbosity=3)
+
     if r_ext != -1:
         keys_list = [item for item in keys_list_orig if f"r{r_ext}" in item]
 
@@ -182,7 +183,7 @@ def _get_modes_list_from_keys(keys_list, r_ext):
             )
             keys_list = [item for item in keys_list_orig if f"{r_ext}" in item]
 
-    # message('List of keys received', keys_list)
+    message('List of filtered keys', keys_list, message_verbosity=3)
     # The list of modes.
     modes_list = []
 
@@ -197,6 +198,7 @@ def _get_modes_list_from_keys(keys_list, r_ext):
         # message(key)
         # Get the ell value
         ell_value, emm_value = _get_ell_emm_from_key(key)
+        message("ell value: ", ell_value, "emm value:", emm_value, message_verbosity=3)
 
         if ell_value != ell_old:
             # If the ell value has changed,
@@ -212,6 +214,7 @@ def _get_modes_list_from_keys(keys_list, r_ext):
 
         # Update it with the new emm mode.
         emm_modes_for_ell.append(emm_value)
+
 
     modes_list.append([ell_value, emm_modes_for_ell])
 
@@ -1122,15 +1125,14 @@ def load_gen_data_from_disk(
             message("No metadata found!", ex)
             metadata = {}
             pass
-        # message(wfa.file_name)
-        # data = np.array(wfile['l0_m0_r500.00'])
-        # message(data)
+
         # Get the list of keys.
         modes_keys_list = list(wfile.keys())
+
         # message('Keys ', modes_keys_list)
         # message(wfa.get_metadata())
-        # Check and filter for particular key string pattern
 
+        # Check and filter for particular key string pattern
         if key_ex is not None:
             # Filter the keys according to key_ex if specified.
             message("Filtering as per", key_ex)
@@ -1144,12 +1146,11 @@ def load_gen_data_from_disk(
             message("key_ex is not specified. Proceeding without filtering..")
 
         modes_keys_list = sorted(modes_keys_list)
-
         # message('Modes keys', modes_keys_list)
+
         wfa.mode_keys_list = modes_keys_list
 
         # Construct the list of modes if it doesnt exist.
-
         ##########################
         # Construct modes list
         ##########################
@@ -1180,7 +1181,7 @@ def load_gen_data_from_disk(
                 # self.ell_max = ell_max
                 # If ell max is given, construct the
                 # list of modes directly.
-                modes_list = construct_mode_list(ell_max)
+                modes_list = construct_mode_list(ell_max, spin_weight=wfa.spin_weight)
 
                 # set the modes list attr.
                 wfa.modes_list = modes_list
@@ -1195,6 +1196,7 @@ def load_gen_data_from_disk(
         # Set the ell_max attribute if not already.
         if not wfa.ell_max:
             wfa.ell_max = ell_max
+
 
         #################################################
         # Load modes
@@ -1241,7 +1243,7 @@ def load_gen_data_from_disk(
 
                 # create flag
                 if not cflag:
-                    if wfa.modes_data.all() == np.array(None):
+                    if (wfa.modes_data == np.array(None)).all():
                         if crop:
                             # Crop the beginning portion.
                             # delta_t = time_axis[1] - time_axis[0]
@@ -1271,10 +1273,12 @@ def load_gen_data_from_disk(
 
                 # wfa.set_mode_data(ell_value, emm_value, 
                 # r_ext_factor*(data_re[shift:] + 1j * data_im[shift:]))
+                print(ell_value, emm_value, data_re + 1j*data_im)
+                
                 wfa.set_mode_data(
-                    ell_value,
-                    emm_value,
-                    r_ext_factor * (data_re + 1j * data_im),
+                    ell_value=ell_value,
+                    emm_value=emm_value,
+                    data=r_ext_factor * (data_re + 1j * data_im),
                 )
 
         ##############################
