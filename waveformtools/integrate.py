@@ -13,13 +13,15 @@ from waveformtools.waveformtools import message
 ##################################################
 
 
-def fixed_frequency_integrator(udata_time, 
-                               delta_t, 
-                               utilde_conven=None,
-                               freq_axis=None, 
-                               omega0=0, 
-                               order=1, 
-                               zero_mode=0):
+def fixed_frequency_integrator(
+    udata_time,
+    delta_t,
+    utilde_conven=None,
+    freq_axis=None,
+    omega0=0,
+    order=1,
+    zero_mode=0,
+):
     """Fixed frequency integrator as presented in Reisswig et. al.
 
     Parameters
@@ -52,7 +54,7 @@ def fixed_frequency_integrator(udata_time,
     Returns
     -------
     u_integ_n_time:	1d array
-                    The input waveform in time-space, 
+                    The input waveform in time-space,
                     integrated in frequency space using FFI.
 
     u_integ_integ_n: 1d array
@@ -84,17 +86,19 @@ def fixed_frequency_integrator(udata_time,
 
     else:
         Nlen = len(utilde_conven)
-        assert (np.array(freq_axis) != np.array(None)).all(), "Please supply the frequency axis along with utilde_conven"
+        assert (
+            np.array(freq_axis) != np.array(None)
+        ).all(), "Please supply the frequency axis along with utilde_conven"
 
     df = np.diff(freq_axis)[0]
     message("df ", df, message_verbosity=3)
-    
+
     # Find the location of the zero index.
     if Nlen % 2 == 0:
         zero_index = int(Nlen / 2)
     else:
         zero_index = int((Nlen - 1) / 2)
-    
+
     omega_axis = construct_ffi_omega_axis(freq_axis, omega0, zero_index)
 
     # Set the zero frequency element separately.
@@ -107,24 +111,29 @@ def fixed_frequency_integrator(udata_time,
         message("Nan Found in utilde_integ_n!")
 
     # Get the inverse fft
-    #utilde_integ_n_orig = unset_fft_conven(utilde_integ_n)
+    # utilde_integ_n_orig = unset_fft_conven(utilde_integ_n)
 
-    #u_integ_n_time = ifft(utilde_integ_n_orig)
+    # u_integ_n_time = ifft(utilde_integ_n_orig)
     u_integ_n_time, u_integ = compute_ifft(utilde_integ_n, df)
 
     return u_integ_n_time, u_integ
 
-def construct_ffi_omega_axis(freq_axis, omega0, zero_index):
-    ''' Construct an angular frequency axis for
-    use with FFI '''
 
-    assert omega0>0, "Please supply a non-zero positive value of cutoff angular frequency"
+def construct_ffi_omega_axis(freq_axis, omega0, zero_index):
+    """Construct an angular frequency axis for
+    use with FFI"""
+
+    assert (
+        omega0 > 0
+    ), "Please supply a non-zero positive value of cutoff angular frequency"
 
     # Construct the angular frequency axis.
     omega_axis = 2 * np.pi * freq_axis
-    #omega_axis[zero_index] = 1
+    # omega_axis[zero_index] = 1
 
-    message("The chosen cutoff angular frequency is", omega0, message_verbosity=2)
+    message(
+        "The chosen cutoff angular frequency is", omega0, message_verbosity=2
+    )
     message("Omega axis", omega_axis, message_verbosity=2)
 
     # Change the angular frequency if its magnitude is below a given omega0.
@@ -133,19 +142,22 @@ def construct_ffi_omega_axis(freq_axis, omega0, zero_index):
         # Skip the zero index
         if index != zero_index:
             # print(freq_integ[index])
-            #try:
+            # try:
             # Get the sign of the angular frequency.
             sign = int(element / abs(element))
             if abs(element) < omega0:
                 omega_axis[index] = sign * omega0
 
         else:
-            if len(freq_axis)%2!=0:
+            if len(freq_axis) % 2 != 0:
                 sign = 1
-                assert omega_axis[index]==0, f"The zero mode element must be zero frequency. Instead it is {omega_axis[index]}"
+                assert (
+                    omega_axis[index] == 0
+                ), f"The zero mode element must be zero frequency. Instead it is {omega_axis[index]}"
                 omega_axis[index] = 1
-    
+
     return omega_axis
+
 
 #############################################
 # 2D integrals
@@ -165,9 +177,9 @@ def TwoDIntegral(func, grid_info, int_method=None):
     ht, hp: float
             The grid spacings.
     int_method: string
-                The method to use for the integration. 
-                Options are DH (Driscoll Healy), 
-                SP (Simpson's), 
+                The method to use for the integration.
+                Options are DH (Driscoll Healy),
+                SP (Simpson's),
                 MP (Midpoint).
 
     Returns
@@ -210,7 +222,7 @@ def MidPoint2DInteg(func, info):
     func: ndarray
           The data to be integrated
     info: surface_grid_info
-          An instance of the surface grid info class 
+          An instance of the surface grid info class
           containing information about the grid.
     Returns
     -------
@@ -281,7 +293,7 @@ def DriscollHealy2DInteg(func, info):
     # theta_1d = np.pi* np.arange(1, NTheta)/NTheta
     # ell_weight_axis = np.arange(int(NTheta/2))
     # theta_2d, ell_2d = np.meshgrid(theta_1d, ell_weight_axis)
-    # weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) / 
+    # weights_grid = (4/ np.pi) * np.sin((2 * ell_2d + 1) * theta_2d) /
     # (2 * ell_2d + 1)
     # weights_axis = np.sum(weights_grid, axis=1)
     # latitude_sum_axis = np.sum(func, axis=1)
@@ -301,7 +313,7 @@ def DriscollHealy2DInteg(func, info):
             # for (int l = 0; l < NTheta/2; ++ l)
             weight += np.sin((2 * ell + 1) * this_theta) / (2 * ell + 1)
 
-        # weight_axis = np.sin((2 * ell_weight_axis + 1) 
+        # weight_axis = np.sin((2 * ell_weight_axis + 1)
         # * this_theta) / (2 * ell_weight_axis + 1)
 
         weight *= 4.0 / np.pi
@@ -519,7 +531,7 @@ def GaussLegendre2DInteg(func, info):
     func: ndarray
           The data to be integrated
     info: surface_grid_info
-           An instance of the surface grid info class 
+           An instance of the surface grid info class
            containing information about the grid.
     Returns
     -------

@@ -26,6 +26,11 @@ from spectral.spherical.grids import UniformGrid
 from spectral.spherical.swsh import Yslm_vec
 from waveformtools.waveformtools import interp_resam_wfs, message
 from pathlib import Path
+from waveformtools.integrate import fixed_frequency_integrator
+from waveformtools.waveformtools import (
+    get_starting_angular_frequency as sang_f,
+)
+
 
 """ Units """
 
@@ -1051,7 +1056,7 @@ class modes_array:
             if not (np.array(extra_indices) == np.array(None)).all():
                 message(f"Extra indices supplied {extra_indices}...")
                 return ang_mode_data[*extra_indices]
-        
+
         return ang_mode_data
 
     @property
@@ -1354,7 +1359,7 @@ class modes_array:
 
         elif (ftype) == "RIT" or (ftype == "GT"):
             if var_type == "Psi4":
-                data_file_path = data_dir/file_name
+                data_file_path = data_dir / file_name
 
                 dataIO.load_RIT_Psi4_data_from_disk(
                     wfa=self,
@@ -1507,7 +1512,9 @@ class modes_array:
 
         raise NotImplementedError
 
-    def set_mode_data(self, ell_value, emm_value, data, r_index=None):
+    def set_mode_data(
+        self, ell_value, emm_value, data, extra_mode_indices=None
+    ):
         """Set the mode array data
         for the respective :math:`(\\ell, m)` mode. If the modes array
         has a mode axis of length more then one e.g. if one is dealing
@@ -1531,6 +1538,10 @@ class modes_array:
         data: 1d array
                The array consisting of
                mode data for the requested mode.
+        extra_mode_indices: tuple
+                            A tuple containing the additional
+                            mode indices locating the data to
+                            be set.
 
         Returns
         -------
@@ -1544,25 +1555,15 @@ class modes_array:
         vec_idx = (ell_value) ** 2 + emm_value + ell_value
 
         if self.extra_mode_axes:
-            if r_index is None:
-                try:
-                    # Set the mode data.
-                    self._modes_data[ell_value, emm_index, :, :] = data
-
-                except Exception as ex:
-                    message(ex)
-                    message("Please provide r_index for the third mode axis")
-
-            else:
-                self._modes_data[ell_value, emm_index, r_index] = data
+            if extra_mode_indices is not None:
+                self._modes_data[vec_idx, *extra_mode_indices] = data
         else:
-            
             # Set the mode data.
             self._modes_data[vec_idx] = data
-            #self._modes_data[ell_value, emm_index] = data
+            # self._modes_data[ell_value, emm_index] = data
 
     def set_mode_data_at_t_step(
-        self, t_step, time_stamp, ell, emm, data, r_index=None
+        self, t_step, time_stamp, ell, emm, data, extra_mode_indices=None
     ):
         """Set the mode array data
         for the respective :math:`(\\ell, m)` mode.
@@ -1581,51 +1582,36 @@ class modes_array:
         data: 1d array
                The array consisting of
                mode data for the requested mode.
-
+        extra_mode_indices: tuple
+                            A tuple containing the additional
+                            mode indices locating the data to
+                            be set.
         Returns
         -------
         self.mode_data: modes_data
                          The updated modes data.
         """
         # Compute the emm index given ell.
-        emm_index = emm + ell
+        # emm_index = emm + ell
+        vec_idx = (ell_value) ** 2 + emm_value + ell_value
 
         if self.extra_mode_axes:
-            if r_index is None:
-                try:
-                    # Set the mode data.
-                    message(
-                        "Setting mode data for all r indices",
-                        message_verbosity=4,
-                    )
-                    self._modes_data[ell, emm_index, :, t_step] = np.array(
-                        data
-                    )
-                    # print("Intercept mode data",
-                    # self._modes_data[ell, emm_index, :, t_step])
-
-                except Exception as ex:
-                    message(ex)
-                    message("Please provide r_index for the third mode axis")
-
-            else:
+            if extra_mode_indices is not None:
                 message(
-                    "Setting mode data at a single r_index",
+                    f"Setting mode data at a mode indices {extra_mode_indices}",
                     message_verbosity=4,
                 )
-                self._modes_data[ell, emm_index, r_index, t_step] = data
+
+                self._modes_data[vec_idx, *extra_mode_indices, ..., t_step] = (
+                    data
+                )
 
         else:
             message(
                 "Setting mode data at just ell, emm (no r axis found)",
                 message_verbosity=4,
             )
-            self._modes_data[ell, emm_index, t_step] = data
-
-        # print("Time axis", self.time_axis)
-        # print("Time axis size", len(self.time_axis))
-
-        # self._time_axis[t_step] = time_stamp
+            self._modes_data[vec_idx, ..., t_step] = data
 
     def to_spherical_array(self, grid_info, meth_info, spin_weight=None):
         """Obtain the spherical array from the modes array.
@@ -1733,7 +1719,7 @@ class modes_array:
         self._time_axis = self.time_axis[start:]
 
         # Trim the data
-        self._modes_data = self.modes_data[:, :, start:]
+        self._modes_data = self.modes_data[..., start:]
 
         # Recenter the time axis
         max_ind = np.argmax(np.absolute(self.mode(2, 2)))
@@ -2162,7 +2148,7 @@ class modes_array:
         omega0: float, optional
                  The lower cutoff angular frequency for FFI.
                  By default, it computes this as one tenth of
-                 the starting frequency of the mode data.
+                 the starting frequency of the respective mode data.
 
         Returns
         -------
@@ -2190,13 +2176,8 @@ class modes_array:
         )
 
         # Integrate,
-        from waveformtools.integrate import fixed_frequency_integrator
-        from waveformtools.waveformtools import (
-            get_starting_angular_frequency as sang_f,
-        )
-
         omega_st = omega0
-        for item in self.modes_list[:]:
+        for item in self.modes_list:
             ell, emm_list = item
             for emm in emm_list:
                 mode_data = self.mode(ell, emm)
@@ -2210,7 +2191,9 @@ class modes_array:
                     omega0=omega_st,
                     order=1,
                 )
-                news_waveform.set_mode_data(ell, emm, data=news_mode_data)
+                news_waveform.set_mode_data(
+                    ell_value=ell, emm_value=emm, data=news_mode_data
+                )
 
         return news_waveform
 

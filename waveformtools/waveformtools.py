@@ -831,8 +831,7 @@ def remove_repetitive_rows(data, delta_t=1, toldt=1e-3):
                   rows removed.
 
     """
-    message("Checking data for repetative rows...\n",
-            message_verbosity=2)
+    message("Checking data for repetative rows...\n", message_verbosity=2)
     data = sort_data(data)
 
     # message("Data shape:", (data.shape), message_verbosity=3)
@@ -2077,10 +2076,12 @@ def coalignwfs(tsdata1, tsdata2, delta_t=None):
 
     tsdata1, tsdata2, _ = lengtheq(tsdata1, tsdata2, delta_t, is_ts=True)
     from pycbc.types.timeseries import TimeSeries
+
     tsdata1 = TimeSeries(tsdata1, delta_t=delta_t)
     tsdata2 = TimeSeries(tsdata2, delta_t=delta_t)
 
-    from pycbc.filter. matchedfilter import matched_filter
+    from pycbc.filter.matchedfilter import matched_filter
+
     # Calculate complex SNR using pycbc function. Note: This complex SNR is
     # actually the complex SNR * norm of the timeseries.
     csnr = matched_filter(tsdata1, tsdata2)

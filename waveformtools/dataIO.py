@@ -172,7 +172,7 @@ def _get_modes_list_from_keys(keys_list, r_ext):
     # modes list structure.
     keys_list_orig = sorted(keys_list)
 
-    message('List of keys received', keys_list, message_verbosity=3)
+    message("List of keys received", keys_list, message_verbosity=3)
 
     if r_ext != -1:
         keys_list = [item for item in keys_list_orig if f"r{r_ext}" in item]
@@ -183,7 +183,7 @@ def _get_modes_list_from_keys(keys_list, r_ext):
             )
             keys_list = [item for item in keys_list_orig if f"{r_ext}" in item]
 
-    message('List of filtered keys', keys_list, message_verbosity=3)
+    message("List of filtered keys", keys_list, message_verbosity=3)
     # The list of modes.
     modes_list = []
 
@@ -198,7 +198,13 @@ def _get_modes_list_from_keys(keys_list, r_ext):
         # message(key)
         # Get the ell value
         ell_value, emm_value = _get_ell_emm_from_key(key)
-        message("ell value: ", ell_value, "emm value:", emm_value, message_verbosity=3)
+        message(
+            "ell value: ",
+            ell_value,
+            "emm value:",
+            emm_value,
+            message_verbosity=3,
+        )
 
         if ell_value != ell_old:
             # If the ell value has changed,
@@ -214,7 +220,6 @@ def _get_modes_list_from_keys(keys_list, r_ext):
 
         # Update it with the new emm mode.
         emm_modes_for_ell.append(emm_value)
-
 
     modes_list.append([ell_value, emm_modes_for_ell])
 
@@ -449,10 +454,10 @@ def load_RIT_Psi4_data_from_disk(
     Parameters
     ----------
     wfa: ModesArray
-         An instance of the waveforms ModesArray class. 
+         An instance of the waveforms ModesArray class.
          Updates this instance if provided, else creates a new instance.
     data_file_path: string/pathlib.Path
-                    A string containing the directory path where 
+                    A string containing the directory path where
                     the mode files can be found.
     label: string, optional
            The label of the modes_array object.
@@ -476,15 +481,15 @@ def load_RIT_Psi4_data_from_disk(
                      A modes_array instance containing the loaded modes if
                      `output_modes_array` is True
     time_axis, modes_data: ndarray
-                           Time axis and an array whose 
+                           Time axis and an array whose
                            first axis is time and second is
-                           flatened modes index consistent with 
+                           flatened modes index consistent with
                            ModesArray
 
     Notes
     -----
-    It seems like the time axis of individual modes are identical to 
-    each other. Hence, one need not worry about choosing the time domain. 
+    It seems like the time axis of individual modes are identical to
+    each other. Hence, one need not worry about choosing the time domain.
     This may change in the future.
     """
     tar_file_name_prefix = os.path.basename(data_file_path)[:-7]
@@ -695,15 +700,15 @@ def load_RIT_Strain_data_from_disk(
     Parameters
     ----------
     wfa: waveforms
-         An instance of the waveforms class. Creates a new one if 
+         An instance of the waveforms class. Creates a new one if
          not provided.
     data_dir: string
-              A string containing the directory path 
+              A string containing the directory path
               where the mode files can be found.
     label: string, optional
            The label of the modes_array object.
     ell_max: int, optional
-             The maximum mode number to load. 
+             The maximum mode number to load.
              If not specified, then all available modes are loaded.
     save_as_ma: bool, optional
                 Save to disk again as a modes_array h5 file?
@@ -711,7 +716,7 @@ def load_RIT_Strain_data_from_disk(
                  The spin weight of the object. Used for filtering modes.
                  Defaults to -2.
     resam_type: string, float, optional
-                The type of resampling to do. Options are 
+                The type of resampling to do. Options are
                 the finest and coarsest, and user input float.
     interp_kind: string, optional
                  The interpolation type to use. Default is cubic.
@@ -723,7 +728,7 @@ def load_RIT_Strain_data_from_disk(
 
     Notes
     -----
-    It seems like the time axis of individual modes are 
+    It seems like the time axis of individual modes are
     identical to each other. Hence, one need not worry about
     choosing the time domain. This may change in future.
     """
@@ -1028,7 +1033,7 @@ def load_gen_data_from_disk(
     Parameters
     ----------
     data_dir: string
-              A string containing the directory path where 
+              A string containing the directory path where
               the mode files can be found.
     label: string, optional
            The label of the modes_array object.
@@ -1041,7 +1046,7 @@ def load_gen_data_from_disk(
                  The spin weight of the object. Used for filtering modes.
                  Defaults to -2.
     resam_type: string, float, optional
-                The type of resampling to do. 
+                The type of resampling to do.
                 Options are finest and coarsest, and user input float.
     interp_kind: string, optional
                  The interpolation type to use. Default is cubic.
@@ -1053,7 +1058,7 @@ def load_gen_data_from_disk(
 
     Notes
     -----
-    It seems like the time axis of individual modes are identical to 
+    It seems like the time axis of individual modes are identical to
     each other. Hence, one need not worry about
     choosing the time domain. This may change in future.
     """
@@ -1093,7 +1098,7 @@ def load_gen_data_from_disk(
     full_path = f"{data_dir}/{file_name}"
     message(f"Loading data from {full_path}")
     # Enforce only l>2 modes.
-    # wf_modes_list = [item for item in wf_modes_list if 
+    # wf_modes_list = [item for item in wf_modes_list if
     # item[0]>=abs(spin_weight)]
 
     # Open the modes file.
@@ -1181,7 +1186,9 @@ def load_gen_data_from_disk(
                 # self.ell_max = ell_max
                 # If ell max is given, construct the
                 # list of modes directly.
-                modes_list = construct_mode_list(ell_max, spin_weight=wfa.spin_weight)
+                modes_list = construct_mode_list(
+                    ell_max, spin_weight=wfa.spin_weight
+                )
 
                 # set the modes list attr.
                 wfa.modes_list = modes_list
@@ -1196,7 +1203,6 @@ def load_gen_data_from_disk(
         # Set the ell_max attribute if not already.
         if not wfa.ell_max:
             wfa.ell_max = ell_max
-
 
         #################################################
         # Load modes
@@ -1260,9 +1266,9 @@ def load_gen_data_from_disk(
                         # del self.modes_data
                         # Create an array for the waveform mode object
                         wfa.create_modes_array(wfa.ell_max, data_len)
-                        # self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], 
+                        # self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len],
                         # dtype=np.complex128)
-                        # self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len], 
+                        # self.modes_data = np.zeros([ell_max+1, 2*(ell_max+1) +1, data_len],
                         # dtype=np.complex128)
 
                         cflag = 1
@@ -1271,10 +1277,10 @@ def load_gen_data_from_disk(
                         # wfa.time_axis = time_axis[shift:]
                         wfa._time_axis = time_axis
 
-                # wfa.set_mode_data(ell_value, emm_value, 
+                # wfa.set_mode_data(ell_value, emm_value,
                 # r_ext_factor*(data_re[shift:] + 1j * data_im[shift:]))
-                print(ell_value, emm_value, data_re + 1j*data_im)
-                
+                print(ell_value, emm_value, data_re + 1j * data_im)
+
                 wfa.set_mode_data(
                     ell_value=ell_value,
                     emm_value=emm_value,
@@ -1930,11 +1936,11 @@ def load_SpECTRE_data_from_disk(
     Parameters
     ----------
     wfa: modes_array, optional
-         The modes array to which to store 
+         The modes array to which to store
          the loaded waveform to. A new modes array will be returned
          if not provided.
     data_dir: string
-              A string containing the directory path 
+              A string containing the directory path
               where the mode files can be found.
     file_name: string
                The name of the file containing the waveform data.
@@ -1946,7 +1952,7 @@ def load_SpECTRE_data_from_disk(
     save_as_ma: bool, optional
                 Save to disk again as a modes_array h5 file?
     resam_type: string, float, optional
-                The type of resampling to do. 
+                The type of resampling to do.
                 Options are finest and coarsest, and user input float.
     interp_kind: string, optional
                  The interpolation type to use. Default is cubic.

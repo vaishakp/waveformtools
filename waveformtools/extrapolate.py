@@ -22,11 +22,11 @@ def r_to_ra_conversion(coord_radius, mass=1, spin=0):
                   The coordinate radius in the Einstein toolkit
 
     mass: float, optional
-          The sum of the quasi-local horizon (Christodolou) masses 
+          The sum of the quasi-local horizon (Christodolou) masses
           of the black holes. Defaults to 1.
 
     spin: float, optional
-          The magnitude of the spin of the system, 
+          The magnitude of the spin of the system,
           as approximated by a single Kerr black hole
           far away from the system. Defaults to 0.
 
@@ -37,7 +37,7 @@ def r_to_ra_conversion(coord_radius, mass=1, spin=0):
 
     Notes
     -----
-    Assumes that the system interoir to the sphere 
+    Assumes that the system interoir to the sphere
     at co-ordinate radius `r_coord` is well approximated by a
     Kerr black hole.
 
@@ -103,12 +103,12 @@ def waveextract_to_inf_perturbative_twop5_order(
     Returns
     -------
     rPsi4_inflm: 1d array
-                 The waveform extracted to 
+                 The waveform extracted to
                  null infninity :math:`\\mathcal{I}^+`
 
     References
     ----------
-    This implements the definition in 
+    This implements the definition in
     Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].
     """
 
@@ -118,7 +118,7 @@ def waveextract_to_inf_perturbative_twop5_order(
     # Timeaxis
 
     timeaxis = np.arange(0, len(rPsi4_rlm) * delta_t, delta_t)
-    # Assigning the terms. Each set of subterms in 
+    # Assigning the terms. Each set of subterms in
     # a pair of paranthesis is a term.
     term_1_prefac = 1 - 2 * mass / areal_radius
     subterm_1_1 = rPsi4_rlm
@@ -210,13 +210,13 @@ def waveextract_to_inf_perturbative_two_order(
 
     References
     ----------
-    This implements the definition in Nakano et al., (2015),  
+    This implements the definition in Nakano et al., (2015),
     Phys. Rev. D 91, 104022 Eq.[29].
     """
 
     from integrate import fixed_frequency_integrator
 
-    # Assigning the terms. Each set of subterms in 
+    # Assigning the terms. Each set of subterms in
     # a pair of paranthesis is a term.
     term_1 = rPsi4_rlm
 
@@ -281,7 +281,7 @@ def waveextract_to_inf_perturbative_one_order(
 
     References
     ----------
-    This implements the definition in 
+    This implements the definition in
     Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].
     """
 
@@ -296,7 +296,7 @@ def waveextract_to_inf_perturbative_one_order(
         rPsi4_rlm, delta_t=delta_t, timeaxis=u_ret
     )
 
-    # Assigning the terms. Each set of subterms in 
+    # Assigning the terms. Each set of subterms in
     # a pair of paranthesis is a term.
 
     # The amplitude correction factor

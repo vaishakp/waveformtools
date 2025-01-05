@@ -335,7 +335,7 @@ def Fourier_differential(
                     sign = 1
 
                 # print(sign)
-                # Change the angular frequency 
+                # Change the angular frequency
                 # if its magnitude is below a given omega0.
                 if abs(element) > omega0:
                     omega_axis[index] = sign * omega0

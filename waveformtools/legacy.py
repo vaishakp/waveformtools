@@ -695,8 +695,7 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
                 discont_type = discont
                 message(
                     "Jump discountinuity in data found at"
-                    "index:%d,timestamp:%f"
-                    % (index, original_timestamp),
+                    "index:%d,timestamp:%f" % (index, original_timestamp),
                     message_verbosity=2,
                 )
                 message("delta_t=%f" % delta_t, message_verbosity=1)
