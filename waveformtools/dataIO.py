@@ -1372,17 +1372,22 @@ def load_SpEC_data_from_disk(
 
     full_path = f"{data_dir}/{file_name}"
 
-    # Key pattern
-    gkey = f"Extrapolated_N{extrap_order}.dir"
-
     wf_f0 = h5py.File(full_path)
 
-    try:
-        wf_file = wf_f0[gkey]
-    except KeyError as ke:
-        message(
-            "Reading as SpEC file in external extrap mode", message_verbosity=2
-        )
+    if extrap_order is not None:
+        # Extrap Key pattern
+        gkey = f"Extrapolated_N{extrap_order}.dir"
+        try:
+            wf_file = wf_f0[gkey]
+        except KeyError as ke:
+            message(
+                ke,
+                ":\n Reading as SpEC file in external extrap mode",
+                message_verbosity=2,
+            )
+
+        wf_file = wf_f0
+    else:
         wf_file = wf_f0
 
     all_keys = list(wf_file.keys())

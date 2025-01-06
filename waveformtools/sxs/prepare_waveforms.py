@@ -264,6 +264,7 @@ class PrepareSXSWaveform:
                 run_cmd += (
                     f" -o {self.joined_waveform_outfile_path}"
                     f" {data_paths_insp} "
+                    f" {data_paths_rdown}"
                 )
 
                 message(f"Running command\n {run_cmd}")
