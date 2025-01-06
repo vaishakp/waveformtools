@@ -1096,7 +1096,7 @@ def load_gen_data_from_disk(
     # Max available mode l.
 
     full_path = f"{data_dir}/{file_name}"
-    message(f"Loading data from {full_path}")
+    message(f"Loading data from {full_path}", message_verbosity=1)
     # Enforce only l>2 modes.
     # wf_modes_list = [item for item in wf_modes_list if
     # item[0]>=abs(spin_weight)]
@@ -1122,7 +1122,7 @@ def load_gen_data_from_disk(
                     wfa.__dict__.update({key: val})
             message("Metadata loaded", message_verbosity=2)
             message(
-                "Waveform meta data:", wfa.get_metadata(), message_verbosity=1
+                "Waveform meta data:", wfa.get_metadata(), message_verbosity=2
             )
 
         except Exception as ex:
@@ -1148,7 +1148,10 @@ def load_gen_data_from_disk(
             # message(modes_keys_list)
 
         else:
-            message("key_ex is not specified. Proceeding without filtering..")
+            message(
+                "key_ex is not specified. Proceeding without filtering..",
+                message_verbosity=2,
+            )
 
         modes_keys_list = sorted(modes_keys_list)
         # message('Modes keys', modes_keys_list)
@@ -1279,7 +1282,6 @@ def load_gen_data_from_disk(
 
                 # wfa.set_mode_data(ell_value, emm_value,
                 # r_ext_factor*(data_re[shift:] + 1j * data_im[shift:]))
-                print(ell_value, emm_value, data_re + 1j * data_im)
 
                 wfa.set_mode_data(
                     ell_value=ell_value,

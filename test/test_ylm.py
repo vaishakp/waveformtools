@@ -9,6 +9,7 @@ from config.verbosity import levels
 lv = levels()
 lv.set_print_verbosity(2)
 
+
 class TestGLGridYlm(unittest.TestCase):
     def test_ylm_single_mode_recovery(self):
         """Test single mode recovery for every mode

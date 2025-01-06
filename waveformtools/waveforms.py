@@ -2105,7 +2105,6 @@ class modes_array:
             modes_list=self.modes_list,
         )
 
-        strain_waveform.time_axis = self.time_axis
         strain_waveform.ell_max = self.ell_max
 
         data_len = self.data_len
@@ -2121,7 +2120,7 @@ class modes_array:
         )
 
         omega_st = omega0
-        for item in self.modes_list[:]:
+        for item in self.modes_list:
             ell, emm_list = item
             for emm in emm_list:
                 mode_data = self.mode(ell, emm)
@@ -2129,13 +2128,17 @@ class modes_array:
                     omega_st = (
                         abs(sang_f(mode_data, delta_t=self.delta_t())) / 10
                     )
-                strain_mode_data, _ = fixed_frequency_integrator(
+                strain_time, strain_mode_data = fixed_frequency_integrator(
                     udata_time=mode_data,
                     delta_t=self.delta_t(),
                     omega0=omega_st,
                     order=2,
                 )
                 strain_waveform.set_mode_data(ell, emm, data=strain_mode_data)
+
+        strain_waveform.time_axis = strain_time
+
+        strain_waveform.trim(trim_upto_time=0)
 
         return strain_waveform
 
@@ -2166,7 +2169,7 @@ class modes_array:
             modes_list=self.modes_list,
         )
 
-        news_waveform.time_axis = self.time_axis
+        # news_waveform.time_axis = self.time_axis
         news_waveform.ell_max = self.ell_max
 
         data_len = self.data_len
@@ -2185,7 +2188,7 @@ class modes_array:
                     omega_st = (
                         abs(sang_f(mode_data, delta_t=self.delta_t())) / 10
                     )
-                news_mode_data, _ = fixed_frequency_integrator(
+                news_time_axis, news_mode_data = fixed_frequency_integrator(
                     udata_time=mode_data,
                     delta_t=self.delta_t(),
                     omega0=omega_st,
@@ -2194,6 +2197,10 @@ class modes_array:
                 news_waveform.set_mode_data(
                     ell_value=ell, emm_value=emm, data=news_mode_data
                 )
+
+        news_waveform._time_axis = news_time_axis
+
+        news_waveform.trim(trim_upto_time=0)
 
         return news_waveform
 

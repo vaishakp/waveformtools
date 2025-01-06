@@ -645,6 +645,9 @@ def lengtheq(data_a, data_b, delta_t=None, is_ts=False):
     if not is_ts:
         signala = np.array(signala)
         signalb = np.array(signalb)
+    else:
+        signala = pycbc.types.timeseries.TimeSeries(signala, delta_t)
+        signalb = pycbc.types.timeseries.TimeSeries(signalb, delta_t)
 
     return [signala, signalb, lflag]
 
@@ -2193,6 +2196,8 @@ def coalignwfs2(tsdata1, tsdata2, delta_t=None):
         np.array(tsdata2[start:end]) / norm2, delta_t
     )
 
+    from pycbc import filter
+
     max_match, max_shift = pycbc.filter.matchedfilter.match(
         tsdata1_cropped, tsdata2_cropped
     )
@@ -2237,6 +2242,7 @@ def coalignwfs2(tsdata1, tsdata2, delta_t=None):
 
     # Recenter waveform 0 and assign the timeaxis of waveform 0 to waveform1
     ctsdata1, dummy = center(ctsdata1, ctsdata1)
+
     tsdata2 = pycbc.types.timeseries.TimeSeries(
         np.array(tsdata2), tsdata2.delta_t, epoch=ctsdata1.sample_times[0]
     )

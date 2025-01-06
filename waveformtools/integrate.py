@@ -4,7 +4,7 @@
 # Imports
 ################################################
 import numpy as np
-
+import scipy
 from spectral.fourier.fft import compute_ifft
 from waveformtools.waveformtools import message
 
@@ -76,10 +76,10 @@ def fixed_frequency_integrator(
         freq_axis, utilde_conven = compute_fft(udata_time, delta_t)
 
         if np.isnan(utilde_conven).any():
-            print("Nan Found in utilde_conven!")
+            message("Nan Found in utilde_conven!")
 
         if np.isnan(freq_axis).any():
-            print("Nan Found in freq_axis!")
+            message("Nan Found in freq_axis!")
 
         # Find the length of the input data.
         Nlen = len(udata_time)
@@ -90,14 +90,15 @@ def fixed_frequency_integrator(
             np.array(freq_axis) != np.array(None)
         ).all(), "Please supply the frequency axis along with utilde_conven"
 
-    df = np.diff(freq_axis)[0]
+    # df = np.diff(freq_axis)[0]
+    df = scipy.stats.mode(np.diff(freq_axis))[0]
     message("df ", df, message_verbosity=3)
 
     # Find the location of the zero index.
-    if Nlen % 2 == 0:
-        zero_index = int(Nlen / 2)
+    if (freq_axis == 0).any():
+        zero_index = np.where(freq_axis == 0)[0][0]
     else:
-        zero_index = int((Nlen - 1) / 2)
+        zero_index = None
 
     omega_axis = construct_ffi_omega_axis(freq_axis, omega0, zero_index)
 
@@ -108,7 +109,7 @@ def fixed_frequency_integrator(
     utilde_integ_n = np.power((-1j / omega_axis), order) * utilde_conven
 
     if np.isnan(utilde_integ_n).any():
-        message("Nan Found in utilde_integ_n!")
+        message("Nan Found in utilde_integ_n!", message_verbosity=0)
 
     # Get the inverse fft
     # utilde_integ_n_orig = unset_fft_conven(utilde_integ_n)
@@ -134,7 +135,7 @@ def construct_ffi_omega_axis(freq_axis, omega0, zero_index):
     message(
         "The chosen cutoff angular frequency is", omega0, message_verbosity=2
     )
-    message("Omega axis", omega_axis, message_verbosity=2)
+    message("Omega axis", omega_axis, message_verbosity=4)
 
     # Change the angular frequency if its magnitude is below a given omega0.
     for index, element in enumerate(omega_axis):
@@ -149,12 +150,11 @@ def construct_ffi_omega_axis(freq_axis, omega0, zero_index):
                 omega_axis[index] = sign * omega0
 
         else:
-            if len(freq_axis) % 2 != 0:
-                sign = 1
-                assert (
-                    omega_axis[index] == 0
-                ), f"The zero mode element must be zero frequency. Instead it is {omega_axis[index]}"
-                omega_axis[index] = 1
+            sign = 1
+            assert (
+                omega_axis[index] == 0
+            ), f"The zero mode element must be zero frequency. Instead it is {omega_axis[index]}"
+            omega_axis[index] = 1
 
     return omega_axis
 
