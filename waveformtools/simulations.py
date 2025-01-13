@@ -1,7 +1,10 @@
 """Data container for Numerical Relativity data."""
 
 import config
+
+config.conf_matplolib()
 import numpy as np
+import scipy
 
 from waveformtools.waveformtools import cleandata, message
 
@@ -639,20 +642,20 @@ class sim:
         # simulation directories.
         sim1 = [item + "/" for item in self.aliases]
         # Array for merger index.
-        ind_merger_one = np.zeros(len(self.aliases), dtype=np.int) - 1
+        ind_merger_one = np.zeros(len(self.aliases), dtype=np.int32) - 1
 
-        for sim_index in range(0, len(self.aliases)):
+        for sim_index, sim_name in enumerate(self.aliases):
             # Loop over simulations.
 
-            message(self.aliases[sim_index])
+            message(sim_name)
             message("------------------")
 
             # Load the qlm_multipole moment data.
             file0 = np.genfromtxt(
                 self.ROOTDIR
-                + sim1[sim_index]
-                + self.data_dir
-                + "quasilocalmeasures-qlm_multipole_moments..asc"
+                / sim_name
+                / self.data_dir
+                / "quasilocalmeasures-qlm_multipole_moments..asc"
             )
 
             # Assign the timeaxis.
@@ -855,15 +858,15 @@ class sim:
             ################################################################
             temp0 = np.genfromtxt(
                 self.ROOTDIR
-                + sim1[sim_index]
-                + self.data_dir
-                + "BH_diagnostics.ah1.gp"
+                / sim1[sim_index]
+                / self.data_dir
+                / "BH_diagnostics.ah1.gp"
             )
             temp1 = np.genfromtxt(
                 self.ROOTDIR
-                + sim1[sim_index]
-                + self.data_dir
-                + "BH_diagnostics.ah2.gp"
+                / sim1[sim_index]
+                / self.data_dir
+                / "BH_diagnostics.ah2.gp"
             )
 
             t_coord_0 = temp0[:, 1]
@@ -888,18 +891,21 @@ class sim:
             data0 = temp0
             data1 = temp1
 
+            print(data0)
             # Clean the data.
             temp0 = cleandata(data0)
             temp1 = cleandata(data1)
 
             message("Dist shapes after cleaning", temp0.shape, temp1.shape)
-
+            print(temp0)
             # Retrieve shape.
             shape0 = temp0.shape
             shape1 = temp1.shape
 
+            message(shape0, shape1)
             # Retrieve timestepping.
-            delta_t = np.diff(temp0[:, 0])[0]
+            delta_t = scipy.stats.mode(np.diff(temp0[:, 0]))[0]
+            # delta_t = np.diff(temp0[:, 0])[0]
 
             # message('Time step',delta_t)
 
@@ -1046,7 +1052,13 @@ class sim:
             # temp1[:act_shape_one[sim_index],1])**2
             # + (temp0[:act_shape_one[sim_index],2]-
             # temp1[:act_shape_one[sim_index],2])**2))
+            # d_one.append([t_coord_0, d_sim])
+
+            assert len(t_coord_0) == len(
+                t_coord_1
+            ), "Check time and data axis of distance data"
             d_one.append([t_coord_0, d_sim])
+
             message(
                 "ml_timeaxis_length: %d, Multipole data length: %d,"
                 "BHdiag length: %d, Distance length: %d"
@@ -1054,7 +1066,7 @@ class sim:
                     len(timeaxis_one[sim_index]),
                     ml_data_length[sim_index],
                     shape1[0],
-                    len(d_one[sim_index]),
+                    len(d_one[sim_index][0]),
                 )
             )
             dist_data_length.append(len(d_sim))
@@ -1069,8 +1081,13 @@ class sim:
         # message('Multipoles shape',multipoles.shape)
 
         # message('Masses shape:',masses_one.shape)
+        # print("d1", d_one)
+        # try:
+        #    d_one = np.array(d_one)
+        # except Exception as ex:
+        #    print(ex)
+        #    return d_one
 
-        d_one = np.array(d_one)
         # d_one.shape
         # d_one.append(np.sqrt((temp0[:act_shape_one[sim_index],1]-
         # temp1[:act_shape_one[sim_index],1])**2
@@ -1084,41 +1101,27 @@ class sim:
         # message('multipoles length',len(multipoles_one))
 
         # Assign data to sim variables.
-        for sim_index in range(0, len(self.aliases)):
-            self.multipoles.update(
-                {self.aliases[sim_index]: multipoles_one[sim_index]}
-            )
+        for sim_index, sim_name in enumerate(self.aliases):
+            self.multipoles.update({sim_name: multipoles_one[sim_index]})
             self.mass_multipoles.update(
-                {self.aliases[sim_index]: all_mass_multipoles_one[sim_index]}
+                {sim_name: all_mass_multipoles_one[sim_index]}
             )
             self.spin_multipoles.update(
-                {self.aliases[sim_index]: all_spin_multipoles_one[sim_index]}
+                {sim_name: all_spin_multipoles_one[sim_index]}
             )
-            self.timeaxis.update(
-                {self.aliases[sim_index]: timeaxis_one[sim_index]}
-            )
-            self.mass1.update({self.aliases[sim_index]: M1_one[sim_index]})
-            self.mass2.update({self.aliases[sim_index]: M2_one[sim_index]})
-            self.mass3.update({self.aliases[sim_index]: M3_one[sim_index]})
-            self.delta_t.update(
-                {self.aliases[sim_index]: delta_t_one[sim_index]}
-            )
-            self.distance.update({self.aliases[sim_index]: d_one[sim_index]})
-            self.merger_ind.update(
-                {self.aliases[sim_index]: ind_merger_one[sim_index]}
-            )
-            self.actmerger_time.update(
-                {self.aliases[sim_index]: merger_time_one[sim_index]}
-            )
-            self.dinit.update({self.aliases[sim_index]: d0_one[sim_index]})
-            self.data_length.update(
-                {self.aliases[sim_index]: ml_data_length[sim_index]}
-            )
-            self.comm_data_length.update(
-                {self.aliases[sim_index]: act_shape_one[sim_index]}
-            )
+            self.timeaxis.update({sim_name: timeaxis_one[sim_index]})
+            self.mass1.update({sim_name: M1_one[sim_index]})
+            self.mass2.update({sim_name: M2_one[sim_index]})
+            self.mass3.update({sim_name: M3_one[sim_index]})
+            self.delta_t.update({sim_name: delta_t_one[sim_index]})
+            self.distance.update({sim_name: d_one[sim_index]})
+            self.merger_ind.update({sim_name: ind_merger_one[sim_index]})
+            self.actmerger_time.update({sim_name: merger_time_one[sim_index]})
+            self.dinit.update({sim_name: d0_one[sim_index]})
+            self.data_length.update({sim_name: ml_data_length[sim_index]})
+            self.comm_data_length.update({sim_name: act_shape_one[sim_index]})
             self.dist_data_length.update(
-                {self.aliases[sim_index]: dist_data_length[sim_index]}
+                {sim_name: dist_data_length[sim_index]}
             )
         # message(self.multipoles)
 
@@ -1138,11 +1141,12 @@ class sim:
             y_coord = y_coord[:length]
             # message(x,y)
 
-            plt.plot(x_coord, y_coord)
-            plt.title("Distance vs t/M " + alias)
-            plt.grid(which="both", axis="both")
-            plt.xlabel("t")
-            plt.ylabel(r"$d/d_{init}$")
+            fig, ax = plt.subplots()
+            ax.plot(x_coord, y_coord)
+            ax.set_title("Distance vs t/M " + alias)
+            # ax.grid(which="both", axis="both")
+            ax.set_xlabel("t")
+            ax.set_ylabel(r"$d/d_{init}$")
             plt.show()
 
     def _resize_multipoles(self):
@@ -1222,19 +1226,19 @@ class sim:
     def load_strain(self, start_index=0):
         """Method to load the shear data of simulations."""
 
-        for sim_index in range(0, len(self.aliases)):
+        for sim_index, sim_name in enumerate(self.aliases):
             # Loop over simulations.
-            alias = self.aliases[sim_index]
+            # alias = sim_name
             # Set the starting index for data.
             start_index = 0  # start_index = 0#int(190/deltat[j])
             # Load the strain data.
             sim_strain_data = np.genfromtxt(
                 self.WAVDIR
-                + self.aliases[sim_index]
+                + sim_name
                 + "/"
                 + self.strain_dir
                 + "/strain_"
-                + str(alias)
+                + sim_name
                 + "_wavextcpm.dat"
             )
 
@@ -1246,7 +1250,7 @@ class sim:
             message("The strain file is")
             message(
                 self.WAVDIR
-                + self.aliases[sim_index]
+                + sim_name
                 + "/"
                 + self.strain_dir
                 + "/strain_"
@@ -1280,13 +1284,14 @@ class sim:
             self.strain.update({alias: [htdat, hpdat, hxdat]})
 
             if config.print_verbosity > 1:
-                import matplotlib.pyplot as plt
+
+                fig, ax = plt.subplots()
 
                 # Plot the strains.
-                plt.plot(htdat, hpdat, label="data " + alias)
-                plt.ylabel("Strain")
-                plt.xlabel("Time (s)")
-                plt.grid(which="both", axis="both")
+                ax.plot(htdat, hpdat, label="data " + alias)
+                ax.set_ylabel("Strain")
+                ax.set_xlabel("Time (s)")
+                # plt.grid(which="both", axis="both")
                 # plt.xlim(-600,400)
                 plt.legend()
                 plt.show()
@@ -1642,7 +1647,7 @@ class sim:
                 for line_index in range(15):
                     fline = next(file)
                     # message(fline)
-                    str_match = re.search(f"\d\d:qlm_np{np_qty}", fline)
+                    str_match = re.search(f"\\d\\d:qlm_np{np_qty}", fline)
                     # message(str_match)
                     if str_match is not None:
                         start_col = int(str_match[0][:2])

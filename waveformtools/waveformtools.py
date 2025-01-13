@@ -740,9 +740,7 @@ def iscontinuous(time_axis, delta_t=None, toldt=1e-3):
     dt_axis = np.diff(time_axis)
 
     if not delta_t:
-        from scipy.stats import mode
-
-        delta_t = mode(dt_axis)[0]
+        delta_t = scipy.stats.mode(dt_axis)[0]
 
     discontinuity_type = 0
     discontinuity_dict = {}
@@ -787,25 +785,30 @@ def sort_data(data):
 
     # message("Data shape:", (data.shape), message_verbosity=3)
     # Set axis along which to remove
-    axis = data.ndim - 1
-    message("Axis:%d" % axis, message_verbosity=3)
-
+    naxis = data.ndim - 1
+    message("nAxis:%d" % naxis, message_verbosity=3)
+    transposed = False
     # Associate data[0] as timeaxis
-    if axis > 0:
+    if naxis > 0:
         shapes = data.shape
-        if shapes[0] > shapes[1]:
+        if shapes[0] < shapes[1]:
+            transposed = True
             data = np.transpose(data)
-        time = data[0, :]
+        time = data[:, 0]
         message("The time array:%s" % time, message_verbosity=3)
     else:
         time = data
 
     order = np.argsort(time)
 
-    if axis > 0:
-        sorted_data = data[:, order]
-    else:
-        sorted_data = np.sort(time)
+    sorted_data = data[order]
+
+    # if naxis > 0:
+    #    sorted_data = data[order, :]
+    # else:
+    #    sorted_data =
+    if transposed:
+        sorted_data = sorted_data.T
 
     return sorted_data
 
@@ -839,15 +842,16 @@ def remove_repetitive_rows(data, delta_t=1, toldt=1e-3):
 
     # message("Data shape:", (data.shape), message_verbosity=3)
     # Set axis along which to remove
-    axis = data.ndim - 1
-    message("Axis:%d" % axis, message_verbosity=3)
-
+    naxis = data.ndim - 1
+    message("nAxis:%d" % naxis, message_verbosity=3)
+    transposed = False
     # Associate data[0] as timeaxis
-    if axis > 0:
+    if naxis > 0:
         shapes = data.shape
-        if shapes[0] > shapes[1]:
+        if shapes[0] < shapes[1]:
+            transposed = True
             data = np.transpose(data)
-        time = data[0, :]
+        time = data[:, 0]
         message("The time array:%s" % time, message_verbosity=3)
     else:
         time = data
@@ -862,15 +866,18 @@ def remove_repetitive_rows(data, delta_t=1, toldt=1e-3):
     if repetition:
         rep_rows = discontinuities["repetitions"][1]
 
-        data = np.delete(data, rep_rows)
+        data = np.delete(data, rep_rows, axis=0)
 
     else:
         message("No points removed\n", message_verbosity=2)
 
     # Return the "cleaned" data matrix
-    cleaned_data = data
+    cleaned_data = np.array(data)
 
-    return cleaned_data
+    if transposed:
+        return cleaned_data.T
+    else:
+        return cleaned_data
 
 
 def fill_gaps_in_data(data, k=5):
@@ -972,11 +979,11 @@ def cleandata(data, toldt=1e-3, bridge=False, k=5):
 
     # message("Data shape:", (data.shape), message_verbosity=3)
     # Set axis along which to remove
-    axis = data.ndim - 1
-    message("Axis:%d" % axis, message_verbosity=3)
+    naxis = data.ndim - 1
+    message("nAxis:%d" % naxis, message_verbosity=3)
 
     # Associate data[0] as timeaxis
-    if axis > 0:
+    if naxis > 0:
         shapes = data.shape
         if shapes[0] > shapes[1]:
             data = np.transpose(data)
@@ -987,7 +994,7 @@ def cleandata(data, toldt=1e-3, bridge=False, k=5):
 
     time = np.sort(time)
     # delta_t = statistics.mode(np.diff(time))
-    delta_t = scipy.stats.mode(np.diff(time))
+    delta_t = scipy.stats.mode(np.diff(time))[0]
 
     message("shape of data:", (data.shape), message_verbosity=3)
 
@@ -996,10 +1003,10 @@ def cleandata(data, toldt=1e-3, bridge=False, k=5):
     if bridge:
         cleaned_data = fill_gaps_in_data(cleaned_data, k=k)
 
-    if axis > 0:
+    if naxis > 0:
         if shapes[0] > shapes[1]:
             cleaned_data = np.transpose(cleaned_data)
-    return cleaned_data
+    return np.array(cleaned_data)
 
 
 def shiftmatched(hdat, ind, delta_t=None, is_ts=False):
