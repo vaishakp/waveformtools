@@ -619,9 +619,7 @@ def load_RIT_Psi4_data_from_disk(
                 # Load the amplitude data
                 ###########################
                 Yamp = wf_psi4_mode_data[:, 3]
-                Yamp_interp_fun = interp1d(
-                    wf_psi4_time, Yamp, kind=interp_kind
-                )
+                Yamp_interp_fun = interp1d(wf_psi4_time, Yamp, kind=interp_kind)
 
                 # Resample
                 Yamp_resam = Yamp_interp_fun(time_axis)
@@ -1589,9 +1587,7 @@ def load_SpEC_data_from_disk(
                     wf_nl.time_axis = wf_time
                     wf_nl.data_len = len(wf_time)
 
-                wf_nl.set_mode_data(
-                    ell, emm, data=wf_data_re + 1j * wf_data_im
-                )
+                wf_nl.set_mode_data(ell, emm, data=wf_data_re + 1j * wf_data_im)
 
     if centre:
         wfa.trim(trim_upto_time=0)
@@ -1894,9 +1890,7 @@ def load_SpEC_non_extrap_data_from_disk(
                     wf_nl.time_axis = wf_time
                     wf_nl.data_len = len(wf_time)
 
-                wf_nl.set_mode_data(
-                    ell, emm, data=wf_data_re + 1j * wf_data_im
-                )
+                wf_nl.set_mode_data(ell, emm, data=wf_data_re + 1j * wf_data_im)
 
     if centre:
         wfa.trim(trim_upto_time=0)

@@ -74,9 +74,7 @@ class SingleMode:
 
             ell_max_dict = max(ell_keys_dict)
 
-            message(
-                "Parsed dict ell_max as", ell_max_dict, message_verbosity=2
-            )
+            message("Parsed dict ell_max as", ell_max_dict, message_verbosity=2)
 
             # if self._ell_max < ell_max:
             self._ell_max = ell_max_dict
@@ -323,9 +321,7 @@ class SingleMode:
                 dtype=np.complex128,
             )
         else:
-            self._modes_data = np.zeros(
-                (ell_max + 1) ** 2, dtype=np.complex128
-            )
+            self._modes_data = np.zeros((ell_max + 1) ** 2, dtype=np.complex128)
 
     def construct_from_vec_modes(self, vec_modes):
         """Load the single modes object using the modes vector"""
@@ -364,9 +360,7 @@ class SingleMode:
 
             # Set the mode data.
             self._modes_data[vec_idx] = value
-            message(
-                f"Set mode data {self.mode(ell, emm)}", message_verbosity=4
-            )
+            message(f"Set mode data {self.mode(ell, emm)}", message_verbosity=4)
         # else:
         #    raise TypeError("Please provide integer values for ell and emm")
 

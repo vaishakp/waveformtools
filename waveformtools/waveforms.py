@@ -10,6 +10,7 @@ modes_array: A data-type.
               Handle and work with mode coefficients.
 """
 
+from copy import deepcopy
 import sys
 
 import h5py
@@ -727,9 +728,7 @@ class spherical_array:
 
         self.sqrt_met_det_data = sqrt_met_det
 
-    def to_shear_modes_array(
-        self, grid_info=None, spin_weight=None, ell_max=8
-    ):
+    def to_shear_modes_array(self, grid_info=None, spin_weight=None, ell_max=8):
         """Decompose a given spherical array function on a sphere
         into Spin Weighted Spherical Harmonic modes.
 
@@ -964,6 +963,7 @@ class modes_array:
         spin_weight=-2,
         actions="empty",
         areal_radii=[],
+        grid_info=None,
     ):
         self.label = label
         self.data_dir = data_dir
@@ -985,7 +985,7 @@ class modes_array:
         self._actions = actions
         self._extra_mode_axes_shape = extra_mode_axes_shape
         self._areal_radii = areal_radii
-
+        self._grid_info = grid_info
         if (np.array(self.extra_mode_axes_shape) == np.array(None)).all():
             self.extra_mode_axes = False
         else:
@@ -1002,6 +1002,10 @@ class modes_array:
     @property
     def spin_weight(self):
         return self._spin_weight
+
+    @property
+    def grid_info(self):
+        return self._grid_info
 
     def get_metadata(self):
         """Get the metadata associated with the instance.
@@ -2519,7 +2523,7 @@ class modes_array:
         if (np.array(theta) == np.array(None)).all() or (
             np.array(phi) == np.array(None)
         ).all():
-            theta, phi = self.Grid.meshgrid
+            theta, phi = self.grid_info.meshgrid
 
         sYlm = Yslm_mp(
             ell_max=ell_max, spin_weight=self.spin_weight, theta=theta, phi=phi
@@ -2563,3 +2567,39 @@ class modes_array:
         ax.set_ylabel(r"$\Psi_{(\ell, m)}$")
         plt.legend()
         plt.show()
+
+    def time_derivative(self, mode=None, method="spline"):
+
+        if mode is None:
+            # modes_list = self.modes_list
+            data = self.modes_data
+        else:
+            data = self.mode(*mode)
+
+        d_wfm = deepcopy(self)
+
+        from waveformtools.differentiate import derivative
+
+        # dt = self.delta_t
+        # for ell, emm_list in modes_list:
+        #    for emm in range(-ell, ell+1):
+        # data = self.mode(ell, emm)
+        if "FD" in method:
+            d_data = derivative(self.time_axis, self.modes_data, method=method)
+            d_wfm._modes_data = d_data
+
+        else:
+            modes_list = self.modes_list
+
+            for ell, emm_list in modes_list:
+                for emm in emm_list:
+
+                    y_data = self.mode(ell, emm)
+                    d_data_lm = derivative(
+                        self.time_axis, y_data, method=method
+                    )
+                    d_wfm.set_mode_data(
+                        ell_value=ell, emm_value=emm, data=d_data_lm
+                    )
+
+        return d_wfm

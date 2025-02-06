@@ -58,9 +58,7 @@ class UniformGrid:
     def npix_act(self):
         # Return the actual number of pixels, excluding the ghost zones present
         # at one iteration.
-        return (self.ntheta - 2 * self.nghosts) * (
-            self.nphi - 2 * self.nghosts
-        )
+        return (self.ntheta - 2 * self.nghosts) * (self.nphi - 2 * self.nghosts)
 
     @property
     def npix_max(self):

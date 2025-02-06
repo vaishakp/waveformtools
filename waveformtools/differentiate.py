@@ -90,6 +90,10 @@ def derivative(x_data, y_data, method="FD", degree=3):
                 dydx_new = differentiate5(y_uniform, delta_x)
             else:
                 raise NotImplementedError(f"Unknown degree {degree}")
+
+        elif method == "FD_vec":
+            dydx_new = differentiate5_vec_nonumba(y_uniform, delta_x)
+
         else:
             raise NotImplementedError(f"Unknown method {method}")
 
@@ -174,9 +178,7 @@ def Chebyshev_differential(x_data, y_data, order=1, degree=8):
     # print(x_data, y_data)
     cheb_coeffs, result = chebfit(x_data, y_data, deg=degree, full=True)
 
-    message(
-        "\n CS derivative Result\n", result, result[0], message_verbosity=4
-    )
+    message("\n CS derivative Result\n", result, result[0], message_verbosity=4)
 
     res = result[0][0]
 
@@ -452,7 +454,7 @@ def differentiate2(data, delta_t):
     der_data.append(derNm2)
     der_data.append(derNm1)
 
-    return der_data
+    return np.array(der_data)
 
 
 def differentiate3(data, delta_t):
@@ -705,7 +707,9 @@ def differentiate5_vec_nonumba(data, delta_t):
 
     """
 
-    data = np.transpose(data, (2, 0, 1))
+    # data = np.transpose(data, (2, 0, 1))
+    data = np.moveaxis(data, -1, 0)
+
     der_data = np.zeros(data.shape, dtype=np.complex128)
 
     # The number of points on one side.
@@ -780,7 +784,10 @@ def differentiate5_vec_nonumba(data, delta_t):
     der_data[-1] = derNm1
 
     message("Shape of data", der_data.shape, message_verbosity=2)
-    return np.transpose(der_data, (1, 2, 0))
+
+    der_data = np.moveaxis(der_data, 0, -1)
+
+    return der_data
 
 
 # @njit(parallel=True)

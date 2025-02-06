@@ -723,9 +723,7 @@ def iscontinuous(data, delta_t=0, toldt=1e-3):
     if discont_type:
         message("The data is not clean!", message_verbosity=1)
         global_discont_type = repetition + discont
-        message(
-            "Discontinuity type:", global_discont_type, message_verbosity=1
-        )
+        message("Discontinuity type:", global_discont_type, message_verbosity=1)
         if global_discont_type == 1:
             message(
                 "The data has repetitive rows at %d locations"

@@ -190,9 +190,7 @@ def quad_on_sphere(integrand, gridinfo, kind="third"):
 
         integrand_phi = integrand[:, phi_index]
 
-        integrand_phi_interp_func = interp1d(
-            theta_1d, integrand_phi, kind=kind
-        )
+        integrand_phi_interp_func = interp1d(theta_1d, integrand_phi, kind=kind)
 
         # Integrate on the phi plane
         integral_phi_vals, integral_phi_errs = quad(

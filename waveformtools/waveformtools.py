@@ -580,6 +580,15 @@ def lengtheq(data_a, data_b, delta_t=None, is_ts=False):
     # of data and extract delta_t.
     # ts = isinstance(data_a, pycbc.types.timeseries.Timeseries)
     # and isinstance(data_b, pycbc.types.timeseries.Timeseries)
+    try:
+        import pycbc
+
+        if isinstance(data_a, pycbc.types.timeseries.TimeSeries) and isinstance(
+            data_b, pycbc.types.timeseries.TimeSeries
+        ):
+            is_ts = True
+    except ModuleNotFoundError as mnf:
+        message(mnf, " Treating data as numpy array", message_verbosity=2)
 
     if is_ts:
         if not delta_t:
@@ -1774,9 +1783,7 @@ def taper_tanh(
         np.tanh(3 * (new_time_axis - duration / 2) / (duration / 2)) + 1
     ) / 2
     end_win = (
-        np.tanh(
-            3 * (-new_time_axis + (tfinal - duration / 2)) / (duration / 2)
-        )
+        np.tanh(3 * (-new_time_axis + (tfinal - duration / 2)) / (duration / 2))
         + 1
     ) / 2
 
@@ -2461,9 +2468,7 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
         "waveform 2 against 1 \n"
     )
     message(f"Recovered Time shift: {Tshift_rec}")
-    message(
-        f"Recovered Phase shift: {Pshift_rec}, {Pshift_rec_rad} in radians"
-    )
+    message(f"Recovered Phase shift: {Pshift_rec}, {Pshift_rec_rad} in radians")
     message("-----------------------------------")
 
     # Apply the time shift to the second waveform
@@ -2696,9 +2701,10 @@ def simplematch_wfs_old(waveforms, delta_t=None):
         )
 
         # Normalize the waveforms
-
-        waveform1 = waveform1 / norm(waveform1)
-        waveform2 = waveform2 / norm(waveform2)
+        norm1 = norm(waveform1)
+        norm2 = norm(waveform2)
+        waveform1 = waveform1 / norm1
+        waveform2 = waveform2 / norm2
 
         try:
             (match_score, shift) = pycbc.filter.matchedfilter.match(
@@ -2714,8 +2720,10 @@ def simplematch_wfs_old(waveforms, delta_t=None):
                 "Waveforms": [waveform1, waveform2],
                 "Match score": match_score,
                 "Shift": shift,
+                "Norms": [norm1, norm2],
             }
         )
+
     return match
 
 
@@ -3105,9 +3113,7 @@ def resample(interp_data, new_delta_t, epoch, length, old_delta_t=None):
             )
 
         # Prepare timeaxis
-        timeaxis = np.linspace(
-            epoch, epoch + length, int(length / new_delta_t)
-        )
+        timeaxis = np.linspace(epoch, epoch + length, int(length / new_delta_t))
         # Append the timeseries to the data list
         ydata = interp_data[i](timeaxis)
         data.append(

@@ -453,9 +453,7 @@ class SimulationExplorer:
         ringdown_segments = {}
 
         available_dirs = os.listdir(ecc_ev_dir)
-        available_dirs = [
-            item for item in available_dirs if ".bak" not in item
-        ]
+        available_dirs = [item for item in available_dirs if ".bak" not in item]
 
         message("Available dirs", available_dirs, message_verbosity=2)
 
@@ -507,9 +505,7 @@ class SimulationExplorer:
             this_lev_segments = [
                 item for item in available_lev_dirs if f"Lev{lev}" in item
             ]
-            this_lev_segments = sorted(
-                [item[5:] for item in this_lev_segments]
-            )
+            this_lev_segments = sorted([item[5:] for item in this_lev_segments])
             inspiral_segments.update({f"Lev{lev}": this_lev_segments})
 
             if lev in available_ringdown_levs:
@@ -719,9 +715,7 @@ class SimulationExplorer:
                 for line in pf:
                     if line is not None:
                         # Get params
-                        results = re.findall(
-                            "[a-zA-Z]+=[0-9]+[.]?[0-9]*", line
-                        )
+                        results = re.findall("[a-zA-Z]+=[0-9]+[.]?[0-9]*", line)
                         fresults = [
                             item for item in results if "chi" not in item
                         ]
@@ -735,9 +729,7 @@ class SimulationExplorer:
                         message("fresults", fresults, message_verbosity=3)
 
                         # Assuming that ID is the first element
-                        sim_name = (
-                            self.sim_basename + fresults[0].split("=")[1]
-                        )
+                        sim_name = self.sim_basename + fresults[0].split("=")[1]
 
                         bfi_sim_params.update({sim_name: {}})
 
@@ -896,9 +888,7 @@ class SimulationExplorer:
         message("sims in waveforms dir", message_verbosity=2)
         self._prepared_waveforms = sim_names
 
-    def get_sim_names_from_prepared_waveform_dirs(
-        self, prepared_waveform_dirs
-    ):
+    def get_sim_names_from_prepared_waveform_dirs(self, prepared_waveform_dirs):
         """Get all sim names from prepared waveform dirs"""
         prepared_waveform_sim_names = []
 
@@ -1077,9 +1067,7 @@ class SimulationExplorer:
             ):
                 RINGDOWN_INITIATED = True
                 last_segment = sorted(ringdown_segments[lev_key])[-1]
-                last_segment_path = self.available_sim_paths[
-                    sim_name
-                ].joinpath(
+                last_segment_path = self.available_sim_paths[sim_name].joinpath(
                     f"Ecc{self.highest_ecc_nums[sim_name]}"
                     f"/Ev/Lev{lev}_Ringdown/Lev{lev}_{last_segment}"
                 )
@@ -1092,9 +1080,7 @@ class SimulationExplorer:
 
             if inspiral_segments:
                 last_segment = sorted(inspiral_segments[f"Lev{lev}"])[-1]
-                last_segment_path = self.available_sim_paths[
-                    sim_name
-                ].joinpath(
+                last_segment_path = self.available_sim_paths[sim_name].joinpath(
                     f"Ecc{self.highest_ecc_nums[sim_name]}"
                     f"/Ev/Lev{lev}_{last_segment}"
                 )
@@ -1198,9 +1184,7 @@ class SimulationExplorer:
 
         files_in_run_dir = os.listdir(run_dir)
 
-        error_files = [
-            item for item in files_in_run_dir if "Errors000" in item
-        ]
+        error_files = [item for item in files_in_run_dir if "Errors000" in item]
 
         message("Error files", error_files, message_verbosity=2)
 
@@ -1602,9 +1586,7 @@ class SimulationExplorer:
 
             for seg in self.inspiral_segments[sim_name][f"Lev{sim_lev}"]:
 
-                message(
-                    f"Searching in Lev{sim_lev}_{seg}", message_verbosity=2
-                )
+                message(f"Searching in Lev{sim_lev}_{seg}", message_verbosity=2)
 
                 path_to_traj = f"{highest_sim_ecc}/Ev/Lev{sim_lev}_{seg}"
                 "/Run/ApparentHorizons/Trajectory_AhA.dat"
@@ -1625,9 +1607,7 @@ class SimulationExplorer:
 
                 if (
                     self.all_req_ref_times[sim_name] < max(avail_seg_times)
-                ) and (
-                    self.all_req_ref_times[sim_name] > min(avail_seg_times)
-                ):
+                ) and (self.all_req_ref_times[sim_name] > min(avail_seg_times)):
                     prev_seg = self.inspiral_segments[sim_name][
                         f"Lev{sim_lev}"
                     ][seg_count]

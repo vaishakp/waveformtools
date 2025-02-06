@@ -7,6 +7,9 @@ import numpy as np
 import scipy
 from spectral.fourier.fft import compute_ifft
 from waveformtools.waveformtools import message
+from waveformtools.waveformtools import (
+    get_starting_angular_frequency as sang_f,
+)
 
 ##################################################
 # Fixed frequency integration
@@ -18,9 +21,10 @@ def fixed_frequency_integrator(
     delta_t,
     utilde_conven=None,
     freq_axis=None,
-    omega0=0,
+    omega0="auto",
     order=1,
     zero_mode=0,
+    omega_threshold_factor=10,
 ):
     """Fixed frequency integrator as presented in Reisswig et. al.
 
@@ -61,6 +65,12 @@ def fixed_frequency_integrator(
                      The integrated u samples in Fourier space.
 
     """
+
+    if omega0 == "auto":
+        omega0 = max(
+            abs(sang_f(udata_time, delta_t) / omega_threshold_factor), 1e-5
+        )
+        message(f"Using cutoff frequency {omega0}", message_verbosity=1)
 
     if not utilde_conven:
         # Compute the FFT of data

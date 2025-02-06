@@ -465,9 +465,7 @@ class sim:
                                 -item[: self.comm_data_length[alias], 2]
                             )
                         ),
-                        np.log(
-                            np.absolute(-item[self.merger_ind[alias] :, 3])
-                        ),
+                        np.log(np.absolute(-item[self.merger_ind[alias] :, 3])),
                     ]
                 }
             )
@@ -974,9 +972,7 @@ class sim:
                         "Merger index has been updated with info from BHdiag3"
                     )
             except BaseException:
-                message(
-                    "Merger time acquired from masses", mergerind * delta_t
-                )
+                message("Merger time acquired from masses", mergerind * delta_t)
 
             message("Merger index", mergerind)
 
@@ -1194,9 +1190,7 @@ class sim:
                     message(
                         "**************************************************"
                     )
-                    message(
-                        "BH 1 and 2 reversal found!!! \n Reversing data..."
-                    )
+                    message("BH 1 and 2 reversal found!!! \n Reversing data...")
                     message(
                         "**************************************************"
                     )
@@ -1409,9 +1403,7 @@ class sim:
             )
             try:
                 bh3 = np.genfromtxt(
-                    self._get_file_path_from_str(
-                        string="*.ah3.gp", alias=alias
-                    )
+                    self._get_file_path_from_str(string="*.ah3.gp", alias=alias)
                 )
             except Exception as excep:
                 message("BH3 file not found!", excep)
