@@ -57,34 +57,26 @@ def plot_modes(
     """
 
     from waveformtools.waveformtools import xtract_cphase
-
     # Start from l=2.
     modes_to_plot = wf1.modes_list[:]
-
     # Order the modes as per 1st waveform modes_array object.
     modes_list = []
     mode_amps = []
 
     for item in modes_to_plot:
         ell, emm_values = item
-
         for emm in emm_values:
+
             mode_values = wf1.mode(ell, emm)
             mode_amp = np.absolute(mode_values)
-
             max_mode_value = np.amax(mode_amp[:-nstop])
-
             mode_phase = xtract_cphase(mode_values.real, mode_values.imag)
-
             mode_amps.append(max_mode_value)
-
             modes_list.append(f"l{ell}m{emm}")
 
     # Sort the mode amps
-
     args_sorted = np.argsort(np.array(mode_amps))[::-1]
     mode_list_sorted = [modes_list[index] for index in args_sorted]
-
     modes_to_plot = []
 
     for item in mode_list_sorted:
@@ -93,30 +85,29 @@ def plot_modes(
         if emm > 0:
             modes_to_plot.append([ell, [emm]])
 
+    # Plots
+    fig, ax = plt.subplots(nrows=2, sharex=True, figsize=(6, 12))
     # For amplitudes
-    fig1, ax1 = plt.subplots()
-    ax1.set_yscale("log")
+    #fig1, ax1 = plt.subplots()
+    ax[0].set_yscale("log")
     # For phases
-    fig2, ax2 = plt.subplots()
-    ax2.set_yscale("log")
-
+    #fig2, ax2 = plt.subplots()
+    #ax2.set_yscale("log")
     for item in modes_to_plot[:nmodes]:
         ell, emm_list = item
         for emm in emm_list:
             mode_values = wf1.mode(ell, emm)
             mode_amp = np.absolute(mode_values)
             max_mode_value = np.amax(mode_values)
-
             mode_phase = xtract_cphase(mode_values.real, mode_values.imag)
-
-            ax1.scatter(
+            ax[0].scatter(
                 wf1.time_axis[:],
                 mode_amp[:],
                 label=rf"$\ell${ell}$m${emm}",
                 s=1,
                 alpha=0.2 * abs(emm) % 1,
             )
-            ax2.scatter(
+            ax[1].scatter(
                 wf1.time_axis[:],
                 abs(mode_phase[:]),
                 label=rf"$\ell${ell}$m${emm}",
@@ -132,49 +123,47 @@ def plot_modes(
 
         mode_phase = xtract_cphase(mode_values.real, mode_values.imag)
 
-        ax1.scatter(
+        ax[0].scatter(
             wf1.time_axis[:],
             mode_amp[:],
             label=rf"$\ell${ell}$m${emm}",
             s=1,
             alpha=0.2 * abs(emm) % 1,
         )
-        ax2.scatter(
+        ax[1].scatter(
             wf1.time_axis[:],
             abs(mode_phase[:]),
             label=rf"$\ell${ell}$m${emm}",
             s=1,
         )
 
-    ax1.grid(which="both")
-    ax2.grid(which="both")
-    ax1.legend()
-    ax2.legend()
+    ax[0].grid(which="both")
+    ax[1].grid(which="both")
+    ax[0].legend()
+    #ax[1].legend()
     plt.tight_layout()
-    ax1.set_xlabel("t/M")
-    ax1.set_ylabel(r"$\vert$" + wf1.label + r"$^{(\ell m)}\vert$")
-    ax2.set_xlabel("t/M")
-    ax2.set_ylabel(r"$\Phi^{(\ell m)}$")
-    ax2.set_xlim(*xlim)
-    ax1.set_xlim(
-        *xlim,
-    )
+    ax[0].set_xlabel("t/M")
+    #ax[1].set_ylabel(r"$\vert$" + wf1.label + r"$^{(\ell m)}\vert$")
+    #ax[0].set_xlabel("t/M")
+    ax[1].set_ylabel(r"$\Phi^{(\ell m)}$")
+    #ax2.set_xlim(*xlim)
+    ax[0].set_xlim(*xlim)
     # fig1.savefig('figures/waveform_extrapolation/amp_evol_modes_q1a0.pdf')
     # fig2.savefig('figures/waveform_extrapolation/phase_evol_modes_q1a0.pdf')
     if ylim != "auto":
         # ax2.set_ylim(
         #   *ylim
         # )
-        ax1.set_ylim(
+        ax[0].set_ylim(
             *ylim,
         )
 
     if save_fig:
-        fig1.savefig(f"{wf1.label}_waveform_amp_modes.pdf")
-        fig2.savefig(f"{wf1.label}_waveform_phase_modes.pdf")
+        fig.savefig(f"{wf1.label}_waveform_modes_amp_phase.pdf")
+        #fig2.savefig(f"{wf1.label}_waveform_phase_modes.pdf")
 
     plt.show()
-
+    return fig, ax
 
 def plot_mode_differences(
     waveforms,
