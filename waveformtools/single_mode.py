@@ -89,7 +89,7 @@ class SingleMode:
             for ell, emm_list in self.modes_list:
                 for emm in emm_list:
                     value = modes_dict[f"l{ell}"][f"m{emm}"]
-                    self.set_mode_data(ell=ell, emm=emm, value=value)
+                    self.set_mode_data(ell=ell, emm=emm, data=value)
 
         if not created:
             self.create_modes_array()
@@ -275,7 +275,7 @@ class SingleMode:
                 "Please request a valid mode ( abs(emm) > abs(ell) here)"
             )
 
-        vec_idx = ell**2 + emm + ell
+        vec_idx = ell**2 + emm + ell - self.spin_weight**2
 
         return self._modes_data[vec_idx]
 
@@ -335,7 +335,7 @@ class SingleMode:
 
         self._modes_data = vec_modes
 
-    def set_mode_data(self, value, ell=None, emm=None):
+    def set_mode_data(self, data, ell=None, emm=None):
         """Set the mode array data for the respective :math:`(\\ell, m)` mode.
 
         Parameters
@@ -349,17 +349,17 @@ class SingleMode:
 
         """
         if (ell is None) and (emm is None):
-            self._modes_data = np.array(value)
+            self._modes_data = np.array(data)
             # if len(value.shape)>1:
             #    self._extra_mode_axes_shape =
         else:
             # elif int(ell)==ell and int(emm)==emm:
             # Compute the linear vector index
-            vec_idx = (ell) ** 2 + emm + ell
-            message(f"Setting l{ell} m{emm} data {value}", message_verbosity=4)
+            vec_idx = (ell) ** 2 + emm + ell - self.spin_weight**2
+            message(f"Setting l{ell} m{emm} data {data}", message_verbosity=4)
 
             # Set the mode data.
-            self._modes_data[vec_idx] = value
+            self._modes_data[vec_idx] = data
             message(f"Set mode data {self.mode(ell, emm)}", message_verbosity=4)
         # else:
         #    raise TypeError("Please provide integer values for ell and emm")
@@ -569,7 +569,7 @@ class SingleMode:
 
         residues = [np.sum(func**2)]
 
-        modes_list = construct_mode_list(ell_max=self.ell_max, spin_weight=0)
+        modes_list = construct_mode_list(ell_max=self.ell_max, spin_weight=self.spin_weight)
         # message(f"Modes list in SHContract
         # {modes_list}", message_verbosity=4)
 
@@ -587,7 +587,7 @@ class SingleMode:
                 )
 
                 recon_func += Clm * Yslm_vec(
-                    spin_weight=0,
+                    spin_weight=self.spin_weight,
                     ell=ell,
                     emm=emm,
                     theta_grid=theta_grid,
@@ -664,7 +664,7 @@ class SingleMode:
             for emm in range(-ell, ell + 1):
 
                 Ylm = Yslm_vec(
-                    spin_weight=0,
+                    spin_weight=self.spin_weight,
                     theta_grid=theta,
                     phi_grid=phi,
                     ell=ell,
@@ -770,7 +770,7 @@ class SingleMode:
 
         residues = self.get_expansion_residues(orig_func)
 
-        ell_axis = np.arange(-1, self.ell_max + 1)
+        ell_axis = np.arange(abs(self.spin_weight)-1, self.ell_max + 1)
 
         import matplotlib.pyplot as plt
 
@@ -780,4 +780,5 @@ class SingleMode:
         ax.set_title(r"Residues vs $\ell$")
         ax.set_ylabel("Residues")
         ax.set_xlabel(r"$\ell$")
+        ax.set_xticks(ell_axis)
         plt.show()

@@ -197,31 +197,31 @@ def _get_modes_list_from_keys(keys_list, r_ext):
     for key in keys_list:
         # message(key)
         # Get the ell value
-        ell_value, emm_value = _get_ell_emm_from_key(key)
+        ell, emm = _get_ell_emm_from_key(key)
         message(
             "ell value: ",
-            ell_value,
+            ell,
             "emm value:",
-            emm_value,
+            emm,
             message_verbosity=3,
         )
 
-        if ell_value != ell_old:
+        if ell != ell_old:
             # If the ell value has changed,
             # update the modes list before moving
             # onto the next ell value.
             modes_list.append([ell_old, emm_modes_for_ell])
             # The present ell value is the old
             # ell value.
-            ell_old = ell_value
+            ell_old = ell
 
             # Reset the ell_mode list.
             emm_modes_for_ell = []
 
         # Update it with the new emm mode.
-        emm_modes_for_ell.append(emm_value)
+        emm_modes_for_ell.append(emm)
 
-    modes_list.append([ell_value, emm_modes_for_ell])
+    modes_list.append([ell, emm_modes_for_ell])
 
     return modes_list
 
@@ -238,9 +238,9 @@ def _get_ell_emm_from_key(key):
 
     Returns
     -------
-    ell_value: int
+    ell: int
                The :math:`\\ell` value
-    emm_value: int
+    emm: int
                The :math:`m` value.
 
     Notes
@@ -254,14 +254,14 @@ def _get_ell_emm_from_key(key):
     str_match = re.search(r"l\d*", key)
     ell_str_start = str_match.start()
     ell_str_end = str_match.end()
-    ell_value = int(key[ell_str_start + 1 : ell_str_end])
+    ell = int(key[ell_str_start + 1 : ell_str_end])
 
     str_match = re.search(r"m-*\d*", key)
     emm_str_start = str_match.start()
     emm_str_end = str_match.end()
-    emm_value = int(key[emm_str_start + 1 : emm_str_end])
+    emm = int(key[emm_str_start + 1 : emm_str_end])
 
-    return ell_value, emm_value
+    return ell, emm
 
 
 def get_iteration_numbers_from_keys(keys_list):
@@ -974,7 +974,7 @@ def load_RIT_Strain_data_from_disk(
             # Load the modes data
             ###################################
 
-            wfa.set_mode_data(ell, emm, r_ext_factor * wfmode)
+            wfa.set_mode_data(ell=ell, emm=emm, data=r_ext_factor * wfmode)
 
     data_file.close()
 
@@ -1214,9 +1214,9 @@ def load_gen_data_from_disk(
         for item in modes_list:
             # For every ell mode list in modes_list
 
-            ell_value, emm_list = item
+            ell, emm_list = item
 
-            for emm_index, emm_value in enumerate(emm_list):
+            for emm_index, emm in enumerate(emm_list):
                 # For every (ell, emm) mode.
 
                 # Find the key corresponding to the mode
@@ -1226,7 +1226,7 @@ def load_gen_data_from_disk(
                             item
                             for item in modes_keys_list
                             if re.search(
-                                f"l{ell_value}_m{emm_value}_r{r_ext}", item
+                                f"l{ell}_m{emm}_r{r_ext}", item
                             )
                         ][0]
                     )
@@ -1236,7 +1236,7 @@ def load_gen_data_from_disk(
                     # message('Its alright')
                 except Exception as ex:
                     message(
-                        f"Waveform dataset for l{ell_value}, m{emm_value} not found",
+                        f"Waveform dataset for l{ell}, m{emm} not found",
                         ex,
                     )
                     sys.exit(0)
@@ -1278,12 +1278,12 @@ def load_gen_data_from_disk(
                         # wfa.time_axis = time_axis[shift:]
                         wfa._time_axis = time_axis
 
-                # wfa.set_mode_data(ell_value, emm_value,
+                # wfa.set_mode_data(ell, emm,
                 # r_ext_factor*(data_re[shift:] + 1j * data_im[shift:]))
 
                 wfa.set_mode_data(
-                    ell_value=ell_value,
-                    emm_value=emm_value,
+                    ell=ell,
+                    emm=emm,
                     data=r_ext_factor * (data_re + 1j * data_im),
                 )
 
@@ -1361,7 +1361,7 @@ def load_SpEC_data_from_disk(
     modes_array: modes_array
                  A modes_array instance containing the loaded modes.
     """
-    message("Loading SpEC data.", message_verbosity=1)
+    message(f"Loading SpEC data N{extrap_order}", message_verbosity=1)
 
     from waveformtools.waveforms import modes_array
 
@@ -1384,11 +1384,12 @@ def load_SpEC_data_from_disk(
                 message_verbosity=2,
             )
 
-        wf_file = wf_f0
+            wf_file = wf_f0
     else:
         wf_file = wf_f0
 
     all_keys = list(wf_file.keys())
+    print(all_keys)
 
     # Max available mode l.
     ell_max_act = get_ell_max_from_keys(all_keys)
@@ -1567,7 +1568,7 @@ def load_SpEC_data_from_disk(
 
             # message(f"Setting mode Data {ell}, {emm} \n {wf_int} \n" )
 
-            wfa.set_mode_data(ell, emm, data=wf_int)
+            wfa.set_mode_data(ell=ell, emm=emm, data=wf_int)
 
     if debug is True:
         for ell, emm_list in modes_list:
@@ -1587,7 +1588,7 @@ def load_SpEC_data_from_disk(
                     wf_nl.time_axis = wf_time
                     wf_nl.data_len = len(wf_time)
 
-                wf_nl.set_mode_data(ell, emm, data=wf_data_re + 1j * wf_data_im)
+                wf_nl.set_mode_data(ell=ell, emm=emm, data=wf_data_re + 1j * wf_data_im)
 
     if centre:
         wfa.trim(trim_upto_time=0)
@@ -1870,7 +1871,7 @@ def load_SpEC_non_extrap_data_from_disk(
             # im_dat = im_int(time_axis)
 
             # wfa.set_mode_data(ell, emm, data=re_dat + 1j * im_dat)
-            wfa.set_mode_data(ell, emm, data=wf_int)
+            wfa.set_mode_data(ell=ell, emm=emm, data=wf_int)
 
     if debug is True:
         for ell, emm_list in modes_list:
@@ -1890,7 +1891,7 @@ def load_SpEC_non_extrap_data_from_disk(
                     wf_nl.time_axis = wf_time
                     wf_nl.data_len = len(wf_time)
 
-                wf_nl.set_mode_data(ell, emm, data=wf_data_re + 1j * wf_data_im)
+                wf_nl.set_mode_data(ell=ell, emm=emm, data=wf_data_re + 1j * wf_data_im)
 
     if centre:
         wfa.trim(trim_upto_time=0)
@@ -2116,7 +2117,7 @@ def load_SpECTRE_data_from_disk(
             im_int = interp1d(wf_time, wf_data_im, kind=kind)
             im_dat = im_int(time_axis)
 
-            wfa.set_mode_data(ell, emm, data=re_dat + 1j * im_dat)
+            wfa.set_mode_data(ell=ell, emm=emm, data=re_dat + 1j * im_dat)
 
     if centre:
         wfa.trim(trim_upto_time=0)
@@ -2232,12 +2233,12 @@ def save_modes_data_to_gen(
         for item in modes_to_save:
             # For every ell mode list in modes_list
 
-            ell_value, emm_list = item
+            ell, emm_list = item
 
-            for emm_value in emm_list:
+            for emm in emm_list:
                 # For every (ell, emm) mode.
 
-                data = wfa.stats_mode(ell_value, emm_value)
+                data = wfa.stats_mode(ell, emm)
                 # set the time and data axis
                 data_re = data.real
                 data_im = data.imag
@@ -2246,7 +2247,7 @@ def save_modes_data_to_gen(
                     np.array([wfa.time_axis, data_re, data_im])
                 )
                 # Make the key
-                key = _key_gen(ell_value, emm_value, extras=f"r{r_ext:.2f}")
+                key = _key_gen(ell, emm, extras=f"r{r_ext:.2f}")
                 # message('Processing key', key)
                 # Create data set
                 wfile.create_dataset(key, data=save_data)
