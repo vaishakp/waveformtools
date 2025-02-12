@@ -762,7 +762,7 @@ class SingleMode:
 
         return DerivSHFromSpec(self, minfo)
 
-    def plot_residues(self, orig_func=None):
+    def plot_residues(self, orig_func=None, *args, **kwargs):
         """Plot the residues of this expanion"""
 
         if (np.array(orig_func) == np.array(None)).all():
@@ -776,7 +776,7 @@ class SingleMode:
 
         fig, ax = plt.subplots()
         ax.set_yscale("log")
-        ax.scatter(ell_axis, residues, s=1)
+        ax.scatter(ell_axis, residues, **kwargs)
         ax.set_title(r"Residues vs $\ell$")
         ax.set_ylabel("Residues")
         ax.set_xlabel(r"$\ell$")
