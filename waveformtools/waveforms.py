@@ -36,6 +36,7 @@ from waveformtools.waveformtools import (
 
 from waveformtools.single_mode import SingleMode
 from scipy.interpolate import InterpolatedUnivariateSpline
+from waveformtools.BMS import compute_linear_momentum_contribution_from_news, compute_recoil_from_momentum
 
 """ Units """
 
@@ -2689,3 +2690,35 @@ class modes_array:
 
         violation_modes = zeroth_order_balance_law_spec(self, 'SP', Grid)
         return violation_modes
+    
+
+    def get_news_from_strain(self, method='spline', radius=1):
+        ''' '''
+
+        news = self.time_derivative(method='SP')
+        news._modes_data*=radius
+
+        return news
+
+    def compute_momentum_flux(self, news):
+
+        dPxdt = np.zeros(self.data_len, dtype=np.complex128)
+        dPydt = np.zeros(self.data_len, dtype=np.complex128)
+
+        for ell, emm_list in self.modes_list:
+            for emm in emm_list:
+
+                f_lm = compute_linear_momentum_contribution_from_news(news.mode(ell, emm), ell, emm)
+                
+                dPxdt += f_lm[0]
+                dPydt += f_lm[1]
+
+        return dPxdt, dPydt
+    
+    def compute_kick(self, radius=1):
+
+        news = self.get_news_from_strain(radius=radius)
+        dPxdt, dPydt = self.compute_momentum_flux(news)
+        v_kick = compute_recoil_from_momentum(self.time_axis, dPxdt, dPydt)
+
+        return v_kick

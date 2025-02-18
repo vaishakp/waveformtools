@@ -457,6 +457,8 @@ def compute_masses_from_mass_ratio_and_total_mass(mass_ratio, M=1):
 
     return mass1, mass2
 
+def compute_chirp_mass_from_mass_ratio_and_total_mass(mass_ratio, M=1):
+    return M*(mass_ratio/(1+mass_ratio)**2 )**(3/5)
 
 # Defining function for calculating Chirpmass from a2
 
@@ -478,6 +480,9 @@ def compute_chirp_mass(a2_param):
     chirp_mass = 2 ** (8.0 / 5) / (5 * np.array(a2_param) ** (8.0 / 5))
     return chirp_mass
 
+
+def compute_chirp_mass_from_masses(m1, m2):
+    return (m1*m2)**(3/5) / (m1+m2)**(1/5)
 
 def compute_chi_eff_from_masses_and_spins(spin1, spin2, larger_mass_ratio):
     """Compute the effective z-spin parameter

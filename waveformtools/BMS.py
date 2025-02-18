@@ -168,3 +168,36 @@ def boost_waveform(unboosted_waveform, conformal_factor):
         boosted_waveform.append(boosted_waveform_item)
 
     return boosted_waveform
+
+
+def compute_linear_momentum_contribution_from_news(news_lm, ell, emm):
+
+    #dPxdt = np.zeros(len(hdot_lm), dtype=np.complex128)
+    #dPydt = np.zeros(len(hdot_lm), dtype=np.complex128)
+
+    dpdtlm = news_lm*(linear_momentum_alm_func(ell,emm)*np.conj(news_lm) + linear_momentum_blm_func(ell,-emm)*np.conj(news_lm) + linear_momentum_blm_func(ell+1,emm+1)*np.conj(news_lm))
+
+    dPxdt_lm = dpdtlm.real/(8*np.pi)
+    dPydt_lm = dpdtlm.imag/(8*np.pi)
+    
+    return dPxdt_lm, dPydt_lm
+
+def linear_momentum_alm_func(ell, emm):
+    return np.sqrt((ell-emm)*(ell+emm+1))/(ell*(ell+1))
+
+def linear_momentum_blm_func(ell, emm):
+    return np.sqrt((ell-2)*(ell+2)*(ell+emm)*(ell+emm-1)/(2*ell-1)/(2*ell+1))/(2*ell)
+
+
+def compute_recoil_from_momentum(time_axis, dPxdt, dPydt):
+    from scipy.interpolate import InterpolatedUnivariateSpline
+    spline_dPxdt_real = InterpolatedUnivariateSpline(time_axis, dPxdt.real, k=5)
+    spline_dPxdt_imag = InterpolatedUnivariateSpline(time_axis, dPxdt.imag, k=5)
+    spline_dPydt_real = InterpolatedUnivariateSpline(time_axis, dPydt.real, k=5)
+    spline_dPydt_imag = InterpolatedUnivariateSpline(time_axis, dPydt.imag, k=5)
+
+    dPx = spline_dPxdt_real.integral(time_axis[0], time_axis[-1]) + 1j*spline_dPxdt_imag.integral(time_axis[0], time_axis[-1])
+    dPy = spline_dPydt_real.integral(time_axis[0], time_axis[-1]) + 1j*spline_dPydt_imag.integral(time_axis[0], time_axis[-1])
+    
+    # Factor = lal.C_SI/1000 to get in km/s
+    return dPx + 1j*dPy
