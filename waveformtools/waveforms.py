@@ -2681,22 +2681,25 @@ class modes_array:
 
         return int_wf_modes
     
-    def compute_waveform_balance_law(self, Grid=None):
+    def compute_waveform_balance_law(self, M_adm, M_final, v_kick, Grid=None):
 
         if Grid is None:
             Grid = self.Grid
 
-        from waveform_balance_laws.laws import zeroth_order_balance_law_spec
+        from waveform_balance_laws.laws import lhs_balance_law, rhs_balance_law_from_modes
 
-        violation_modes = zeroth_order_balance_law_spec(self, 'SP', Grid)
-        return violation_modes
+        violations = lhs_balance_law(M_adm=M_adm,
+                                     M_final=M_final,
+                                     v_kick=v_kick,
+                                     grid_info=Grid) - rhs_balance_law_from_modes(self, 'SP', Grid)
+        return violations
     
 
-    def get_news_from_strain(self, method='spline', radius=1):
+    def get_news_from_strain(self, method='spline'):
         ''' '''
-
+        news = deepcopy(self)
+        news._time_axis = deepcopy(news.time_axis)
         news = self.time_derivative(method='SP')
-        news._modes_data*=radius
 
         return news
 
@@ -2705,20 +2708,20 @@ class modes_array:
         dPxdt = np.zeros(self.data_len, dtype=np.complex128)
         dPydt = np.zeros(self.data_len, dtype=np.complex128)
 
-        for ell, emm_list in self.modes_list:
-            for emm in emm_list:
+        modes_list = construct_mode_list(ell_max=self.ell_max-1, spin_weight=-2)
 
-                f_lm = compute_linear_momentum_contribution_from_news(news.mode(ell, emm), ell, emm)
-                
+        for ell, emm_list in modes_list:
+            for emm in emm_list:
+                f_lm = compute_linear_momentum_contribution_from_news(news, ell, emm)
                 dPxdt += f_lm[0]
                 dPydt += f_lm[1]
 
         return dPxdt, dPydt
     
-    def compute_kick(self, radius=1):
-
-        news = self.get_news_from_strain(radius=radius)
+    def compute_kick(self):
+        news = self.get_news_from_strain()
         dPxdt, dPydt = self.compute_momentum_flux(news)
-        v_kick = compute_recoil_from_momentum(self.time_axis, dPxdt, dPydt)
-
+        #print((dPxdt==0).all())
+        v_kick = compute_recoil_from_momentum(news.time_axis, dPxdt, dPydt)
+        
         return v_kick
