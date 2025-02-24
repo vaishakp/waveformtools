@@ -462,6 +462,9 @@ def compute_chirp_mass_from_mass_ratio_and_total_mass(mass_ratio, M=1):
 
 # Defining function for calculating Chirpmass from a2
 
+def compute_total_mass_from_mass_ratio_and_chirp_mass(mass_ratio, chirp_mass):
+    Mtotal = chirp_mass/((mass_ratio/(1+mass_ratio)**2)**(3/5)) 
+    return Mtotal
 
 def compute_chirp_mass(a2_param):
     """Compute the chirpmass from a2, the coefficient
