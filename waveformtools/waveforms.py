@@ -1752,7 +1752,7 @@ class modes_array:
             ell_max=self.ell_max, data_len=self.data_len
         )
 
-        from spectral.fourier.fft import compute_fft
+        from spectral.fourier.transforms import compute_fft
 
         for mode in self.modes_list:
             # Extrapolate every mode
@@ -1790,7 +1790,7 @@ class modes_array:
             ell_max=self.ell_max, data_len=self.data_len
         )
 
-        from spectral.fourier.fft import compute_ifft
+        from spectral.fourier.transforms import compute_ifft
 
         for mode in self.modes_list:
             # Extrapolate every mode

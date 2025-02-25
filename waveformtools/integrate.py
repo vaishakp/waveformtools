@@ -5,7 +5,7 @@
 ################################################
 import numpy as np
 import scipy
-from spectral.fourier.fft import compute_ifft
+from spectral.fourier.transforms import compute_ifft
 from waveformtools.waveformtools import message
 from waveformtools.waveformtools import (
     get_starting_angular_frequency as sang_f,
@@ -75,7 +75,7 @@ def fixed_frequency_integrator(
     if not utilde_conven:
         # Compute the FFT of data
         from numpy.fft import ifft
-        from spectral.fourier.fft import compute_fft, unset_fft_conven
+        from spectral.fourier.transforms import compute_fft, unset_fft_conven
 
         # from waveformtools import taper
         # udata_x_re = taper(u_time.real, delta_t=delta_t)
