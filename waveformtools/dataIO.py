@@ -631,12 +631,12 @@ def load_RIT_Psi4_data_from_disk(
                 modes_data[:, mode_idx] = wfmode
 
     if output_modes_array == True:
-        from waveformtools.waveforms import modes_array
+        from waveformtools.modes_array import ModesArray
 
         data_dir = os.path.dirname(data_file_path)
 
         if not wfa:
-            wfa = modes_array(
+            wfa = ModesArray(
                 label=label,
                 data_dir=data_dir,
                 modes_list=modes_list,
@@ -748,7 +748,7 @@ def load_RIT_Strain_data_from_disk(
         message("Interpolating using interp1d", message_verbosity=2)
         interpolator = partial(interp1d, kind=interp_kind)
 
-    from waveformtools.waveforms import modes_array
+    from waveformtools.modes_array import ModesArray
 
     # Max available mode l.
     ell_max_act, keys_list = get_ell_max_from_file(
@@ -781,10 +781,10 @@ def load_RIT_Strain_data_from_disk(
 
     if not wfa:
         # Create a modes array
-        wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
+        wfa = ModesArray(label=label, ell_max=ell_max, modes_list=modes_list)
     # wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
     if debug is True:
-        wf_nl = modes_array(
+        wf_nl = ModesArray(
             label=label + "_nl", ell_max=ell_max, modes_list=modes_list
         )
 
@@ -1061,12 +1061,12 @@ def load_gen_data_from_disk(
     choosing the time domain. This may change in future.
     """
     message("Loading generic data.", message_verbosity=1)
-    from waveformtools.waveforms import modes_array
+    from waveformtools.modes_array import ModesArray
 
     # Max available mode l.
     if not wfa:
         # Create a modes array
-        wfa = modes_array(
+        wfa = ModesArray(
             label=label,
             data_dir=data_dir,
             modes_list=modes_list,
@@ -1363,7 +1363,7 @@ def load_SpEC_data_from_disk(
     """
     message(f"Loading SpEC data N{extrap_order}", message_verbosity=1)
 
-    from waveformtools.waveforms import modes_array
+    from waveformtools.modes_array import ModesArray
 
     # Load SXS waveforms to modes_array.
     # Spectra infinty
@@ -1422,10 +1422,10 @@ def load_SpEC_data_from_disk(
 
     if not wfa:
         # Create a modes array
-        wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
+        wfa = ModesArray(label=label, ell_max=ell_max, modes_list=modes_list)
     # wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
     if debug is True:
-        wf_nl = modes_array(
+        wf_nl = ModesArray(
             label=label + "_nl", ell_max=ell_max, modes_list=modes_list
         )
 
@@ -1667,7 +1667,7 @@ def load_SpEC_non_extrap_data_from_disk(
     """
     message("Loading SpEC data.", message_verbosity=1)
 
-    from waveformtools.waveforms import modes_array
+    from waveformtools.modes_array import ModesArray
 
     # Load SXS waveforms to modes_array.
     # Spectra infinty
@@ -1728,13 +1728,13 @@ def load_SpEC_non_extrap_data_from_disk(
 
     if not wfa:
         # Create a modes array
-        wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
+        wfa = ModesArray(label=label, ell_max=ell_max, modes_list=modes_list)
     # wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
 
     wfa._areal_radii = dset["ArealRadius.dat"][...]
 
     if debug is True:
-        wf_nl = modes_array(
+        wf_nl = ModesArray(
             label=label + "_nl", ell_max=ell_max, modes_list=modes_list
         )
 
@@ -1966,7 +1966,7 @@ def load_SpECTRE_data_from_disk(
     """
     spin_weight = -2
     message("Loading SpECTRE data.", message_verbosity=1)
-    from waveformtools.waveforms import modes_array
+    from waveformtools.waveforms import ModesArray
 
     # Load SXS waveforms to modes_array.
     # Spectra infinty
@@ -1998,9 +1998,9 @@ def load_SpECTRE_data_from_disk(
         else:
             ell_max = wfa_ell_max
 
-    if not wfa:
+    if not isinstance(wfa, ModesArray):
         # Create a modes array
-        wfa = modes_array(label=label, ell_max=ell_max, modes_list=modes_list)
+        wfa = ModesArray(label=label, ell_max=ell_max, modes_list=modes_list)
 
     if not data_dir:
         data_dir = wfa.data_dir
@@ -2043,7 +2043,7 @@ def load_SpECTRE_data_from_disk(
 
             wf_time = wf_file.t
             # message(type(wfa.modes_data))
-            if wfa.modes_data.all() == np.array(None):
+            if (wfa.modes_data == np.array(None)).any():
                 time_axis = wf_time
                 message("Creating modes data")
 
@@ -2171,14 +2171,14 @@ def save_modes_data_to_gen(
 
     Examples
     --------
-    >>> from waveformtools.waveforms import modes_array
+    >>> from waveformtools.modes_array import ModesArray
     >>> wf = modes_array()
     >>> wf.data_dir = './'
     >>> wf.filename = 'data_file.h5'
     >>> wf.modes_list = [[2, 2], [3, 3]]
     >>> wf.load_gen_data()
     """
-    # from waveformtools.waveforms import modes_array
+    # from waveformtools.modes_array import ModesArray
 
     #############################
     # I/O assignments.
@@ -2189,7 +2189,7 @@ def save_modes_data_to_gen(
     wfa.out_file_name = wfa.out_file_name.replace("->", "_")
 
     # get the full path.
-    full_path = wfa.data_dir + "/" + wfa.out_file_name
+    full_path = wfa.data_dir/wfa.out_file_name
 
     if r_ext is None:
         if wfa.r_ext is None:
@@ -2238,7 +2238,7 @@ def save_modes_data_to_gen(
             for emm in emm_list:
                 # For every (ell, emm) mode.
 
-                data = wfa.stats_mode(ell, emm)
+                data = wfa.mode(ell, emm)
                 # set the time and data axis
                 data_re = data.real
                 data_im = data.imag

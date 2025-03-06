@@ -2,7 +2,7 @@ import numpy as np
 from spectral.spherical.swsh import Yslm_vec
 from waveformtools.dataIO import construct_mode_list
 from waveformtools.waveformtools import message
-from waveformtools.diagnostics import method_info
+from waveformtools.diagnostics import MethodInfo
 
 # from numba import int32, float64, complex128, uint16, types, typed,
 # from numba.types import List, Dict

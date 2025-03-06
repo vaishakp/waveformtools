@@ -3,7 +3,7 @@
 import numpy as np
 
 
-class method_info:
+class MethodInfo:
     """The methods for integration ,differential to be passed on
     for operations."""
 

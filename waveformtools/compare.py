@@ -35,6 +35,7 @@ def plot_modes(
     ylim="auto",
     nstop=1,
     plot22=False,
+    figsize=(18, 12)
 ):
     """Plot the first `nmodes` dominant modes of
     the input waveforms
@@ -80,13 +81,15 @@ def plot_modes(
     modes_to_plot = []
 
     for item in mode_list_sorted:
-        ell = int(item[1])
-        emm = int(item[3:])
+        c1, c2 = item.split('m')
+        ell = int(c1[1:])
+        emm = int(c2)
+
         if emm > 0:
             modes_to_plot.append([ell, [emm]])
 
     # Plots
-    fig, ax = plt.subplots(nrows=2, sharex=True, figsize=(6, 12))
+    fig, ax = plt.subplots(nrows=2, sharex=True, figsize=figsize)
     # For amplitudes
     #fig1, ax1 = plt.subplots()
     ax[0].set_yscale("log")
