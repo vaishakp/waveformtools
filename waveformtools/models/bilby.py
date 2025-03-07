@@ -1,6 +1,3 @@
-from waveformtools.models.waveform_models import WaveformModel
-import bilby
-
 class BilbyWaveformGenerator(WaveformModel):
 
     def __int__(self, 
@@ -40,13 +37,13 @@ class BilbyWaveformGenerator(WaveformModel):
         
 
     def get_bilby_parameters_dict(self):
-
+        pass
 
     def get_polarizations(self):
 
-        return self.waveform_generator.frequency_domain_strain(parameters=)
+        return self.waveform_generator.frequency_domain_strain()
 
 
 
     def get_td_waveform(self):
-        
+        pass

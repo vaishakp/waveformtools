@@ -1,5 +1,5 @@
 import numpy as np
-from waveformtools.waveforms import modes_array
+from waveformtools.modes_array import ModesArray
 
 
 
@@ -7,7 +7,7 @@ def get_modes_array_from_eob_modes_dict(time_axis, modes_dict):
 
     ell_max =4
 
-    wf_modes = modes_array(ell_max=ell_max+1,
+    wf_modes = ModesArray(ell_max=ell_max+1,
                            time_axis=time_axis,
                            spin_weight=-2)
     
