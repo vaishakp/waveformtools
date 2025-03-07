@@ -6,61 +6,60 @@ from waveformtools.models.utils import get_eob_modes_array
 class WaveformModel(ABC):
 
     def __init__(self,
-                 mass_1,
-                 mass_2,
-                 spin1x,
-                 spin1y,
-                 spin1z,
-                 spin2x,
-                 spin2y,
-                 spin2z,
-                 phi_ref,
-                 inclination,
-                 distance,
-                 delta_t=None,
-                 delta_f=None,
+                 parameters_dict,
                  *args,
-                 f_low=20,
-                 omega0=None,
-                 debug=True,
-                 approximant='SEOBNRv5PHM',
                  **kwargs,
                  ):
-        
+                
+        #if self.delta_t is None:
+        #    if self.delta_f is None:
+        #        raise KeyError("Please provide delta_t or delta_f")
+        #    else:
+        #        self.domain='frequency'
+        #else:
+        #    self.domain = 'time'
 
-        if omega0 is None:
-            self.omega0 = f_low/2
-        
-        self.delta_t = delta_t
-        self.delta_f = delta_f
-
-        if self.delta_t is None:
-            if self.delta_f is None:
-                raise KeyError("Please provide delta_t or delta_f")
-            else:
-                self.domain='frequency'
-        else:
-            self.domain = 'time'
+        self.parameters_dict = parameters_dict
 
 
-        self.parameters_dict = { 'mass_1' : mass_1,
-                                'mass_2' : mass_2,
-                                'spin1x' : spin1x,
-                                'spin1y' : spin1y,
-                                'spin1z' : spin1z,
-                                'spin2x' : spin2x,
-                                'spin2y' : spin2y,
-                                'spin2z' : spin2z,
-                                'phi_ref' : phi_ref,
-                                'inclination' : inclination,
-                                'distance' : distance,
-                                'f_low' : f_low,
+        self.parameters_dict_keys = [
+                                        'mass_1',
+                                        'mass_2',
+                                        'spin1x',
+                                        'spin1y',
+                                        'spin1z',
+                                        'spin2x',
+                                        'spin2y',
+                                        'spin2z',
+                                        'phi_ref',
+                                        'inclination',
+                                        'distance',
+                                        'f_low',
+                                        'f_ref',
+                                        #'sampling_frequency',
+                                        'delta_t',
+                                        #'delta_f',
+                                        'omega0',
+                                        'approximant',
+                                        'PhenomXHMReleaseVersion',
+                                        'PhenomXPrecVersion',
+                                        'debug',
 
-        }
+                                    ]
+                                
 
-        self.debug=debug
-        self.approximant = approximant
+        self.set_parameters()
+        #if self.omega0 is None:
+        #    self.omega0 = f_low/2
 
+    def set_parameters(self):
+
+        for key in self.parameters_dict_keys:
+            try:
+                setattr(self, key, self.parameters_dict[key])
+            except KeyError:
+                setattr(self, key, None)
+            
 
     def get_td_waveform_modes(self):
         raise NotImplementedError
