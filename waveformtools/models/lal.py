@@ -14,19 +14,38 @@ class LALWaveformModel(WaveformModel):
 
         #print("Local init")
         self.parameters_dict['lal_approximant'] = SimInspiralGetApproximantFromString(self.approximant)
-
-        if self.approximant == "IMRPhenomXPHM":
-            if PhenomXHMReleaseVersion is not None:
-                SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion(self.lal_dict, PhenomXHMReleaseVersion)
-            if PhenomXPrecVersion is not None:
-                SimInspiralWaveformParamsInsertPhenomXPrecVersion(self.lal_dict, 320)
-
+        self.parameters_dict['PhenomXHMReleaseVersion'] = PhenomXHMReleaseVersion
+        self.parameters_dict['PhenomXPrecVersion'] = PhenomXPrecVersion
+                    
         #print("A")
         self.parameters_dict['longAscNodes']=0
         self.parameters_dict['eccentricity'] = 0
         self.parameters_dict['meanPerAno'] = 0
         self.set_parameters()
 
+        if self.approximant == "IMRPhenomXPHM":
+            self.add_waveform_generation_arguments_to_lal_dict()
+
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['lal_dict']
+        del self.parameters_dict['lal_dict']
+        return state
+
+    def __setstate__(self, state):
+
+        self.__dict__.update(state)
+        self.parameters_dict['lal_dict'] = CreateDict()
+        self.add_waveform_generation_arguments_to_lal_dict()
+        self.set_parameters()
+
+    def add_waveform_generation_arguments_to_lal_dict(self):
+
+        if self.PhenomXHMReleaseVersion is not None:
+            SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion(self.lal_dict, self.PhenomXHMReleaseVersion)
+        if self.PhenomXPrecVersion is not None:
+            SimInspiralWaveformParamsInsertPhenomXPrecVersion(self.lal_dict, self.PhenomXPrecVersion)
 
     def get_td_waveform(self, **parameters_dict):
 

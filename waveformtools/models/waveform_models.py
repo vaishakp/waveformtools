@@ -46,6 +46,18 @@ class WaveformModel:
         self.parameters_dict['lal_dict'] = CreateDict()
         self.set_parameters()
 
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state['lal_dict']
+        del self.parameters_dict['lal_dict']
+        return state
+
+    def __setstate__(self, state):
+        
+        self.__dict__.update(state)
+        self.parameters_dict['lal_dict'] = CreateDict()
+        self.set_parameters()
+
     @property
     def phi_ref(self):
         return self.coa_phase
