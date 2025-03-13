@@ -118,7 +118,7 @@ class PrepareSXSWaveform:
 
         if joined_waveform_outfile_name is None:
             message("Choosing default directory for output...")
-            joined_waveform_outfile_name = (
+            joined_waveform_outfile_name = ('rhOverM_'+
                 sim_name + f"Lev{self.lev}JoinedWaveform.h5"
             )
 
@@ -153,9 +153,11 @@ class PrepareSXSWaveform:
         )
 
         if joined_horizons_outfile_name is None:
-            self._joined_horizons_outfile_name = (
+            joined_horizons_outfile_name = ('Horizons_'+
                 sim_name + f"Lev{self.lev}JoinedHorizons.h5"
             )
+        
+        self._joined_horizons_outfile_name = joined_horizons_outfile_name
 
         self.setup_env()
 
