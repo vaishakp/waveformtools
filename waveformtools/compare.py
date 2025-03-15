@@ -165,7 +165,7 @@ def plot_modes(
         fig.savefig(f"{wf1.label}_waveform_modes_amp_phase.pdf")
         #fig2.savefig(f"{wf1.label}_waveform_phase_modes.pdf")
 
-    plt.show()
+    #plt.show()
     return fig, ax
 
 def plot_mode_differences(

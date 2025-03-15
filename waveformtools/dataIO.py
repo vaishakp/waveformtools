@@ -635,7 +635,7 @@ def load_RIT_Psi4_data_from_disk(
 
         data_dir = os.path.dirname(data_file_path)
 
-        if not wfa:
+        if not isinstance(wfa, ModesArray):
             wfa = ModesArray(
                 label=label,
                 data_dir=data_dir,
@@ -779,7 +779,7 @@ def load_RIT_Strain_data_from_disk(
 
     message("Chosen ell max", ell_max, "Available ell_max", ell_max_act)
 
-    if not wfa:
+    if not isinstance(wfa, ModesArray):
         # Create a modes array
         wfa = ModesArray(label=label, ell_max=ell_max, modes_list=modes_list)
     # wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
@@ -1064,7 +1064,7 @@ def load_gen_data_from_disk(
     from waveformtools.modes_array import ModesArray
 
     # Max available mode l.
-    if not wfa:
+    if not isinstance(wfa, ModesArray):
         # Create a modes array
         wfa = ModesArray(
             label=label,
@@ -1321,7 +1321,7 @@ def load_SpEC_data_from_disk(
     label="SXS Strain",
     data_dir="./",
     file_name="rhOverM_Extrapolated_N5_CoM_Mem.h5",
-    extrap_order=4,
+    extrap_order=None,
     r_ext=None,
     ell_max=None,
     centre=True,
@@ -1420,7 +1420,7 @@ def load_SpEC_data_from_disk(
 
     message("Chosen ell max", ell_max, "Available ell_max", ell_max_act)
 
-    if not wfa:
+    if not isinstance(wfa, ModesArray):
         # Create a modes array
         wfa = ModesArray(label=label, ell_max=ell_max, modes_list=modes_list)
     # wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)
@@ -1726,7 +1726,7 @@ def load_SpEC_non_extrap_data_from_disk(
 
     message("Chosen ell max", ell_max, "Available ell_max", ell_max_act)
 
-    if not wfa:
+    if not isinstance(wfa, ModesArray):
         # Create a modes array
         wfa = ModesArray(label=label, ell_max=ell_max, modes_list=modes_list)
     # wfa = modes_array(label=label, data_dir=data_dir, modes_list=modes_list)

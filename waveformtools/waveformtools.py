@@ -3251,3 +3251,146 @@ def get_val_at_t_ref(time_axis, val_axis, time):
     # print(val_at_t_ref, type(val_at_t_ref))
 
     return round(val_at_t_ref, 5)
+def get_nr_frame_angles_from_lal(inclination, phi_ref, tol=1e-3):
+    ''' Convert the lalframe angles (inclination, phi_ref)
+    to NR frame (theta, phi/psi, alpha) '''
+
+    orb_phase = phi_ref
+    #inclination = ref_params['inclination']
+
+    # Get the LAL source frame vectors
+    ln_hat_x = 0
+    ln_hat_y = 0
+    ln_hat_z = 1
+
+    n_hat_x = 1
+    n_hat_y = 0
+    n_hat_z = 0
+
+    ln_hat = np.array([ln_hat_x, ln_hat_y, ln_hat_z])
+    n_hat = np.array([n_hat_x, n_hat_y, n_hat_z])
+
+    # 2.3: Carryout vector math to get Zref in the lal wave frame
+    corb_phase = np.cos(orb_phase)
+    sorb_phase = np.sin(orb_phase)
+    sinclination = np.sin(inclination)
+    cinclination = np.cos(inclination)
+
+    ln_cross_n = np.cross(ln_hat, n_hat)
+    ln_cross_n_x, ln_cross_n_y, ln_cross_n_z = ln_cross_n
+
+    z_wave_x = sinclination * (sorb_phase * n_hat_x + corb_phase * ln_cross_n_x)
+    z_wave_y = sinclination * (sorb_phase * n_hat_y + corb_phase * ln_cross_n_y)
+    z_wave_z = sinclination * (sorb_phase * n_hat_z + corb_phase * ln_cross_n_z)
+
+    z_wave_x += cinclination * ln_hat_x
+    z_wave_y += cinclination * ln_hat_y
+    z_wave_z += cinclination * ln_hat_z
+
+    z_wave = np.array([z_wave_x, z_wave_y, z_wave_z])
+    z_wave = z_wave / np.linalg.norm(z_wave)
+
+    #################################################################
+    # Step 3.1: Extract theta and psi from Z in the lal wave frame
+    # NOTE: Theta can only run between 0 and pi, so no problem with arccos here
+    theta = np.arccos(z_wave_z)
+
+    # Degenerate if Z_wave[2] == 1. In this case just choose psi randomly,
+    # the choice will be cancelled out by alpha correction (I hope!)
+
+    # If theta is very close to the poles
+    # return a random value
+    if abs(z_wave_z - 1.0) < tol:
+        psi = 0.5
+
+    else:
+        # psi can run between 0 and 2pi, but only one solution works for x and y */
+        # Possible numerical issues if z_wave_x = sin(theta) */
+        if abs(z_wave_x / np.sin(theta)) > 1.0:
+            if abs(z_wave_x / np.sin(theta)) < (1 + 10 * tol):
+                # LAL tol retained.
+                if (z_wave_x * np.sin(theta)) < 0.0:
+                    psi = np.pi
+
+                else:
+                    psi = 0.0
+
+            else:
+                print(f"z_wave_x = {z_wave_x}")
+                print(f"sin(theta) = {np.sin(theta)}")
+                raise ValueError(
+                    "Z_x cannot be bigger than sin(theta). Please contact the developers."
+                )
+
+        else:
+            psi = np.arccos(z_wave_x / np.sin(theta))
+
+        y_val = np.sin(psi) * np.sin(theta)
+
+        # If z_wave[1] is negative, flip psi so that sin(psi) goes negative
+        # while preserving cos(psi) */
+        if z_wave_y < 0.0:
+            psi = 2 * np.pi - psi
+            y_val = np.sin(psi) * np.sin(theta)
+
+        if abs(y_val - z_wave_y) > (5e3 * tol):
+            # LAL tol retained.
+            print(f"orb_phase = {orb_phase}")
+            print(
+                f"y_val = {y_val}, z_wave_y = {z_wave_y}, abs(y_val - z_wave_y) = {abs(y_val - z_wave_y)}"
+            )
+            raise ValueError("Math consistency failure! Please contact the developers.")
+
+    # 3.2: Compute the vectors theta_hat and psi_hat
+    # stheta = np.sin(theta)
+    # ctheta = np.cos(theta)
+
+    spsi = np.sin(psi)
+    cpsi = np.cos(psi)
+
+    # theta_hat_x = cpsi * ctheta
+    # theta_hat_y = spsi * ctheta
+    # theta_hat_z = -stheta
+    # theta_hat = np.array([theta_hat_x, theta_hat_y, theta_hat_z])
+
+    psi_hat_x = -spsi
+    psi_hat_y = cpsi
+    psi_hat_z = 0.0
+    psi_hat = np.array([psi_hat_x, psi_hat_y, psi_hat_z])
+
+    # Step 4: Compute sin(alpha) and cos(alpha)
+    # Rotation angles on the tangent plane
+    # due to spin weight.
+
+    # n_dot_theta = np.dot(n_hat, theta_hat)
+    # ln_cross_n_dot_theta = np.dot(ln_cross_n, theta_hat)
+
+    n_dot_psi = np.dot(n_hat, psi_hat)
+    ln_cross_n_dot_psi = np.dot(ln_cross_n, psi_hat)
+
+    # salpha = corb_phase * n_dot_theta - sorb_phase * ln_cross_n_dot_theta
+    calpha = corb_phase * n_dot_psi - sorb_phase * ln_cross_n_dot_psi
+
+    if abs(calpha) > 1:
+        calpha_err = abs(calpha) - 1
+        if calpha_err < tol:
+            # This tol could have been much smaller.
+            # Just resuing the default for now.
+            print(
+                f"Correcting the polarization angle for finite precision error {calpha_err}"
+            )
+            calpha = calpha / abs(calpha)
+        else:
+            raise ValueError(
+                "Seems like something is wrong with the polarization angle. Please contact the developers!"
+            )
+
+    alpha = np.arccos(calpha)
+
+    angles = {
+        "theta": theta,
+        "psi": psi,
+        "alpha": alpha,
+    }
+
+    return angles
