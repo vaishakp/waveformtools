@@ -11,6 +11,8 @@ from waveformtools.waveformtools import (
     get_starting_angular_frequency as sang_f,
 )
 
+from scipy.interpolate import InterpolatedUnivariateSpline
+
 ##################################################
 # Fixed frequency integration
 ##################################################
@@ -554,3 +556,27 @@ def GaussLegendre2DInteg(func, info):
         * info.dphi
     )
     return integral
+
+
+def twod_time_integral(times, twod_func_ts, a=None, b=None):
+    ''' Integrate a twoD array in time '''
+    
+    xdata = times
+    if a is None:
+        a = xdata[0]
+    if b is None:
+        b = xdata[-1]
+        
+    ntime, ntheta, nphi = twod_func_ts.shape
+    ans = np.zeros((ntheta ,nphi), dtype=np.complex128)
+
+    for th_idx in range(ntheta):
+        for ph_idx in range(nphi):
+            ydata = twod_func_ts[:, th_idx, ph_idx]
+            yinterp_re = InterpolatedUnivariateSpline(xdata, ydata.real, k=5)
+            yinterp_im = InterpolatedUnivariateSpline(xdata, ydata.imag, k=5)
+            integral_re = yinterp_re.integral(a=a, b=b)
+            integral_im = yinterp_im.integral(a=a, b=b)
+            ans[th_idx, ph_idx]  = integral_re + 1j*integral_im
+
+    return ans
