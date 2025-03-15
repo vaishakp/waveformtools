@@ -15,7 +15,7 @@ from waveformtools.dataIO import (
 )
 from spectral.spherical.grids import UniformGrid
 from spectral.spherical.swsh import Yslm_vec
-from waveformtools.waveformtools import interp_resam_wfs, message
+from waveformtools.waveformtools import interp_resam_wfs, message, get_nr_frame_angles_from_lal
 from pathlib import Path
 from waveformtools.integrate import fixed_frequency_integrator
 from waveformtools.waveformtools import (
@@ -264,8 +264,10 @@ class ModesArray:
         return aslice
     
     def __len__(self):
-
-        return len(self.time_axis)
+        if (np.array(self.time_axis) == np.array(None)).any():
+            return False
+        else:
+            return len(self.time_axis)
     
     def get_metadata(self):
         """Get the metadata associated with the instance.
@@ -1695,12 +1697,11 @@ class ModesArray:
     def to_td_waveform(
         self,
         Mtotal=1,
-        theta=0,
-        phi=0,
+        inclination=0,
+        phi_ref=0,
         alpha=None,
         distance=1,
         delta_t=None,
-        method="precise",
         k=None,
     ):
         """Get the plus and cross polarizations of
@@ -1737,50 +1738,35 @@ class ModesArray:
         nrcatalogtools package to obtain the correct
         angles first.
         """
+        import lal
 
-        if method == "fast":
-            message("Using fast SWSH method")
-            from spectral.spherical.swsh import Yslm_vec as Yslm
-        elif method == "precise":
-            message("Using precise SWSH method")
-            from spectral.spherical.swsh import Yslm_prec as Yslm
-        else:
-            raise NotImplementedError(f"Unknown method {method}")
+        angles = get_nr_frame_angles_from_lal(inclination, phi_ref)
+        theta = angles["theta"]
+        phi = angles["psi"]
+        alpha = angles["alpha"]
 
-        wts = 0
-        all_yslm = []
-        flat_modes = []
-
-        for ell, emm_list in self.modes_list:
-            for emm in emm_list:
-                Y = Yslm(self.spin_weight, ell, emm, theta=theta, phi=phi)
-
-                all_yslm.append(np.complex256(Y))
-                flat_modes.append(self.mode(ell, emm))
-
-        all_yslm = np.complex256(all_yslm)
-
-        wts = np.dot(all_yslm, flat_modes)
+        polarizations = self.evaluate_angular(theta=theta, phi=phi)
 
         # Rescale the time axis
-        taxis = self.time_axis * tuc * Mtotal
+        taxis = self.time_axis * lal.MTSUN_SI * Mtotal
 
         if isinstance(delta_t, float):
             # Resample the waveform
             new_taxis = np.arange(taxis[0], taxis[-1], delta_t)
-            wts = interp_resam_wfs(wts, taxis, new_taxis, k=k)
+            polarizations = interp_resam_wfs(polarizations, taxis, new_taxis, k=k)
             taxis = new_taxis
 
+        amp_factor = lal.G_SI * Mtotal * lal.MSUN_SI / (lal.C_SI**2 * distance * 1e6 * lal.PC_SI)
+
         # Rescale the magnitude of the waveform
-        wts = Mtotal * wts / (distance * dMpc * muc)
+        polarizations = amp_factor * polarizations
 
         # Rotate polarizations
         if alpha is not None:
             from waveformtools.transforms import rotate_polarizations
+            polarizations = rotate_polarizations(polarizations, alpha)
 
-            wts = rotate_polarizations(wts, alpha)
-
-        return taxis, wts.real, -wts.imag
+        return taxis, polarizations.real, polarizations.imag
 
     def evaluate_angular(
         self, theta=None, phi=None, ell_max=None, max_t_steps=None
@@ -1861,7 +1847,7 @@ class ModesArray:
         
         from waveformtools.compare import plot_modes
 
-        plot_modes(self, nmodes,
+        return plot_modes(self, nmodes,
                          save_fig,
                          xlim,
                          ylim,
