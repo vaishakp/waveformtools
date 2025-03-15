@@ -402,7 +402,6 @@ def construct_mode_list(ell_max, spin_weight):
         f"{max([item[0] for item in modes_list])}",
         message_verbosity=4,
     )
-
     message("--------------------------------\n", message_verbosity=4)
 
     return modes_list
@@ -1931,6 +1930,7 @@ def load_SpECTRE_data_from_disk(
     resam_type="auto",
     kind="cubic",
     compression_opts=0,
+    spin_weight=None,
 ):
     """Load the SpECTRE or SpEC CCE waveform to modes_array,
     from hdf5 files from disk.
@@ -1964,13 +1964,21 @@ def load_SpECTRE_data_from_disk(
     modes_array: modes_array
                  A modes_array instance containing the loaded modes.
     """
-    spin_weight = -2
+    #spin_weight = -2
+    if spin_weight is None:
+        if wfa is None:
+            spin_weight=-2
+        else:
+            if wfa.spin_weight is None:
+                spin_weight = -2
+            else:
+                spin_weight = wfa.spin_weight
+
     message("Loading SpECTRE data.", message_verbosity=1)
     from waveformtools.waveforms import ModesArray
 
     # Load SXS waveforms to modes_array.
-    # Spectra infinty
-
+    # Spectre infinty
     full_path = f"{data_dir}/{file_name}"
 
     try:
@@ -1984,9 +1992,11 @@ def load_SpECTRE_data_from_disk(
         sys.exit(0)
 
     wf_file = scri.rpxmb.load(full_path)[0].to_inertial_frame()
-    ell_max_act = wf_file.ell_max
-    # Add readinf ell max from file
+    ell_max_act = int(wf_file.ell_max)
+    #import pdb
+    #pdb.set_trace()
 
+    # Add readinf ell max from file
     if ell_max is None:
         if wfa is None:
             wfa_ell_max = None
@@ -2001,6 +2011,7 @@ def load_SpECTRE_data_from_disk(
     if not isinstance(wfa, ModesArray):
         # Create a modes array
         wfa = ModesArray(label=label, ell_max=ell_max, modes_list=modes_list)
+
 
     if not data_dir:
         data_dir = wfa.data_dir
@@ -2017,11 +2028,9 @@ def load_SpECTRE_data_from_disk(
     else:
         wfa.ell_max = ell_max
 
-    # ell_max		 = 12
     if not modes_list:
         if not wfa.modes_list:
             message("Constructing the modes list")
-            # sys.exit(0)
             modes_list = construct_mode_list(
                 ell_max=ell_max, spin_weight=spin_weight
             )
@@ -2030,40 +2039,26 @@ def load_SpECTRE_data_from_disk(
     else:
         wfa.modes_list = modes_list
 
-    # flag = None
-
     from scipy.stats import mode as stats_mode
 
     for ell, emm_list in modes_list:
         for emm in emm_list:
-            # message(ell, emm)
             wf_data = wf_file.data[:, wf_file.index(ell, emm)]
             wf_data_re = wf_data.real
             wf_data_im = wf_data.imag
-
             wf_time = wf_file.t
-            # message(type(wfa.modes_data))
+
             if (wfa.modes_data == np.array(None)).any():
                 time_axis = wf_time
                 message("Creating modes data")
-
-                # min_dt = round(min(np.diff(wf_psi4_time)), 2)
-                # max_dt = round(max(np.diff(wf_psi4_time)), 2)
-                # dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
-                # dt_auto = int(dt_auto*100)/100
                 dt_auto = stats_mode(np.diff(time_axis))[0]
-                # message(f'Default dt is {dt_auto}')
-
-                # min_dt = round(min(np.diff(time_axis)), 2)
-                # max_dt = round(max(np.diff(time_axis)), 2)
-
+                message(f'Default dt is {dt_auto}', message_verbosity=3)
                 min_dt = min(np.diff(time_axis))
                 max_dt = max(np.diff(time_axis))
 
                 message(
                     f"Min dt {min_dt} and Max dt {max_dt}", message_verbosity=2
                 )
-
                 if resam_type == "finest":
                     # Choose finest available timestep
                     # for upto 3 decimal digits.
@@ -2080,7 +2075,6 @@ def load_SpECTRE_data_from_disk(
                         m_dt,
                         message_verbosity=1,
                     )
-
                 if isinstance(resam_type, float):
                     m_dt = resam_type
                     message(
@@ -2088,7 +2082,6 @@ def load_SpECTRE_data_from_disk(
                         m_dt,
                         message_verbosity=1,
                     )
-
                 if resam_type == "auto":
                     # Choose finest available timestep
                     # for upto 3 decimal digits.
@@ -2098,25 +2091,17 @@ def load_SpECTRE_data_from_disk(
                         m_dt,
                         message_verbosity=1,
                     )
-
                 # New (resampled) time axis
                 time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
-
                 # Length of data.
                 data_len = len(time_axis)
-                # message(data_len)
-
                 wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
-                # message(wfa.mode(0,0).shape)
                 wfa.time_axis = time_axis
 
             re_int = interp1d(wf_time, wf_data_re, kind=kind)
-            # message(wf_time[0], wf_time[-1], time_axis[0], time_axis[-1])
             re_dat = re_int(time_axis)
-
             im_int = interp1d(wf_time, wf_data_im, kind=kind)
             im_dat = im_int(time_axis)
-
             wfa.set_mode_data(ell=ell, emm=emm, data=re_dat + 1j * im_dat)
 
     if centre:

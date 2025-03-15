@@ -172,6 +172,7 @@ class ModesArray:
         if ufunc == np.conjugate:
             cma = self.deepcopy()
             cma._modes_data = np.conjugate(self._modes_data)
+            cma._spin_weight=int(np.sign(cma.spin_weight)*cma.spin_weight)
             return cma
         
         return NotImplemented
@@ -221,6 +222,7 @@ class ModesArray:
         obj2 = self.deepcopy()
         if isinstance(obj, self.__class__):
             obj2._modes_data = self.modes_data * obj.modes_data
+            obj2._spin_weight = self.spin_weight + obj.spin_weight
         else:
             obj2._modes_data = self.modes_data*obj
 
@@ -231,6 +233,7 @@ class ModesArray:
         obj2 = self.deepcopy() 
         if isinstance(obj, self.__class__):
             obj2._modes_data = self.modes_data * obj.modes_data
+            obj2._spin_weight = self.spin_weight + obj.spin_weight
         else:
             obj2._modes_data = obj*self.modes_data
 
@@ -241,6 +244,7 @@ class ModesArray:
         obj2 = self.deepcopy() 
         if isinstance(obj, self.__class__):
             obj2._modes_data = self.modes_data / obj.modes_data
+            obj2._spin_weight = self.spin_weight - obj.spin_weight
         else:
             obj2._modes_data= self.modes_data /obj
         return obj2
@@ -250,6 +254,7 @@ class ModesArray:
         obj2 = self.deepcopy() 
         if isinstance(obj, self.__class__):
             obj2._modes_data = obj.modes_data/self.modes_data
+            obj2._spin_weight = obj.spin_weight - self.spin_weight
         else:
             obj2._modes_data = obj/self.modes_data
 
@@ -1909,8 +1914,6 @@ class ModesArray:
                                   ell_max=self.ell_max,
                                   label='BLawRHS',
                                   Grid=self.Grid)
-
-
         xdata = self.time_axis
 
         if a is None:
@@ -1920,7 +1923,6 @@ class ModesArray:
 
         for ell, emm_list in modes_list:
             for emm in emm_list:
-
                 ydata = self.mode(ell, emm)
                 #xdata = self.time_axis
                 yinterp_re = InterpolatedUnivariateSpline(xdata, ydata.real, k=5)
@@ -1943,11 +1945,6 @@ class ModesArray:
             Grid = self.Grid
 
         from waveform_balance_laws.laws import balance_law
-
-        #lhs_residue = lhs_balance_law(M_adm=M_adm,
-        #                             M_final=M_final,
-        #                             v_kick=v_kick,
-        #                             grid_info=Grid) - rhs_balance_law_from_modes(self, 'SP', Grid)
         
         violations = balance_law(strain_modes=self,
                                  ginfo=Grid,
@@ -1958,20 +1955,14 @@ class ModesArray:
         return violations
     
 
-    def compute_waveform_balance_law_finite_time(self, Psi2_modes, Grid=None):
+    def compute_waveform_balance_law_finite_time(self, psi2_modes, Grid=None):
 
         if Grid is None:
             Grid = self.Grid
 
         from waveform_balance_laws.laws import balance_law_finite_time
-
-        #lhs_residue = lhs_balance_law(M_adm=M_adm,
-        #                             M_final=M_final,
-        #                             v_kick=v_kick,
-        #                             grid_info=Grid) - rhs_balance_law_from_modes(self, 'SP', Grid)
-        
         violations = balance_law_finite_time(strain_modes=self,
-                                             Psi2_modes=Psi2_modes,
+                                             psi2_modes=psi2_modes,
                                              ginfo=Grid,
                                             )
         
@@ -1989,7 +1980,6 @@ class ModesArray:
 
         dPxdt = np.zeros(self.data_len, dtype=np.complex128)
         dPydt = np.zeros(self.data_len, dtype=np.complex128)
-
         modes_list = construct_mode_list(ell_max=self.ell_max-1, spin_weight=-2)
 
         for ell, emm_list in modes_list:
@@ -2000,10 +1990,10 @@ class ModesArray:
 
         return dPxdt, dPydt
     
+
     def compute_kick(self):
         news = self.get_news_from_strain()
         dPxdt, dPydt = self.compute_momentum_flux(news)
-        #print((dPxdt==0).all())
         v_kick = compute_recoil_from_momentum(news.time_axis, dPxdt, dPydt)
         
         return v_kick
@@ -2017,27 +2007,26 @@ class ModesArray:
         return cropped_wfm
 
 
-    def energy_function_from_news_modes(self, news_modes):
+    def get_power_from_news_modes(self, news_modes):
 
-        nnbar_modes = news_modes*np.conjugate(news_modes)
-        nnbar = nnbar_modes.evaluate_angular()
-        ntheta, nphi, ntime = nnbar.shape
-        xdata = news_modes.time_axis
-        a = xdata[0]
-        b = xdata[-1]
+        power = np.sum(np.absolute(news_modes.modes_data )**2, axis=0)/(16*np.pi)
 
-        energy_func = np.zeros((ntheta, nphi), dtype=np.complex128)
+        return power
+    
+    def compute_energy_loss(self, news_modes=None):
 
-        #print(len(xdata), rhs.shape)   
-        for th_idx in range(ntheta):
-            for ph_idx in range(nphi):
-                ydata = nnbar[th_idx, ph_idx, :]
-                yinterp_re = InterpolatedUnivariateSpline(xdata, ydata.real, k=5)
-                yinterp_im = InterpolatedUnivariateSpline(xdata, ydata.imag, k=5)
-                integral_re = yinterp_re.integral(a=a, b=b)
-                integral_im = yinterp_im.integral(a=a, b=b)
-                energy_func[th_idx, ph_idx]  = integral_re + 1j*integral_im
+        if news_modes is None:
+            news_modes = self.get_news_from_strain()
 
-        return energy_func
+        power = self.get_power_from_news_modes(news_modes)
+        energy_loss = InterpolatedUnivariateSpline(self.time_axis, power, k=5).integrate(a=self.time_axis[0], b = self.time_axis[-1])
 
-        
+        return energy_loss
+    
+    def bar(self):
+        ''' Only complex conjugate the modes - don't change the 
+        spin weight '''
+
+        bar_modes = deepcopy(self)
+        bar_modes._modes_data = np.conjugate(self.modes_data)
+        return bar_modes
