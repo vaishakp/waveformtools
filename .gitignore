@@ -22,5 +22,5 @@ waveformtools/devel_nb
 **/waveformtools.egg-info
 **/.ipynb_checkpoints
 *.pkl
-#**/dev
+**/dev/
 *.orig
