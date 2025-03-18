@@ -1100,7 +1100,7 @@ def load_gen_data_from_disk(
 
     # Open the modes file.
     # import h5py, json
-    full_path = wfa.data_dir + "/" + wfa.file_name
+    full_path = wfa.data_dir/wfa.file_name
 
     # message(wfa.file_name)
     with h5py.File(full_path, "r") as wfile:
@@ -1261,7 +1261,7 @@ def load_gen_data_from_disk(
                         else:
                             shift = 0
                         data_len = len(time_axis) - shift
-                        wfa.data_len = data_len
+                        wfa._data_len = data_len
                         # Delete the attribute
                         # del self.modes_data
                         # Create an array for the waveform mode object

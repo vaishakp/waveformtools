@@ -59,12 +59,12 @@ class ModesArray:
     Methods
     -------
     get_metadata:
-                   Get the metadata associated with the modes_array.
+                   Get the metadata associated with the ModesArray.
     mode:
            Get the data for the given :math:`\\ell, m` mode.
     create_modes_array:
                          A private method to create an
-                         empty `modes_array` of given shape.
+                         empty `ModesArray` of given shape.
     delta_t:
               Set the attribute `delta_t` and/ or return its value.
     load_modes:
@@ -74,10 +74,10 @@ class ModesArray:
     set_mode_data:
                    Set the `mode` data of specified modes.
     to_frequency_basis:
-                        Get the `modes_array` in frequency basis
+                        Get the `ModesArray` in frequency basis
                         from its time basis representation.
     to_time_basis:
-                   Get the `modes_array` in temporal basis
+                   Get the `ModesArray` in temporal basis
                    from its frequency basis representation.
     extrap_to_inf:
                    Extrapolate the modes to infinity.
@@ -370,8 +370,8 @@ class ModesArray:
 
         Returns
         -------
-        self.modes_array: modes_array
-                           sets the `self.modes_array` attribute.
+        self.modes_data: modes_data
+                           sets the `self.ModesArray` attribute.
         """
         import datetime
         import time
@@ -457,8 +457,10 @@ class ModesArray:
         #        data_len = len(self.frequency_axis)
 
         #    self._data_len = data_len
-
-        return len(self)
+        if self._data_len is not None:
+            return self._data_len
+        else:
+            return len(self)
 
     #@data_len.setter
     #def data_len(self, data_len):
@@ -981,7 +983,7 @@ class ModesArray:
         return waveform_sp
 
     def trim(self, trim_upto_time=None):
-        """Trim the modes_array at the beginning and center about
+        """Trim the ModesArray at the beginning and center about
         the peak of the 2,2 mode.
 
         Parameters
@@ -991,7 +993,7 @@ class ModesArray:
 
         Returns
         -------
-        Re-sets the `time_axis` and `modes_array` data.
+        Re-sets the `time_axis` and `ModesArray` data.
         """
         if trim_upto_time is None:
             trim_upto_time = self.r_ext
@@ -1014,13 +1016,13 @@ class ModesArray:
 
         Returns
         -------
-        waveform_tilde_modes: modes_array
-                               A modes_array containing the modes
+        waveform_tilde_modes: ModesArray
+                               A ModesArray containing the modes
                                in frequency basis.
         """
 
         # Create a new modes array
-        waveform_tilde_modes = modes_array(
+        waveform_tilde_modes = ModesArray(
             label=f"{self.label} -> frequency_domain"
         )
         waveform_tilde_modes.create_modes_array(
@@ -1054,13 +1056,13 @@ class ModesArray:
 
         Returns
         -------
-        waveform_modes: modes_array
-                         A modes_array containing the modes
+        waveform_modes: ModesArray
+                         A ModesArray containing the modes
                          in frequency basis.
         """
 
         # Create a new modes array
-        waveform_modes = modes_array(label=f"{self.label} -> time_domain")
+        waveform_modes = ModesArray(label=f"{self.label} -> time_domain")
         waveform_modes.create_modes_array(
             ell_max=self.ell_max, data_len=self.data_len
         )
@@ -1186,7 +1188,7 @@ class ModesArray:
             modes_list = construct_mode_list(self.ell_max, self.spin_weight)
 
         # Create a mode array for the extrapolated waveform.
-        extrap_wf = modes_array(
+        extrap_wf = ModesArray(
             label=f"{self.label} -> rPsi4_inf",
             modes_list=self.modes_list,
             ell_max=self.ell_max,
@@ -1228,8 +1230,8 @@ class ModesArray:
 
         Parameters
         ----------
-        supertransl_alpha_modes: modes_array
-                                  The modes_array containing the
+        supertransl_alpha_modes: ModesArray
+                                  The ModesArray containing the
                                   supertranslation mode coefficients.
         Grid: class instance
                     The class instance that contains
@@ -1241,7 +1243,7 @@ class ModesArray:
 
         Returns
         -------
-        Psi4_supertransl: modes_array
+        Psi4_supertransl: ModesArray
                            A class instance containg the
                            modes of the supertranslated
                            waveform :math:`\\Psi_4`.
@@ -1314,7 +1316,7 @@ class ModesArray:
         # Set the data.
         supertransl_spherical_waveform.data = supertransl_spherical_grid
 
-        # Get modes_array from spherical_array
+        # Get ModesArray from spherical_array
         Psi4_supertransl_modes = supertransl_spherical_waveform.to_modes_array(
             ell_max=ell_max
         )
@@ -1366,7 +1368,7 @@ class ModesArray:
         return boosted_waveform
 
     def get_strain_from_psi4(self, omega0="auto"):
-        """Get the strain `modes_array` from :math:`\\Psi_4` by
+        """Get the strain `ModesArray` from :math:`\\Psi_4` by
         fixed frequency integration.
 
         Parameters
@@ -1377,12 +1379,12 @@ class ModesArray:
 
         Returns
         -------
-        strain_waveform: modes_array
+        strain_waveform: ModesArray
                           The computed strain modes.
         """
 
         # Initialize a mode array for strain.
-        strain_waveform = modes_array(
+        strain_waveform = ModesArray(
             label="{} strain from Psi4".format(self.label),
             r_ext=self.r_ext,
             ell_max=8,
@@ -1427,7 +1429,7 @@ class ModesArray:
         return strain_waveform
 
     def get_news_from_psi4(self, omega0="auto"):
-        """Get the News `modes_array` from :math:`\\Psi_4` by
+        """Get the News `ModesArray` from :math:`\\Psi_4` by
         fixed frequency integration.
 
         Parameters
@@ -1439,14 +1441,14 @@ class ModesArray:
 
         Returns
         -------
-        news_waveform: modes_array
+        news_waveform: ModesArray
                         The computed strain modes.
         """
 
         # Initialize a mode array for strain.
-        # news_waveform = modes_array(label=f'{self.label} news from
+        # news_waveform = ModesArray(label=f'{self.label} news from
         # Psi4', r_ext=500, ell_max=8, modes_list=self.modes_list)
-        news_waveform = modes_array(
+        news_waveform = ModesArray(
             label="{} news from Psi4".format(self.label),
             r_ext=500,
             ell_max=8,
@@ -1498,7 +1500,7 @@ class ModesArray:
 
         Returns
         -------
-        tapered_modes: modes_array
+        tapered_modes: ModesArray
                         Modes array with tapered mode data.
         """
 
@@ -1534,7 +1536,7 @@ class ModesArray:
                 new_data_len = len(tapered_data_re)
 
                 if tapered_modes is None:
-                    tapered_modes = modes_array(
+                    tapered_modes = ModesArray(
                         label="tapered {}".format(self.label),
                         r_ext=self.r_ext,
                         modes_list=self.modes_list,
@@ -1573,7 +1575,7 @@ class ModesArray:
 
         Returns
         -------
-        tapered_modes: modes_array
+        tapered_modes: ModesArray
                         Modes array with tapered mode data.
         """
 
@@ -1617,7 +1619,7 @@ class ModesArray:
                 new_data_len = len(tapered_data_re)
 
                 if tapered_modes is None:
-                    tapered_modes = modes_array(
+                    tapered_modes = ModesArray(
                         label="tapered {}".format(self.label),
                         r_ext=self.r_ext,
                         modes_list=self.modes_list,
@@ -1656,11 +1658,11 @@ class ModesArray:
 
         Returns:
         --------
-        filtered_modes: modes_array
+        filtered_modes: ModesArray
                          A modes array object containing filtered modes.
         """
 
-        # modes_array for filtered data.
+        # ModesArray for filtered data.
         filtered_modes = None
 
         # Import the filter
@@ -1672,7 +1674,7 @@ class ModesArray:
             for emm in emm_list:
                 if filtered_modes is None:
                     # Create filtered_modes
-                    filtered_modes = modes_array(
+                    filtered_modes = ModesArray(
                         label="lc filtered {}".format(self.label),
                         r_ext=self.r_ext,
                         modes_list=self.modes_list,
