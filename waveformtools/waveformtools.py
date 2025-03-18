@@ -3239,3 +3239,15 @@ def progressbar(present_count, total_counts, normalize="yes"):
     )
     sys.stdout.flush()
     return 1
+
+
+def get_val_at_t_ref(time_axis, val_axis, time):
+    """Interpolate and get the value at the requested time"""
+
+    from scipy.interpolate import interp1d
+
+    int_func = interp1d(time_axis, val_axis, kind="cubic")
+    val_at_t_ref = float(int_func(time))
+    # print(val_at_t_ref, type(val_at_t_ref))
+
+    return round(val_at_t_ref, 5)
