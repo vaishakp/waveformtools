@@ -654,7 +654,6 @@ def rotate_polarizations(wf, alpha):
     """
 
     h1, h2 = wf.real, wf.imag
-
     rh1 = np.cos(2 * alpha) * h1 - np.sin(2 * alpha) * h2
     rh2 = np.sin(2 * alpha) * h1 + np.cos(2 * alpha) * h2
 
