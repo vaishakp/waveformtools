@@ -17,6 +17,7 @@ import h5py
 import pandas as pd
 from sxstools.coordinate_transform import CoordinateTransform
 from sxstools.quantities import get_horizon_quantities_from_h5
+import json
 
 class SimulationExplorer:
     """Find and load simulations in a given directory.
@@ -1447,7 +1448,6 @@ class SimulationExplorer:
             self.prepared_waveforms_dir / f"{sim_name}_waveforms_Lev{lev}/"
             f"extrapolated/rhOverM_Extrapolated_N{N}_CoM.h5"
         )
-
         
         return wpath
 
@@ -1562,7 +1562,7 @@ class SimulationExplorer:
         hdir = self.prepared_waveforms_dir / f"{sim_name}_waveforms_Lev{sim_lev}/"f"joined"
         
         files = os.listdir(hdir)
-        filtered_files = [item for item in files if "Horizons" in item]
+        filtered_files = [item for item in files if "Horizons_" in item]
         if len(filtered_files)>1:
             raise KeyError("More than one horizons file found!")
         else:
@@ -1577,8 +1577,8 @@ class SimulationExplorer:
 
     def load_waveform_modes(self, sim_name, sim_lev):
         ''' Load processed waveform modes '''
+
         path_to_extrap_waveform_h5 = self.get_waveform_out_path(sim_name, sim_lev)
-        
         return scri.SpEC.read_from_h5(str(path_to_extrap_waveform_h5))
 
 
@@ -1595,29 +1595,46 @@ class SimulationExplorer:
     def transform_parameters_to_t_ref(self, sim_name, sim_lev, IDparams, req_tref):
         ''' Transform the parameters to the frame at t_ref '''
 
-        for Next in [-1, 2, 3, 4, 5, 6]:
+        metadata=False
+        for N_ext in [-1, 2, 3, 4, 5, 6]:
+            wdir = self.prepared_waveforms_dir / f"{sim_name}_waveforms_Lev{sim_lev}/transformed"
+            wpath = wdir/f"rhOverM_Extrapolated_N{N_ext}_CoM.h5"
+            mdpath = wdir/"reference_metadata.json"
 
-            waveform_modes = self.load_waveform_modes(sim_name, sim_lev)
-            result = CoordinateTransform(
-                                            t_ref=req_tref,
-                                            waveform_modes=waveform_modes.data.T,
-                                            waveform_times=waveform_modes.t,
-                                            massA=IDparams['massA'],
-                                            massB=IDparams['massB'],
-                                            xA=IDparams['xA'],
-                                            xB=IDparams['xB'],
-                                            chiA=IDparams['chiA'],
-                                            chiB=IDparams['chiB'],
-                                            chiC_final=IDparams['chiC_final'],
-                                            v_kick=IDparams['v_kick'],
-                                            normal_direction='Lhat',
-                                            method='fine'
-                                        )
+            if not (os.path.isfile(wpath) and os.path.isfile(mdpath)):
+                waveform_modes = self.load_waveform_modes(sim_name, sim_lev)
+                result = CoordinateTransform(
+                                                t_ref=req_tref,
+                                                waveform_modes=waveform_modes.data.T,
+                                                waveform_times=waveform_modes.t,
+                                                massA=IDparams['massA'],
+                                                massB=IDparams['massB'],
+                                                xA=IDparams['xA'],
+                                                xB=IDparams['xB'],
+                                                chiA=IDparams['chiA'],
+                                                chiB=IDparams['chiB'],
+                                                chiC_final=IDparams['chiC_final'],
+                                                v_kick=IDparams['v_kick'],
+                                                normal_direction='Lhat',
+                                                method='fine'
+                                            )
+                result.transform()
+                self.save_waveform_modes(result.waveform_modes_rot_xyz, sim_name, sim_lev, N_ext)
 
-            result.transform()
-            self.save_waveform_modes(result.waveform_modes_rot_xyz, sim_name, sim_lev, Next)
+                if not metadata:
+                    #import pdb
+                    #pdb.set_trace()
+                    reference_parameters = result.reference_parameters
+                    with open(mdpath, "w") as f:
+                        json.dump(reference_parameters, f)
+                    metadata=True
+                    
+                   
+            else:
+                with open(mdpath, "r") as f:
+                    reference_parameters = json.load(f)
 
-        return result.reference_parameters
+        return reference_parameters
 
     def parse_sim_params_at_req_ref_times(self):
         """Parse the masses, spins and Orbital freq at requested ref times
@@ -1650,12 +1667,12 @@ class SimulationExplorer:
                     message(reference_parameters)
                     message("------------------------")
                     
-                    omega_ref  = float(reference_parameters['omega'])
-                    chiA_ref   = reference_parameters['chiA']
-                    chiB_ref   = reference_parameters['chiB']
-                    chiC_final = tuple(reference_parameters['chiC_final'])
-                    v_kick     = tuple(reference_parameters['v_kick'])
-                    phi_ref    = reference_parameters['phi']
+                    omega_ref  = float(reference_parameters['omega_ref'])
+                    chiA_ref   = reference_parameters['chiA_ref']
+                    chiB_ref   = reference_parameters['chiB_ref']
+                    chiC_final = tuple(reference_parameters['chiC_final_ref'])
+                    v_kick     = tuple(reference_parameters['v_kick_ref'])
+                    phi_ref    = reference_parameters['phi_ref']
                     massA      = reference_parameters["massA"]
                     massB      = reference_parameters["massB"]
                     massC      = IDparams["massC"]

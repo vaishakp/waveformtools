@@ -117,7 +117,7 @@ class PrepareSXSWaveform:
         self._history_file = history_file
 
         if joined_waveform_outfile_name is None:
-            message("Choosing default directory for output...")
+            message("Choosing default directory for output...", message_verbosity=2)
             joined_waveform_outfile_name = ('rhOverM_'+
                 sim_name + f"Lev{self.lev}JoinedWaveform.h5"
             )
@@ -127,18 +127,18 @@ class PrepareSXSWaveform:
         if out_dir is None:
 
             cwd = Path(os.getcwd())
-            message(f"Current working directory {cwd}")
+            message(f"Current working directory {cwd}", message_verbosity=2)
             self._out_dir = (
                 cwd / f"processed_waveforms/{sim_name}_waveforms_Lev{self.lev}"
             )
-            message(f"Setting out-directory to ({self.out_dir})...")
+            message(f"Setting out-directory to ({self.out_dir})...", message_verbosity=2)
         else:
             self._out_dir = out_dir
 
-        message(f"Out directory is set to {self.out_dir}")
+        message(f"Out directory is set to {self.out_dir}", message_verbosity=2)
 
         if not os.path.isdir(self.out_dir):
-            message(f"Creating directory {self.out_dir}")
+            message(f"Creating directory {self.out_dir}", message_verbosity=2)
             os.makedirs(self.out_dir)
 
         joined_outfile_dir = os.path.join(self.out_dir, Path(f"joined"))
@@ -232,10 +232,10 @@ class PrepareSXSWaveform:
         """Join the waveform h5 files"""
 
         if Path(self.joined_horizons_outfile_path).exists():
-            message("File already exists. Skipping operation.")
+            message("File already exists. Skipping operation.", message_verbosity=2)
 
         else:
-            message("Joining waveform h5 files...")
+            message("Joining waveform h5 files...", message_verbosity=2)
 
             data_paths_insp = os.path.join(
                 self.sim_dir,
@@ -269,7 +269,7 @@ class PrepareSXSWaveform:
                     f" {data_paths_rdown}"
                 )
 
-                message(f"Running command\n {run_cmd}")
+                message(f"Running command\n {run_cmd}", message_verbosity=2)
 
                 # with open('join_waveforms_output.txt', "wb") as fout:
                 # subprocess.check_call('dir',stdout=f)
@@ -283,14 +283,14 @@ class PrepareSXSWaveform:
 
                 out = cmd.read()
 
-                message("Command output \n", out)
+                message("Command output \n", out, message_verbosity=2)
             except Exception as ex:
                 run_cmd += (
                     f" -o {self.joined_waveform_outfile_path}"
                     f" {data_paths_insp}"
                 )
 
-                message(f"Running command\n {run_cmd}")
+                message(f"Running command\n {run_cmd}", message_verbosity=2)
 
                 # with open('join_waveforms_output.txt', "wb") as fout:
                 # subprocess.check_call('dir',stdout=f)
@@ -304,9 +304,9 @@ class PrepareSXSWaveform:
 
                 out = cmd.read()
 
-                message("Command output \n", out)
+                message("Command output \n", out, message_verbosity=2)
 
-            message("Command completed. Please check Errors.txt for details")
+            message("Command completed. Please check Errors.txt for details", message_verbosity=2)
 
     def extrapolate(self, ChMass=1.0, UseStupidNRARFormat=True):
         """Extrapolate the waveform"""
@@ -322,15 +322,15 @@ class PrepareSXSWaveform:
             )
         # message(exists)
         except Exception as excep:
-            message("\t", excep)
-            message("\tNo extrapolated files from previous run found")
+            message("\t", excep, message_verbosity=2)
+            message("\tNo extrapolated files from previous run found", message_verbosity=2)
             exists = []
 
         if len(exists) > 0:
-            message("\tSkipping extrapolation")
+            message("\tSkipping extrapolation", message_verbosity=2)
 
         else:
-            message("Extrapolating...")
+            message("Extrapolating...", message_verbosity=2)
 
             wf = scri.extrapolate(
                 InputDirectory=self.joined_outfile_dir,
@@ -347,10 +347,10 @@ class PrepareSXSWaveform:
         file dir"""
 
         if Path(self.joined_horizons_outfile_path).exists():
-            message("File already exists. Skipping join horizons operation.")
+            message("File already exists. Skipping join horizons operation.", message_verbosity=2)
 
         else:
-            message("Joining Horizon h5 files...")
+            message("Joining Horizon h5 files...", message_verbosity=2)
 
             input_insp_dat_rel_loc = (
                 f"Ecc{self.ecc}"
@@ -391,13 +391,13 @@ class PrepareSXSWaveform:
                     f" {data_paths_insp} {data_paths_rdown}"
                 )
 
-                message(f"Running command\n {run_cmd}")
+                message(f"Running command\n {run_cmd}", message_verbosity=2)
 
                 cmd = os.popen(run_cmd)
 
                 out = cmd.read()
 
-                message("Command output \n", out)
+                message("Command output \n", out, message_verbosity=2)
 
             except Exception as ex:
                 run_cmd += (
@@ -405,15 +405,15 @@ class PrepareSXSWaveform:
                     f" {data_paths_insp}"
                 )
 
-                message(f"Running command\n {run_cmd}")
+                message(f"Running command\n {run_cmd}", message_verbosity=2)
 
                 cmd = os.popen(run_cmd)
 
                 out = cmd.read()
 
-                message("Command output \n", out)
+                message("Command output \n", out, message_verbosity=2)
 
-            message("Command completed. Please check Errors.txt for details.")
+            message("Command completed. Please check Errors.txt for details.", message_verbosity=2)
 
     def transform_to_CoM_frame(
         self,
@@ -432,16 +432,16 @@ class PrepareSXSWaveform:
 
         except Exception as excep:
             message(excep)
-            message("Continuing with transformation")
+            message("Continuing with transformation", message_verbosity=2)
             exists = []
 
         if len(exists) > 0:
-            message("Skipping CoM transformation")
+            message("Skipping CoM transformation", message_verbosity=2)
         else:
-            message("Transforming to CoM frame...")
+            message("Transforming to CoM frame...", message_verbosity=2)
 
             for extrap_enn in extrap_enn_list:
-                message(f"Working on Extrapolated N_{extrap_enn}")
+                message(f"Working on Extrapolated N_{extrap_enn}", message_verbosity=2)
 
                 path_to_waveform_h5 = os.path.join(
                     self.extrap_out_dir,
@@ -497,7 +497,7 @@ class PrepareSXSWaveform:
 
             pass
 
-        message("\n--------------------------------------------------------\n")
+        message("\n--------------------------------------------------------\n", message_verbosity=2)
 
         return True
 
