@@ -568,24 +568,16 @@ class SingleMode:
             func = self.func
 
         residues = [np.sum(func**2)]
-
         modes_list = construct_mode_list(ell_max=self.ell_max, spin_weight=self.spin_weight)
-        # message(f"Modes list in SHContract
-        # {modes_list}", message_verbosity=4)
-
         theta_grid, phi_grid = self.Grid.meshgrid
-
         recon_func = np.zeros(theta_grid.shape, dtype=np.complex128)
 
         for ell, emm_list in modes_list:
             for emm in emm_list:
-                # Clm = modes[f"l{ell}"][f"m{emm}"]
-
                 Clm = self.mode(ell, emm)
                 message(
                     f"Clm shape in SHContract {Clm.shape}", message_verbosity=4
                 )
-
                 recon_func += Clm * Yslm_vec(
                     spin_weight=self.spin_weight,
                     ell=ell,
@@ -594,8 +586,7 @@ class SingleMode:
                     phi_grid=phi_grid,
                 )
 
-            res = np.sum((recon_func - func) ** 2)
-
+            res = np.sum(np.absolute(recon_func - func) ** 2)
             residues.append(res)
 
         return residues
@@ -776,7 +767,7 @@ class SingleMode:
 
         fig, ax = plt.subplots()
         ax.set_yscale("log")
-        ax.scatter(ell_axis, residues, **kwargs)
+        ax.scatter(ell_axis, residues, *args, **kwargs)
         ax.set_title(r"Residues vs $\ell$")
         ax.set_ylabel("Residues")
         ax.set_xlabel(r"$\ell$")
