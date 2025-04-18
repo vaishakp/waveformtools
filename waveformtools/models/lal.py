@@ -1,5 +1,6 @@
 from waveformtools.models.waveform_models import WaveformModel
 #import bilby
+import lalsimulation
 from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralGetApproximantFromString
 from lalsimulation import SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion, SimInspiralWaveformParamsInsertPhenomXPrecVersion
 from lal import MSUN_SI, PC_SI, CreateDict
@@ -7,7 +8,10 @@ from lal import MSUN_SI, PC_SI, CreateDict
 
 class LALWaveformModel(WaveformModel):
     
-    def __init__(self, PhenomXHMReleaseVersion=122022, PhenomXPrecVersion=320, parameters_dict={}):
+    def __init__(self, 
+                 PhenomXHMReleaseVersion=122022, 
+                 PhenomXPrecVersion=320, 
+                 parameters_dict={}):
 
         #print("Init")
         super().__init__(parameters_dict)
@@ -25,7 +29,11 @@ class LALWaveformModel(WaveformModel):
 
         if self.approximant == "IMRPhenomXPHM":
             self.add_waveform_generation_arguments_to_lal_dict()
-
+        if self.parameters_dict["approximant"] == "NR_hdf5":
+            lalsimulation.SimInspiralWaveformParamsInsertNumRelData(
+                self.parameters_dict['lal_dict'], 
+                str(self.parameters_dict['lvcnr_file_path']))
+            self.set_spins_from_NR_data()
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -71,9 +79,10 @@ class LALWaveformModel(WaveformModel):
                                                 self.lal_dict,
                                                 self.lal_approximant
                                             )
-        
-        return hp.data.data, hc.data.data
-    
+        if self.approximant == "NR_hdf5":
+            return -hp.data.data, hc.data.data
+        else:
+            return hp.data.data, hc.data.data
 
     def get_td_waveform_dict(self, **parameters_dict):
 
@@ -100,14 +109,34 @@ class LALWaveformModel(WaveformModel):
                                                 parameters_dict['lal_approximant']
                                             )
         
-        return hp.data.data, hc.data.data
+        if self.approximant == "NR_hdf5":
+            return -hp.data.data, hc.data.data
+        else:
+            return hp.data.data, hc.data.data
     
 
     def update_parameters(self, parameters_dict):
         
-
         self.parameters_dict.update(parameters_dict)
         #self.parameters_dict['phi_ref'] = self.parameters_dict['coa_phase']
         self.set_parameters()
         
+    def set_spins_from_NR_data(self):
+        Mtotal_NR = self.parameters_dict["mass1"] + self.parameters_dict["mass2"]
+        spins = lalsimulation.SimInspiralNRWaveformGetSpinsFromHDF5File(
+            self.f_ref, 
+            Mtotal_NR, 
+            str(self.lvcnr_file_path))
         
+        spin1x, spin1y, spin1z, spin2x, spin2y, spin2z = spins
+
+        self.parameters_dict.update({'spin1x' : spin1x,
+                                     'spin1y' : spin1y,
+                                     'spin1z' : spin1z,
+                                     'spin2x' : spin2x,
+                                     'spin2y' : spin2y,
+                                     'spin2z' : spin2z,
+                                    })
+        
+        self.set_parameters()
+        return self.parameters_dict
