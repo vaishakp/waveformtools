@@ -1,5 +1,6 @@
 from lal import CreateDict
-
+import numpy as np
+from pycbc.detector import Detector
 
 class WaveformModel:
 
@@ -39,7 +40,7 @@ class WaveformModel:
                                         'PhenomXHMReleaseVersion',
                                         'PhenomXPrecVersion',
                                         'debug',
-
+                                        'lvcnr_file_path'
                                     ]
 
         self.parameters_dict['model']=None
@@ -92,7 +93,27 @@ class WaveformModel:
 
     def compute_model(self):
         raise NotImplementedError
-    
+
+    def project_polarizations(self, 
+                         hp, 
+                         hc,
+                         extrinsic_parameters, 
+                         detector_string):
+        
+        ifo = Detector(detector_string)
+        maxloc = np.argmax(np.absolute(hp+1j*hc))
+        times = np.arange(0, len(hp)*self.delta_t, self.delta_t)
+        pmax = len(hp) - maxloc
+        tmax = times[maxloc]
+        det_times = (times - tmax)
+        det_times += extrinsic_parameters['t_coal']
+        Fp, Fc = ifo.antenna_pattern(extrinsic_parameters['ra'], 
+                                     extrinsic_parameters['dec'], 
+                                     extrinsic_parameters['psi'], 
+                                     det_times)
+        h_inj = Fp*hp + Fc*hc
+
+        return det_times, h_inj
 
 
 
