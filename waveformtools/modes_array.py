@@ -24,7 +24,7 @@ from waveformtools.waveformtools import (
 
 from waveformtools.single_mode import SingleMode
 from scipy.interpolate import InterpolatedUnivariateSpline
-from waveformtools.BMS import compute_linear_momentum_contribution_from_news, compute_recoil_from_momentum
+from waveformtools.BMS import compute_linear_momentum_contribution_from_news, compute_impulse_from_force
 
 class ModesArray:
     """A class that holds mode array of waveforms
@@ -1953,7 +1953,12 @@ class ModesArray:
 
         return int_wf_modes
     
-    def compute_waveform_balance_law(self, M_adm, M_final, v_kick, Grid=None):
+    def compute_waveform_balance_law(self, 
+                                     M_adm, 
+                                     M_final, 
+                                     v_kick, 
+                                     Grid=None,
+                                     debug=False):
 
         if Grid is None:
             Grid = self.Grid
@@ -1964,12 +1969,15 @@ class ModesArray:
                                  ginfo=Grid,
                                  M_adm=M_adm,
                                  M_final=M_final,
-                                 v_kick=v_kick
+                                 v_kick=v_kick,
+                                 debug=debug
                                 )
         return violations
     
 
-    def compute_waveform_balance_law_finite_time(self, psi2_modes, Grid=None):
+    def compute_waveform_balance_law_finite_time(self, 
+                                                 psi2_modes, 
+                                                 Grid=None):
 
         if Grid is None:
             Grid = self.Grid
@@ -1992,8 +2000,10 @@ class ModesArray:
 
     def compute_momentum_flux(self, news):
 
-        dPxdt = np.zeros(self.data_len, dtype=np.complex128)
-        dPydt = np.zeros(self.data_len, dtype=np.complex128)
+        dPxdt = np.zeros(self.data_len, dtype=np.float64)
+        dPydt = np.zeros(self.data_len, dtype=np.float64)
+        dPzdt = np.zeros(self.data_len, dtype=np.complex128)
+
         modes_list = construct_mode_list(ell_max=self.ell_max-1, spin_weight=-2)
 
         for ell, emm_list in modes_list:
@@ -2001,17 +2011,22 @@ class ModesArray:
                 f_lm = compute_linear_momentum_contribution_from_news(news, ell, emm)
                 dPxdt += f_lm[0]
                 dPydt += f_lm[1]
+                dPzdt += f_lm[2]
 
-        return dPxdt, dPydt
+        return dPxdt, dPydt, dPzdt
     
 
-    def compute_kick(self):
+    def compute_kick(self, Mfinal=1, complex_output=False):
         news = self.get_news_from_strain()
-        dPxdt, dPydt = self.compute_momentum_flux(news)
-        v_kick = compute_recoil_from_momentum(news.time_axis, dPxdt, dPydt)
+        dPxdt, dPydt, dPzdt = self.compute_momentum_flux(news)
+        p_kick = compute_impulse_from_force(news.time_axis, dPxdt, dPydt, dPzdt)
+        v_kick = p_kick/Mfinal
         
-        return v_kick
-    
+        if not complex_output:
+            return np.array([v_kick[0].real, v_kick[0].imag, v_kick[1].real])
+        else:
+            return v_kick
+            
     def crop(self, start_idx, end_idx):
 
         cropped_wfm = self.deepcopy()
