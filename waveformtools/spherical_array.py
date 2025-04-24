@@ -24,7 +24,7 @@ from waveformtools.waveformtools import (
 
 from waveformtools.single_mode import SingleMode
 from scipy.interpolate import InterpolatedUnivariateSpline
-from waveformtools.BMS import compute_linear_momentum_contribution_from_news, compute_recoil_from_momentum
+from waveformtools.BMS import compute_linear_momentum_contribution_from_news, compute_impulse_from_force
 
 
 
