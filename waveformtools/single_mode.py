@@ -275,7 +275,12 @@ class SingleMode:
                 "Please request a valid mode ( abs(emm) > abs(ell) here)"
             )
 
-        vec_idx = ell**2 + emm + ell - self.spin_weight**2
+        elif ell < abs(self.spin_weight):
+            raise ValueError(
+                "Please request a valid mode with ell >= abs(spin_weight)"
+            )
+        
+        vec_idx = ell**2 + emm + ell #- self.spin_weight**2
 
         return self._modes_data[vec_idx]
 

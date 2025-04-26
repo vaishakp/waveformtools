@@ -1798,21 +1798,25 @@ class ModesArray:
         if ell_max is None:
             ell_max = self.ell_max
 
+        if max_t_steps is None:
+            max_t_steps = self.data_len
+
         if (np.array(theta) == np.array(None)).all() or (
             np.array(phi) == np.array(None)
         ).all():
             theta, phi = self.Grid.meshgrid
 
         sYlm = Yslm_mp(
-            ell_max=ell_max, spin_weight=self.spin_weight, theta=theta, phi=phi
-        )
+            ell_max=ell_max, spin_weight=self.spin_weight, theta=theta, phi=phi,
+            Grid=self.Grid)
+
         sYlm.run()
-        Ylm_vec = sYlm.sYlm_modes._modes_data
-        modes_data_len = len(Ylm_vec)
+        sYlm_funcs_vec = sYlm.sYlm_modes._modes_data
+        modes_data_len = sYlm_funcs_vec.shape[0]
 
         val = np.tensordot(
             self._modes_data[:modes_data_len, ..., :max_t_steps],
-            Ylm_vec,
+            sYlm_funcs_vec,
             axes=((0), (0)),
         )
 
@@ -1993,40 +1997,68 @@ class ModesArray:
     def get_news_from_strain(self, method='spline'):
         ''' '''
         news = deepcopy(self)
-        news._time_axis = deepcopy(news.time_axis)
-        news = self.time_derivative(method='SP')
+        #news._time_axis = deepcopy(news.time_axis)
+        news = self.time_derivative(method='spline')
 
         return news
 
-    def compute_momentum_flux(self, news):
+    def compute_momentum_flux(self, news_modes):
 
         dPxdt = np.zeros(self.data_len, dtype=np.float64)
         dPydt = np.zeros(self.data_len, dtype=np.float64)
         dPzdt = np.zeros(self.data_len, dtype=np.complex128)
 
+        # ell-1 because the linear momentum contrib involves higher order
+        # terms ell+1
         modes_list = construct_mode_list(ell_max=self.ell_max-1, spin_weight=-2)
 
         for ell, emm_list in modes_list:
             for emm in emm_list:
-                f_lm = compute_linear_momentum_contribution_from_news(news, ell, emm)
+                f_lm = compute_linear_momentum_contribution_from_news(news_modes, ell, emm)
+                print(f"f_{ell, emm}", f_lm[2])
                 dPxdt += f_lm[0]
                 dPydt += f_lm[1]
                 dPzdt += f_lm[2]
 
+        print("Force", dPzdt)
         return dPxdt, dPydt, dPzdt
     
 
-    def compute_kick(self, Mfinal=1, complex_output=False):
-        news = self.get_news_from_strain()
-        dPxdt, dPydt, dPzdt = self.compute_momentum_flux(news)
-        p_kick = compute_impulse_from_force(news.time_axis, dPxdt, dPydt, dPzdt)
+    def compute_kick(self, Mfinal=1):
+        news_modes = self.get_news_from_strain()
+        dPxdt, dPydt, dPzdt = self.compute_momentum_flux(news_modes)
+        p_kick = compute_impulse_from_force(news_modes.time_axis, 
+                                            dPxdt, 
+                                            dPydt, 
+                                            dPzdt)
         v_kick = p_kick/Mfinal
         
-        if not complex_output:
-            return np.array([v_kick[0].real, v_kick[0].imag, v_kick[1].real])
-        else:
-            return v_kick
-            
+        return v_kick
+    
+    def compute_kick_direct(self, Mfinal=1):
+        from waveformtools.integrate import TwoDIntegral
+        news_modes = self.get_news_from_strain()
+        news = news_modes.evaluate_angular()
+        intensity = np.absolute(news)**2
+        theta, phi = self.Grid.meshgrid
+        Y10 = Yslm_vec(spin_weight=0, ell=1, emm=0, theta_grid=theta, phi_grid=phi)
+        Y11 = Yslm_vec(spin_weight=0, ell=1, emm=1, theta_grid=theta, phi_grid=phi)
+        P10 = intensity*Y10
+        factor_10 = 2*np.sqrt(np.pi/3)
+        factor_11 = 2*np.sqrt(2*np.pi/3)
+        dPzdt = factor_10*TwoDIntegral(P10, self.Grid, 'GL')/(16*np.pi)
+        del P10
+        P11 = intensity*Y11
+        dPxydt = factor_11*TwoDIntegral(P11, self.Grid, 'GL')/(16*np.pi)
+        del P11
+        del intensity
+        dPxdt = dPxydt.imag
+        dPydt = dPxydt.real
+        p_kick = compute_impulse_from_force(news_modes.time_axis, dPxdt, dPydt, dPzdt)
+        v_kick = p_kick/Mfinal
+        
+        return v_kick.real
+    
     def crop(self, start_idx, end_idx):
 
         cropped_wfm = self.deepcopy()
