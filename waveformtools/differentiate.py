@@ -45,7 +45,7 @@ def derivative(x_data, y_data, method="FD", degree=3):
           The first order derivative of y w.r.t. x.
     """
 
-    if method == "SP":
+    if method == "spline":
         dydx = spline_differential(x_data, y_data, k=degree)
     elif method == "CS":
         dydx = Chebyshev_differential(x_data, y_data, order=1, degree=degree)
