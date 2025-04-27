@@ -165,6 +165,10 @@ class ModesArray:
     def Grid(self):
         return self._Grid
 
+    @property
+    def n_modes(self):
+        return (self.ell_max+1)**2 - self.spin_weight**2
+    
     def deepcopy(self):
         return deepcopy(self)
 
@@ -2015,12 +2019,12 @@ class ModesArray:
         for ell, emm_list in modes_list:
             for emm in emm_list:
                 f_lm = compute_linear_momentum_contribution_from_news(news_modes, ell, emm)
-                print(f"f_{ell, emm}", f_lm[2])
+                #print(f"f_{ell, emm}", f_lm[2])
                 dPxdt += f_lm[0]
                 dPydt += f_lm[1]
                 dPzdt += f_lm[2]
 
-        print("Force", dPzdt)
+        #print("Force", dPzdt)
         return dPxdt, dPydt, dPzdt
     
 

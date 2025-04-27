@@ -137,6 +137,10 @@ class SingleMode:
         return self._sine_power
 
     @property
+    def n_modes(self):
+        return (self.ell_max+1)**2 - self.spin_weight**2
+    
+    @property
     def modes_data(self):
         return self._modes_data
 
@@ -561,7 +565,7 @@ class SingleMode:
         )
 
         trunc_modes._modes_data = self._modes_data[
-            : ell_max_choice + 1, : 2 * ell_max_choice + 3
+            : (ell_max_choice + 1)**2 
         ]
 
         return trunc_modes
