@@ -191,7 +191,7 @@ def compute_linear_momentum_contribution_from_news(news_modes, ell, emm):
     dPydt_lm = dpdt_xy_lm.imag/(8*np.pi)
     dPzdt_lm = dpdt_z_lm/(16*np.pi)
 
-    print("dPzdt", dPzdt_lm)
+    #print("dPzdt", dPzdt_lm)
     return dPxdt_lm, dPydt_lm, dPzdt_lm
 
 def linear_momentum_alm_func(ell, emm):
