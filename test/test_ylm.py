@@ -386,7 +386,7 @@ class TestGLGridYlm(unittest.TestCase):
 
         theta_grid, phi_grid = info.meshgrid
 
-        from scipy.special import sph_harm
+        from scipy.special import sph_harm_y as sph_harm
 
         for ell in range(info.L + 1):
             for emm in range(-ell, ell + 1):
