@@ -5,3 +5,4 @@ ligo-common
 pycbc
 gmpy2
 gmpy
+pyseobnr
