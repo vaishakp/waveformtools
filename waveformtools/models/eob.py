@@ -15,13 +15,13 @@ class EOBWaveformModel(WaveformModel):
 
         # Greater than 1, with m1 > m2 
         self.mass_ratio = self.parameters_dict['mass_1']/self.parameters_dict['mass_2']
-
+        self.td_waveform_modes = None
     def compute_model(self):
         self.time_axis, self.modes_dict, self.model = generate_modes_opt(self.mass_ratio,
                                                                     self.chi_1,
                                                                     self.chi_2,
                                                                     self.omega0,
-                                                                    debug=self.debug,
+                                                                    debug=True,
                                                                     approximant=self.approximant)
         
         self.td_waveform_modes = get_modes_array_from_eob_modes_dict(self.time_axis, self.modes_dict)
