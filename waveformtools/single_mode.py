@@ -699,7 +699,7 @@ class SingleMode:
 
         return val
 
-    def evaluate(self, theta=None, phi=None, ell_max=None):
+    def evaluate_angular(self, theta=None, phi=None, ell_max=None):
         """Evaluate the expansion at requested angular coordinates
         by generating SWSHs in parallel and vectorizing the
         summation"""
