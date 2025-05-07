@@ -1,10 +1,11 @@
 import numpy as np
 from spectral.spherical.transforms import SHExpand
 from spectral.spherical.grids import GLGrid
-from waveformtools.diagnostics import method_info
+from waveformtools.diagnostics import MethodInfo as method_info
 from waveformtools.waveformtools import message
 import unittest, pytest
 from config.verbosity import levels
+from waveformtools.single_mode import SingleMode
 
 lv = levels()
 lv.set_print_verbosity(2)
@@ -262,7 +263,7 @@ class TestGLGridYlm(unittest.TestCase):
 
         test_modes = SHExpand(func=test_data, method_info=minfo, info=info)
 
-        test_data_back = test_modes.contract()
+        test_data_back = test_modes.evaluate_angular()
 
         # Test contracted modes
         np.testing.assert_array_almost_equal(
@@ -355,7 +356,7 @@ class TestGLGridYlm(unittest.TestCase):
 
         test_modes = SHExpand(func=test_data, method_info=minfo, info=info)
 
-        test_data_back = test_modes.contract()
+        test_data_back = test_modes.evaluate_angular()
 
         # Test re expansion
         # Re-expand contracted modes
