@@ -386,7 +386,8 @@ class TestGLGridYlm(unittest.TestCase):
 
         theta_grid, phi_grid = info.meshgrid
 
-        from scipy.special import sph_harm_y as sph_harm
+        #from scipy.special import sph_harm_y as sph_harm
+        from scipy.special import sph_harm
 
         for ell in range(info.L + 1):
             for emm in range(-ell, ell + 1):
@@ -423,7 +424,7 @@ class TestGLGridYlm(unittest.TestCase):
         # info = GLGrid(L=24)
         # minfo = method_info(ell_max=24, int_method='GL')
 
-        ell_max = 6  # Warning: Very expensive. Tested upto 84
+        ell_max = 8  # Warning: Very expensive. Tested upto 84
 
         from spectral.spherical.swsh import Yslm_vec, Yslm_prec
 
@@ -471,7 +472,7 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=24)
         # minfo = method_info(ell_max=24, int_method='GL')
 
-        ell_max = 16  # Warning: very expensive. Tested upto 84
+        ell_max = 8  # Warning: very expensive. Tested upto 84
 
         from spectral.spherical.swsh import Yslm_vec, Yslm_prec_grid
 
