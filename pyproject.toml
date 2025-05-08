@@ -24,7 +24,7 @@ path = "waveformtools/__init__.py"
 
 [project]
 name = "waveformtools"
-dynamic = ['version']
+dynamic = ['version', 'dependencies', 'optional-dependencies']
 authors = [{ name="Vaishak Prasad", email="vaishakprasad@gmail.com"}, ]
 description = " Tools for working with numerical relativity and waveforms data "
 readme = "README.md"
@@ -34,20 +34,20 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = ["numpy",
-	"scipy",
-	"matplotlib",
-	"numba",
-	"h5py",
-	"termcolor",
-	"datetime",
-	"sympy",
-	"numpydoc",
-    ]
+#dependencies = ["numpy",
+#	"scipy",
+#	"matplotlib",
+#	"numba",
+#	"h5py",
+#	"termcolor",
+#	"datetime",
+#	"sympy",
+#	"numpydoc",
+#    ]
 #    "config@git+https://gitlab.com/vaishakp/config"]
 
-[project.optional-dependencies]
-EXT = ["pycbc", "lalsuite", "ligo-common"]
+#[project.optional-dependencies]
+#EXT = ["pycbc", "lalsuite", "ligo-common"]
 
 [project.urls]
 "Homepage" = "https://gitlab.com/vaishakp/waveformtools"
@@ -58,4 +58,5 @@ EXT = ["pycbc", "lalsuite", "ligo-common"]
 
 [tools.setuptools.dynamic]
 version = {attr = "waveformtools.__version__"}
-
+dependencies = {file = ["requirements.txt"]}
+optional-dependencies = {ext = { file = ["optional-requirements.txt"]}}
