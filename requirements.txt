@@ -1,6 +1,5 @@
 # Modules to install
 
-python>=3.11
 numpy
 scipy
 matplotlib
