@@ -49,6 +49,9 @@ def write_git_version():
     current_version, current_major_version, current_minor_version = get_current_version()
     if current_minor_version is not None:
         vers+=f".{int(current_minor_version)+1}"
+    elif current_major_version==vers:
+        vers+=f".1"
+    
 
     # Write to public/version
     with open(source_directory + "/public/version", "w") as vers_file:
