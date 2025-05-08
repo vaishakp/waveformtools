@@ -1,5 +1,7 @@
 # Optional requirements
 
+recommonmark
+sphinx-rtd-theme
 lalsuite
 ligo-common
 pycbc
