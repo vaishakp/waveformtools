@@ -2,10 +2,37 @@
 
 import os
 from datetime import date
-
+import re
 source_directory = os.path.dirname(os.path.abspath(__file__))
 
 # print(source_directory)
+
+def get_current_version():
+    """ Get the current version """
+    line_found=False
+    with open(f"{source_directory}/waveformtools/__init__.py") as vf:
+        while not line_found:
+            one_line = vf.readline()
+            if "__version__" in one_line:
+                line_found=True
+    
+    current_version = re.search(r'\d+.\d+.\d+[.\d+]*', one_line).group(0)
+    current_major_version = re.search(r'\d+.\d+.\d+', one_line).group(0)
+    version_segments = current_version.split(".")
+
+    print(f"Current version {current_version}")
+    print(f"Current major version {current_major_version}")
+    
+    if len(version_segments)==3:
+        current_minor_version=None
+    elif len(version_segments)==4:
+        current_minor_version=version_segments[-1]
+    else:
+        raise ValueError("Version not read properly")
+
+    print(f"Current minor version {current_minor_version}")
+
+    return current_version, current_major_version, current_minor_version
 
 
 def write_git_version():
@@ -18,6 +45,10 @@ def write_git_version():
     # vers = os.popen(f'git -C {source_directory} log -1 --date=short | grep Date').read()[8:-1]
     vers = str(date.today())
     vers = vers.replace("-", ".")
+
+    current_version, current_major_version, current_minor_version = get_current_version()
+    if current_minor_version is not None:
+        vers+=f".{int(current_minor_version)+1}"
 
     # Write to public/version
     with open(source_directory + "/public/version", "w") as vers_file:
