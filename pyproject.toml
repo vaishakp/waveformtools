@@ -34,20 +34,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-#dependencies = ["numpy",
-#	"scipy",
-#	"matplotlib",
-#	"numba",
-#	"h5py",
-#	"termcolor",
-#	"datetime",
-#	"sympy",
-#	"numpydoc",
-#    ]
-#    "config@git+https://gitlab.com/vaishakp/config"]
-
-#[project.optional-dependencies]
-#EXT = ["pycbc", "lalsuite", "ligo-common"]
 
 [project.urls]
 "Homepage" = "https://gitlab.com/vaishakp/waveformtools"
