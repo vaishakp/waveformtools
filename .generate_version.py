@@ -43,15 +43,22 @@ def write_git_version():
     # Open the file
     # Get the version
     # vers = os.popen(f'git -C {source_directory} log -1 --date=short | grep Date').read()[8:-1]
-    vers = str(date.today())
-    vers = vers.replace("-", ".")
+    new_major_version = str(date.today())
+    new_major_version = new_version.replace("-", ".")
 
     current_version, current_major_version, current_minor_version = get_current_version()
-    if current_minor_version is not None:
-        vers+=f".{int(current_minor_version)+1}"
-    elif current_major_version==vers:
-        vers+=f".1"
     
+    if new_major_version==current_major_version:
+        if current_minor_version is None:
+            new_minor_version=1
+        else:
+            new_minor_version= int(current_minor_version)+1
+        
+        new_version = f"{new_major_version}.{new_minor_version}"
+
+    else:
+        new_minor_version=None
+        new_version = new_major_version
 
     # Write to public/version
     with open(source_directory + "/public/version", "w") as vers_file:
