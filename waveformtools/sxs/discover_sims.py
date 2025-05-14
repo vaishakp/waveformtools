@@ -16,8 +16,8 @@ import subprocess
 import h5py
 import pandas as pd
 from sxstools.coordinate_transform import CoordinateTransform
-from sxstools.quantities import get_horizon_quantities_from_h5
 import json
+from sxstools.quantities import get_dynamics_from_h5, get_t_ref_from_dynamics_and_freq, get_NR_ref_quantities_at_t_ref
 
 class SimulationExplorer:
     """Find and load simulations in a given directory.
@@ -1575,14 +1575,30 @@ class SimulationExplorer:
             
         return parameters
 
+    def load_dynamics_from_joined_horizons_file(self, sim_name, sim_lev, req_t_ref):
+
+        hdir = self.prepared_waveforms_dir / f"{sim_name}_waveforms_Lev{sim_lev}/"f"joined"
+        
+        files = os.listdir(hdir)
+        filtered_files = [item for item in files if "Horizons_" in item]
+        if len(filtered_files)>1:
+            raise KeyError("More than one horizons file found!")
+        else:
+            file_name = filtered_files[0]
+
+        full_path_to_h = hdir/file_name
+
+        dynamics = get_dynamics_from_h5(full_path_to_h)
+        
+        return dynamics
+    
     def load_waveform_modes(self, sim_name, sim_lev):
         ''' Load processed waveform modes '''
 
         path_to_extrap_waveform_h5 = self.get_waveform_out_path(sim_name, sim_lev)
         return scri.SpEC.read_from_h5(str(path_to_extrap_waveform_h5))
 
-
-    def save_waveform_modes(self, waveform_modes, sim_name, sim_lev, Next):
+    def save_waveform_modes_v0(self, waveform_modes, sim_name, sim_lev, Next):
 
         wdir = self.prepared_waveforms_dir / f"{sim_name}_waveforms_Lev{sim_lev}/"f"transformed"
         if not os.path.isdir(wdir):
@@ -1591,48 +1607,70 @@ class SimulationExplorer:
         if not os.path.isfile(wpath):
             scri.SpEC.file_io.write_to_h5(waveform_modes, str(wpath))
 
+    def save_waveform_modes(self, waveform_modes, file_dir, file_path):
 
-    def transform_parameters_to_t_ref(self, sim_name, sim_lev, IDparams, req_tref):
+        if not os.path.isdir(file_dir):
+            os.mkdir(file_dir)
+
+        if not os.path.isfile(file_path):
+            scri.SpEC.file_io.write_to_h5(waveform_modes, str(file_path))
+
+    def transform_parameters_to_t_ref(self, 
+                                      sim_name, 
+                                      sim_lev, 
+                                      dynamics, 
+                                      NR_ref_params, 
+                                     ):
         ''' Transform the parameters to the frame at t_ref '''
-
-        metadata=False
+        
         for N_ext in [-1, 2, 3, 4, 5, 6]:
-            wdir = self.prepared_waveforms_dir / f"{sim_name}_waveforms_Lev{sim_lev}/transformed"
-            wpath = wdir/f"rhOverM_Extrapolated_N{N_ext}_CoM.h5"
+            wdir   = self.prepared_waveforms_dir / f"{sim_name}_waveforms_Lev{sim_lev}/transformed"
+            wpath  = wdir/f"extrapolated_CoM_transformed_N{N_ext}.h5"
             mdpath = wdir/"reference_metadata.json"
 
-            if not (os.path.isfile(wpath) and os.path.isfile(mdpath)):
-                waveform_modes = self.load_waveform_modes(sim_name, sim_lev)
-                result = CoordinateTransform(
-                                                t_ref=req_tref,
-                                                waveform_modes=waveform_modes.data.T,
-                                                waveform_times=waveform_modes.t,
-                                                massA=IDparams['massA'],
-                                                massB=IDparams['massB'],
-                                                xA=IDparams['xA'],
-                                                xB=IDparams['xB'],
-                                                chiA=IDparams['chiA'],
-                                                chiB=IDparams['chiB'],
-                                                chiC_final=IDparams['chiC_final'],
-                                                v_kick=IDparams['v_kick'],
-                                                normal_direction='Lhat',
-                                                method='fine'
-                                            )
-                result.transform()
-                self.save_waveform_modes(result.waveform_modes_rot_xyz, sim_name, sim_lev, N_ext)
-
-                if not metadata:
-                    #import pdb
-                    #pdb.set_trace()
-                    reference_parameters = result.reference_parameters
-                    with open(mdpath, "w") as f:
-                        json.dump(reference_parameters, f)
-                    metadata=True
-                    
-                   
+            if not os.path.isfile(mdpath):
+                print(f"metadata does not exist for {sim_name} {sim_lev}")
+                metadata_exists=False
             else:
-                with open(mdpath, "r") as f:
-                    reference_parameters = json.load(f)
+                print(f"metadata exists for {sim_name} {sim_lev}")
+                metadata_exists=True
+
+            if not os.path.isfile(wpath):
+                print(f"TWF does not exist for {sim_name} {sim_lev}")
+                waveform_exists = False
+            else:
+                print(f"TWF exists for {sim_name} {sim_lev}")
+                waveform_exists = True
+
+            # if transformed waveform and metadata do not exist
+            if not (waveform_exists and metadata_exists):
+                print(f"{sim_name}: Creating Waveform and metadata")
+                waveform_modes = self.load_waveform_modes(sim_name, sim_lev)
+                t_operator = CoordinateTransform(NR_ref_parames=NR_ref_params,
+                                                dynamics=dynamics,
+                                                waveform_modes=waveform_modes,
+                                                )
+                
+                t_operator.transform()
+                self.save_waveform_modes(t_operator.waveform_modes_rot_xyz, 
+                                        wdir,
+                                        wpath)
+
+                # recompute metadata only if metadata is not saved
+                #if not metadata_exists:
+                #print(f"{sim_name}: Creating metadata ")
+                #import pdb
+                #pdb.set_trace()
+                reference_parameters = t_operator.reference_parameters
+
+                with open(mdpath, "w") as f:
+                    json.dump(reference_parameters, f)
+                    metadata=True
+            else:
+                print(f"{sim_name} Waveform and metadata exists ")
+     
+            with open(mdpath, "r") as f:
+                reference_parameters = json.load(f)
 
         return reference_parameters
 
@@ -1659,9 +1697,15 @@ class SimulationExplorer:
                     print(sim_name_lev)
                     self.ref_parameters.update({ sim_name_lev: self.all_sim_params[sim_name]})
                     req_tref = self.all_req_ref_times[sim_name]
-                    IDparams = self.load_ID_sim_params_from_joined_horizons_file(sim_name, sim_lev, req_tref)
-                    reference_parameters = self.transform_parameters_to_t_ref(sim_name, sim_lev, IDparams, req_tref)
-                    
+                    #IDparams = self.load_ID_sim_params_from_joined_horizons_file(sim_name, sim_lev, req_tref)
+                    dynamics = self.load_dynamics_from_joined_horizons_file(sim_name, sim_lev, req_tref)
+                    reference_NR_parameters = get_NR_ref_quantities_at_t_ref(dynamics=dynamics, t_ref=req_tref)
+                    reference_parameters = self.transform_parameters_to_t_ref(sim_name, 
+                                                                              sim_lev, 
+                                                                              dynamics, 
+                                                                              reference_NR_parameters, 
+                                                                             )
+
                     message(f"Reference parameters at tref={req_tref} are")
                     message("------------------------")
                     message(reference_parameters)
@@ -1675,7 +1719,7 @@ class SimulationExplorer:
                     phi_ref    = reference_parameters['phi_ref']
                     massA      = reference_parameters["massA"]
                     massB      = reference_parameters["massB"]
-                    massC      = IDparams["massC"]
+                    massC      = reference_parameters["massC"]
 
                     self.ref_parameters[sim_name_lev].update(
                         {"ReqRefTime": self.all_req_ref_times[sim_name]}
