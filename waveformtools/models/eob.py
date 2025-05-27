@@ -2,7 +2,7 @@ import numpy as np
 from waveformtools.models.waveform_models import WaveformModel
 from pyseobnr.generate_waveform import generate_modes_opt, generate_prec_hpc_opt,  GenerateWaveform
 from waveformtools.models.utils import get_modes_array_from_eob_modes_dict
-
+from pycbc.waveform import get_td_waveform
 
 class EOBWaveformModel(WaveformModel):
         
@@ -14,7 +14,7 @@ class EOBWaveformModel(WaveformModel):
         self.chi_2 = np.array([self.parameters_dict['spin2x'], self.parameters_dict['spin2y'], self.parameters_dict['spin2z']])
 
         # Greater than 1, with m1 > m2 
-        self.mass_ratio = self.parameters_dict['mass_1']/self.parameters_dict['mass_2']
+        self.mass_ratio = self.parameters_dict['mass1']/self.parameters_dict['mass2']
         self.td_waveform_modes = None
     def compute_model(self):
         self.time_axis, self.modes_dict, self.model = generate_modes_opt(self.mass_ratio,
@@ -38,6 +38,7 @@ class EOBWaveformModel(WaveformModel):
 
         parameters = self.parameters_dict.copy()
         parameters.update(kwargs)
+        self.compute_model()
 
-        self.td_waveform_modes.to_td_waveform(**parameters)
-        
+        #return self.td_waveform_modes.to_td_waveform(**parameters)
+        return get_td_waveform(**parameters)

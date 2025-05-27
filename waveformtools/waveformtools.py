@@ -3394,3 +3394,19 @@ def get_nr_frame_angles_from_lal(inclination, phi_ref, tol=1e-3):
     }
 
     return angles
+
+
+
+def find_maxloc_and_time(times, amp):
+
+    from scipy.interpolate import interp1d
+
+    amp_interp = interp1d(times, amp, kind='cubic')
+    times_fine = np.linspace(times[0], times[-1], len(times)*1000)
+    amp_fine = amp_interp(times_fine)
+
+    maxloc = np.argmax(amp_fine)
+    maxloc_0 = np.argmax(amp)
+    t_maxloc = times_fine[maxloc]
+
+    return t_maxloc, maxloc, maxloc_0
