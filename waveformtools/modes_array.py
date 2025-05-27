@@ -24,7 +24,7 @@ from waveformtools.waveformtools import (
 
 from waveformtools.single_mode import SingleMode
 from scipy.interpolate import InterpolatedUnivariateSpline
-from waveformtools.BMS import compute_linear_momentum_contribution_from_news, compute_impulse_from_force
+from waveformtools.BMS import compute_linear_momentum_contribution_from_news, compute_impulse_from_force, compute_angular_momentum
 
 class ModesArray:
     """A class that holds mode array of waveforms
@@ -2071,22 +2071,63 @@ class ModesArray:
 
         return cropped_wfm
 
-
     def get_power_from_news_modes(self, news_modes):
 
         power = np.sum(np.absolute(news_modes.modes_data )**2, axis=0)/(16*np.pi)
 
         return power
     
-    def compute_energy_loss(self, news_modes=None):
-
+    def compute_energy_radiated(self, 
+                                news_modes=None, 
+                                t_start=None,
+                                t_end=None, 
+                                since_peak=False,
+                                inspiral_only=False):
+    
         if news_modes is None:
             news_modes = self.get_news_from_strain()
 
+        if since_peak or inspiral_only:
+            power = self.get_power_from_news_modes(news_modes)
+            if since_peak:
+                t_start = self.time_axis[np.argmax(power)]
+
+            if inspiral_only:
+                t_end = self.time_axis[np.argmax(power)]
+
+        if t_start is None:
+            t_start = self.time_axis[0]
+
+        if t_end is None:
+            t_end = self.time_axis[-1]
+
         power = self.get_power_from_news_modes(news_modes)
-        energy_loss = InterpolatedUnivariateSpline(self.time_axis, power, k=5).integrate(a=self.time_axis[0], b = self.time_axis[-1])
+        print(t_start, t_end)
+        energy_loss = InterpolatedUnivariateSpline(self.time_axis, 
+                                                   power, 
+                                                   k=5).integral(a=t_start, 
+                                                                  b=t_end)
 
         return energy_loss
+    
+    def compute_angular_momentum_radiated(self,
+                                          news_modes=None,
+                                          t_start=None,
+                                          t_end=None,
+                                          since_peak=False,
+                                          inspiral_only=False):
+        
+        if news_modes is None:
+            news_modes = self.get_news_from_strain()
+
+        d_ang_momentum = compute_angular_momentum(self, 
+                                                  news_modes,
+                                                  t_start=t_start,
+                                                  t_end=t_end,
+                                                  since_peak=since_peak,
+                                                  inspiral_only=inspiral_only)
+        
+        return d_ang_momentum
     
     def bar(self):
         ''' Only complex conjugate the modes - don't change the 

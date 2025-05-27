@@ -8,6 +8,7 @@ import numpy as np
 
 from waveformtools.waveformtools import message
 from scipy.interpolate import InterpolatedUnivariateSpline
+from waveformtools.dataIO import construct_mode_list
 
 def compute_conformal_k(vec_v, theta, phi, spin_phase=0):
     """Compute the conformal factor for the boost transformation
@@ -222,3 +223,73 @@ def compute_impulse_from_force(time_axis, dPxdt, dPydt, dPzdt):
 
     # Factor = lal.C_SI/1000 to get in km/s
     return np.array([dPx, dPy, dPz])
+
+
+def f_lm(ell, emm):
+    ''' The flm factor for the angular momentum modes '''
+    f_lm = np.sqrt( ell*(ell+1) - emm*(emm+1) )
+    return f_lm
+
+def compute_angular_momentum_evolution(strain_modes, news_modes):
+
+    dJcx_dt = 0
+    dJcy_dt = 0
+    dJcz_dt = 0
+    factor = 16*np.pi
+    news_modes_conj = np.conjugate(news_modes)
+    
+    modes_list = construct_mode_list(ell_max=strain_modes.ell_max-1, spin_weight=-2)
+
+    #for ell, emm_list in strain_modes.modes_list:
+    for ell, emm_list in modes_list:
+        for emm in emm_list:
+            #if abs(emm+1)>ell or abs(emm-1)>ell:
+            #    continue
+            t1 = f_lm(ell, emm)*news_modes_conj.mode(ell, emm+1)
+            t2 = f_lm(ell, -emm)*news_modes_conj.mode(ell, emm-1)
+            dJcx_dt += strain_modes.mode(ell, emm)*(t1 + t2)
+            dJcy_dt += strain_modes.mode(ell, emm)*(t1 - t2)
+            dJcz_dt += emm*(strain_modes.mode(ell, emm) * news_modes_conj.mode(ell, emm)) 
+    
+    dJx_dt = dJcx_dt.imag/(2*factor)
+    dJy_dt = -dJcy_dt.real/(2*factor)
+    dJz_dt = dJcz_dt.imag/factor
+
+    return np.array([strain_modes.time_axis, dJx_dt, dJy_dt, dJz_dt])
+
+
+def compute_angular_momentum(strain_modes, 
+                             news_modes,
+                             t_start=None,
+                             t_end=None,
+                             since_peak=False,
+                             inspiral_only=False):
+    
+    #modes_list = construct_mode_list(ell_max=strain_modes.ell_max-1, spin_weight=-2)
+
+    if since_peak or inspiral_only:
+        power = strain_modes.get_power_from_news_modes(news_modes)
+        if since_peak:
+            t_start = strain_modes.time_axis[np.argmax(power)]
+
+        if inspiral_only:
+            t_end = strain_modes.time_axis[np.argmax(power)]
+
+    if t_start is None:
+        t_start = strain_modes.time_axis[0]
+
+    if t_end is None:
+        t_end = strain_modes.time_axis[-1]
+
+
+    dJ_dt_vec = compute_angular_momentum_evolution(strain_modes, news_modes)
+    time_axis, dJx_dt, dJy_dt, dJz_dt = dJ_dt_vec
+    spline_dJx_dt = InterpolatedUnivariateSpline(time_axis, dJx_dt, k=5)
+    spline_dJy_dt = InterpolatedUnivariateSpline(time_axis, dJy_dt, k=5)
+    spline_dJz_dt = InterpolatedUnivariateSpline(time_axis, dJz_dt, k=5)
+    dJx = spline_dJx_dt.integral(t_start, t_end)
+    dJy = spline_dJy_dt.integral(t_start, t_end)
+    dJz = spline_dJz_dt.integral(t_start, t_end)
+
+    return np.array([dJx, dJy, dJz])
+
