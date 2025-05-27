@@ -1,6 +1,7 @@
 from lal import CreateDict
 import numpy as np
 from pycbc.detector import Detector
+from waveformtools.waveformtools import find_maxloc_and_time
 
 class WaveformModel:
 
@@ -99,13 +100,17 @@ class WaveformModel:
                          hc,
                          extrinsic_parameters, 
                          detector_string):
+        ''' t_coal is defined here to be the location of the peak of the 
+        polarization '''
         
         ifo = Detector(detector_string)
-        maxloc = np.argmax(np.absolute(hp+1j*hc))
+        amp = np.absolute(hp+1j*hc)
         times = np.arange(0, len(hp)*self.delta_t, self.delta_t)
-        pmax = len(hp) - maxloc
-        tmax = times[maxloc]
-        det_times = (times - tmax)
+        t_maxloc, _, _ = find_maxloc_and_time(times, amp)
+        #maxloc = np.argmax()
+        #pmax = len(hp) - maxloc
+        #tmax = times[maxloc]
+        det_times = (times - t_maxloc)
         det_times += extrinsic_parameters['t_coal']
         Fp, Fc = ifo.antenna_pattern(extrinsic_parameters['ra'], 
                                      extrinsic_parameters['dec'], 
