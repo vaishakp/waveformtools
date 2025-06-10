@@ -3258,7 +3258,7 @@ def get_nr_frame_angles_from_lal(inclination, phi_ref, tol=1e-3):
     orb_phase = phi_ref
     #inclination = ref_params['inclination']
 
-    # Get the LAL source frame vectors
+    # Define the LAL source frame vectors
     ln_hat_x = 0
     ln_hat_y = 0
     ln_hat_z = 1

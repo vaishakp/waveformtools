@@ -21,6 +21,8 @@ from waveformtools.waveformtools import (
     xtract_camp_phase,
 )
 
+from scipy.stats import mode as stats_mode
+
 ##########################
 # RIT data
 ##########################
@@ -1466,8 +1468,8 @@ def load_SpEC_data_from_disk(
     # create flag
     # flag = None
 
-    # get auto dt
-    from scipy.stats import mode as stats_mode
+    if (wfa.modes_data == np.array(None)).any():
+        wfa = initialize_modes_array(wf_time, wfa, resam_type=resam_type, ell_max=ell_max)
 
     # Load modes
     for ell, emm_list in modes_list:
@@ -1486,63 +1488,6 @@ def load_SpEC_data_from_disk(
             wf_data_c = wf_data_re + 1j * wf_data_im
 
             # wf_amp, wf_phase = xtract_camp_phase(wf_data_re, wf_data_im)
-
-            # message(type(wfa.modes_data))
-            if (wfa.modes_data == np.array(None)).all():
-                time_axis = wf_time
-                message("Creating modes data")
-
-                # min_dt = round(min(np.diff(wf_psi4_time)), 2)
-                # max_dt = round(max(np.diff(wf_psi4_time)), 2)
-                # dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
-                # dt_auto = int(dt_auto*100)/100
-                # dt_auto = round(stats_mode(np.diff(time_axis))[0][0], 4)
-
-                # print('diff time', np.diff(time_axis))
-                # print('mode time', stats_mode(np.diff(time_axis)))
-
-                dt_auto = stats_mode(np.diff(time_axis))[0]
-
-                # message(f'Default dt is {dt_auto}')
-
-                # min_dt = round(min(np.diff(time_axis)), 2)
-                # max_dt = round(max(np.diff(time_axis)), 2)
-
-                min_dt = min(np.diff(time_axis))
-                max_dt = max(np.diff(time_axis))
-
-                message(f"Min dt {min_dt} and Max dt {max_dt}")
-
-                if resam_type == "finest":
-                    # Choose finest available timestep
-                    # for upto 3 decimal digits.
-                    m_dt = min_dt
-                    message("Resampling at the finest timestep", m_dt)
-                if resam_type == "coarsest":
-                    m_dt = max_dt
-                    message("Resampling at the coarsest timestep", m_dt)
-
-                if isinstance(resam_type, float):
-                    m_dt = resam_type
-                    message("Resampling at user defined timestep", m_dt)
-
-                if resam_type == "auto":
-                    # Choose the most popular timestep
-                    m_dt = dt_auto
-                    message("Resampling at the default timestep", m_dt)
-
-                message("Chosen resampling fineness:", resam_type)
-                # New (resampled) time axis
-                time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
-
-                # Length of data.
-                data_len = len(time_axis)
-                # message(data_len)
-
-                wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
-                # message(wfa.stats_mode(0,0).shape)
-                wfa.time_axis = time_axis
-
             # Interpolate and resamplea
             # Note
             # Interpolating in amplitude and phase is better
@@ -1778,8 +1723,8 @@ def load_SpEC_non_extrap_data_from_disk(
     # create flag
     # flag = None
 
-    # get auto dt
-    from scipy.stats import mode as stats_mode
+    if (wfa.modes_data == np.array(None)).any():
+        wfa = initialize_modes_array(wf_time, wfa, resam_type=resam_type, ell_max=ell_max)
 
     # Load modes
     for ell, emm_list in modes_list:
@@ -1798,56 +1743,7 @@ def load_SpEC_non_extrap_data_from_disk(
             # wf_amp, wf_phase = xtract_camp_phase(wf_data_re, wf_data_im)
 
             # message(type(wfa.modes_data))
-            if wfa.modes_data.all() == np.array(None):
-                time_axis = wf_time
-                message("Creating modes data")
 
-                # min_dt = round(min(np.diff(wf_psi4_time)), 2)
-                # max_dt = round(max(np.diff(wf_psi4_time)), 2)
-                # dt_auto = (time_axis[-1] - time_axis[0])/len(time_axis)
-                # dt_auto = int(dt_auto*100)/100
-                # dt_auto = round(stats_mode(np.diff(time_axis))[0][0], 4)
-                dt_auto = stats_mode(np.diff(time_axis), keepdims=True)[0]
-
-                # message(f'Default dt is {dt_auto}')
-
-                # min_dt = round(min(np.diff(time_axis)), 2)
-                # max_dt = round(max(np.diff(time_axis)), 2)
-
-                min_dt = min(np.diff(time_axis))
-                max_dt = max(np.diff(time_axis))
-
-                message(f"Min dt {min_dt} and Max dt {max_dt}")
-
-                if resam_type == "finest":
-                    # Choose finest available timestep
-                    # for upto 3 decimal digits.
-                    m_dt = min_dt
-                    message("Resampling at the finest timestep", m_dt)
-                if resam_type == "coarsest":
-                    m_dt = max_dt
-                    message("Resampling at the coarsest timestep", m_dt)
-
-                if isinstance(resam_type, float):
-                    m_dt = resam_type
-                    message("Resampling at user defined timestep", m_dt)
-
-                if resam_type == "auto":
-                    # Choose the most popular timestep
-                    m_dt = dt_auto
-                    message("Resampling at the default timestep", m_dt)
-
-                message("Chosen resampling fineness:", resam_type)
-                # New (resampled) time axis
-                time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
-
-                # Length of data.
-                data_len = len(time_axis)
-                # message(data_len)
-
-                wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
-                # message(wfa.mode(0,0).shape)
-                wfa.time_axis = time_axis
 
             # Interpolate and resamplea
             # Note
@@ -2039,65 +1935,19 @@ def load_SpECTRE_data_from_disk(
     else:
         wfa.modes_list = modes_list
 
-    from scipy.stats import mode as stats_mode
+    wf_time = wf_file.t
+
+    if (wfa.modes_data == np.array(None)).any():
+        wfa = initialize_modes_array(wf_time, wfa, resam_type=resam_type, ell_max=ell_max)
+
+    time_axis = wfa.time_axis
 
     for ell, emm_list in modes_list:
         for emm in emm_list:
             wf_data = wf_file.data[:, wf_file.index(ell, emm)]
             wf_data_re = wf_data.real
             wf_data_im = wf_data.imag
-            wf_time = wf_file.t
-
-            if (wfa.modes_data == np.array(None)).any():
-                time_axis = wf_time
-                message("Creating modes data")
-                dt_auto = stats_mode(np.diff(time_axis))[0]
-                message(f'Default dt is {dt_auto}', message_verbosity=3)
-                min_dt = min(np.diff(time_axis))
-                max_dt = max(np.diff(time_axis))
-
-                message(
-                    f"Min dt {min_dt} and Max dt {max_dt}", message_verbosity=2
-                )
-                if resam_type == "finest":
-                    # Choose finest available timestep
-                    # for upto 3 decimal digits.
-                    m_dt = min_dt
-                    message(
-                        "Resampling at the finest timestep",
-                        m_dt,
-                        message_verbosity=1,
-                    )
-                if resam_type == "coarsest":
-                    m_dt = max_dt
-                    message(
-                        "Resampling at the coarsest timestep",
-                        m_dt,
-                        message_verbosity=1,
-                    )
-                if isinstance(resam_type, float):
-                    m_dt = resam_type
-                    message(
-                        "Resampling at user defined timestep",
-                        m_dt,
-                        message_verbosity=1,
-                    )
-                if resam_type == "auto":
-                    # Choose finest available timestep
-                    # for upto 3 decimal digits.
-                    m_dt = dt_auto
-                    message(
-                        "Resampling at the default timestep",
-                        m_dt,
-                        message_verbosity=1,
-                    )
-                # New (resampled) time axis
-                time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
-                # Length of data.
-                data_len = len(time_axis)
-                wfa.create_modes_array(ell_max=ell_max, data_len=data_len)
-                wfa.time_axis = time_axis
-
+            
             re_int = interp1d(wf_time, wf_data_re, kind=kind)
             re_dat = re_int(time_axis)
             im_int = interp1d(wf_time, wf_data_im, kind=kind)
@@ -2115,6 +1965,62 @@ def load_SpECTRE_data_from_disk(
         )
 
     return wfa
+
+
+def initialize_modes_array(time_axis, modes_array, resam_type='finest', ell_max=8):
+    """ Initialize a modes array given the time axis """
+
+    message("Creating modes data")
+    dt_auto = stats_mode(np.diff(time_axis))[0]
+    message(f'Default dt is {dt_auto}', message_verbosity=3)
+    min_dt = min(np.diff(time_axis))
+    max_dt = max(np.diff(time_axis))
+
+    message(
+        f"Min dt {min_dt} and Max dt {max_dt}", message_verbosity=2
+    )
+    if resam_type == "finest":
+        # Choose finest available timestep
+        # for upto 3 decimal digits.
+        m_dt = min_dt
+        message(
+            "Resampling at the finest timestep",
+            m_dt,
+            message_verbosity=1,
+        )
+    if resam_type == "coarsest":
+        m_dt = max_dt
+        message(
+            "Resampling at the coarsest timestep",
+            m_dt,
+            message_verbosity=1,
+        )
+    if isinstance(resam_type, float):
+        m_dt = resam_type
+        message(
+            "Resampling at user defined timestep",
+            m_dt,
+            message_verbosity=1,
+        )
+    if resam_type == "auto":
+        # Choose finest available timestep
+        # for upto 3 decimal digits.
+        m_dt = dt_auto
+        message(
+            "Resampling at the default timestep",
+            m_dt,
+            message_verbosity=1,
+        )
+
+    # New (resampled) time axis
+    time_axis = np.arange(time_axis[0], time_axis[-1], m_dt)
+    # Length of data.
+    data_len = len(time_axis)
+    modes_array.create_modes_array(ell_max=ell_max, data_len=data_len)
+    modes_array.time_axis = time_axis
+
+    return modes_array
+
 
 
 ##################################################################

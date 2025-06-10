@@ -1710,7 +1710,6 @@ class ModesArray:
         Mtotal=1,
         inclination=0,
         phi_ref=0,
-        alpha=None,
         distance=1,
         delta_t=None,
         k=None,
@@ -1752,24 +1751,26 @@ class ModesArray:
         import lal
 
         angles = get_nr_frame_angles_from_lal(inclination, phi_ref)
+        
         theta = angles["theta"]
         phi = angles["psi"]
-        alpha = angles["alpha"]
+        ialpha = angles["alpha"]
+
         polarizations = self.evaluate_angular(theta=theta, phi=phi)
 
-        import matplotlib.pyplot as plt
-        plt.plot(polarizations.real)
-        plt.plot(polarizations.imag)
-        plt.show()
+        #import matplotlib.pyplot as plt
+        #plt.plot(polarizations.real)
+        #plt.plot(polarizations.imag)
+        #plt.show()
 
         # Rotate polarizations
         #if alpha is not None:
         from waveformtools.transforms import rotate_polarizations
-        polarizations = rotate_polarizations(polarizations, alpha)
+        polarizations = rotate_polarizations(polarizations, ialpha)
         
-        plt.plot(polarizations.real)
-        plt.plot(polarizations.imag)
-        plt.show()
+        #plt.plot(polarizations.real)
+        #plt.plot(polarizations.imag)
+        #plt.show()
 
         # Rescale the time axis
         taxis = self.time_axis * lal.MTSUN_SI * Mtotal
@@ -1785,9 +1786,12 @@ class ModesArray:
         # Rescale the magnitude of the waveform
         polarizations *= amp_factor
 
-        plt.plot(polarizations.real)
-        plt.plot(polarizations.imag)
-        plt.show()
+        #import matplotlib.pyplot as plt
+
+        #plt.plot(polarizations.real, label='+')
+        #plt.plot(polarizations.imag, label='x')
+        #plt.legend()
+        #plt.show()
         
         return taxis, polarizations.real, polarizations.imag
 
