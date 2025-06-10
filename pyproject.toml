@@ -13,14 +13,18 @@ max-line-length = 120
 ignore = ['E203']
 
 [build-system]
-#requires = ["setuptools"]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools"]
+#requires = ["hatchling"]
+#build-backend = "hatchling.build"
 #build-backend = "setuptools.build_meta"
 
-[tool.hatch.version]
-path = "waveformtools/__init__.py"
+#[tool.hatch.version]
+#path = "waveformtools/__init__.py"
 
+[tool.setuptools.dynamic]
+version = {attr = "waveformtools.__version__"}
+dependencies = {file = ["requirements.txt"] }
+optional-dependencies = {ext = { file = ["optional-requirements.txt"]}}
 
 [project]
 name = "waveformtools"
@@ -42,7 +46,4 @@ classifiers = [
 #[tool.hatch.metadata]
 #allow-direct-references = true
 
-[tools.setuptools.dynamic]
-version = {attr = "waveformtools.__version__"}
-dependencies = {file = ["requirements.txt"]}
-optional-dependencies = {ext = { file = ["optional-requirements.txt"]}}
+
