@@ -49,7 +49,7 @@ opt = ["optional-requirements.txt"]
 "Homepage" = "https://gitlab.com/vaishakp/waveformtools"
 "Bug Tracker" = "https://gitlab.com/vaishakp/waveformtools/issues"
 
-#[tool.hatch.metadata]
-#allow-direct-references = true
+[tool.hatch.metadata]
+allow-direct-references = true
 
 
