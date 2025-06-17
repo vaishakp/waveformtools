@@ -66,7 +66,8 @@ pytest:
     - conda init
     - source ~/.bashrc
     - conda activate test
-    - pip install -r requirements.txt
+    #- pip install -r requirements.txt
+    - pip install .
     - pip install spherical
     - pip install pytest
   script:
@@ -126,7 +127,8 @@ pages:
   #  - pip install -r requirements.txt
   #  - pip install quaternionic
   #  - pip install spherical
-    - pip install -r requirements.txt
+    #- pip install -r requirements.txt
+    - pip install .
     - conda info --env
     - which python
     - which conda
@@ -139,8 +141,8 @@ pages:
     - pwd
     - ls -l
     - echo $PYTHONPATH
-    - export PYTHONPATH=$PYTHONPATH:"/builds/vaishakp/waveformtools"
-    - echo $PYTHONPATH
+  #  - export PYTHONPATH=$PYTHONPATH:"/builds/vaishakp/waveformtools"
+  #  - echo $PYTHONPATH
   # - pip install pylint flake8
   # - conda install pylint flake8
     #- pip install -U sphinx sphinx-rtd-theme rinohtype numpydoc
