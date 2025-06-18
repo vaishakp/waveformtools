@@ -27,10 +27,10 @@ import traceback
 from inspect import getframeinfo, stack
 
 try:
-    import config
+    import vlconf
 except Exception as ex:
     print(ex)
-    import waveformtools.config as config
+    import waveformtools.config as vlconf
 
 import numpy as np
 
@@ -52,8 +52,8 @@ from termcolor import colored
 def message(
     *args,
     message_verbosity=2,
-    print_verbosity=config.print_verbosity,
-    log_verbosity=config.log_verbosity,
+    print_verbosity=vlconf.print_verbosity,
+    log_verbosity=vlconf.log_verbosity,
     **kwargs,
 ):
     """The print function with verbosity levels and logging facility.

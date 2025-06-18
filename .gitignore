@@ -19,8 +19,10 @@
 waveformtools/devel_nb
 **/.ipynb_checkpoints
 **/dist
+**/build
 **/waveformtools.egg-info
 **/.ipynb_checkpoints
 *.pkl
 **/dev/
 *.orig
+

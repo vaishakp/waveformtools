@@ -4,7 +4,7 @@ from spectral.spherical.grids import GLGrid
 from waveformtools.diagnostics import MethodInfo as method_info
 from waveformtools.waveformtools import message
 import unittest, pytest
-from config.verbosity import levels
+from vlconf.verbosity import levels
 from waveformtools.single_mode import SingleMode
 
 lv = levels()

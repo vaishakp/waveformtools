@@ -1836,8 +1836,8 @@ class ModesArray:
         import matplotlib.pyplot as plt
 
         try:
-            import config
-            config.conf_matplolib()
+            import vlconf
+            vlconf.conf_matplolib()
         except Exception as excep:
             excep("Unable to conf matplotlib")
 
