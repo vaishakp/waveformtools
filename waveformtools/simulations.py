@@ -1,8 +1,8 @@
 """Data container for Numerical Relativity data."""
 
-import config
+import vlconf
 
-config.conf_matplolib()
+vlconf.conf_matplolib()
 import numpy as np
 import scipy
 
@@ -1277,7 +1277,7 @@ class sim:
             # Update the sim.strain
             self.strain.update({alias: [htdat, hpdat, hxdat]})
 
-            if config.print_verbosity > 1:
+            if vlconf.print_verbosity > 1:
 
                 fig, ax = plt.subplots()
 
