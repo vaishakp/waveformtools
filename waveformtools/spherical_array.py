@@ -13,8 +13,10 @@ from waveformtools.dataIO import (
     get_iteration_numbers_from_keys,
     sort_keys,
 )
-from spectral.spherical.grids import UniformGrid
-from spectral.spherical.swsh import Yslm_vec
+from spectools.spherical.grids import UniformGrid
+from spectools.spherical.grids import UniformGrid
+from spectools.spherical.swsh import Yslm_vec
+from spectools.spherical.swsh import Yslm_vec
 from waveformtools.waveformtools import interp_resam_wfs, message
 from pathlib import Path
 from waveformtools.integrate import fixed_frequency_integrator

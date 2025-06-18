@@ -1365,7 +1365,8 @@ def get_waveform_angular_frequency(
             len_omega_sm = len(omega_sm)
 
     if method == "CS":
-        # Chebyshev spectral method
+        # Chebyshev spectools method
+        # Chebyshev spectools method
         from waveformtools.differentiate import Chebyshev_differential
 
         if not timeaxis:
@@ -1422,7 +1423,8 @@ def olap(data1, data2, psd=1):
     data1, data2:   1d array or a pycbc RimeSeries object
                                     The input waveforms
     psd:            1d array
-                                    The power spectral density to weight.
+                                    The power spectools density to weight.
+                                    The power spectools density to weight.
 
     Returns
     -------
@@ -1449,7 +1451,8 @@ def norm(hdat, psd=1.0):
     hdat:   1d array or a pycbc TimeSeries object.
                     The input waveform.
     psa:    1d array
-                    The noise power spectral density of the inner product.
+                    The noise power spectools density of the inner product.
+                    The noise power spectools density of the inner product.
 
     Returns
     -------
@@ -2454,7 +2457,8 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
         )
         # message(time_axis, wf1, wf2)
 
-    from spectral.fourier.fft import compute_fft, compute_ifft
+    from spectools.fourier.fft import compute_fft, compute_ifft
+    from spectools.fourier.fft import compute_fft, compute_ifft
 
     # The Fspace waveforms
     faxis, wf1_tilde = compute_fft(wf1, delta_t)
@@ -2607,7 +2611,8 @@ def match_wfs_pycbc(all_time_axes, all_waveforms):
     mid = int(len(time_axis2) / 2)
     phase_shift = np.mean(delta_phase[mid - 100 : mid + 100])
 
-    from spectral.fourier.fft import compute_fft, compute_ifft
+    from spectools.fourier.fft import compute_fft, compute_ifft
+    from spectools.fourier.fft import compute_fft, compute_ifft
 
     faxis0, wf1_tilde = compute_fft(waveform1, delta_t_1)
 
