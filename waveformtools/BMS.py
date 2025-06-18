@@ -93,7 +93,8 @@ def compute_supertransl_alpha(supertransl_alpha_modes, theta, phi):
     # ell_min = int(keys_list[0][1])
     # ell_max = int(keys_list[-1][1])
     # Import the Spherical Harmonic function
-    from spectral.spherical.swsh import Yslm_vec
+    from spectools.spherical.swsh import Yslm_vec
+    from spectools.spherical.swsh import Yslm_vec
 
     spin_weight = 0
     # Ylm = partial(Yslm, spin_weight=0)

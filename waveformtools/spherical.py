@@ -5,7 +5,8 @@
 #################################
 
 import numpy as np
-from spectral.spherical.swsh import Yslm_vec
+from spectools.spherical.swsh import Yslm_vec
+from spectools.spherical.swsh import Yslm_vec
 
 
 def decompose_in_SWSHs(

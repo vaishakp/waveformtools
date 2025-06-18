@@ -1,5 +1,6 @@
 import numpy as np
-from spectral.spherical.swsh import Yslm_vec
+from spectools.spherical.swsh import Yslm_vec
+from spectools.spherical.swsh import Yslm_vec
 from waveformtools.dataIO import construct_mode_list
 from waveformtools.waveformtools import message
 from waveformtools.diagnostics import MethodInfo
@@ -95,7 +96,8 @@ class SingleMode:
             self.create_modes_array()
 
         if Grid is None:
-            from spectral.spherical.grids import GLGrid
+            from spectools.spherical.grids import GLGrid
+            from spectools.spherical.grids import GLGrid
 
             self._Grid = GLGrid(L=ell_max)
 
@@ -445,7 +447,8 @@ class SingleMode:
             raise NotImplementedError
             modes = self.non_zero_modes(tol=tol)
 
-        from spectral.spherical.transforms import SHContract
+        from spectools.spherical.transforms import SHContract
+        from spectools.spherical.transforms import SHContract
         from waveformtools.diagnostics import method_info
 
         minfo = method_info()
@@ -686,7 +689,8 @@ class SingleMode:
         if ell_max is None:
             ell_max = self.ell_max
 
-        from spectral.spherical.swsh import create_Yslm_modes_array
+        from spectools.spherical.swsh import create_Yslm_modes_array
+        from spectools.spherical.swsh import create_Yslm_modes_array
 
         Yslm = create_Yslm_modes_array(
             theta=float(theta),
@@ -703,7 +707,8 @@ class SingleMode:
         """Evaluate the expansion at requested angular coordinates
         by generating SWSHs in parallel and vectorizing the
         summation"""
-        from spectral.spherical.Yslm_mp import Yslm_mp
+        from spectools.spherical.Yslm_mp import Yslm_mp
+        from spectools.spherical.Yslm_mp import Yslm_mp
 
         if ell_max is None:
             ell_max = self.ell_max
@@ -733,7 +738,8 @@ class SingleMode:
         if ell_max is None:
             ell_max = self.ell_max
 
-        from spectral.spherical.swsh import create_spherical_Yslm_modes_array
+        from spectools.spherical.swsh import create_spherical_Yslm_modes_array
+        from spectools.spherical.swsh import create_spherical_Yslm_modes_array
 
         sYlm = create_spherical_Yslm_modes_array(
             theta=float(theta),

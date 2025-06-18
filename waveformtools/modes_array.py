@@ -13,8 +13,10 @@ from waveformtools.dataIO import (
     get_iteration_numbers_from_keys,
     sort_keys,
 )
-from spectral.spherical.grids import UniformGrid
-from spectral.spherical.swsh import Yslm_vec
+from spectools.spherical.grids import UniformGrid
+from spectools.spherical.grids import UniformGrid
+from spectools.spherical.swsh import Yslm_vec
+from spectools.spherical.swsh import Yslm_vec
 from waveformtools.waveformtools import interp_resam_wfs, message, get_nr_frame_angles_from_lal
 from pathlib import Path
 from waveformtools.integrate import fixed_frequency_integrator
@@ -1033,7 +1035,8 @@ class ModesArray:
             ell_max=self.ell_max, data_len=self.data_len
         )
 
-        from spectral.fourier.transforms import compute_fft
+        from spectools.fourier.transforms import compute_fft
+        from spectools.fourier.transforms import compute_fft
 
         for mode in self.modes_list:
             # Extrapolate every mode
@@ -1071,7 +1074,8 @@ class ModesArray:
             ell_max=self.ell_max, data_len=self.data_len
         )
 
-        from spectral.fourier.transforms import compute_ifft
+        from spectools.fourier.transforms import compute_ifft
+        from spectools.fourier.transforms import compute_ifft
 
         for mode in self.modes_list:
             # Extrapolate every mode
@@ -1347,7 +1351,8 @@ class ModesArray:
                            that contains the boosted waveform.
         """
 
-        from spectral.spherical.grids import UniformGrid
+        from spectools.spherical.grids import UniformGrid
+        from spectools.spherical.grids import UniformGrid
 
         # Construct a spherical grid.
         if Grid is None:
@@ -1801,7 +1806,8 @@ class ModesArray:
         """Evaluate the expansion at requested angular coordinates
         by generating SWSHs in parallel and vectorizing the
         summation"""
-        from spectral.spherical.Yslm_mp import Yslm_mp
+        from spectools.spherical.Yslm_mp import Yslm_mp
+        from spectools.spherical.Yslm_mp import Yslm_mp
 
         if ell_max is None:
             ell_max = self.ell_max

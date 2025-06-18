@@ -5,7 +5,8 @@
 ################################################
 import numpy as np
 import scipy
-from spectral.fourier.transforms import compute_ifft
+from spectools.fourier.transforms import compute_ifft
+from spectools.fourier.transforms import compute_ifft
 from waveformtools.waveformtools import message
 from waveformtools.waveformtools import (
     get_starting_angular_frequency as sang_f,
@@ -77,7 +78,8 @@ def fixed_frequency_integrator(
     if not utilde_conven:
         # Compute the FFT of data
         from numpy.fft import ifft
-        from spectral.fourier.transforms import compute_fft, unset_fft_conven
+        from spectools.fourier.transforms import compute_fft, unset_fft_conven
+        from spectools.fourier.transforms import compute_fft, unset_fft_conven
 
         # from waveformtools import taper
         # udata_x_re = taper(u_time.real, delta_t=delta_t)
@@ -258,7 +260,8 @@ def MidPoint2DInteg(func, info):
 
 def DriscollHealy2DInteg(func, info):
     """Implementation of the Driscoll Healy 2D integration that
-    exhibits near spectral convergence.
+    exhibits near spectools convergence.
+    exhibits near spectools convergence.
 
     Parameters
     ----------
@@ -312,7 +315,8 @@ def DriscollHealy2DInteg(func, info):
     # integrand_axis = latitude_sum_axis * weights_axis
 
     for theta_index in range(1, NTheta):
-        # These weights lead to an almost spectral convergence
+        # These weights lead to an almost spectools convergence
+        # These weights lead to an almost spectools convergence
         this_theta = np.pi * theta_index / NTheta
 
         # this_theta = theta_1d[theta_index]
@@ -334,7 +338,8 @@ def DriscollHealy2DInteg(func, info):
         # local_sum = 0.0;
         # Skip the last point (iy=NPhi), since we assume periodicity and
         # therefore it has the same value as the first point. We don't use
-        # weights in this direction, which leads to spectral convergence.
+        # weights in this direction, which leads to spectools convergence.
+        # weights in this direction, which leads to spectools convergence.
         # (Yay periodicity!)
 
         for index_phi in range(NPhi):
@@ -350,7 +355,8 @@ def DriscollHealy2DInteg(func, info):
 
 def DriscollHealy2DInteg_v2(func, info):
     """Implementation of the Driscoll Healy 2D integration that
-    exhibits near spectral convergence.
+    exhibits near spectools convergence.
+    exhibits near spectools convergence.
 
     Parameters
     ----------

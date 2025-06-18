@@ -1,6 +1,8 @@
 import numpy as np
-from spectral.spherical.transforms import SHExpand
-from spectral.spherical.grids import GLGrid
+from spectools.spherical.transforms import SHExpand
+from spectools.spherical.transforms import SHExpand
+from spectools.spherical.grids import GLGrid
+from spectools.spherical.grids import GLGrid
 from waveformtools.diagnostics import MethodInfo as method_info
 from waveformtools.waveformtools import message
 import unittest, pytest
@@ -19,7 +21,8 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=11)
         minfo = method_info(ell_max=11, int_method="GL")
 
-        from spectral.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -59,7 +62,8 @@ class TestGLGridYlm(unittest.TestCase):
             info = GLGrid(L=11)
             minfo = method_info(ell_max=11, int_method="GL")
 
-            from spectral.spherical.swsh import Yslm_vec
+            from spectools.spherical.swsh import Yslm_vec
+            from spectools.spherical.swsh import Yslm_vec
 
             theta_grid, phi_grid = info.meshgrid
 
@@ -192,7 +196,8 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=11)
         minfo = method_info(ell_max=11, int_method="GL")
 
-        from spectral.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -285,7 +290,8 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=11)
         minfo = method_info(ell_max=11, int_method="GL")
 
-        from spectral.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -382,7 +388,8 @@ class TestGLGridYlm(unittest.TestCase):
         info = GLGrid(L=24)
         minfo = method_info(ell_max=24, int_method="GL")
 
-        from spectral.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -426,7 +433,8 @@ class TestGLGridYlm(unittest.TestCase):
 
         ell_max = 8  # Warning: Very expensive. Tested upto 84
 
-        from spectral.spherical.swsh import Yslm_vec, Yslm_prec
+        from spectools.spherical.swsh import Yslm_vec, Yslm_prec
+        from spectools.spherical.swsh import Yslm_vec, Yslm_prec
 
         # theta_grid, phi_grid = info.meshgrid
 
@@ -474,7 +482,8 @@ class TestGLGridYlm(unittest.TestCase):
 
         ell_max = 8  # Warning: very expensive. Tested upto 84
 
-        from spectral.spherical.swsh import Yslm_vec, Yslm_prec_grid
+        from spectools.spherical.swsh import Yslm_vec, Yslm_prec_grid
+        from spectools.spherical.swsh import Yslm_vec, Yslm_prec_grid
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -536,7 +545,8 @@ class TestGLGridYlm(unittest.TestCase):
 
         ell_max = 24
 
-        from spectral.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
 
         # theta_grid, phi_grid = info.meshgrid
 
@@ -600,7 +610,8 @@ class TestGLGridYlm(unittest.TestCase):
 
         ell_max = 24
 
-        from spectral.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
+        from spectools.spherical.swsh import Yslm_vec
 
         theta_grid, phi_grid = info.meshgrid
 
@@ -665,7 +676,8 @@ class TestGLGridYlm(unittest.TestCase):
 
         ell_max = 6  # Warning: very expensive. Tested upto 84
 
-        from spectral.spherical.swsh import Yslm_prec_grid
+        from spectools.spherical.swsh import Yslm_prec_grid
+        from spectools.spherical.swsh import Yslm_prec_grid
 
         theta_grid, phi_grid = info.meshgrid
 
