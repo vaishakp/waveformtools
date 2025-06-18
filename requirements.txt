@@ -9,7 +9,7 @@ termcolor
 datetime
 sympy
 numpydoc
-config@git+https://gitlab.com/vaishakp/config@master#egg=config
-spectral@git+https://github.com/vaishakp/spectral@main#egg=spectral
+vlconf
+spectools
 sphinx-rtd-theme
 recommonmark
