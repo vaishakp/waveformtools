@@ -3415,3 +3415,39 @@ def find_maxloc_and_time(times, amp):
     t_maxloc = times_fine[maxloc]
 
     return t_maxloc, maxloc, maxloc_0
+
+def load_lal_modes_to_modes_array(lal_modes, domain='fd'):
+    ''' '''
+    from waveformtools.modes_array import ModesArray
+
+    nm = lal_modes
+    ell_max = nm.l
+
+    if domain=='fd':
+        wfm = ModesArray(label=f'lal_{domain}',
+                        ell_max=ell_max,
+                        frequency_axis=lal_modes.fdata.data,
+                        )
+        print(len(lal_modes.fdata.data))
+    if domain=='td':
+        wfm = ModesArray(label=f'lal_{domain}',
+                    ell_max=ell_max,
+                    time_axis=lal_modes.tdata.data,
+                    )
+        print(len(lal_modes.tdata.data))
+
+    wfm.create_modes_array()
+    print(wfm.modes_data.shape)
+
+    ell = ell_max
+    emm = ell_max
+
+    while ell!=2 and emm!=-2:
+        ell = nm.l
+        emm = nm.m
+        print(ell, emm, nm.mode.data)
+        wfm.set_mode_data(ell=ell, emm=emm, data=nm.mode.data.data)
+        nm =  nm.next
+
+
+    return wfm

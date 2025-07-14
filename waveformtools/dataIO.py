@@ -1872,7 +1872,7 @@ def load_SpECTRE_data_from_disk(
 
     message("Loading SpECTRE data.", message_verbosity=1)
     from waveformtools.waveforms import ModesArray
-
+    import sxs
     # Load SXS waveforms to modes_array.
     # Spectre infinty
     full_path = f"{data_dir}/{file_name}"
@@ -1887,7 +1887,8 @@ def load_SpECTRE_data_from_disk(
         )
         sys.exit(0)
 
-    wf_file = scri.rpxmb.load(full_path)[0].to_inertial_frame()
+    wf_file = sxs.load("/home/vaishakprasad/.cache/sxs/SXS:BBH:2526v3.0/Lev3:Strain_N2.h5")
+    #wf_file = scri.rpxmb.load(full_path)[0].to_inertial_frame()
     ell_max_act = int(wf_file.ell_max)
     #import pdb
     #pdb.set_trace()

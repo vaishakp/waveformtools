@@ -33,9 +33,9 @@ class WaveformModel:
                                         'distance',
                                         'f_lower',
                                         'f_ref',
-                                        #'sampling_frequency',
+                                        'sampling_frequency',
                                         'delta_t',
-                                        #'delta_f',
+                                        'delta_f',
                                         'omega0',
                                         'approximant',
                                         'PhenomXHMReleaseVersion',
@@ -60,9 +60,9 @@ class WaveformModel:
         self.parameters_dict['lal_dict'] = CreateDict()
         self.set_parameters()
 
-    @property
-    def phi_ref(self):
-        return self.coa_phase
+    #@property
+    #def phi_ref(self):
+    #    return self.coa_phase
     
     def set_parameters(self):
 

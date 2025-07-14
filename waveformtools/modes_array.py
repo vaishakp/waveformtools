@@ -275,10 +275,12 @@ class ModesArray:
         return aslice
     
     def __len__(self):
-        if (np.array(self.time_axis) == np.array(None)).any():
-            return False
-        else:
+        if not (np.array(self.time_axis) == np.array(None)).any():
             return len(self.time_axis)
+        elif not (np.array(self.frequency_axis) == np.array(None)).any():
+            return len(self.frequency_axis)
+        else:
+            return False
     
     def get_metadata(self):
         """Get the metadata associated with the instance.
@@ -1039,8 +1041,6 @@ class ModesArray:
         from spectools.fourier.transforms import compute_fft
 
         for mode in self.modes_list:
-            # Extrapolate every mode
-
             # Ge the ell value
             ell, emm_list = mode
 
@@ -2037,7 +2037,6 @@ class ModesArray:
         #print("Force", dPzdt)
         return dPxdt, dPydt, dPzdt
     
-
     def compute_kick(self, Mfinal=1):
         news_modes = self.get_news_from_strain()
         dPxdt, dPydt, dPzdt = self.compute_momentum_flux(news_modes)
