@@ -3400,8 +3400,6 @@ def get_nr_frame_angles_from_lal(inclination, phi_ref, tol=1e-3):
 
     return angles
 
-
-
 def find_maxloc_and_time(times, amp):
 
     from scipy.interpolate import interp1d
@@ -3419,6 +3417,8 @@ def find_maxloc_and_time(times, amp):
 def load_lal_modes_to_modes_array(lal_modes, domain='fd'):
     ''' '''
     from waveformtools.modes_array import ModesArray
+
+    phase_fac = 1#np.exp(-1j*np.pi/2)
 
     nm = lal_modes
     ell_max = nm.l
@@ -3442,12 +3442,17 @@ def load_lal_modes_to_modes_array(lal_modes, domain='fd'):
     ell = ell_max
     emm = ell_max
 
-    while ell!=2 and emm!=-2:
-        ell = nm.l
-        emm = nm.m
-        print(ell, emm, nm.mode.data)
-        wfm.set_mode_data(ell=ell, emm=emm, data=nm.mode.data.data)
-        nm =  nm.next
-
+    for ell1 in range(ell_max, -1, -1):
+        for emm1 in range(ell1, -ell1-1, -1):
+            if nm is not None:
+                print(ell1, emm1, nm.mode.data)
+                #while ell!=2 and emm!=-2:
+                ell = nm.l
+                emm = nm.m
+                assert ell1==ell, f"ell mode index exception. Expected {ell1}, Got: {ell}"
+                assert emm1==emm, f"emm mode index exception. Expected {emm1}, Got: {emm}"
+                
+                wfm.set_mode_data(ell=ell, emm=emm, data=phase_fac*np.conjugate(nm.mode.data.data))
+                nm =  nm.next
 
     return wfm

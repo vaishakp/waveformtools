@@ -165,7 +165,6 @@ class LALWaveformModel(WaveformModel):
         Tapering conventions: default lal 
         '''
         print(parameters_dict)
-
         self.update_parameters(parameters_dict)
         apx_domain = self.get_approximant_type(self.approximant)
         print(apx_domain)
@@ -174,22 +173,22 @@ class LALWaveformModel(WaveformModel):
 
             try:
                 waveform_modes_list = SimInspiralChooseTDModes(             
-                                                                            parameters_dict['phi_ref'],
-                                                                            parameters_dict['delta_t'],
-                                                                            parameters_dict['mass1']*MSUN_SI,
-                                                                            parameters_dict['mass2']*MSUN_SI,
-                                                                            parameters_dict['spin1x'],
-                                                                            parameters_dict['spin1y'],
-                                                                            parameters_dict['spin1z'],
-                                                                            parameters_dict['spin2x'],
-                                                                            parameters_dict['spin2y'],
-                                                                            parameters_dict['spin2z'],
-                                                                            parameters_dict['f_lower'],
-                                                                            parameters_dict['f_ref'],
-                                                                            parameters_dict['distance']*1e6*PC_SI,
-                                                                            parameters_dict['lal_dict'],
-                                                                            parameters_dict['ell_max'],
-                                                                            parameters_dict['lal_approximant']
+                                                                parameters_dict['phi_ref'],
+                                                                parameters_dict['delta_t'],
+                                                                parameters_dict['mass1']*MSUN_SI,
+                                                                parameters_dict['mass2']*MSUN_SI,
+                                                                parameters_dict['spin1x'],
+                                                                parameters_dict['spin1y'],
+                                                                parameters_dict['spin1z'],
+                                                                parameters_dict['spin2x'],
+                                                                parameters_dict['spin2y'],
+                                                                parameters_dict['spin2z'],
+                                                                parameters_dict['f_lower'],
+                                                                parameters_dict['f_ref'],
+                                                                parameters_dict['distance']*1e6*PC_SI,
+                                                                parameters_dict['lal_dict'],
+                                                                parameters_dict['ell_max'],
+                                                                parameters_dict['lal_approximant']
                                                             )
             except Exception as ex:
                 print(ex)
@@ -197,23 +196,23 @@ class LALWaveformModel(WaveformModel):
 
         if apx_domain == 'fd':
             waveform_modes_list = SimInspiralChooseFDModes( 
-                                                                        parameters_dict['mass1']*MSUN_SI,
-                                                                        parameters_dict['mass2']*MSUN_SI,
-                                                                        parameters_dict['spin1x'],
-                                                                        parameters_dict['spin1y'],
-                                                                        parameters_dict['spin1z'],
-                                                                        parameters_dict['spin2x'],
-                                                                        parameters_dict['spin2y'],
-                                                                        parameters_dict['spin2z'],
-                                                                        parameters_dict['delta_f'],
-                                                                        parameters_dict['f_lower'],
-                                                                        parameters_dict['f_max'],
-                                                                        parameters_dict['f_ref'],
-                                                                        parameters_dict['phi_ref'],
-                                                                        parameters_dict['distance']*1e6*PC_SI,
-                                                                        parameters_dict['inclination'],
-                                                                        parameters_dict['lal_dict'],
-                                                                        parameters_dict['lal_approximant']
+                                                                parameters_dict['mass1']*MSUN_SI,
+                                                                parameters_dict['mass2']*MSUN_SI,
+                                                                parameters_dict['spin1x'],
+                                                                parameters_dict['spin1y'],
+                                                                parameters_dict['spin1z'],
+                                                                parameters_dict['spin2x'],
+                                                                parameters_dict['spin2y'],
+                                                                parameters_dict['spin2z'],
+                                                                parameters_dict['delta_f'],
+                                                                parameters_dict['f_lower'],
+                                                                parameters_dict['f_max'],
+                                                                parameters_dict['f_ref'],
+                                                                parameters_dict['phi_ref'],
+                                                                parameters_dict['distance']*1e6*PC_SI,
+                                                                parameters_dict['inclination'],
+                                                                parameters_dict['lal_dict'],
+                                                                parameters_dict['lal_approximant']
                                                             )
 
         #else:

@@ -27,6 +27,7 @@ from waveformtools.waveformtools import (
 from waveformtools.single_mode import SingleMode
 from scipy.interpolate import InterpolatedUnivariateSpline
 from waveformtools.BMS import compute_linear_momentum_contribution_from_news, compute_impulse_from_force, compute_angular_momentum
+from waveformtools.waveformtools import roll
 
 class ModesArray:
     """A class that holds mode array of waveforms
@@ -391,6 +392,8 @@ class ModesArray:
             except Exception as ex:
                 message(ex)
                 raise NameError("Please supply ell_max")
+        else:
+            self.ell_max = ell_max
 
         if data_len is None:
             try:
@@ -398,6 +401,8 @@ class ModesArray:
             except Exception as ex:
                 message(ex)
                 raise NameError("Please supply data_len")
+        else:
+            self._data_len = data_len
 
         if (np.array(self.time_axis) == np.array(None)).all():
             self.create_time_axis(data_len)
@@ -1058,6 +1063,22 @@ class ModesArray:
         waveform_tilde_modes.modes_list = self.modes_list
         return waveform_tilde_modes
 
+    def find_max_intensity_loc(self):
+        intensity  = 0
+
+        for ell in range(self.ell_max+1):
+            for emm in range(-ell, ell+1):
+                intensity+=np.absolute(self.mode(ell, emm))
+
+        argmax_int = np.argmax(intensity)
+        maxtime = self.time_axis[argmax_int]
+
+        return argmax_int, maxtime
+    
+    @property
+    def duration(self):
+        return self.time_axis[-1] - self.time_axis[0]
+    
     def to_time_basis(self):
         """Compute the modes in time basis.
 
@@ -1069,17 +1090,17 @@ class ModesArray:
         """
 
         # Create a new modes array
-        waveform_modes = ModesArray(label=f"{self.label} -> time_domain")
-        waveform_modes.create_modes_array(
-            ell_max=self.ell_max, data_len=self.data_len
-        )
+        waveform_modes = ModesArray(label=f"{self.label} -> time_domain",
+                                    ell_max=self.ell_max,
+                                    data_len=self.data_len)
+        
+        waveform_modes.create_modes_array()
+        from spectools.fourier.transforms import compute_ifft
+        from spectools.fourier.transforms import compute_ifft
 
-        from spectools.fourier.transforms import compute_ifft
-        from spectools.fourier.transforms import compute_ifft
 
         for mode in self.modes_list:
             # Extrapolate every mode
-
             # Ge the ell value
             ell, emm_list = mode
 
@@ -1090,15 +1111,38 @@ class ModesArray:
 
                 waveform_modes.set_mode_data(ell=ell, emm=emm, data=time_data)
 
-        try:
-            maxloc = np.argmax(np.absolute(waveform_modes.mode(2, 2)))
-        except Exception as ex:
-            message(ex)
-            maxloc = 0
+        waveform_modes._time_axis = time_axis
 
-        maxtime = time_axis[maxloc]
+        #try:
+        #    maxloc = np.argmax(np.absolute(waveform_modes.mode(2, 2)))
+        #except Exception as ex:
+        #    message(ex)
+        #    maxloc = 0
 
-        waveform_modes.time_axis = time_axis - maxtime
+        maxloc, maxtime = waveform_modes.find_max_intensity_loc()
+        print(f"maxloc {maxloc}", f"maxtime {maxtime}")
+        frac = (maxtime-waveform_modes.time_axis[0])/waveform_modes.duration
+
+        if frac<0.7:
+            slice_time = waveform_modes.time_axis[0] + 0.7*waveform_modes.duration
+            slice_arg = np.argmin(abs(waveform_modes.time_axis-slice_time))
+            roll_arg = slice_arg - maxloc
+            print("roll arg", roll_arg)
+
+            for mode in self.modes_list:
+            # Extrapolate every mode
+            # Ge the ell value
+                ell, emm_list = mode
+                for emm in emm_list:
+                    rolled_mode_data = roll(waveform_modes.mode(ell, emm), roll_arg)
+                    waveform_modes.set_mode_data(ell=ell, emm=emm, data=rolled_mode_data)
+                # slice and roll every mode
+                # 
+        else:
+            roll_arg = 0
+
+        maxtime = waveform_modes.time_axis[roll_arg+maxloc]
+        waveform_modes.time_axis = waveform_modes.time_axis - maxtime
 
         return waveform_modes
 
