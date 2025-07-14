@@ -1818,7 +1818,7 @@ def load_SpECTRE_data_from_disk(
     data_dir="./",
     file_name="rhOverM_Extrapolated_N5_CoM_Mem.h5",
     r_ext=None,
-    ell_max=12,
+    ell_max=None,
     centre=True,
     modes_list=None,
     r_ext_factor=1,
@@ -1887,7 +1887,7 @@ def load_SpECTRE_data_from_disk(
         )
         sys.exit(0)
 
-    wf_file = sxs.load("/home/vaishakprasad/.cache/sxs/SXS:BBH:2526v3.0/Lev3:Strain_N2.h5")
+    wf_file = sxs.load(full_path)
     #wf_file = scri.rpxmb.load(full_path)[0].to_inertial_frame()
     ell_max_act = int(wf_file.ell_max)
     #import pdb
