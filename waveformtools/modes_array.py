@@ -1762,6 +1762,7 @@ class ModesArray:
         distance=1,
         delta_t=None,
         k=None,
+        polarization_angle=0
     ):
         """Get the plus and cross polarizations of
         of the waveform time series by summing the modes.
@@ -1805,6 +1806,9 @@ class ModesArray:
         phi = angles["psi"]
         ialpha = angles["alpha"]
 
+        if theta==0:
+            theta=1e-6
+
         polarizations = self.evaluate_angular(theta=theta, phi=phi)
 
         #import matplotlib.pyplot as plt
@@ -1815,7 +1819,7 @@ class ModesArray:
         # Rotate polarizations
         #if alpha is not None:
         from waveformtools.transforms import rotate_polarizations
-        polarizations = rotate_polarizations(polarizations, ialpha)
+        polarizations = rotate_polarizations(polarizations, polarization_angle+ialpha)
         
         #plt.plot(polarizations.real)
         #plt.plot(polarizations.imag)
