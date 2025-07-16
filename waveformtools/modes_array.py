@@ -470,6 +470,7 @@ class ModesArray:
         #        data_len = len(self.frequency_axis)
 
         #    self._data_len = data_len
+        
         if self._data_len is not None:
             return self._data_len
         else:
@@ -1870,7 +1871,7 @@ class ModesArray:
 
         sYlm = Yslm_mp(
             ell_max=ell_max, spin_weight=self.spin_weight, theta=theta, phi=phi,
-            Grid=self.Grid)
+            Grid=self.Grid, cache=False)
 
         sYlm.run()
         sYlm_funcs_vec = sYlm.sYlm_modes._modes_data
@@ -2043,7 +2044,8 @@ class ModesArray:
 
     def compute_waveform_balance_law_finite_time(self, 
                                                  psi2_modes, 
-                                                 Grid=None):
+                                                 Grid=None,
+                                                 debug=False):
 
         if Grid is None:
             Grid = self.Grid
@@ -2052,6 +2054,7 @@ class ModesArray:
         violations = balance_law_finite_time(strain_modes=self,
                                              psi2_modes=psi2_modes,
                                              ginfo=Grid,
+                                             debug=debug
                                             )
         
         return violations
@@ -2066,18 +2069,19 @@ class ModesArray:
 
     def compute_momentum_flux(self, news_modes):
 
-        dPxdt = np.zeros(self.data_len, dtype=np.float64)
-        dPydt = np.zeros(self.data_len, dtype=np.float64)
-        dPzdt = np.zeros(self.data_len, dtype=np.complex128)
+        dPxdt = np.zeros(news_modes.data_len, dtype=np.float64)
+        dPydt = np.zeros(news_modes.data_len, dtype=np.float64)
+        dPzdt = np.zeros(news_modes.data_len, dtype=np.complex128)
 
         # ell-1 because the linear momentum contrib involves higher order
-        # terms ell+1
+        # terms upto ell+1
         modes_list = construct_mode_list(ell_max=self.ell_max-1, spin_weight=-2)
 
         for ell, emm_list in modes_list:
             for emm in emm_list:
                 f_lm = compute_linear_momentum_contribution_from_news(news_modes, ell, emm)
                 #print(f"f_{ell, emm}", f_lm[2])
+                #print(len(f_lm[0]), len(f_lm[1]), len(f_lm[2]), len(dPxdt), news_modes.data_len)
                 dPxdt += f_lm[0]
                 dPydt += f_lm[1]
                 dPzdt += f_lm[2]

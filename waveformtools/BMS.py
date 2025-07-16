@@ -177,6 +177,7 @@ def compute_linear_momentum_contribution_from_news(news_modes, ell, emm):
     #dPxdt = np.zeros(len(hdot_lm), dtype=np.complex128)
     #dPydt = np.zeros(len(hdot_lm), dtype=np.complex128)
 
+    #print(news_modes.data_len, news_modes.modes_data.shape)
     dpdt_xy_lm = news_modes.mode(ell, emm)*(
         linear_momentum_alm_func(ell, emm)*np.conj(news_modes.mode(ell, emm+1)) + 
         linear_momentum_blm_func(ell, -emm)*np.conj(news_modes.mode(ell-1, emm+1)) - 
