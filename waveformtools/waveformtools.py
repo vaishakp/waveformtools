@@ -3414,11 +3414,12 @@ def find_maxloc_and_time(times, amp):
 
     return t_maxloc, maxloc, maxloc_0
 
-def load_lal_modes_to_modes_array(lal_modes, domain='fd'):
+def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     ''' '''
     from waveformtools.modes_array import ModesArray
+    from lal import MTSUN_SI
 
-    phase_fac = 1#np.exp(-1j*np.pi/2)
+    factor = 1/(MTSUN_SI*Mtotal**2)
 
     nm = lal_modes
     ell_max = nm.l
@@ -3428,16 +3429,16 @@ def load_lal_modes_to_modes_array(lal_modes, domain='fd'):
                         ell_max=ell_max,
                         frequency_axis=lal_modes.fdata.data,
                         )
-        print(len(lal_modes.fdata.data))
+        # print(len(lal_modes.fdata.data))
     if domain=='td':
         wfm = ModesArray(label=f'lal_{domain}',
                     ell_max=ell_max,
                     time_axis=lal_modes.tdata.data,
                     )
-        print(len(lal_modes.tdata.data))
+        #print(len(lal_modes.tdata.data))
 
     wfm.create_modes_array()
-    print(wfm.modes_data.shape)
+    #print(wfm.modes_data.shape)
 
     ell = ell_max
     emm = ell_max
@@ -3452,7 +3453,7 @@ def load_lal_modes_to_modes_array(lal_modes, domain='fd'):
                 assert ell1==ell, f"ell mode index exception. Expected {ell1}, Got: {ell}"
                 assert emm1==emm, f"emm mode index exception. Expected {emm1}, Got: {emm}"
                 
-                wfm.set_mode_data(ell=ell, emm=emm, data=phase_fac*np.conjugate(nm.mode.data.data))
+                wfm.set_mode_data(ell=ell, emm=emm, data=factor*np.conjugate(nm.mode.data.data))
                 nm =  nm.next
 
     return wfm

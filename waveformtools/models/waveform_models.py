@@ -1,7 +1,9 @@
 from lal import CreateDict
 import numpy as np
 from pycbc.detector import Detector
-from waveformtools.waveformtools import find_maxloc_and_time
+from waveformtools.waveformtools import find_maxloc_and_time, message
+from lal import MSUN_SI, MTSUN_SI, PC_SI, G_SI, C_SI
+
 
 class WaveformModel:
 
@@ -72,7 +74,14 @@ class WaveformModel:
             #except KeyError:
             #    setattr(self, key, None)
             
-
+    @property
+    def Mtotal(self):
+        return self.parameters_dict['mass1'] + self.parameters_dict['mass2']
+    
+    @property
+    def dimless_omega0(self):
+        return self.omega0*(self.Mtotal*MTSUN_SI)
+    
     def get_td_waveform_modes(self):
         raise NotImplementedError
     
@@ -107,9 +116,6 @@ class WaveformModel:
         amp = np.absolute(hp+1j*hc)
         times = np.arange(0, len(hp)*self.delta_t, self.delta_t)
         t_maxloc, _, _ = find_maxloc_and_time(times, amp)
-        #maxloc = np.argmax()
-        #pmax = len(hp) - maxloc
-        #tmax = times[maxloc]
         det_times = (times - t_maxloc)
         det_times += extrinsic_parameters['t_coal']
         Fp, Fc = ifo.antenna_pattern(extrinsic_parameters['ra'], 
@@ -120,13 +126,73 @@ class WaveformModel:
 
         return det_times, h_inj
 
+    def non_dimensionalize_td_waveform_modes(self, wfm_td, **parameters_dict):
 
+        Mtotal = parameters_dict["mass1"] + parameters_dict["mass2"]
+        wfm_td.time_axis = wfm_td.time_axis/(Mtotal*MTSUN_SI)
+        wfm_td._modes_data = wfm_td.modes_data*parameters_dict['distance']*PC_SI*1e6*(C_SI**2)/(G_SI*Mtotal*MSUN_SI)
+        return wfm_td
 
+    def dimensionalize_td_waveform_modes(self, wfm_td, **parameters_dict):
 
+        Mtotal = parameters_dict["mass1"] + parameters_dict["mass2"]
+        wfm_td.time_axis = wfm_td.time_axis*(Mtotal*MTSUN_SI)
+        wfm_td._modes_data = wfm_td.modes_data * (G_SI*Mtotal*MSUN_SI)/(parameters_dict['distance']*PC_SI*1e6*(C_SI**2))
+        return wfm_td
 
+    def compute_infinite_time_balance_laws(self, omega_low=2e-3, **parameters_dict):
+        ''' Compute the infinite time version of the balance laws 
+        by fetching the waveform modes and generating an equivalent 
+        EoB hamiltonian '''
+        from spectools.spherical.grids import GLGrid
+        Grid = GLGrid(L=28)
 
+        wfm = self.get_td_waveform_modes(dimensionless=True, **parameters_dict)
+        E0 = self.get_corresponding_eob_hamiltonian(**parameters_dict)
+        message(f"EoB Hamiltonain {E0}", message_verbosity=1)
 
-        
+        news_modes = wfm.get_news_from_strain()
+        Erad = wfm.compute_energy_radiated(news_modes=news_modes)
+        Mfinal = E0 - Erad
+        message(f"Energy radiated {Erad}", message_verbosity=1)
+        message(f"Final mass from energy radiated {Mfinal}", message_verbosity=1)
 
+        if 'EOB' in parameters_dict['approximant']:
+            Mfinal_rad = Mfinal
+            Mfinal = self.model.final_mass
+            error = 100*(Mfinal/Mfinal_rad -1)
+            message(f"Final mass from EoB {Mfinal}", message_verbosity=1)
+            message(f"%error {error}", message_verbosity=1)
 
+        v_kick = wfm.compute_kick(Mfinal=Mfinal)
+        message(f"Kick velocity {v_kick}", message_verbosity=1)
+        violations = wfm.compute_waveform_balance_law(M_adm=E0, 
+                                         M_final=Mfinal,
+                                         v_kick=v_kick,
+                                         Grid=Grid,
+                                         debug=True
+                                         )
 
+        return violations
+    
+    def get_corresponding_eob_hamiltonian(self,  L=29, **parameters_dict):
+        ''' Get the corresponding EoB Hamiltonian at the starting frequency of the 
+        waveform '''
+        from waveformtools.models.eob import EOBWaveformModel
+        mass1 = parameters_dict['mass1']
+        mass2 = parameters_dict['mass2']
+        Mtotal = mass1 + mass2
+        message(f"Total mass {Mtotal}", message_verbosity=1)
+        m1 = mass1/Mtotal
+        m2 = mass2/Mtotal
+        mu = m1*m2
+        eob_parameters_dict = parameters_dict.copy()
+        #omega0_dimless = parameters_dict['omega0']*Mtotal*MTSUN_SI
+        #message(f"dimensionless omega_0 {omega0_dimless}", message_verbosity=1)
+        #eob_parameters_dict.update({"omega0" : omega0_dimless})
+        eob_parameters_dict.update({"approximant" : "SEOBNRv5PHM" })
+        eob_generator = EOBWaveformModel(eob_parameters_dict)
+        eob_generator.compute_model(L=L)
+        E0 = eob_generator.model.dynamics[0, 5]*mu
+
+        return E0

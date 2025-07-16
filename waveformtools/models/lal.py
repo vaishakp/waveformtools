@@ -3,9 +3,9 @@ from waveformtools.models.waveform_models import WaveformModel
 import lalsimulation
 from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralGetApproximantFromString, SimInspiralChooseTDModes, SimInspiralChooseFDModes
 from lalsimulation import SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion, SimInspiralWaveformParamsInsertPhenomXPrecVersion
-from lal import MSUN_SI, MTSUN_SI, PC_SI, CreateDict
+from lal import MSUN_SI, MTSUN_SI, PC_SI, CreateDict, G_SI, C_SI
 from pycbc.waveform import td_approximants, fd_approximants
-from waveformtools.waveformtools import load_lal_modes_to_modes_array, get_starting_angular_frequency
+from waveformtools.waveformtools import load_lal_modes_to_modes_array, get_starting_angular_frequency, message
 from waveformtools.models.eob import EOBWaveformModel
 from scipy.interpolate import InterpolatedUnivariateSpline
 
@@ -65,7 +65,8 @@ class LALWaveformModel(WaveformModel):
 
         self.update_parameters(parameters_dict)
 
-        hp, hc = SimInspiralChooseTDWaveform(   self.mass1*MSUN_SI,
+        hp, hc = SimInspiralChooseTDWaveform(   
+                                                self.mass1*MSUN_SI,
                                                 self.mass2*MSUN_SI,
                                                 self.spin1x,
                                                 self.spin1y,
@@ -85,6 +86,7 @@ class LALWaveformModel(WaveformModel):
                                                 self.lal_dict,
                                                 self.lal_approximant
                                             )
+        
         if self.approximant == "NR_hdf5":
             return -hp.data.data, hc.data.data
         else:
@@ -168,6 +170,7 @@ class LALWaveformModel(WaveformModel):
         self.update_parameters(parameters_dict)
         apx_domain = self.get_approximant_type(self.approximant)
         print(apx_domain)
+        Mtotal = parameters_dict["mass1"] + parameters_dict["mass2"]
 
         if apx_domain == 'td':
 
@@ -215,11 +218,8 @@ class LALWaveformModel(WaveformModel):
                                                                 parameters_dict['lal_approximant']
                                                             )
 
-        #else:
-        #    raise KeyError(f"Unknown apx domain {apx_domain}")
-        
-
-        wfm = load_lal_modes_to_modes_array(waveform_modes_list, domain=apx_domain)
+        wfm = load_lal_modes_to_modes_array(lal_modes=waveform_modes_list, domain=apx_domain,
+                                            Mtotal=Mtotal)
 
         if 'fd' in wfm.label:
             wfm_td = wfm.to_time_basis()
@@ -229,51 +229,6 @@ class LALWaveformModel(WaveformModel):
             raise KeyError("The modes array is not correctly representing the lal modes.")
         
         if dimensionless:
-            Mtotal = (parameters_dict["mass1"] + parameters_dict["mass2"])
-            wfm_td.time_axis = wfm_td.time_axis/(Mtotal*MTSUN_SI)
-            wfm_td.modes_data = wfm_td.modes_data*parameters_dict['distance']*PC_SI*1e6/(Mtotal*MSUN_SI)
+            wfm_td = self.non_dimensionalize_td_waveform_modes(wfm_td, **parameters_dict)
 
         return wfm_td
-
-
-    def get_corresponding_eob_hamiltonian(self, waveform_modes, **parameters_dict):
-        ''' Get the corresponding EoB Hamiltonian at the starting frequency of the 
-        waveform '''
-
-        mass1 = parameters_dict['mass1']
-        mass2 = parameters_dict['mass2']
-
-        mu = mass1*mass2/(mass1 + mass2)
-        #omega_init = get_starting_angular_frequency(waveform_modes.mode(2,2).real, waveform_modes.delta_t)
-
-        eob_parameters_dict = parameters_dict.copy()
-
-        omega0_dimless = parameters_dict['omega0']*(mass1+mass2)*MTSUN_SI
-        
-        eob_parameters_dict.update({"omega0" : omega0_dimless})
-        eob_generator = EOBWaveformModel(eob_parameters_dict)
-        eob_generator.compute_model()
-
-        eob_waveform_modes = eob_generator.get_td_waveform_modes()
-        E0 = eob_generator.model[0, 5]*mu
-
-        #eob_omega = eob_generator.model[:, 6]
-
-        #eob_omega_interp = InterpolatedUnivariateSpline(eob_waveform_modes.time_axis, 
-        #                                                eob_omega)
-        
-        #eob_fine_time_axis = np.arange(eob_waveform_modes.time_axis[0], 
-        #                               eob_waveform_modes.time_axis[-1], 1e-3)
-        
-        #eob_omega_fine = eob_omega_interp(eob_fine_time_axis)
-
-        #targ = np.argmin(eob_omega_fine-omega0_dimless
-
-        return E0
-
-
-
-
-
-
-
