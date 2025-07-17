@@ -3419,7 +3419,10 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     from waveformtools.modes_array import ModesArray
     from lal import MTSUN_SI
 
-    factor = 1/(MTSUN_SI*Mtotal**2)
+    # Explain this factor
+    # One M *MTSUN is due to the dimensionalization
+    # of the time axis. What about the extra M?
+    factor = (MTSUN_SI*Mtotal**2)
 
     nm = lal_modes
     ell_max = nm.l
