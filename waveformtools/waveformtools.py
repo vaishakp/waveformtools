@@ -3449,7 +3449,7 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     for ell1 in range(ell_max, -1, -1):
         for emm1 in range(ell1, -ell1-1, -1):
             if nm is not None:
-                print(ell1, emm1, nm.mode.data)
+                #print(ell1, emm1, nm.mode.data)
                 #while ell!=2 and emm!=-2:
                 ell = nm.l
                 emm = nm.m

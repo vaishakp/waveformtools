@@ -1065,11 +1065,14 @@ class ModesArray:
         return waveform_tilde_modes
 
     def find_max_intensity_loc(self):
-        intensity  = 0
+        
+        intensity = np.sum(np.absolute(self.modes_data)**2, axis=0)
 
-        for ell in range(self.ell_max+1):
-            for emm in range(-ell, ell+1):
-                intensity+=np.absolute(self.mode(ell, emm))
+        #intensity  = 0
+
+        #for ell in range(self.ell_max+1):
+        #    for emm in range(-ell, ell+1):
+        #        intensity+=np.absolute(self.mode(ell, emm))
 
         argmax_int = np.argmax(intensity)
         maxtime = self.time_axis[argmax_int]
@@ -1097,8 +1100,6 @@ class ModesArray:
         
         waveform_modes.create_modes_array()
         from spectools.fourier.transforms import compute_ifft
-        from spectools.fourier.transforms import compute_ifft
-
 
         for mode in self.modes_list:
             # Extrapolate every mode
@@ -1113,30 +1114,27 @@ class ModesArray:
                 waveform_modes.set_mode_data(ell=ell, emm=emm, data=time_data)
 
         waveform_modes._time_axis = time_axis
-
-        #try:
-        #    maxloc = np.argmax(np.absolute(waveform_modes.mode(2, 2)))
-        #except Exception as ex:
-        #    message(ex)
-        #    maxloc = 0
-
         maxloc, maxtime = waveform_modes.find_max_intensity_loc()
-        print(f"maxloc {maxloc}", f"maxtime {maxtime}")
+        message(f"maxloc {maxloc}", f"maxtime {maxtime}")
         frac = (maxtime-waveform_modes.time_axis[0])/waveform_modes.duration
 
+        # Undo FD warp
         if frac<0.7:
             slice_time = waveform_modes.time_axis[0] + 0.7*waveform_modes.duration
             slice_arg = np.argmin(abs(waveform_modes.time_axis-slice_time))
             roll_arg = slice_arg - maxloc
             print("roll arg", roll_arg)
 
-            for mode in self.modes_list:
+            cond_modes_data = roll(waveform_modes.modes_data.T, roll_arg)
+            waveform_modes._modes_data = cond_modes_data
+
+            #for mode in self.modes_list:
             # Extrapolate every mode
             # Ge the ell value
-                ell, emm_list = mode
-                for emm in emm_list:
-                    rolled_mode_data = roll(waveform_modes.mode(ell, emm), roll_arg)
-                    waveform_modes.set_mode_data(ell=ell, emm=emm, data=rolled_mode_data)
+            #    ell, emm_list = mode
+            #    for emm in emm_list:
+            #        rolled_mode_data = roll(waveform_modes.mode(ell, emm), roll_arg)
+            #        waveform_modes.set_mode_data(ell=ell, emm=emm, data=rolled_mode_data)
                 # slice and roll every mode
                 # 
         else:
