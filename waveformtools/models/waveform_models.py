@@ -147,7 +147,7 @@ class WaveformModel:
         from spectools.spherical.grids import GLGrid
         Grid = GLGrid(L=28)
 
-        wfm = self.get_td_waveform_modes(dimensionless=True, **parameters_dict)
+        wfm = self.get_td_waveform_modes(dimensionless=True)
         E0 = self.get_corresponding_eob_hamiltonian(**parameters_dict)
         message(f"EoB Hamiltonain {E0}", message_verbosity=1)
 

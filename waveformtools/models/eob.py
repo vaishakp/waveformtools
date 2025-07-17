@@ -6,7 +6,7 @@ from pycbc.waveform import get_td_waveform
 
 class EOBWaveformModel(WaveformModel):
         
-    def __init__(self, deviation_dict=None, *args, **kwargs):
+    def __init__(self, parameters_dict, deviation_dict=None, *args, **kwargs):
         ''' The deviation dict is to be passes as a dict of dicts, following 
         https://waveforms.docs.ligo.org/software/pyseobnr/source/notebooks/pseob_example.html
 
@@ -14,7 +14,7 @@ class EOBWaveformModel(WaveformModel):
         each a dict with fractional deciations in specific modes.
 
         '''
-        super().__init__(*args, **kwargs)
+        super().__init__(parameters_dict=parameters_dict, *args, **kwargs)
 
         self.chi_1 = np.array([self.parameters_dict['spin1x'], self.parameters_dict['spin1y'], self.parameters_dict['spin1z']])
         self.chi_2 = np.array([self.parameters_dict['spin2x'], self.parameters_dict['spin2y'], self.parameters_dict['spin2z']])
