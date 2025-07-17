@@ -191,7 +191,7 @@ class WaveformModel:
         #message(f"dimensionless omega_0 {omega0_dimless}", message_verbosity=1)
         #eob_parameters_dict.update({"omega0" : omega0_dimless})
         eob_parameters_dict.update({"approximant" : "SEOBNRv5PHM" })
-        eob_generator = EOBWaveformModel(eob_parameters_dict)
+        eob_generator = EOBWaveformModel(parameters_dict=eob_parameters_dict)
         eob_generator.compute_model(L=L)
         E0 = eob_generator.model.dynamics[0, 5]*mu
 
