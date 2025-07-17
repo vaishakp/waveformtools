@@ -1119,22 +1119,22 @@ class ModesArray:
         frac = (maxtime-waveform_modes.time_axis[0])/waveform_modes.duration
 
         # Undo FD warp
-        if frac<0.7:
+        if frac<0.7 or frac>0.85:
             slice_time = waveform_modes.time_axis[0] + 0.7*waveform_modes.duration
             slice_arg = np.argmin(abs(waveform_modes.time_axis-slice_time))
             roll_arg = slice_arg - maxloc
             print("roll arg", roll_arg)
 
-            cond_modes_data = roll(waveform_modes.modes_data.T, roll_arg)
-            waveform_modes._modes_data = cond_modes_data
+            #cond_modes_data = roll(waveform_modes.modes_data.T, roll_arg)
+            #waveform_modes._modes_data = cond_modes_data
 
-            #for mode in self.modes_list:
+            for mode in self.modes_list:
             # Extrapolate every mode
             # Ge the ell value
-            #    ell, emm_list = mode
-            #    for emm in emm_list:
-            #        rolled_mode_data = roll(waveform_modes.mode(ell, emm), roll_arg)
-            #        waveform_modes.set_mode_data(ell=ell, emm=emm, data=rolled_mode_data)
+                ell, emm_list = mode
+                for emm in emm_list:
+                    rolled_mode_data = roll(waveform_modes.mode(ell, emm), roll_arg)
+                    waveform_modes.set_mode_data(ell=ell, emm=emm, data=rolled_mode_data)
                 # slice and roll every mode
                 # 
         else:

@@ -3418,12 +3418,11 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     ''' '''
     from waveformtools.modes_array import ModesArray
     from lal import MTSUN_SI
-
     # Explain this factor
     # One M *MTSUN is due to the dimensionalization
     # of the time axis. What about the extra M?
-    factor = (MTSUN_SI*Mtotal**2)
-
+    
+    
     nm = lal_modes
     ell_max = nm.l
 
@@ -3432,31 +3431,28 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
                         ell_max=ell_max,
                         frequency_axis=lal_modes.fdata.data,
                         )
-        # print(len(lal_modes.fdata.data))
+        N = len(lal_modes.fdata.data)
+
     if domain=='td':
         wfm = ModesArray(label=f'lal_{domain}',
                     ell_max=ell_max,
                     time_axis=lal_modes.tdata.data,
                     )
-        #print(len(lal_modes.tdata.data))
+        N = 1
 
+    factor = 1/(N*MTSUN_SI*Mtotal)
+    
     wfm.create_modes_array()
-    #print(wfm.modes_data.shape)
-
     ell = ell_max
     emm = ell_max
 
     for ell1 in range(ell_max, -1, -1):
         for emm1 in range(ell1, -ell1-1, -1):
             if nm is not None:
-                #print(ell1, emm1, nm.mode.data)
-                #while ell!=2 and emm!=-2:
                 ell = nm.l
                 emm = nm.m
                 assert ell1==ell, f"ell mode index exception. Expected {ell1}, Got: {ell}"
                 assert emm1==emm, f"emm mode index exception. Expected {emm1}, Got: {emm}"
-                
                 wfm.set_mode_data(ell=ell, emm=emm, data=factor*np.conjugate(nm.mode.data.data))
                 nm =  nm.next
-
     return wfm
