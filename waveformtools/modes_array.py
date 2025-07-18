@@ -460,26 +460,17 @@ class ModesArray:
         data_len: int
                    The length of the time/frequency axis.
         """
-
-        #if self._data_len is None:
-        #    try:
-        #        data_len = len(self.time_axis)
-
-        #    except Exception as ex:
-        #        message(ex)
-        #        data_len = len(self.frequency_axis)
-
-        #    self._data_len = data_len
+        if (self._data_len is None) and len(self) is not None: 
+            self._data_len = len(self)
+        elif (self._data_len is None) and (len(self) is None):
+            self._data_len = 0
+        elif len(self)!=0:
+            if self._data_len is not None:
+                if len(self)!= self._data_len:
+                    self._data_len = len(self)
         
-        if self._data_len is not None:
-            return self._data_len
-        else:
-            return len(self)
-
-    #@data_len.setter
-    #def data_len(self, data_len):
-    #    self._data_len = data_len
-
+        return self._data_len
+    
     def delta_t(self, value=None):
         """Sets and returns the value of time stepping :math:`dt`.
 
@@ -2084,7 +2075,6 @@ class ModesArray:
                 dPydt += f_lm[1]
                 dPzdt += f_lm[2]
 
-        #print("Force", dPzdt)
         return dPxdt, dPydt, dPzdt
     
     def compute_kick(self, Mfinal=1):

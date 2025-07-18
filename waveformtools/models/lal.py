@@ -122,11 +122,7 @@ class LALWaveformModel(WaveformModel):
         else:
             return hp.data.data, hc.data.data
 
-    def update_parameters(self, parameters_dict):
-        
-        self.parameters_dict.update(parameters_dict)
-        #self.parameters_dict['phi_ref'] = self.parameters_dict['coa_phase']
-        self.set_parameters()
+    
         
     def set_spins_from_NR_data(self):
         Mtotal_NR = self.parameters_dict["mass1"] + self.parameters_dict["mass2"]
@@ -157,6 +153,7 @@ class LALWaveformModel(WaveformModel):
         else:
             raise KeyError(f"Unknown apx type {apx}")
         
+        message(f"Apx type {apx_domain}", message_verbosity=1)
         return apx_domain
 
 
@@ -173,7 +170,6 @@ class LALWaveformModel(WaveformModel):
         Mtotal = parameters_dict["mass1"] + parameters_dict["mass2"]
 
         if apx_domain == 'td':
-
             try:
                 waveform_modes_list = SimInspiralChooseTDModes(             
                                                                 parameters_dict['phi_ref'],
@@ -218,13 +214,21 @@ class LALWaveformModel(WaveformModel):
                                                                 parameters_dict['lal_approximant']
                                                             )
 
-        wfm = load_lal_modes_to_modes_array(lal_modes=waveform_modes_list, domain=apx_domain,
+        #print(waveform_modes_list, waveform_modes_list.tdata)
+        wfm = load_lal_modes_to_modes_array(lal_modes=waveform_modes_list, 
+                                            domain=apx_domain,
                                             Mtotal=Mtotal)
 
         if 'fd' in wfm.label:
             wfm_td = wfm.to_time_basis()
         elif 'td' in wfm.label:
             wfm_td = wfm
+
+            if self.approximant == 'NRSur7dq4':
+                _, maxtime = wfm.find_max_intensity_loc()
+                wfm._modes_data/=10000
+                wfm_td._time_axis -= maxtime
+
         else:
             raise KeyError("The modes array is not correctly representing the lal modes.")
         

@@ -23,8 +23,9 @@ class EOBWaveformModel(WaveformModel):
         self.mass_ratio = self.parameters_dict['mass1']/self.parameters_dict['mass2']
         self.td_waveform_modes = None
 
-    def compute_model(self, L):
-       
+    def compute_model(self, L, **parameters_dict):
+        
+        self.update_parameters(parameters_dict)
         self.time_axis, self.modes_dict, self.model = generate_modes_opt(self.mass_ratio,
                                                                     self.chi_1,
                                                                     self.chi_2,
@@ -40,10 +41,13 @@ class EOBWaveformModel(WaveformModel):
     def get_td_waveform_modes(self, 
                               dimensionless=True, 
                               L=29,
+                              **parameters_dict
                               ):
 
-        if self.td_waveform_modes is None:
-            self.compute_model(L)
+        self.update_parameters(parameters_dict)
+        
+        #if self.td_waveform_modes is None:
+        self.compute_model(L, **parameters_dict)
 
         wfm_td = self.td_waveform_modes
 

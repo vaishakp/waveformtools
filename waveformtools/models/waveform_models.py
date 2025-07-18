@@ -3,6 +3,7 @@ import numpy as np
 from pycbc.detector import Detector
 from waveformtools.waveformtools import find_maxloc_and_time, message
 from lal import MSUN_SI, MTSUN_SI, PC_SI, G_SI, C_SI
+from waveformtools.waveformtools import get_starting_angular_frequency
 
 
 class WaveformModel:
@@ -61,10 +62,6 @@ class WaveformModel:
         self.__dict__.update(state)
         self.parameters_dict['lal_dict'] = CreateDict()
         self.set_parameters()
-
-    #@property
-    #def phi_ref(self):
-    #    return self.coa_phase
     
     def set_parameters(self):
 
@@ -73,7 +70,14 @@ class WaveformModel:
             setattr(self, key, self.parameters_dict[key])
             #except KeyError:
             #    setattr(self, key, None)
-            
+    
+    def update_parameters(self, parameters_dict):
+        
+        self.parameters_dict.update(parameters_dict)
+        #self.parameters_dict['phi_ref'] = self.parameters_dict['coa_phase']
+        self.set_parameters()
+
+        
     @property
     def Mtotal(self):
         return self.parameters_dict['mass1'] + self.parameters_dict['mass2']
@@ -140,14 +144,14 @@ class WaveformModel:
         wfm_td._modes_data = wfm_td.modes_data * (G_SI*Mtotal*MSUN_SI)/(parameters_dict['distance']*PC_SI*1e6*(C_SI**2))
         return wfm_td
 
-    def compute_infinite_time_balance_laws(self, omega_low=2e-3, **parameters_dict):
+    def compute_infinite_time_balance_laws(self, **parameters_dict):
         ''' Compute the infinite time version of the balance laws 
         by fetching the waveform modes and generating an equivalent 
         EoB hamiltonian '''
         from spectools.spherical.grids import GLGrid
         Grid = GLGrid(L=28)
 
-        wfm = self.get_td_waveform_modes(dimensionless=True)
+        wfm = self.get_td_waveform_modes(dimensionless=True, **parameters_dict)
         E0 = self.get_corresponding_eob_hamiltonian(**parameters_dict)
         message(f"EoB Hamiltonain {E0}", message_verbosity=1)
 
@@ -179,6 +183,7 @@ class WaveformModel:
         ''' Get the corresponding EoB Hamiltonian at the starting frequency of the 
         waveform '''
         from waveformtools.models.eob import EOBWaveformModel
+
         mass1 = parameters_dict['mass1']
         mass2 = parameters_dict['mass2']
         Mtotal = mass1 + mass2
@@ -187,9 +192,18 @@ class WaveformModel:
         m2 = mass2/Mtotal
         mu = m1*m2
         eob_parameters_dict = parameters_dict.copy()
-        #omega0_dimless = parameters_dict['omega0']*Mtotal*MTSUN_SI
-        #message(f"dimensionless omega_0 {omega0_dimless}", message_verbosity=1)
-        #eob_parameters_dict.update({"omega0" : omega0_dimless})
+
+        if self.f_lower==0 or self.omega0==0:
+            wfm    = self.get_td_waveform_modes(**parameters_dict)
+            omega0_dimless = get_starting_angular_frequency(wfm.mode(2,2), 
+                                                    wfm.delta_t(),
+                                                    npoints=250
+                                                    )
+            omega0 = omega0_dimless/(Mtotal*MTSUN_SI)
+            message(f"omega0_dimless {omega0_dimless}", message_verbosity=1)
+            message(f"omega0 {omega0}", message_verbosity=1)
+            eob_parameters_dict.update({"omega0" : omega0})
+        
         eob_parameters_dict.update({"approximant" : "SEOBNRv5PHM" })
         eob_generator = EOBWaveformModel(parameters_dict=eob_parameters_dict)
         eob_generator.compute_model(L=L)
