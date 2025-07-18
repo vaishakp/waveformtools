@@ -3425,21 +3425,33 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     
     nm = lal_modes
     ell_max = nm.l
+    
+    print(ell_max)
 
     if domain=='fd':
         wfm = ModesArray(label=f'lal_{domain}',
                         ell_max=ell_max,
                         frequency_axis=lal_modes.fdata.data,
                         )
+        
+        print("len", len(wfm), wfm.data_len)
         N = len(lal_modes.fdata.data)
 
     if domain=='td':
+
+        if lal_modes.tdata is None:
+            time_axis = np.arange(0, len(lal_modes.mode.data.data)*lal_modes.mode.deltaT, lal_modes.mode.deltaT)
+        else:
+            time_axis = lal_modes.tdata.data
+
+        message(f"data length {len(time_axis)}", message_verbosity=1)
+        
         wfm = ModesArray(label=f'lal_{domain}',
                     ell_max=ell_max,
-                    time_axis=lal_modes.tdata.data,
+                    time_axis=time_axis,
                     )
         N = 1
-
+        
     factor = 1/(N*MTSUN_SI*Mtotal)
     
     wfm.create_modes_array()
@@ -3455,4 +3467,5 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
                 assert emm1==emm, f"emm mode index exception. Expected {emm1}, Got: {emm}"
                 wfm.set_mode_data(ell=ell, emm=emm, data=factor*np.conjugate(nm.mode.data.data))
                 nm =  nm.next
+
     return wfm
