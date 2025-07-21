@@ -1106,7 +1106,7 @@ class ModesArray:
 
         waveform_modes._time_axis = time_axis
         maxloc, maxtime = waveform_modes.find_max_intensity_loc()
-        message(f"maxloc {maxloc}", f"maxtime {maxtime}")
+        message(f"maxloc {maxloc}", f"maxtime {maxtime}", message_verbosity=3)
         frac = (maxtime-waveform_modes.time_axis[0])/waveform_modes.duration
 
         # Undo FD warp
@@ -1114,7 +1114,7 @@ class ModesArray:
             slice_time = waveform_modes.time_axis[0] + 0.7*waveform_modes.duration
             slice_arg = np.argmin(abs(waveform_modes.time_axis-slice_time))
             roll_arg = slice_arg - maxloc
-            print("roll arg", roll_arg)
+            message("roll arg", roll_arg, message_verbosity=3)
 
             #cond_modes_data = roll(waveform_modes.modes_data.T, roll_arg)
             #waveform_modes._modes_data = cond_modes_data
