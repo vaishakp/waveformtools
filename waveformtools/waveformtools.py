@@ -3426,6 +3426,9 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     nm = lal_modes
     ell_max = nm.l
     
+    message(f'domain {domain}', message_verbosity=1)
+    message(f'Mtotal {Mtotal}', message_verbosity=1)
+
     #print(ell_max)
 
     if domain=='fd':
@@ -3452,7 +3455,7 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
                     )
         N = 1
         
-    factor = 1/(N*MTSUN_SI*Mtotal)
+    factor = 2/(np.pi*N*MTSUN_SI*Mtotal)
     
     wfm.create_modes_array()
     ell = ell_max
