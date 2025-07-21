@@ -6,7 +6,7 @@ from pycbc.waveform import get_td_waveform
 
 class EOBWaveformModel(WaveformModel):
         
-    def __init__(self, parameters_dict, deviation_dict=None, *args, **kwargs):
+    def __init__(self, parameters_dict, deviation_dict={}, *args, **kwargs):
         ''' The deviation dict is to be passes as a dict of dicts, following 
         https://waveforms.docs.ligo.org/software/pyseobnr/source/notebooks/pseob_example.html
 
@@ -18,9 +18,12 @@ class EOBWaveformModel(WaveformModel):
 
         self.chi_1 = np.array([self.parameters_dict['spin1x'], self.parameters_dict['spin1y'], self.parameters_dict['spin1z']])
         self.chi_2 = np.array([self.parameters_dict['spin2x'], self.parameters_dict['spin2y'], self.parameters_dict['spin2z']])
-        self.deviation_dict = deviation_dict
+        self.settings = deviation_dict
+        
         # Greater than 1, with m1 > m2
         self.mass_ratio = self.parameters_dict['mass1']/self.parameters_dict['mass2']
+        self.delta_t_dimless = self.parameters_dict["delta_t"]/(self.Mtotal * self.MTSUN_SI)
+        self.settings.update({"dt" : self.parameters_dict["delta_t"]})
         self.td_waveform_modes = None
 
     def compute_model(self, L, **parameters_dict):
@@ -32,7 +35,7 @@ class EOBWaveformModel(WaveformModel):
                                                                     self.dimless_omega0,
                                                                     debug=True,
                                                                     approximant=self.approximant,
-                                                                    settings=self.deviation_dict,
+                                                                    settings=self.settings,
                                                                     )
         
         self.td_waveform_modes = get_modes_array_from_eob_modes_dict(self.time_axis, self.modes_dict, L=L)

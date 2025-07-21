@@ -1,5 +1,6 @@
 from waveformtools.models.waveform_models import WaveformModel
 #import bilby
+import numpy as np
 import lalsimulation
 from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralGetApproximantFromString, SimInspiralChooseTDModes, SimInspiralChooseFDModes
 from lalsimulation import SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion, SimInspiralWaveformParamsInsertPhenomXPrecVersion
@@ -40,6 +41,9 @@ class LALWaveformModel(WaveformModel):
 
         if 'ell_max' not in self.parameters_dict:
             self.parameters_dict.update({"ell_max" : 4})
+
+        
+
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -153,7 +157,7 @@ class LALWaveformModel(WaveformModel):
         else:
             raise KeyError(f"Unknown apx type {apx}")
         
-        message(f"Apx type {apx_domain}", message_verbosity=1)
+        message(f"Apx type {apx_domain}", message_verbosity=2)
         return apx_domain
 
 
@@ -163,10 +167,10 @@ class LALWaveformModel(WaveformModel):
          
         Tapering conventions: default lal 
         '''
-        print(parameters_dict)
+        #print(parameters_dict)
         self.update_parameters(parameters_dict)
         apx_domain = self.get_approximant_type(self.approximant)
-        print(apx_domain)
+        #print(apx_domain)
         Mtotal = parameters_dict["mass1"] + parameters_dict["mass2"]
 
         if apx_domain == 'td':

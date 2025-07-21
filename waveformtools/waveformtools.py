@@ -3426,7 +3426,7 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     nm = lal_modes
     ell_max = nm.l
     
-    print(ell_max)
+    #print(ell_max)
 
     if domain=='fd':
         wfm = ModesArray(label=f'lal_{domain}',
@@ -3434,7 +3434,7 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
                         frequency_axis=lal_modes.fdata.data,
                         )
         
-        print("len", len(wfm), wfm.data_len)
+        #print("len", len(wfm), wfm.data_len)
         N = len(lal_modes.fdata.data)
 
     if domain=='td':
@@ -3444,7 +3444,7 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
         else:
             time_axis = lal_modes.tdata.data
 
-        message(f"data length {len(time_axis)}", message_verbosity=1)
+        message(f"data length {len(time_axis)}", message_verbosity=3)
         
         wfm = ModesArray(label=f'lal_{domain}',
                     ell_max=ell_max,

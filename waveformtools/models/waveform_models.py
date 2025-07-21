@@ -50,6 +50,18 @@ class WaveformModel:
         self.parameters_dict['model']=None
         self.parameters_dict['lal_dict'] = CreateDict()
         self.set_parameters()
+        self.MSUN_SI = MSUN_SI
+        self.MTSUN_SI = MTSUN_SI
+        self.G_SI = G_SI
+        self.PC_SI = PC_SI
+        self.C_SI = C_SI
+        
+        if 'omega0' not in self.parameters_dict:
+            if 'f_lower' not in self.parameters_dict:
+                raise KeyError("Please supply omega0 or f_lower")
+            else:
+                self.parameters_dict.update({"omega0":2*np.pi*self.parameters_dict['f_lower']})
+
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -157,19 +169,25 @@ class WaveformModel:
 
         news_modes = wfm.get_news_from_strain()
         Erad = wfm.compute_energy_radiated(news_modes=news_modes)
-        Mfinal = E0 - Erad
+        Mfinal_rad = E0 - Erad
         message(f"Energy radiated {Erad}", message_verbosity=1)
-        message(f"Final mass from energy radiated {Mfinal}", message_verbosity=1)
+        message(f"Final mass from energy radiated {Mfinal_rad}", message_verbosity=1)
+        Mfinal_eob = self.eob_generator.model.final_mass
 
         if 'EOB' in parameters_dict['approximant']:
-            Mfinal_rad = Mfinal
-            Mfinal = self.model.final_mass
-            error = 100*(Mfinal/Mfinal_rad -1)
-            message(f"Final mass from EoB {Mfinal}", message_verbosity=1)
-            message(f"%error {error}", message_verbosity=1)
+            Mfinal = Mfinal_eob
+            
+        else:
+            Mfinal = Mfinal_rad
+
+        error = 100*(Mfinal_eob/Mfinal_rad -1)
+        message(f"Final mass from EoB {Mfinal_eob}", message_verbosity=1)
+        message(f"%error {error}", message_verbosity=1)
 
         v_kick = wfm.compute_kick(Mfinal=Mfinal)
         message(f"Kick velocity {v_kick}", message_verbosity=1)
+        message(f"Length", news_modes.data_len, message_verbosity=1)
+        
         violations = wfm.compute_waveform_balance_law(M_adm=E0, 
                                          M_final=Mfinal,
                                          v_kick=v_kick,
@@ -182,6 +200,7 @@ class WaveformModel:
     def get_corresponding_eob_hamiltonian(self,  L=29, **parameters_dict):
         ''' Get the corresponding EoB Hamiltonian at the starting frequency of the 
         waveform '''
+
         from waveformtools.models.eob import EOBWaveformModel
 
         mass1 = parameters_dict['mass1']
@@ -207,6 +226,9 @@ class WaveformModel:
         eob_parameters_dict.update({"approximant" : "SEOBNRv5PHM" })
         eob_generator = EOBWaveformModel(parameters_dict=eob_parameters_dict)
         eob_generator.compute_model(L=L)
+
+        #self.eob_model = eob_generator.model
+        self.eob_generator = eob_generator
         E0 = eob_generator.model.dynamics[0, 5]*mu
 
         return E0
