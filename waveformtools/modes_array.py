@@ -2014,6 +2014,26 @@ class ModesArray:
                                      M_final, 
                                      v_kick, 
                                      Grid=None,
+                                     ):
+
+        if Grid is None:
+            Grid = self.Grid
+
+        from waveform_balance_laws.laws import balance_law
+        
+        violations = balance_law(strain_modes=self,
+                                 ginfo=Grid,
+                                 M_adm=M_adm,
+                                 M_final=M_final,
+                                 v_kick=v_kick,
+                                )
+        return violations
+    
+    def compute_waveform_balance_law_debug(self, 
+                                     M_adm, 
+                                     M_final, 
+                                     v_kick, 
+                                     Grid=None,
                                      debug=False):
 
         if Grid is None:
@@ -2026,10 +2046,9 @@ class ModesArray:
                                  M_adm=M_adm,
                                  M_final=M_final,
                                  v_kick=v_kick,
-                                 debug=debug
                                 )
         return violations
-    
+
 
     def compute_waveform_balance_law_finite_time(self, 
                                                  psi2_modes, 
@@ -2151,7 +2170,7 @@ class ModesArray:
             t_end = self.time_axis[-1]
 
         power = self.get_power_from_news_modes(news_modes)
-        print(t_start, t_end)
+        # print(t_start, t_end)
         energy_loss = InterpolatedUnivariateSpline(self.time_axis, 
                                                    power, 
                                                    k=5).integral(a=t_start, 
