@@ -12,7 +12,7 @@ class WaveformModel:
                  parameters_dict,
                  ):
         
-        print("Super init")
+        # print("Super init")
         #if self.delta_t is None:
         #    if self.delta_f is None:
         #        raise KeyError("Please provide delta_t or delta_f")
@@ -165,34 +165,35 @@ class WaveformModel:
 
         wfm = self.get_td_waveform_modes(dimensionless=True, **parameters_dict)
         E0 = self.get_corresponding_eob_hamiltonian(**parameters_dict)
-        message(f"EoB Hamiltonain {E0}", message_verbosity=1)
+        # message(f"EoB Hamiltonain {E0}", message_verbosity=1)
 
         news_modes = wfm.get_news_from_strain()
         Erad = wfm.compute_energy_radiated(news_modes=news_modes)
-        Mfinal_rad = E0 - Erad
-        message(f"Energy radiated {Erad}", message_verbosity=1)
-        message(f"Final mass from energy radiated {Mfinal_rad}", message_verbosity=1)
-        Mfinal_eob = self.eob_generator.model.final_mass
+        # Mfinal_rad = E0 - Erad
+        # message(f"Energy radiated {Erad}", message_verbosity=1)
+        # message(f"Final mass from energy radiated {Mfinal_rad}", message_verbosity=1)
+        # Mfinal_eob = self.eob_generator.model.final_mass
 
         if 'EOB' in parameters_dict['approximant']:
+            Mfinal_eob = self.eob_generator.model.final_mass
             Mfinal = Mfinal_eob
-            
+            # error = 100*(Mfinal_eob/Mfinal_rad -1)
+
         else:
+            Mfinal_rad = E0 - Erad
             Mfinal = Mfinal_rad
 
-        error = 100*(Mfinal_eob/Mfinal_rad -1)
-        message(f"Final mass from EoB {Mfinal_eob}", message_verbosity=1)
-        message(f"%error {error}", message_verbosity=1)
+        # message(f"Final mass from EoB {Mfinal_eob}", message_verbosity=1)
+        # message(f"%error {error}", message_verbosity=1)
 
         v_kick = wfm.compute_kick(Mfinal=Mfinal)
-        message(f"Kick velocity {v_kick}", message_verbosity=1)
-        message(f"Length", news_modes.data_len, message_verbosity=1)
+        # message(f"Kick velocity {v_kick}", message_verbosity=1)
+        # message(f"Length", news_modes.data_len, message_verbosity=1)
         
         violations = wfm.compute_waveform_balance_law(M_adm=E0, 
                                          M_final=Mfinal,
                                          v_kick=v_kick,
                                          Grid=Grid,
-                                         debug=True
                                          )
 
         return violations
@@ -206,7 +207,7 @@ class WaveformModel:
         mass1 = parameters_dict['mass1']
         mass2 = parameters_dict['mass2']
         Mtotal = mass1 + mass2
-        message(f"Total mass {Mtotal}", message_verbosity=1)
+        # message(f"Total mass {Mtotal}", message_verbosity=1)
         m1 = mass1/Mtotal
         m2 = mass2/Mtotal
         mu = m1*m2
@@ -219,8 +220,8 @@ class WaveformModel:
                                                     npoints=250
                                                     )
             omega0 = omega0_dimless/(Mtotal*MTSUN_SI)
-            message(f"omega0_dimless {omega0_dimless}", message_verbosity=1)
-            message(f"omega0 {omega0}", message_verbosity=1)
+            # message(f"omega0_dimless {omega0_dimless}", message_verbosity=1)
+            # message(f"omega0 {omega0}", message_verbosity=1)
             eob_parameters_dict.update({"omega0" : omega0})
         
         eob_parameters_dict.update({"approximant" : "SEOBNRv5PHM" })
