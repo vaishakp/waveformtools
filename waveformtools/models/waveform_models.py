@@ -198,6 +198,53 @@ class WaveformModel:
 
         return violations
     
+    def compute_infinite_time_balance_laws_debug(self, **parameters_dict):
+        ''' Compute the infinite time version of the balance laws 
+        by fetching the waveform modes and generating an equivalent 
+        EoB hamiltonian '''
+        from spectools.spherical.grids import GLGrid
+        Grid = GLGrid(L=28)
+
+        
+        wfm = self.get_td_waveform_modes(dimensionless=True, **parameters_dict)
+        E0 = self.get_corresponding_eob_hamiltonian(**parameters_dict)
+        message(f"EoB Hamiltonain {E0}", message_verbosity=1)
+
+        news_modes = wfm.get_news_from_strain()
+        message(f"Length", news_modes.data_len, message_verbosity=1)
+        Erad = wfm.compute_energy_radiated(news_modes=news_modes)
+        Mfinal_rad = E0 - Erad
+        message(f"Energy radiated {Erad}", message_verbosity=1)
+        message(f"Final mass from energy radiated {Mfinal_rad}", message_verbosity=1)
+        Mfinal_eob = self.eob_generator.model.final_mass
+
+        if 'EOB' in parameters_dict['approximant']:
+            Mfinal_eob = self.eob_generator.model.final_mass
+            Mfinal = Mfinal_eob
+        
+
+        else:
+            Mfinal_rad = E0 - Erad
+            Mfinal = Mfinal_rad
+
+        error = 100*(Mfinal_eob/Mfinal_rad -1)
+        message(f"Final mass from EoB {Mfinal_eob}", message_verbosity=1)
+        message(f"%error {error}", message_verbosity=1)
+
+        v_kick = wfm.compute_kick(Mfinal=Mfinal)
+        message(f"Kick velocity {v_kick}", message_verbosity=1)
+        
+        
+        violations = wfm.compute_waveform_balance_law_debug(M_adm=E0, 
+                                         M_final=Mfinal,
+                                         v_kick=v_kick,
+                                         Grid=Grid,
+                                         debug=True
+                                         )
+
+        return violations
+    
+
     def get_corresponding_eob_hamiltonian(self,  L=29, **parameters_dict):
         ''' Get the corresponding EoB Hamiltonian at the starting frequency of the 
         waveform '''
