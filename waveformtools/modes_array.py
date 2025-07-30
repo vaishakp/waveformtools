@@ -1091,50 +1091,127 @@ class ModesArray:
         
         waveform_modes.create_modes_array()
         from spectools.fourier.transforms import compute_ifft
+        factor = 1#/(self.data_len)
 
-        for mode in self.modes_list:
-            # Extrapolate every mode
-            # Ge the ell value
-            ell, emm_list = mode
-
+        for ell, emm_list in self.modes_list:
             for emm in emm_list:
                 time_axis, time_data = compute_ifft(
                     self.mode(ell, emm), self.delta_f
                 )
-
-                waveform_modes.set_mode_data(ell=ell, emm=emm, data=time_data)
+                waveform_modes.set_mode_data(ell=ell, 
+                                             emm=emm, 
+                                             data=time_data)
 
         waveform_modes._time_axis = time_axis
-        maxloc, maxtime = waveform_modes.find_max_intensity_loc()
+        waveform_modes._modes_data*=factor
+        waveform_modes.undo_warp()
+        return waveform_modes
+
+    def to_time_basis_pycbc(self):
+        ''' Use pycbc to transform to time domain '''
+
+        from pycbc.types.frequencyseries import FrequencySeries
+
+        created=False
+        for ell, emm_list in self.modes_list:
+            for emm in emm_list:
+                lm_fs    = FrequencySeries(self.mode(ell, emm), delta_f=self.delta_f, dtype=np.complex128)
+                #lm_fs_re = FrequencySeries(self.mode(ell, emm).real, delta_f=self.delta_f)
+                #lm_fs_im = FrequencySeries(self.mode(ell, emm).imag, delta_f=self.delta_f)                
+                lm_ts    = lm_fs.to_timeseries()
+                #lm_ts_re = lm_fs_re.to_timeseries()
+                #lm_ts_im = lm_fs_im.to_timeseries()
+                #lm_ts_arr    = np.array(lm_ts_re) + 1j*np.array(lm_ts_im )
+
+                if not created:
+                    # Create a new modes array
+                    waveform_modes = ModesArray(label=f"{self.label} -> time_domain",
+                                                ell_max=self.ell_max,
+                                                data_len=len(lm_ts),
+                                                time_axis=lm_ts.sample_times)
+                    waveform_modes.create_modes_array()
+                    created=True 
+
+                waveform_modes.set_mode_data(data=np.array(lm_ts), 
+                                             ell=ell, 
+                                             emm=emm)
+
+        waveform_modes.undo_warp()
+
+        return waveform_modes
+    
+    def to_time_basis_pycbc_2(self):
+        ''' Use pycbc to transform to time domain '''
+
+        from pycbc import types
+        from pycbc import fft
+
+        created=False
+        for ell, emm_list in self.modes_list:
+            for emm in emm_list:
+
+                inarr = types.Array(self.mode(ell, emm), dtype=np.complex128)
+                outarr = types.Array(np.zeros([self.data_len], dtype=np.complex64), dtype=np.complex128)
+                
+                #lm_fs    = FrequencySeries(self.mode(ell, emm), delta_f=self.delta_f, dtype=np.complex128)
+                #lm_fs_re = FrequencySeries(self.mode(ell, emm).real, delta_f=self.delta_f)
+                #lm_fs_im = FrequencySeries(self.mode(ell, emm).imag, delta_f=self.delta_f)                
+                #lm_ts    = lm_fs.to_timeseries()
+                #lm_ts_re = lm_fs_re.to_timeseries()
+                #lm_ts_im = lm_fs_im.to_timeseries()
+                #lm_ts_arr    = np.array(lm_ts_re) + 1j*np.array(lm_ts_im )
+                fft.ifft(inarr, outarr)
+
+                if not created:
+                    # Create a new modes array
+                    dt = 1/(self.data_len* 2*self.delta_f)
+                    time_axis = np.arange(0, self.data_len*dt, dt)
+
+                    waveform_modes = ModesArray(label=f"{self.label} -> time_domain",
+                                                ell_max=self.ell_max,
+                                                data_len=len(outarr),
+                                                time_axis=time_axis
+                                                )
+                    waveform_modes.create_modes_array()
+                    created=True 
+
+                waveform_modes.set_mode_data(data=np.array(outarr), 
+                                             ell=ell, 
+                                             emm=emm)
+
+        waveform_modes.undo_warp()
+
+        return waveform_modes
+
+
+    def undo_warp(self):
+        ''' Undo FD warp '''
+
+        maxloc, maxtime = self.find_max_intensity_loc()
         message(f"maxloc {maxloc}", f"maxtime {maxtime}", message_verbosity=3)
-        frac = (maxtime-waveform_modes.time_axis[0])/waveform_modes.duration
+        frac = (maxtime-self.time_axis[0])/self.duration
 
         # Undo FD warp
         if frac<0.7 or frac>0.85:
-            slice_time = waveform_modes.time_axis[0] + 0.7*waveform_modes.duration
-            slice_arg = np.argmin(abs(waveform_modes.time_axis-slice_time))
+            slice_time = self.time_axis[0] + 0.7*self.duration
+            slice_arg = np.argmin(abs(self.time_axis-slice_time))
             roll_arg = slice_arg - maxloc
             message("roll arg", roll_arg, message_verbosity=3)
-
-            #cond_modes_data = roll(waveform_modes.modes_data.T, roll_arg)
-            #waveform_modes._modes_data = cond_modes_data
 
             for mode in self.modes_list:
             # Extrapolate every mode
             # Ge the ell value
                 ell, emm_list = mode
                 for emm in emm_list:
-                    rolled_mode_data = roll(waveform_modes.mode(ell, emm), roll_arg)
-                    waveform_modes.set_mode_data(ell=ell, emm=emm, data=rolled_mode_data)
+                    rolled_mode_data = roll(self.mode(ell, emm), roll_arg)
+                    self.set_mode_data(ell=ell, emm=emm, data=rolled_mode_data)
                 # slice and roll every mode
                 # 
         else:
             roll_arg = 0
 
-        maxtime = waveform_modes.time_axis[roll_arg+maxloc]
-        waveform_modes.time_axis = waveform_modes.time_axis - maxtime
-
-        return waveform_modes
+        maxtime = self.time_axis[roll_arg+maxloc]
+        self._time_axis = self.time_axis - maxtime
 
     def extrap_to_inf(
         self,

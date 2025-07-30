@@ -148,7 +148,7 @@ class LALWaveformModel(WaveformModel):
         self.set_parameters()
         return self.parameters_dict
     
-    def get_approximant_type(self, apx):
+    def get_approximant_type_auto(self, apx):
 
         if apx in td_approximants():
             apx_domain = 'td'
@@ -159,6 +159,16 @@ class LALWaveformModel(WaveformModel):
         
         message(f"Apx type {apx_domain}", message_verbosity=2)
         return apx_domain
+
+    def get_approximant_type(self, apx):
+
+        td_approximants = ['NRSur7dq4', 'SEOBNRv5PHM']
+        fd_approximants = ['IMRPhenomXPHM']
+
+        if apx in fd_approximants:
+            return 'fd'
+        else:
+            return 'td'
 
 
     def get_td_waveform_modes(self, dimensionless=True, **parameters_dict):
@@ -217,20 +227,26 @@ class LALWaveformModel(WaveformModel):
                                                                 parameters_dict['lal_dict'],
                                                                 parameters_dict['lal_approximant']
                                                             )
-
+            return waveform_modes_list
+        
         #print(waveform_modes_list, waveform_modes_list.tdata)
         wfm = load_lal_modes_to_modes_array(lal_modes=waveform_modes_list, 
                                             domain=apx_domain,
                                             Mtotal=Mtotal)
 
+        from copy import deepcopy
+
+        
+
         if 'fd' in wfm.label:
             wfm_td = wfm.to_time_basis()
+            
         elif 'td' in wfm.label:
             wfm_td = wfm
 
             if self.approximant == 'NRSur7dq4':
                 _, maxtime = wfm.find_max_intensity_loc()
-                wfm._modes_data/=10000
+                wfm._modes_data/=1
                 wfm_td._time_axis -= maxtime
 
         else:
