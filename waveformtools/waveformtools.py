@@ -3422,13 +3422,10 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     # One M *MTSUN is due to the dimensionalization
     # of the time axis. What about the extra M?
     
-    #from copy import deepcopy
-
+    
     nm = lal_modes
     ell_max = nm.l
     
-    # nm2 = deepcopy(nm)
-
     message(f'domain {domain}', message_verbosity=1)
     message(f'Mtotal {Mtotal}', message_verbosity=1)
 
@@ -3473,10 +3470,7 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
                 emm = nm.m
                 assert ell1==ell, f"ell mode index exception. Expected {ell1}, Got: {ell}"
                 assert emm1==emm, f"emm mode index exception. Expected {emm1}, Got: {emm}"
-                #wfm.set_mode_data(ell=ell, emm=emm, data=factor*np.conjugate(nm.mode.data.data))
                 wfm.set_mode_data(ell=ell, emm=emm, data=factor*np.conjugate(nm.mode.data.data))
                 nm =  nm.next
 
     return wfm
-
-
