@@ -2,7 +2,7 @@ import numpy as np
 from waveformtools.models.waveform_models import WaveformModel
 from pyseobnr.generate_waveform import generate_modes_opt, generate_prec_hpc_opt,  GenerateWaveform
 from waveformtools.models.utils import get_modes_array_from_eob_modes_dict
-from pycbc.waveform import get_td_waveform
+from pycbc.waveform import get_td_waveform as pycbc_get_td_waveform
 
 class EOBWaveformModel(WaveformModel):
         
@@ -26,7 +26,7 @@ class EOBWaveformModel(WaveformModel):
         self.settings.update({"dt" : self.parameters_dict["delta_t"]})
         self.td_waveform_modes = None
 
-    def compute_model(self, L, **parameters_dict):
+    def compute_model(self, L=28, **parameters_dict):
         
         self.update_parameters(parameters_dict)
         self.time_axis, self.modes_dict, self.model = generate_modes_opt(self.mass_ratio,
@@ -63,7 +63,8 @@ class EOBWaveformModel(WaveformModel):
 
         parameters = self.parameters_dict.copy()
         parameters.update(kwargs)
+        parameters.update({'coa_phase' : parameters['phi_ref']})
         self.compute_model()
 
         #return self.td_waveform_modes.to_td_waveform(**parameters)
-        return get_td_waveform(**parameters)
+        return pycbc_get_td_waveform(**parameters)

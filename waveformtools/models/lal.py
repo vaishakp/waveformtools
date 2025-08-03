@@ -42,8 +42,6 @@ class LALWaveformModel(WaveformModel):
         if 'ell_max' not in self.parameters_dict:
             self.parameters_dict.update({"ell_max" : 4})
 
-        
-
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -127,7 +125,6 @@ class LALWaveformModel(WaveformModel):
             return hp.data.data, hc.data.data
 
     
-        
     def set_spins_from_NR_data(self):
         Mtotal_NR = self.parameters_dict["mass1"] + self.parameters_dict["mass2"]
         spins = lalsimulation.SimInspiralNRWaveformGetSpinsFromHDF5File(
