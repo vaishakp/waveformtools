@@ -33,6 +33,7 @@ class LALWaveformModel(WaveformModel):
 
         if self.approximant == "IMRPhenomXPHM":
             self.add_waveform_generation_arguments_to_lal_dict()
+
         if self.parameters_dict["approximant"] == "NR_hdf5":
             lalsimulation.SimInspiralWaveformParamsInsertNumRelData(
                 self.parameters_dict['lal_dict'], 
@@ -45,8 +46,10 @@ class LALWaveformModel(WaveformModel):
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        del state['lal_dict']
-        del self.parameters_dict['lal_dict']
+        if 'lal_dict' in state.keys():
+            del state['lal_dict']
+        if 'lal_dict' in self.parameters_dict.keys():
+            del self.parameters_dict['lal_dict']
         return state
 
     def __setstate__(self, state):
@@ -58,10 +61,11 @@ class LALWaveformModel(WaveformModel):
 
     def add_waveform_generation_arguments_to_lal_dict(self):
 
-        if self.PhenomXHMReleaseVersion is not None:
-            SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion(self.lal_dict, self.PhenomXHMReleaseVersion)
-        if self.PhenomXPrecVersion is not None:
-            SimInspiralWaveformParamsInsertPhenomXPrecVersion(self.lal_dict, self.PhenomXPrecVersion)
+        if self.parameters_dict["approximant"]=="IMRPhenomXPHM":
+            if self.PhenomXHMReleaseVersion is not None:
+                SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion(self.lal_dict, self.PhenomXHMReleaseVersion)
+            if self.PhenomXPrecVersion is not None:
+                SimInspiralWaveformParamsInsertPhenomXPrecVersion(self.lal_dict, self.PhenomXPrecVersion)
 
     def get_td_waveform(self, **parameters_dict):
 
@@ -232,8 +236,6 @@ class LALWaveformModel(WaveformModel):
                                             Mtotal=Mtotal)
 
         from copy import deepcopy
-
-        
 
         if 'fd' in wfm.label:
             wfm_td = wfm.to_time_basis()
