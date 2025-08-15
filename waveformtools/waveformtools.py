@@ -458,7 +458,9 @@ def compute_masses_from_mass_ratio_and_total_mass(mass_ratio, M=1):
     return mass1, mass2
 
 def compute_masses_from_mass_ratio_and_chirp_mass(mass_ratio, chirp_mass):
-
+    "Using the larger mass ratio "
+    if mass_ratio<1:
+        mass_ratio=1/mass_ratio
     total_mass = compute_total_mass_from_mass_ratio_and_chirp_mass(mass_ratio, chirp_mass)
     mass1, mass2 = compute_masses_from_mass_ratio_and_total_mass(mass_ratio, total_mass)
     return mass1, mass2
