@@ -60,7 +60,7 @@ class WaveformModel:
             if 'f_lower' not in self.parameters_dict:
                 raise KeyError("Please supply omega0 or f_lower")
             else:
-                self.parameters_dict.update({"omega0":2*np.pi*self.parameters_dict['f_lower']})
+                self.parameters_dict.update({"omega0":np.pi*self.parameters_dict['f_lower']})
 
 
     def __getstate__(self):
@@ -89,7 +89,11 @@ class WaveformModel:
         #self.parameters_dict['phi_ref'] = self.parameters_dict['coa_phase']
         self.set_parameters()
 
-        
+    
+    @property
+    def dimless_omega_ref(self):
+        return np.pi*self.f_ref*self.Mtotal*MTSUN_SI
+    
     @property
     def Mtotal(self):
         return self.parameters_dict['mass1'] + self.parameters_dict['mass2']

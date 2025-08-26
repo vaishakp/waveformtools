@@ -33,6 +33,7 @@ class EOBWaveformModel(WaveformModel):
                                                                     self.chi_1,
                                                                     self.chi_2,
                                                                     self.dimless_omega0,
+                                                                    self.dimless_omega_ref,
                                                                     debug=True,
                                                                     approximant=self.approximant,
                                                                     settings=self.settings,
