@@ -28,7 +28,7 @@ def get_requirements():
 
 setuptools.setup(
     name="waveformtools",
- 	version="2025.08.03",
+ 	version="2025.08.26",
     author="Vaishak Prasad",
     author_email="vaishakprasad@gmail.com",
     description="Functions for handling waveform and numerical relativity data",
