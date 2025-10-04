@@ -2,7 +2,7 @@ from waveformtools.models.waveform_models import WaveformModel
 #import bilby
 import numpy as np
 import lalsimulation
-from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralGetApproximantFromString, SimInspiralChooseTDModes, SimInspiralChooseFDModes
+from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralFD, SimInspiralGetApproximantFromString, SimInspiralChooseTDModes, SimInspiralChooseFDModes
 from lalsimulation import SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion, SimInspiralWaveformParamsInsertPhenomXPrecVersion
 from lal import MSUN_SI, MTSUN_SI, PC_SI, CreateDict, G_SI, C_SI
 from pycbc.waveform import td_approximants, fd_approximants
@@ -97,6 +97,39 @@ class LALWaveformModel(WaveformModel):
             return -hp.data.data, hc.data.data
         else:
             return hp.data.data, hc.data.data
+
+    def get_fd_waveform(self, **parameters_dict):
+
+        self.update_parameters(parameters_dict)
+
+        hp, hc = SimInspiralFD(   
+                                self.mass1*MSUN_SI,
+                                self.mass2*MSUN_SI,
+                                self.spin1x,
+                                self.spin1y,
+                                self.spin1z,
+                                self.spin2x,
+                                self.spin2y,
+                                self.spin2z,
+                                self.distance*1e6*PC_SI,
+                                self.inclination,
+                                self.phi_ref,
+                                self.longAscNodes,
+                                self.eccentricity,
+                                self.meanPerAno,
+                                self.delta_f,
+                                self.f_lower,
+                                self.f_max,
+                                self.f_ref,
+                                self.lal_dict,
+                                self.lal_approximant
+                            )
+        
+        if self.approximant == "NR_hdf5":
+            return -hp.data.data, hc.data.data
+        else:
+            return hp.data.data, hc.data.data
+        
 
     def get_td_waveform_dict(self, **parameters_dict):
 

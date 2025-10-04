@@ -35,6 +35,7 @@ class WaveformModel:
                                         'inclination',
                                         'distance',
                                         'f_lower',
+                                        'f_max',
                                         'f_ref',
                                         'sampling_frequency',
                                         'delta_t',
