@@ -35,6 +35,7 @@ class WaveformModel:
                                         'inclination',
                                         'distance',
                                         'f_lower',
+                                        'f_max',
                                         'f_ref',
                                         'sampling_frequency',
                                         'delta_t',
@@ -46,7 +47,6 @@ class WaveformModel:
                                         'debug',
                                         'lvcnr_file_path'
                                     ]
-
         self.parameters_dict['model']=None
         self.parameters_dict['lal_dict'] = CreateDict()
         self.set_parameters()

@@ -2,7 +2,7 @@ from waveformtools.models.waveform_models import WaveformModel
 #import bilby
 import numpy as np
 import lalsimulation
-from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralGetApproximantFromString, SimInspiralChooseTDModes, SimInspiralChooseFDModes
+from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralFD, SimInspiralGetApproximantFromString, SimInspiralChooseTDModes, SimInspiralChooseFDModes
 from lalsimulation import SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion, SimInspiralWaveformParamsInsertPhenomXPrecVersion
 from lal import MSUN_SI, MTSUN_SI, PC_SI, CreateDict, G_SI, C_SI
 from pycbc.waveform import td_approximants, fd_approximants
@@ -18,6 +18,7 @@ class LALWaveformModel(WaveformModel):
                  parameters_dict={}):
 
         #print("Init")
+    
         super().__init__(parameters_dict)
 
         #print("Local init")
@@ -33,6 +34,7 @@ class LALWaveformModel(WaveformModel):
 
         if self.approximant == "IMRPhenomXPHM":
             self.add_waveform_generation_arguments_to_lal_dict()
+
         if self.parameters_dict["approximant"] == "NR_hdf5":
             lalsimulation.SimInspiralWaveformParamsInsertNumRelData(
                 self.parameters_dict['lal_dict'], 
@@ -45,8 +47,10 @@ class LALWaveformModel(WaveformModel):
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        del state['lal_dict']
-        del self.parameters_dict['lal_dict']
+        if 'lal_dict' in state.keys():
+            del state['lal_dict']
+        if 'lal_dict' in self.parameters_dict.keys():
+            del self.parameters_dict['lal_dict']
         return state
 
     def __setstate__(self, state):
@@ -58,10 +62,11 @@ class LALWaveformModel(WaveformModel):
 
     def add_waveform_generation_arguments_to_lal_dict(self):
 
-        if self.PhenomXHMReleaseVersion is not None:
-            SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion(self.lal_dict, self.PhenomXHMReleaseVersion)
-        if self.PhenomXPrecVersion is not None:
-            SimInspiralWaveformParamsInsertPhenomXPrecVersion(self.lal_dict, self.PhenomXPrecVersion)
+        if self.parameters_dict["approximant"]=="IMRPhenomXPHM":
+            if self.PhenomXHMReleaseVersion is not None:
+                SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion(self.lal_dict, self.PhenomXHMReleaseVersion)
+            if self.PhenomXPrecVersion is not None:
+                SimInspiralWaveformParamsInsertPhenomXPrecVersion(self.lal_dict, self.PhenomXPrecVersion)
 
     def get_td_waveform(self, **parameters_dict):
 
@@ -93,6 +98,39 @@ class LALWaveformModel(WaveformModel):
             return -hp.data.data, hc.data.data
         else:
             return hp.data.data, hc.data.data
+
+    def get_fd_waveform(self, approximant=None, **parameters_dict):
+
+        self.update_parameters(parameters_dict)
+
+        hp, hc = SimInspiralFD(   
+                                self.mass1*MSUN_SI,
+                                self.mass2*MSUN_SI,
+                                self.spin1x,
+                                self.spin1y,
+                                self.spin1z,
+                                self.spin2x,
+                                self.spin2y,
+                                self.spin2z,
+                                self.distance*1e6*PC_SI,
+                                self.inclination,
+                                self.phi_ref,
+                                self.longAscNodes,
+                                self.eccentricity,
+                                self.meanPerAno,
+                                self.delta_f,
+                                self.f_lower,
+                                self.f_max,
+                                self.f_ref,
+                                self.lal_dict,
+                                self.lal_approximant
+                            )
+        
+        if self.approximant == "NR_hdf5":
+            return -hp.data.data, hc.data.data
+        else:
+            return hp.data.data, hc.data.data
+        
 
     def get_td_waveform_dict(self, **parameters_dict):
 
@@ -221,10 +259,9 @@ class LALWaveformModel(WaveformModel):
                                                                 parameters_dict['phi_ref'],
                                                                 parameters_dict['distance']*1e6*PC_SI,
                                                                 parameters_dict['inclination'],
-                                                                parameters_dict['lal_dict'],
-                                                                parameters_dict['lal_approximant']
+                                                                self.lal_dict,
+                                                                self.lal_approximant
                                                             )
-            return waveform_modes_list
         
         #print(waveform_modes_list, waveform_modes_list.tdata)
         wfm = load_lal_modes_to_modes_array(lal_modes=waveform_modes_list, 
@@ -232,8 +269,6 @@ class LALWaveformModel(WaveformModel):
                                             Mtotal=Mtotal)
 
         from copy import deepcopy
-
-        
 
         if 'fd' in wfm.label:
             wfm_td = wfm.to_time_basis()
@@ -253,3 +288,45 @@ class LALWaveformModel(WaveformModel):
             wfm_td = self.non_dimensionalize_td_waveform_modes(wfm_td, **parameters_dict)
 
         return wfm_td
+    
+
+
+    def get_fd_waveform_modes(self, dimensionless=True, **parameters_dict):
+        ''' Return the waveform modes object as a 
+        `waveformtools.waveform_modes.WaveformModes` object.
+         
+        Tapering conventions: default lal 
+        '''
+        #print(parameters_dict)
+        self.update_parameters(parameters_dict)
+        apx_domain = self.get_approximant_type(self.approximant)
+        #print(apx_domain)
+        Mtotal = parameters_dict["mass1"] + parameters_dict["mass2"]
+
+
+        waveform_modes_list = SimInspiralChooseFDModes( 
+                                                            parameters_dict['mass1']*MSUN_SI,
+                                                            parameters_dict['mass2']*MSUN_SI,
+                                                            parameters_dict['spin1x'],
+                                                            parameters_dict['spin1y'],
+                                                            parameters_dict['spin1z'],
+                                                            parameters_dict['spin2x'],
+                                                            parameters_dict['spin2y'],
+                                                            parameters_dict['spin2z'],
+                                                            parameters_dict['delta_f'],
+                                                            parameters_dict['f_lower'],
+                                                            parameters_dict['f_max'],
+                                                            parameters_dict['f_ref'],
+                                                            parameters_dict['phi_ref'],
+                                                            parameters_dict['distance']*1e6*PC_SI,
+                                                            parameters_dict['inclination'],
+                                                            self.lal_dict,
+                                                            self.lal_approximant
+                                                        )
+        
+        #print(waveform_modes_list, waveform_modes_list.tdata)
+        wfm = load_lal_modes_to_modes_array(lal_modes=waveform_modes_list, 
+                                            domain=apx_domain,
+                                            Mtotal=Mtotal)
+
+        return wfm
