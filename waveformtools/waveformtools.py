@@ -3424,7 +3424,6 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     # One M *MTSUN is due to the dimensionalization
     # of the time axis. What about the extra M?
     
-    
     nm = lal_modes
     ell_max = nm.l
     
