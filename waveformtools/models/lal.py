@@ -323,7 +323,7 @@ class LALWaveformModel(WaveformModel):
                                                             self.lal_dict,
                                                             self.lal_approximant
                                                         )
-        
+
         #print(waveform_modes_list, waveform_modes_list.tdata)
         wfm = load_lal_modes_to_modes_array(lal_modes=waveform_modes_list, 
                                             domain=apx_domain,
