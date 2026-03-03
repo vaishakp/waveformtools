@@ -9,7 +9,7 @@ dependencies:
     - termcolor
     - numba
     - datetime
-    - scipy
+    - scipy>=1.15.0
     - h5py
     - numpy
     - sympy

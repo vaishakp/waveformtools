@@ -1,7 +1,7 @@
 # Modules to install
 
 numpy
-scipy
+scipy>=1.15.0
 matplotlib
 numba
 h5py
