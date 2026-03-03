@@ -1,7 +1,5 @@
 import numpy as np
 from spectools.spherical.transforms import SHExpand
-from spectools.spherical.transforms import SHExpand
-from spectools.spherical.grids import GLGrid
 from spectools.spherical.grids import GLGrid
 from waveformtools.diagnostics import MethodInfo as method_info
 from waveformtools.waveformtools import message
@@ -394,7 +392,7 @@ class TestGLGridYlm(unittest.TestCase):
         theta_grid, phi_grid = info.meshgrid
 
         #from scipy.special import sph_harm_y as sph_harm
-        from scipy.special import sph_harm
+        from scipy.special import sph_harm_y
 
         for ell in range(info.L + 1):
             for emm in range(-ell, ell + 1):
@@ -406,7 +404,8 @@ class TestGLGridYlm(unittest.TestCase):
                     phi_grid=phi_grid,
                 )
 
-                Ylm_scipy = sph_harm(emm, ell, phi_grid, theta_grid)
+                #Ylm_scipy = sph_harm(emm, ell, phi_grid, theta_grid)
+                Ylm_scipy = sph_harm_y(ell, emm, theta_grid, phi_grid)
 
                 # Note: scipy is not accurate. Any disagreement
                 # and low precision

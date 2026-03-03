@@ -870,15 +870,9 @@ def SHExpandAuto(
     #####################
 
     orig_func = func.copy()
-
-    # from scipy.special import sph_harm
-
     theta_grid, phi_grid = info.meshgrid
-
     ell_max = method_info.ell_max
     method = method_info.int_method
-
-    # from waveformtools.single_mode import SingleMode
 
     modes = {}
 
@@ -1109,16 +1103,10 @@ def SHExpandSimple(
 
 
     """
-    # from scipy.special import sph_harm
-
     # from waveformtools.single_mode import SingleMode
-
     orig_func = func.copy()
-
     theta_grid, phi_grid = info.meshgrid
-
     ell_max = method_info.ell_max
-
     method = method_info.int_method
 
     message(
@@ -1295,7 +1283,6 @@ def SHExpandSimpleSPack(
 
 
     """
-    # from scipy.special import sph_harm
     # from waveformtools.single_mode import SingleMode
 
     orig_func = func.copy()
