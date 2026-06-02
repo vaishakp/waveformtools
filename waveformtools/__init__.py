@@ -1,5 +1,5 @@
 # Copyright (c) 2020, Vaishak Prasad
-# See [LICENSE](https://gitlab.com/vaishakp/waveformtools/-/blob/main/LICENSE) file for details.
+# See [LICENSE](https://github.com/vaishakp/waveformtools/blob/main/LICENSE) file for details.
 """
 Module for the analysis and handling of numerical relativity and gravitational waveform data.
 
