@@ -1,6 +1,6 @@
 [[Project landing page]](https://sites.google.com/view/waveformtools/home)
-[![pipeline status](https://gitlab.com/vaishakp/waveformtools/badges/main/pipeline.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main)
-[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://gitlab.com/vaishakp/waveformtools/commits/main/LICENSE)
+[![CI](https://github.com/vaishakp/waveformtools/actions/workflows/ci.yml/badge.svg)](https://github.com/vaishakp/waveformtools/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/vaishakp/waveformtools/blob/main/LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/waveformtools/badge/?version=latest)](https://waveformtools.readthedocs.io/en/latest/?badge=latest)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PyPI version](docs/vers_badge.svg)](https://pypi.org/project/waveformtools/)
@@ -13,7 +13,7 @@ waveformtools is a numerical relativity data handling package that was written t
 
 This package contains implementations of customized algorithms and techniques.  Some of these contain the usage of existing python based library functions from pycbc, scipy, etc but effort has been made to keep these to a minimum.
 
- 
+  
 * Handling of numerical relativity data, and retreiving specific information about the physical system. Presently, this supports the EinsteinToolkit data.
 
     The class container and methods "sim" can load NR data into convenient lists and dictionaries, which can be used to     retrieve specific data/ information about the numerical simulation. 
@@ -98,8 +98,6 @@ We request you to also cite these. Thanks!
 
 
 
-
-
 # Installing this package
 
 ## Dependencies
@@ -130,16 +128,17 @@ pip install waveformtools
 ```
 ## Alternate method
 
-Manual install directly from gitlab:
+Manual install directly from GitHub:
 
-```pip install git+https://gitlab.com/vaishakp/waveformtools@main```
+```sh
+pip install git+https://github.com/vaishakp/waveformtools@main
+```
 
 Or from a clone:
 
 * First, clone this repository:
-
 ```sh
-git clone https://gitlab.com/vaishakp/waveformtools.git
+git clone https://github.com/vaishakp/waveformtools.git
 
 ```
 * Second, run python setup from the `waveformtools` directory:
@@ -213,15 +212,15 @@ To plot the modes
 
 The documentation for this module is available at [Link to the Documentation](https://waveformtools.readthedocs.io/en/latest/). This was built automatically using Read the Docs.
 
-In some case where the repo has run out of gitlab CI minutes, the documentation is not automatically built. In such cases, we request the user to access the documentation through the `index.html` file in `docs` directory.
+In some cases where the CI service is unavailable or quota-limited, the documentation may not be automatically built. In such cases, we request the user to access the documentation through the `index.html` file in `docs` directory.
 
 
 # Bug tracker
-If you run into any issues while using this package, please report the issue on the [issue tracker](https://gitlab.com/vaishakp/waveformtools/-/issues).
+If you run into any issues while using this package, please report the issue on the [issue tracker](https://github.com/vaishakp/waveformtools/issues).
 
- 
+  
 # Acknowledgements
 
-This project has been hosted, as you can see, on gitlab. Several gitlab tools are used in the deployment of the code, its testing, version control.
+This project was originally hosted on GitLab and is now developed on GitHub. Several CI and deployment tools are used for testing, version control, and releases.
 
 The work of this was developed in aiding my PhD work at Inter-University Centre for Astronomy and Astrophysics (IUCAA, Pune, India)](https://www.iucaa.in/). The PhD is in part supported by the [Shyama Prasad Nukherjee Fellowship](https://csirhrdg.res.in/Home/Index/1/Default/2006/59) awarded to me by the [Council of Scientific and Industrial Research (CSIR, India)](https://csirhrdg.res.in/). Resources of the [Inter-University Centre for Astronomy and Astrophysics (IUCAA, Pune, India)](https://www.iucaa.in/) were are used in part.
