@@ -160,12 +160,28 @@ class WaveformModel:
         wfm_td._modes_data = wfm_td.modes_data * (G_SI*Mtotal*MSUN_SI)/(parameters_dict['distance']*PC_SI*1e6*(C_SI**2))
         return wfm_td
 
-    def compute_infinite_time_balance_laws(self, **parameters_dict):
+    def compute_infinite_time_balance_laws(
+        self,
+        chunk_size=None,
+        grid_L=28,
+        **parameters_dict,
+    ):
         ''' Compute the infinite time version of the balance laws 
         by fetching the waveform modes and generating an equivalent 
-        EoB hamiltonian '''
+        EoB hamiltonian.
+
+        Parameters
+        ----------
+        chunk_size : int or None
+            If None, use the legacy full-angular-time-array balance-law path.
+            If an integer, use the chunked RHS implementation in
+            ``waveformtools.chunked_balance_laws``. This reduces peak memory
+            during the angular RHS evaluation.
+        grid_L : int
+            Gauss-Legendre angular resolution.
+        '''
         from spectools.spherical.grids import GLGrid
-        Grid = GLGrid(L=28)
+        Grid = GLGrid(L=grid_L)
 
         wfm = self.get_td_waveform_modes(dimensionless=True, **parameters_dict)
         E0 = self.get_corresponding_eob_hamiltonian(**parameters_dict)
@@ -193,21 +209,37 @@ class WaveformModel:
         v_kick = wfm.compute_kick(Mfinal=Mfinal)
         # message(f"Kick velocity {v_kick}", message_verbosity=1)
         # message(f"Length", news_modes.data_len, message_verbosity=1)
-        
-        violations = wfm.compute_waveform_balance_law(M_adm=E0, 
-                                         M_final=Mfinal,
-                                         v_kick=v_kick,
-                                         Grid=Grid,
-                                         )
+
+        if chunk_size is None:
+            violations = wfm.compute_waveform_balance_law(M_adm=E0,
+                                             M_final=Mfinal,
+                                             v_kick=v_kick,
+                                             Grid=Grid,
+                                             )
+        else:
+            from waveformtools.chunked_balance_laws import balance_law_chunked
+            violations = balance_law_chunked(
+                strain_modes=wfm,
+                ginfo=Grid,
+                M_adm=E0,
+                M_final=Mfinal,
+                v_kick=v_kick,
+                chunk_size=chunk_size,
+            )
 
         return violations
     
-    def compute_infinite_time_balance_laws_debug(self, **parameters_dict):
+    def compute_infinite_time_balance_laws_debug(
+        self,
+        chunk_size=None,
+        grid_L=28,
+        **parameters_dict,
+    ):
         ''' Compute the infinite time version of the balance laws 
         by fetching the waveform modes and generating an equivalent 
         EoB hamiltonian '''
         from spectools.spherical.grids import GLGrid
-        Grid = GLGrid(L=28)
+        Grid = GLGrid(L=grid_L)
 
         
         wfm = self.get_td_waveform_modes(dimensionless=True, **parameters_dict)
@@ -238,13 +270,24 @@ class WaveformModel:
         v_kick = wfm.compute_kick(Mfinal=Mfinal)
         message(f"Kick velocity {v_kick}", message_verbosity=1)
         
-        
-        violations = wfm.compute_waveform_balance_law_debug(M_adm=E0, 
-                                         M_final=Mfinal,
-                                         v_kick=v_kick,
-                                         Grid=Grid,
-                                         debug=True
-                                         )
+        if chunk_size is None:
+            violations = wfm.compute_waveform_balance_law_debug(M_adm=E0, 
+                                             M_final=Mfinal,
+                                             v_kick=v_kick,
+                                             Grid=Grid,
+                                             debug=True
+                                             )
+        else:
+            from waveformtools.chunked_balance_laws import balance_law_chunked
+            violations = balance_law_chunked(
+                strain_modes=wfm,
+                ginfo=Grid,
+                M_adm=E0,
+                M_final=Mfinal,
+                v_kick=v_kick,
+                chunk_size=chunk_size,
+                debug=True,
+            )
 
         return violations
     
