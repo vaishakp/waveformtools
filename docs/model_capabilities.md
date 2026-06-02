@@ -8,8 +8,8 @@ This document summarizes the current waveform-generation capabilities exposed th
 - `waveformtools/models/eob.py`
 - `waveformtools/models/utils.py`
 
-The summary is intentionally implementation-facing: it records what the code appears
-to support today, and where the API should be tightened.
+The summary is implementation-facing: it records what the code supports today, the
+public methods that expose each output type, and remaining API gaps.
 
 ## Implemented model backends
 
@@ -24,10 +24,16 @@ Supported LAL-related functionality:
 
 - time-domain plus/cross polarizations via `SimInspiralChooseTDWaveform`;
 - frequency-domain plus/cross polarizations via `SimInspiralFD`;
-- time-domain modes via `SimInspiralChooseTDModes` when the approximant is treated as
-  time-domain;
-- frequency-domain modes via `SimInspiralChooseFDModes` when the approximant is
-  treated as frequency-domain;
+- time-domain modes via `SimInspiralChooseTDModes`;
+- frequency-domain modes via `SimInspiralChooseFDModes`;
+- an explicit FD-modes-as-TD route through `get_fd_waveform_modes_as_td()`;
+- public aliases with clearer output names:
+  - `get_td_modes()`;
+  - `get_fd_modes()`;
+  - `get_fd_modes_as_td()`;
+  - `get_td_polarizations()`;
+  - `get_fd_polarizations()`;
+  - `project_td_polarizations()`;
 - loading LAL mode linked lists into `ModesArray` through
   `load_lal_modes_to_modes_array`;
 - limited special-case support for `NR_hdf5`, including insertion of the NR file path
@@ -35,15 +41,15 @@ Supported LAL-related functionality:
 - special PhenomX configuration knobs for `IMRPhenomXPHM`, namely
   `PhenomXHMReleaseVersion` and `PhenomXPrecVersion`.
 
-The explicit approximant-domain classifier currently treats:
+Approximant-domain handling is centralized in `get_approximant_domain()`. The explicit
+registry currently records:
 
 - `NRSur7dq4` and `SEOBNRv5PHM` as time-domain;
-- `IMRPhenomXPHM` as frequency-domain;
-- all other approximants as time-domain by default.
+- `IMRPhenomXPHM` as frequency-domain.
 
-There is also an automatic classifier using PyCBC's `td_approximants()` and
-`fd_approximants()`, but the mode-generation methods currently use the explicit
-classifier.
+For other approximants, the code falls back to PyCBC's `td_approximants()` and
+`fd_approximants()` registries. Unknown approximants raise a `KeyError` rather than
+silently defaulting to the time domain.
 
 ### `EOBWaveformModel`
 
@@ -54,6 +60,8 @@ classifier.
 - passing a deviation/settings dictionary to pySEOBNR for parameterized-deviation or
   pseudo-EOB studies;
 - returning dimensional or dimensionless time-domain modes;
+- a `capabilities()` method;
+- a `get_td_modes()` alias for `get_td_waveform_modes()`;
 - a `get_td_waveform` helper that currently delegates to PyCBC's
   `get_td_waveform` rather than projecting the internally generated EOB modes.
 
@@ -63,39 +71,69 @@ The EOB backend currently does not expose a native frequency-domain mode generat
 
 | Capability | `LALWaveformModel` | `EOBWaveformModel` | Notes |
 |---|---:|---:|---|
-| TD plus/cross polarizations | Yes | Partial | LAL uses `SimInspiralChooseTDWaveform`. EOB has `get_td_waveform`, but it delegates to PyCBC rather than using `td_waveform_modes.to_td_waveform`. |
+| TD plus/cross polarizations | Yes | Partial | LAL uses `SimInspiralChooseTDWaveform`. EOB has `get_td_waveform`, but it delegates to PyCBC rather than using the internally generated modes. |
 | FD plus/cross polarizations | Yes | No | LAL uses `SimInspiralFD`. EOB has no native FD polarization method. |
 | TD modes | Yes | Yes | LAL uses `SimInspiralChooseTDModes`; EOB uses `generate_modes_opt` and converts to `ModesArray`. |
-| FD modes | Yes, for FD LAL models | No | LAL uses `SimInspiralChooseFDModes`. EOB does not provide native FD modes. |
-| Convert FD modes to TD modes | Yes, in `get_td_waveform_modes` | No direct FD path | For FD-labelled LAL modes, `get_td_waveform_modes` converts the `ModesArray` to the time basis via `to_time_basis()`. |
-| Detector projections | Yes, TD only | Inherited, TD only | The base class provides `project_polarizations(hp, hc, extrinsic_parameters, detector_string)` using PyCBC `Detector`. It expects TD `hp`, `hc` arrays and uses `delta_t`. |
+| FD modes | Yes | No | LAL uses `SimInspiralChooseFDModes`. EOB does not provide native FD modes. |
+| FD modes returned as TD modes | Yes | No | LAL exposes `get_fd_waveform_modes_as_td()` and alias `get_fd_modes_as_td()`. This generates FD modes, loads them as a frequency-basis `ModesArray`, converts with `to_time_basis()`, and optionally non-dimensionalizes the TD result. |
+| Detector projections | Yes, TD only | Inherited, TD only | The base class provides `project_polarizations(hp, hc, extrinsic_parameters, detector_string)` using PyCBC `Detector`. LAL also exposes `project_td_polarizations()`. |
 | NR HDF5 model path | Yes | No | LAL supports `NR_hdf5` with `lvcnr_file_path` inserted into the LAL dictionary. |
 | Dimensionless modes | Yes, TD route | Yes | The base class can non-dimensionalize/dimensionalize TD modes using total mass and distance. |
+| Capability introspection | Yes | Yes | Both backends expose `capabilities()`. |
 | Balance-law diagnostics | Inherited | Inherited | The base class has infinite-time balance-law utilities that consume TD modes and construct a corresponding EOB Hamiltonian. |
 
-## Answers to the specific questions
+## Current public methods by output type
+
+### LAL backend
+
+```python
+model.get_td_waveform_modes(...)
+model.get_fd_waveform_modes(...)
+model.get_fd_waveform_modes_as_td(...)
+
+model.get_td_modes(...)
+model.get_fd_modes(...)
+model.get_fd_modes_as_td(...)
+
+model.get_td_waveform(...)
+model.get_fd_waveform(...)
+model.get_td_polarizations(...)
+model.get_fd_polarizations(...)
+
+model.project_td_polarizations(hp, hc, extrinsic_parameters, detector_string)
+model.capabilities()
+```
+
+### EOB backend
+
+```python
+model.get_td_waveform_modes(...)
+model.get_td_modes(...)
+model.get_td_waveform(...)
+model.capabilities()
+```
+
+## Answers to common capability questions
 
 ### Can it generate modes?
 
 Yes.
 
-- `LALWaveformModel.get_td_waveform_modes()` generates modes using LALSimulation.
-  Depending on the approximant classification, it calls either
-  `SimInspiralChooseTDModes` or `SimInspiralChooseFDModes`, then loads the result into
-  a `ModesArray`.
-- `LALWaveformModel.get_fd_waveform_modes()` directly calls
-  `SimInspiralChooseFDModes`.
+- `LALWaveformModel.get_td_waveform_modes()` generates TD modes for TD approximants.
+- `LALWaveformModel.get_fd_waveform_modes()` generates FD modes.
+- `LALWaveformModel.get_fd_waveform_modes_as_td()` generates FD modes and returns them
+  in the same TD `ModesArray` convention used by the existing FD-to-TD path.
 - `EOBWaveformModel.get_td_waveform_modes()` generates TD modes through pySEOBNR and
   returns a `ModesArray`.
 
 ### Can it generate FD and TD modes?
 
-For LAL-backed models: yes, with caveats.
+For LAL-backed models: yes.
 
-- TD modes are supported through `get_td_waveform_modes()`.
-- FD modes are supported through `get_fd_waveform_modes()`.
-- For FD approximants, the TD-mode route can generate FD modes and convert them into a
-  time-basis `ModesArray` using `to_time_basis()`.
+- TD modes are supported through `get_td_waveform_modes()` and `get_td_modes()`.
+- FD modes are supported through `get_fd_waveform_modes()` and `get_fd_modes()`.
+- FD modes returned as TD modes are supported through `get_fd_waveform_modes_as_td()`
+  and `get_fd_modes_as_td()`.
 
 For EOB-backed models: TD modes are supported; FD modes are not currently exposed.
 
@@ -118,8 +156,10 @@ return a PyCBC `TimeSeries`, and does not implement an FD projection path.
 
 Yes for LAL-backed models.
 
-- `LALWaveformModel.get_td_waveform()` returns TD `(hp, hc)` arrays.
-- `LALWaveformModel.get_fd_waveform()` returns FD `(hp, hc)` arrays.
+- `LALWaveformModel.get_td_waveform()` and `get_td_polarizations()` return TD
+  `(hp, hc)` arrays.
+- `LALWaveformModel.get_fd_waveform()` and `get_fd_polarizations()` return FD
+  `(hp, hc)` arrays.
 
 For EOB-backed models, polarization support is incomplete/indirect:
 
@@ -129,46 +169,9 @@ For EOB-backed models, polarization support is incomplete/indirect:
   generated EOB modes into plus/cross polarizations.
 - There is no EOB `get_fd_waveform()` implementation.
 
-### Can it generate TD and FD polarizations?
+## Remaining suggested improvements
 
-For LAL-backed models: yes.
-
-For EOB-backed models: TD polarizations are only partial/indirect, and FD
-polarizations are not currently implemented.
-
-## Suggested improvements
-
-### 1. Make the domain model explicit
-
-The code currently has both `get_approximant_type_auto()` and a hard-coded
-`get_approximant_type()` list. The hard-coded version is used by the mode-generation
-methods and defaults unknown approximants to `td`.
-
-Recommended change:
-
-- make domain detection explicit and centralized;
-- prefer PyCBC/LAL approximant registries when possible;
-- fail loudly for unknown approximants instead of silently defaulting to TD;
-- store the chosen domain as `self.domain` or derive it from a small registry.
-
-### 2. Separate four output concepts cleanly
-
-A clean public API would expose exactly these methods with consistent return types:
-
-```python
-get_td_modes(...)
-get_fd_modes(...)
-get_td_polarizations(...)
-get_fd_polarizations(...)
-project_td_polarizations(...)
-project_fd_polarizations(...)
-```
-
-The present names are close, but the behavior is uneven across backends. In particular,
-`EOBWaveformModel.get_td_waveform()` does not currently use the internally generated EOB
-modes.
-
-### 3. Convert EOB modes to polarizations directly
+### 1. Convert EOB modes to polarizations directly
 
 For the EOB backend, implement a direct route:
 
@@ -179,7 +182,7 @@ td_modes -> h_plus(t), h_cross(t)
 using the existing `ModesArray` machinery. This would make EOB behavior parallel to the
 LAL backend and avoid delegating `EOBWaveformModel.get_td_waveform()` to PyCBC.
 
-### 4. Add FD projection support
+### 2. Add FD projection support
 
 The base projection method is TD-only. A useful extension would be:
 
@@ -190,7 +193,7 @@ project_fd_polarizations(hp_f, hc_f, extrinsic_parameters, detector_string)
 using frequency-domain antenna factors when the sky location and polarization angle are
 constant over the segment, or explicitly documenting the assumptions.
 
-### 5. Normalize return types
+### 3. Normalize return types
 
 At present, low-level LAL calls return raw NumPy arrays, while mode-generation routes
 return `ModesArray`. It would be useful to define and document return-type conventions,
@@ -201,7 +204,7 @@ for example:
 - optionally PyCBC `TimeSeries` / `FrequencySeries` wrappers for direct data-analysis
   use.
 
-### 6. Improve parameter validation
+### 4. Improve parameter validation
 
 The base class directly sets every key in `parameters_dict` as an attribute. This is
 convenient, but fragile.
@@ -213,23 +216,7 @@ Recommended additions:
   `f_ref`, `distance`, and angular parameters;
 - validation of mass naming (`mass1`/`mass2` vs `mass_1`/`mass_2`).
 
-### 7. Avoid mutable default arguments
-
-Several constructors use default dictionaries such as `parameters_dict={}` and
-`deviation_dict={}`. These should be replaced with `None` defaults and initialized
-inside the function body.
-
-Recommended pattern:
-
-```python
-def __init__(self, parameters_dict=None, deviation_dict=None):
-    if parameters_dict is None:
-        parameters_dict = {}
-    if deviation_dict is None:
-        deviation_dict = {}
-```
-
-### 8. Add smoke tests for the capability matrix
+### 5. Add smoke tests for the capability matrix
 
 Add small tests that verify:
 
@@ -237,12 +224,13 @@ Add small tests that verify:
 - LAL FD polarizations are generated for a lightweight FD approximant;
 - LAL TD modes return a populated `ModesArray`;
 - LAL FD modes return a populated `ModesArray`;
+- LAL FD modes returned as TD modes return a populated TD `ModesArray`;
 - EOB TD modes return a populated `ModesArray` when pySEOBNR is installed;
 - TD projection returns an array with the expected length.
 
 The EOB tests should be optional/skipped when `pyseobnr` is unavailable.
 
-### 9. Document backend dependencies
+### 6. Document backend dependencies
 
 The model layer depends on optional heavy packages:
 
