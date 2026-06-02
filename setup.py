@@ -34,7 +34,7 @@ setuptools.setup(
     description="Functions for handling waveform and numerical relativity data",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://gitlab.com/vaishakp/waveformtools",
+    url="https://github.com/vaishakp/waveformtools",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
