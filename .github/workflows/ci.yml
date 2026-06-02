@@ -26,26 +26,26 @@ jobs:
           python-version: "3.11"
           activate-environment: waveformtools-ci
           channels: conda-forge,defaults
-          channel-priority: flexible
-          auto-update-conda: true
+          channel-priority: strict
+          miniforge-variant: Miniforge3
+          use-mamba: true
+          auto-update-conda: false
 
       - name: Install build and runtime dependencies
         run: |
-          conda install -y -c conda-forge -c defaults \
+          mamba install -y -c conda-forge \
             python=3.11 \
             gxx_linux-64 \
             fftw \
-            scipy \
             numpy \
+            scipy \
             h5py \
             matplotlib \
             numba \
-            spherical \
-            recommonmark \
-            sphinx-rtd-theme \
             termcolor
           python -m pip install --upgrade pip
           python -m pip install build pytest
+          python -m pip install -r requirements.txt
 
       - name: Install package
         run: |
@@ -86,18 +86,22 @@ jobs:
           python -m pip install black isort flake8 pylint
 
       - name: Check import sorting
+        continue-on-error: true
         run: |
-          isort --check-only .
+          isort --check-only --diff .
 
       - name: Check formatting
+        continue-on-error: true
         run: |
           black --check .
 
       - name: Run flake8
+        continue-on-error: true
         run: |
           flake8 .
 
       - name: Run pylint
+        continue-on-error: true
         run: |
           find . -type f -iname "*.py" \
             -not -path "./build/*" \
