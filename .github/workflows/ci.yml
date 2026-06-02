@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: "3.11"
+          activate-environment: waveformtools-ci
+          channels: conda-forge,defaults
+          channel-priority: flexible
+          auto-update-conda: true
+
+      - name: Install build and runtime dependencies
+        run: |
+          conda install -y -c conda-forge -c defaults \
+            python=3.11 \
+            gxx_linux-64 \
+            fftw \
+            scipy \
+            numpy \
+            h5py \
+            matplotlib \
+            numba \
+            spherical \
+            recommonmark \
+            sphinx-rtd-theme \
+            termcolor
+          python -m pip install --upgrade pip
+          python -m pip install build pytest
+
+      - name: Install package
+        run: |
+          python -m pip install .
+
+      - name: Build source and wheel distributions
+        run: |
+          python -m build
+
+      - name: Run tests
+        run: |
+          pytest -vv --junitxml=report.xml
+
+      - name: Upload pytest report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: report.xml
+
+  lint:
+    name: Lint checks
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install lint tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install black isort flake8 pylint
+
+      - name: Check import sorting
+        run: |
+          isort --check-only .
+
+      - name: Check formatting
+        run: |
+          black --check .
+
+      - name: Run flake8
+        run: |
+          flake8 .
+
+      - name: Run pylint
+        run: |
+          find . -type f -iname "*.py" \
+            -not -path "./build/*" \
+            -not -path "./dist/*" \
+            -print0 | xargs -0 pylint
