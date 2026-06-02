@@ -46,10 +46,8 @@ files = ["requirements.txt"]
 opt = ["optional-requirements.txt"]
 
 [project.urls]
-"Homepage" = "https://gitlab.com/vaishakp/waveformtools"
-"Bug Tracker" = "https://gitlab.com/vaishakp/waveformtools/issues"
+"Homepage" = "https://github.com/vaishakp/waveformtools"
+"Bug Tracker" = "https://github.com/vaishakp/waveformtools/issues"
 
 [tool.hatch.metadata]
 allow-direct-references = true
-
-
