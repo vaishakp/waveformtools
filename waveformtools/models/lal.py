@@ -8,6 +8,7 @@ from lal import MSUN_SI, MTSUN_SI, PC_SI, CreateDict, G_SI, C_SI
 from pycbc.waveform import td_approximants, fd_approximants
 from waveformtools.waveformtools import load_lal_modes_to_modes_array, get_starting_angular_frequency, message
 from waveformtools.models.eob import EOBWaveformModel
+from waveformtools.fd_to_td import fd_modes_to_td_modes, prepare_physical_td_window
 from scipy.interpolate import InterpolatedUnivariateSpline
 
 
@@ -92,6 +93,7 @@ class LALWaveformModel(WaveformModel):
             "td_modes": True,
             "fd_modes": True,
             "fd_modes_as_td": True,
+            "fd_modes_as_td_physical_window": True,
             "td_polarizations": True,
             "fd_polarizations": True,
             "td_projection": True,
@@ -336,22 +338,78 @@ class LALWaveformModel(WaveformModel):
         wfm_fd = self._load_lal_modes(waveform_modes_list, domain='fd')
         return wfm_fd
 
-    def get_fd_waveform_modes_as_td(self, dimensionless=True, **parameters_dict):
+    def get_fd_waveform_modes_as_td(self, dimensionless=True, undo_warp=True, **parameters_dict):
         """Generate FD modes and return them in the current TD convention.
 
         This is the explicit version of the existing FD-approximant path in
         ``get_td_waveform_modes``: generate modes with
         ``SimInspiralChooseFDModes``, load them as an FD ``ModesArray``, convert
-        to the time basis with ``ModesArray.to_time_basis()``, and optionally
-        non-dimensionalize the resulting TD modes.
+        to the time basis, and optionally non-dimensionalize the resulting TD
+        modes.
+
+        Parameters
+        ----------
+        undo_warp : bool, optional
+            Preserve the historical ``ModesArray.to_time_basis()`` behavior by
+            applying ``ModesArray.undo_warp()`` after the inverse FFT. Set this
+            to ``False`` when you want the raw circular FFT buffer and will
+            perform explicit physical windowing with
+            ``get_fd_waveform_modes_as_td_physical_window``.
         """
 
         self.update_parameters(parameters_dict)
         wfm_fd = self.get_fd_waveform_modes(dimensionless=False)
-        wfm_td = wfm_fd.to_time_basis()
+        wfm_td = fd_modes_to_td_modes(wfm_fd, undo_warp=undo_warp)
 
         if dimensionless:
             wfm_td = self.non_dimensionalize_td_waveform_modes(wfm_td, **self.parameters_dict)
+
+        return wfm_td
+
+    def get_fd_waveform_modes_as_td_physical_window(
+        self,
+        dimensionless=True,
+        t_min=None,
+        t_max=None,
+        peak_target_frac=0.5,
+        taper_width=None,
+        taper_frac=None,
+        taper_sides='both',
+        set_peak_time_to_zero=True,
+        **parameters_dict,
+    ):
+        """Generate FD modes and return a centered physical TD window.
+
+        This path is intended for analyses, such as balance-law integrals, where
+        wrapped circular-FFT content should not be interpreted as a physical
+        post-merger tail. It differs from the legacy path by inverse-FFTing the
+        FD modes without the heuristic ``undo_warp`` roll, applying one common
+        shift to all modes so the total-intensity peak is at the requested target
+        index, assigning a fresh time axis, optionally cropping, and optionally
+        tapering the crop edges.
+
+        If ``dimensionless=True`` then ``t_min``, ``t_max``, and ``taper_width``
+        are interpreted in geometric units ``t/M``. If ``dimensionless=False``
+        they are interpreted in seconds.
+        """
+
+        self.update_parameters(parameters_dict)
+        wfm_fd = self.get_fd_waveform_modes(dimensionless=False)
+        wfm_td = fd_modes_to_td_modes(wfm_fd, undo_warp=False)
+
+        if dimensionless:
+            wfm_td = self.non_dimensionalize_td_waveform_modes(wfm_td, **self.parameters_dict)
+
+        wfm_td = prepare_physical_td_window(
+            wfm_td,
+            t_min=t_min,
+            t_max=t_max,
+            peak_target_frac=peak_target_frac,
+            taper_width=taper_width,
+            taper_frac=taper_frac,
+            taper_sides=taper_sides,
+            set_peak_time_to_zero=set_peak_time_to_zero,
+        )
 
         return wfm_td
 
@@ -365,6 +423,9 @@ class LALWaveformModel(WaveformModel):
 
     def get_fd_modes_as_td(self, **parameters_dict):
         return self.get_fd_waveform_modes_as_td(**parameters_dict)
+
+    def get_fd_modes_as_td_physical_window(self, **parameters_dict):
+        return self.get_fd_waveform_modes_as_td_physical_window(**parameters_dict)
 
     def get_td_polarizations(self, **parameters_dict):
         return self.get_td_waveform(**parameters_dict)
