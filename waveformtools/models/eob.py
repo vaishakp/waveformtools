@@ -6,7 +6,7 @@ from pycbc.waveform import get_td_waveform as pycbc_get_td_waveform
 
 class EOBWaveformModel(WaveformModel):
         
-    def __init__(self, parameters_dict, deviation_dict={}, *args, **kwargs):
+    def __init__(self, parameters_dict=None, deviation_dict=None, *args, **kwargs):
         ''' The deviation dict is to be passes as a dict of dicts, following 
         https://waveforms.docs.ligo.org/software/pyseobnr/source/notebooks/pseob_example.html
 
@@ -14,6 +14,16 @@ class EOBWaveformModel(WaveformModel):
         each a dict with fractional deciations in specific modes.
 
         '''
+        if parameters_dict is None:
+            parameters_dict = {}
+        else:
+            parameters_dict = dict(parameters_dict)
+
+        if deviation_dict is None:
+            deviation_dict = {}
+        else:
+            deviation_dict = dict(deviation_dict)
+
         super().__init__(parameters_dict=parameters_dict, *args, **kwargs)
 
         self.chi_1 = np.array([self.parameters_dict['spin1x'], self.parameters_dict['spin1y'], self.parameters_dict['spin1z']])
@@ -25,6 +35,19 @@ class EOBWaveformModel(WaveformModel):
         self.delta_t_dimless = self.parameters_dict["delta_t"]/(self.Mtotal * self.MTSUN_SI)
         self.settings.update({"dt" : self.parameters_dict["delta_t"]})
         self.td_waveform_modes = None
+
+    def capabilities(self):
+        """Return the output capabilities advertised by this backend."""
+        return {
+            "td_modes": True,
+            "fd_modes": False,
+            "fd_modes_as_td": False,
+            "td_polarizations": "partial",
+            "fd_polarizations": False,
+            "td_projection": True,
+            "fd_projection": False,
+            "nr_hdf5": False,
+        }
 
     def compute_model(self, L=28, **parameters_dict):
         
@@ -59,6 +82,9 @@ class EOBWaveformModel(WaveformModel):
             wfm_td = self.dimensionalize_td_waveform_modes(wfm_td, self.parameters_dict)
             
         return wfm_td
+
+    def get_td_modes(self, **parameters_dict):
+        return self.get_td_waveform_modes(**parameters_dict)
     
     def get_td_waveform(self, **kwargs):
 
