@@ -1,13 +1,19 @@
 """Alignment policies for mode-space waveform comparisons.
 
 The comparison core uses this module to make all alignment choices explicit.
+The default behavior is deliberately useful for unequal-length waveforms:
+
+1. align the two time axes by the peak of the (2,2) mode,
+2. require compatible sampling rates,
+3. crop/truncate both waveforms to their common overlapping interval.
+
 The first implemented subset supports:
 
 - no time alignment,
 - peak-of-(2,2) alignment,
 - peak-of-total-mode-power alignment,
 - strict common-grid comparisons,
-- crop-to-overlap comparisons,
+- crop/truncate-to-overlap comparisons,
 - resampling the candidate waveform to the reference grid,
 - no phase alignment,
 - global complex phase maximization,
@@ -49,6 +55,10 @@ _ALLOWED_RESAMPLE_METHODS = {"linear", "cubic"}
 class AlignmentSpec:
     """User-facing alignment choices for a mode comparison.
 
+    Defaults are chosen for the common case where two generated waveforms have
+    the same sampling rate but different start/end times. The comparison aligns
+    peaks and crops both waveforms to their common post-alignment interval.
+
     Parameters
     ----------
     time_alignment:
@@ -70,8 +80,8 @@ class AlignmentSpec:
         Number of grid points used by the initial orbital-phase search.
     """
 
-    time_alignment: TimeAlignment = "none"
-    time_domain_policy: TimeDomainPolicy = "error"
+    time_alignment: TimeAlignment = "peak_22"
+    time_domain_policy: TimeDomainPolicy = "crop_to_overlap"
     phase_alignment: PhaseAlignment = "global_complex"
     resample_method: ResampleMethod = "linear"
     candidate_time_shift: float = 0.0
@@ -200,30 +210,41 @@ def prepare_mode_data(
         overlap = overlap_interval(time_a, time_b)
         if overlap is None:
             raise ValueError("No overlapping time interval after time alignment.")
+
         if alignment.time_domain_policy == "crop_to_overlap":
             _require_compatible_sampling(dt_a, dt_b, alignment)
-        mask = (time_a >= overlap[0] - alignment.time_axis_atol) & (
-            time_a <= overlap[1] + alignment.time_axis_atol
-        )
-        reference_grid = time_a[mask]
-        if len(reference_grid) < alignment.minimum_overlap_samples:
-            raise ValueError(
-                "Insufficient overlap after alignment: "
-                f"{len(reference_grid)} samples < {alignment.minimum_overlap_samples}."
-            )
-        arrays_a = {
-            mode: np.asarray(modes_a.mode(*mode), dtype=np.complex128)[mask]
-            for mode in selected_modes
-        }
-        arrays_b = {
-            mode: interpolate_complex(
+            reference_grid, arrays_a, arrays_b = _crop_to_common_overlap(
+                modes_a,
+                modes_b,
+                time_a,
                 time_b,
-                np.asarray(modes_b.mode(*mode), dtype=np.complex128),
-                reference_grid,
-                method=alignment.resample_method,
+                selected_modes,
+                overlap,
+                alignment,
             )
-            for mode in selected_modes
-        }
+        else:
+            mask = (time_a >= overlap[0] - alignment.time_axis_atol) & (
+                time_a <= overlap[1] + alignment.time_axis_atol
+            )
+            reference_grid = time_a[mask]
+            if len(reference_grid) < alignment.minimum_overlap_samples:
+                raise ValueError(
+                    "Insufficient overlap after alignment: "
+                    f"{len(reference_grid)} samples < {alignment.minimum_overlap_samples}."
+                )
+            arrays_a = {
+                mode: np.asarray(modes_a.mode(*mode), dtype=np.complex128)[mask]
+                for mode in selected_modes
+            }
+            arrays_b = {
+                mode: interpolate_complex(
+                    time_b,
+                    np.asarray(modes_b.mode(*mode), dtype=np.complex128),
+                    reference_grid,
+                    method=alignment.resample_method,
+                )
+                for mode in selected_modes
+            }
 
     diagnostics = TimeAxisDiagnostics(
         dt_a=dt_a,
@@ -316,6 +337,51 @@ def interpolate_complex(
         return real + 1j * imag
 
     raise ValueError(f"Unsupported resampling method: {method!r}")
+
+
+def _crop_to_common_overlap(
+    modes_a: Any,
+    modes_b: Any,
+    time_a: np.ndarray,
+    time_b: np.ndarray,
+    selected_modes: Sequence[tuple[int, int]],
+    overlap: tuple[float, float],
+    alignment: AlignmentSpec,
+) -> tuple[np.ndarray, dict[tuple[int, int], np.ndarray], dict[tuple[int, int], np.ndarray]]:
+    """Crop both waveforms to the common overlap without interpolation."""
+
+    mask_a = (time_a >= overlap[0] - alignment.time_axis_atol) & (
+        time_a <= overlap[1] + alignment.time_axis_atol
+    )
+    mask_b = (time_b >= overlap[0] - alignment.time_axis_atol) & (
+        time_b <= overlap[1] + alignment.time_axis_atol
+    )
+    grid_a = time_a[mask_a]
+    grid_b = time_b[mask_b]
+    n_samples = min(len(grid_a), len(grid_b))
+    if n_samples < alignment.minimum_overlap_samples:
+        raise ValueError(
+            "Insufficient overlap after alignment: "
+            f"{n_samples} samples < {alignment.minimum_overlap_samples}."
+        )
+
+    grid_a = grid_a[:n_samples]
+    grid_b = grid_b[:n_samples]
+    if not np.allclose(grid_a, grid_b, rtol=alignment.time_axis_rtol, atol=alignment.time_axis_atol):
+        raise ValueError(
+            "time_domain_policy='crop_to_overlap' requires aligned samples after peak/time alignment. "
+            "Use time_domain_policy='resample_to_reference' if the grids have a sub-sample offset."
+        )
+
+    arrays_a = {
+        mode: np.asarray(modes_a.mode(*mode), dtype=np.complex128)[mask_a][:n_samples]
+        for mode in selected_modes
+    }
+    arrays_b = {
+        mode: np.asarray(modes_b.mode(*mode), dtype=np.complex128)[mask_b][:n_samples]
+        for mode in selected_modes
+    }
+    return grid_a, arrays_a, arrays_b
 
 
 def _strict_common_grid(time_a: np.ndarray, time_b: np.ndarray, alignment: AlignmentSpec) -> np.ndarray:
