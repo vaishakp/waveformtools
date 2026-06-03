@@ -72,7 +72,8 @@ def test_identity_mode_match_is_one():
     assert result.match == pytest.approx(1.0, abs=1e-12)
     assert result.mismatch == pytest.approx(0.0, abs=1e-12)
     assert result.diagnostics["n_modes"] >= 1
-    assert result.diagnostics["alignment"]["time_domain_policy"] == "error"
+    assert result.diagnostics["alignment"]["time_alignment"] == "peak_22"
+    assert result.diagnostics["alignment"]["time_domain_policy"] == "crop_to_overlap"
 
 
 def test_phase_maximized_mode_match_recovers_global_phase():
@@ -101,6 +102,21 @@ def test_orbital_phase_alignment_uses_single_m_dependent_phase():
     assert fixed_phase.match < 1.0
     assert aligned.match > 0.999
     assert aligned.best_parameters["orbital_phase"] is not None
+
+
+def test_default_alignment_crops_unequal_lengths_after_peak_alignment():
+    dt = 0.1
+    reference_time = np.arange(-10.0, 10.0 + 0.5 * dt, dt)
+    candidate_time = np.arange(-7.0, 6.0 + 0.5 * dt, dt)
+    reference = make_test_modes(time_axis=reference_time, time_shift=0.0)
+    candidate = make_test_modes(time_axis=candidate_time, time_shift=0.0)
+
+    result = mode_match(reference, candidate)
+
+    assert result.match == pytest.approx(1.0, abs=1e-12)
+    assert result.diagnostics["time_axis"]["n_samples"] == len(candidate_time)
+    assert result.diagnostics["time_axis"]["policy"] == "crop_to_overlap"
+    assert result.diagnostics["alignment"]["time_alignment"] == "peak_22"
 
 
 def test_strict_time_policy_rejects_different_lengths():
@@ -142,6 +158,7 @@ def test_peak_total_power_alignment_handles_shifted_peak():
     unaligned = mode_match(
         reference,
         shifted,
+        time_alignment="none",
         time_domain_policy="resample_to_reference",
         phase_alignment="global_complex",
     )
