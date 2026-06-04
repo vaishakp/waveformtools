@@ -3,6 +3,54 @@ import numpy as np
 from waveformtools.modes_array import ModesArray
 
 
+def lal_fd_modes_to_td_modes(wfm_fd, undo_warp=True):
+    """Convert LAL two-sided FD modes to TD modes.
+
+    LAL FD modes are stored on an increasing two-sided frequency axis.  They
+    are not in the shifted/conjugated/scaled convention expected by
+    ``spectools.compute_ifft``.  The historical LAL loader stores FD data as
+    ``conj(lal_data) / N``; this function first recovers the raw LAL samples
+    and then applies the direct continuous inverse-sum normalization
+    ``h(t) ~= df * sum_f H(f) exp(2 pi i f t)``.  The final conjugation matches
+    waveformtools' TD mode convention, which also conjugates LAL TD modes at
+    load time.
+    """
+
+    frequency_axis = np.asarray(wfm_fd.frequency_axis, dtype=float)
+    if frequency_axis.ndim != 1 or frequency_axis.size != wfm_fd.data_len:
+        raise ValueError("LAL FD modes require a 1D frequency axis.")
+    if wfm_fd.data_len < 2:
+        raise ValueError("Need at least two FD samples to transform to TD.")
+    delta_f = float(wfm_fd.delta_f)
+    if not np.isfinite(delta_f) or delta_f <= 0.0:
+        raise ValueError("LAL FD modes require a positive finite delta_f.")
+
+    wfm_td = ModesArray(
+        label=f"{wfm_fd.label} -> time_domain",
+        ell_max=wfm_fd.ell_max,
+        data_len=wfm_fd.data_len,
+        modes_list=wfm_fd.modes_list,
+        spin_weight=wfm_fd.spin_weight,
+        time_axis=np.arange(wfm_fd.data_len, dtype=float)
+        / (wfm_fd.data_len * delta_f),
+    )
+    wfm_td.create_modes_array()
+
+    for ell, emm_list in wfm_fd.modes_list:
+        for emm in emm_list:
+            lal_fd_data = _recover_lal_fd_samples(wfm_fd.mode(ell, emm))
+            time_data = np.conjugate(
+                wfm_fd.data_len
+                * delta_f
+                * np.fft.ifft(np.fft.ifftshift(lal_fd_data))
+            )
+            wfm_td.set_mode_data(ell=ell, emm=emm, data=time_data)
+
+    if undo_warp:
+        wfm_td.undo_warp()
+    return wfm_td
+
+
 def fd_modes_to_td_modes(wfm_fd, undo_warp=True):
     """Inverse-FFT an FD ModesArray mode by mode."""
     from spectools.fourier.transforms import compute_ifft
@@ -19,7 +67,10 @@ def fd_modes_to_td_modes(wfm_fd, undo_warp=True):
     time_axis = None
     for ell, emm_list in wfm_fd.modes_list:
         for emm in emm_list:
-            time_axis, time_data = compute_ifft(wfm_fd.mode(ell, emm), wfm_fd.delta_f)
+            time_axis, time_data = compute_ifft(
+                wfm_fd.mode(ell, emm),
+                wfm_fd.delta_f,
+            )
             wfm_td.set_mode_data(ell=ell, emm=emm, data=time_data)
 
     wfm_td._time_axis = time_axis
@@ -28,7 +79,18 @@ def fd_modes_to_td_modes(wfm_fd, undo_warp=True):
     return wfm_td
 
 
-def recenter_modes_at_peak(wfm_td, peak_target_frac=0.5, set_peak_time_to_zero=True):
+def _recover_lal_fd_samples(stored_mode):
+    """Undo waveformtools' historical LAL FD loader convention."""
+
+    stored = np.asarray(stored_mode, dtype=np.complex128)
+    return np.conjugate(stored) * stored.size
+
+
+def recenter_modes_at_peak(
+    wfm_td,
+    peak_target_frac=0.5,
+    set_peak_time_to_zero=True,
+):
     """Apply one common circular shift so the total-intensity peak is fixed."""
     if not (0.0 <= peak_target_frac <= 1.0):
         raise ValueError("peak_target_frac must be in [0, 1]")
@@ -38,14 +100,18 @@ def recenter_modes_at_peak(wfm_td, peak_target_frac=0.5, set_peak_time_to_zero=T
     if data_len < 2:
         raise ValueError("Need at least two time samples to recenter modes")
 
-    intensity = np.sum(np.abs(out.modes_data)**2, axis=0)
+    intensity = np.sum(np.abs(out.modes_data) ** 2, axis=0)
     i_peak = int(np.argmax(intensity))
     i_target = int(round(peak_target_frac * (data_len - 1)))
     roll_arg = i_target - i_peak
 
     for ell, emm_list in out.modes_list:
         for emm in emm_list:
-            out.set_mode_data(ell=ell, emm=emm, data=np.roll(out.mode(ell, emm), roll_arg))
+            out.set_mode_data(
+                ell=ell,
+                emm=emm,
+                data=np.roll(out.mode(ell, emm), roll_arg),
+            )
 
     if set_peak_time_to_zero:
         dt = float(np.median(np.diff(out.time_axis)))
@@ -77,7 +143,8 @@ def crop_time_window(wfm_td, t_min=None, t_max=None):
 def apply_time_taper(wfm_td, taper_width=None, taper_frac=None, sides="both"):
     """Apply a raised-cosine taper to all modes in a TD ModesArray."""
     if sides not in {"both", "left", "right", "none"}:
-        raise ValueError("sides must be one of 'both', 'left', 'right', 'none'")
+        message = "sides must be one of 'both', 'left', 'right', 'none'"
+        raise ValueError(message)
     if sides == "none":
         return wfm_td.deepcopy()
 
@@ -106,7 +173,11 @@ def apply_time_taper(wfm_td, taper_width=None, taper_frac=None, sides="both"):
 
     for ell, emm_list in out.modes_list:
         for emm in emm_list:
-            out.set_mode_data(ell=ell, emm=emm, data=out.mode(ell, emm) * window)
+            out.set_mode_data(
+                ell=ell,
+                emm=emm,
+                data=out.mode(ell, emm) * window,
+            )
     return out
 
 

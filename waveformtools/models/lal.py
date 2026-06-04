@@ -8,7 +8,10 @@ from lal import MSUN_SI, MTSUN_SI, PC_SI, CreateDict, G_SI, C_SI
 from pycbc.waveform import td_approximants, fd_approximants
 from waveformtools.waveformtools import load_lal_modes_to_modes_array, get_starting_angular_frequency, message
 from waveformtools.models.eob import EOBWaveformModel
-from waveformtools.fd_to_td import fd_modes_to_td_modes, prepare_physical_td_window
+from waveformtools.fd_to_td import (
+    lal_fd_modes_to_td_modes,
+    prepare_physical_td_window,
+)
 from scipy.interpolate import InterpolatedUnivariateSpline
 
 
@@ -359,7 +362,7 @@ class LALWaveformModel(WaveformModel):
 
         self.update_parameters(parameters_dict)
         wfm_fd = self.get_fd_waveform_modes(dimensionless=False)
-        wfm_td = fd_modes_to_td_modes(wfm_fd, undo_warp=undo_warp)
+        wfm_td = lal_fd_modes_to_td_modes(wfm_fd, undo_warp=undo_warp)
 
         if dimensionless:
             wfm_td = self.non_dimensionalize_td_waveform_modes(wfm_td, **self.parameters_dict)
@@ -395,7 +398,7 @@ class LALWaveformModel(WaveformModel):
 
         self.update_parameters(parameters_dict)
         wfm_fd = self.get_fd_waveform_modes(dimensionless=False)
-        wfm_td = fd_modes_to_td_modes(wfm_fd, undo_warp=False)
+        wfm_td = lal_fd_modes_to_td_modes(wfm_fd, undo_warp=False)
 
         if dimensionless:
             wfm_td = self.non_dimensionalize_td_waveform_modes(wfm_td, **self.parameters_dict)
