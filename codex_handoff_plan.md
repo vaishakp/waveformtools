@@ -153,19 +153,13 @@ best_parameters = {
 - Updated tests accordingly, including a collision regression for a generator
   parameter named `candidate_time_shift`.
 
-## Remaining Batches
-
 ### Batch 6: import hygiene
 
-Issue:
+Fixed:
 
 - `waveformtools/__init__.py` prints `package_directory` on import.
-
-Plan:
-
 - Remove import-time `print(package_directory)`.
-- Consider converting `read_git_version()` fallback print to a warning or quiet
-  fallback, but keep that as a separate tiny edit if possible.
+- Added `test/test_import_hygiene.py`.
 
 ## Later Work After Audit Batches
 
