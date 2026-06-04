@@ -73,6 +73,13 @@ def test_bms_frame_preprocessing_returns_copies_and_report():
     np.testing.assert_allclose(target_pre.modes_data, target.modes_data)
     np.testing.assert_allclose(candidate_pre.modes_data, candidate.modes_data)
     assert report.compatibility["compatible"]
+    assert report.charge_diagnostics["available"]
+    assert report.charge_diagnostics["comparison"]["supermomentum_l0_energy"][
+        "available"
+    ]
+    assert report.charge_diagnostics["comparison"][
+        "supermomentum_l1_linear_momentum"
+    ]["available"]
     assert not report.transforms["applied"]
     assert not report.assumptions["superrest_frame_fixed"]
     assert report.target_diagnostics is not None
@@ -93,6 +100,7 @@ def test_bms_frame_preprocessing_can_skip_diagnostics():
     assert report.candidate_diagnostics is None
     assert report.compatibility["compatible"]
     assert not report.compatibility["diagnostics_available"]
+    assert not report.charge_diagnostics["available"]
 
 
 def test_bms_frame_preprocessing_flags_incompatible_energy():
@@ -152,6 +160,10 @@ def test_bms_frame_preprocessing_report_is_json_friendly():
     data = report.to_dict()
 
     assert data["compatibility"]["compatible"]
+    assert data["charge_diagnostics"]["available"]
+    assert data["charge_diagnostics"]["comparison"]["angular_momentum"][
+        "available"
+    ]
     assert data["transforms"]["rotation"] == "none"
     assert "pn_eob_phenom_frame_comment" in data["assumptions"]
 
