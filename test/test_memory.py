@@ -8,13 +8,21 @@ import pytest
 from waveformtools.memory import (
     DisplacementMemoryConfig,
     compute_displacement_memory_from_news,
+    compute_displacement_memory_source_from_news,
 )
 from waveformtools.modes_array import ModesArray
 
 
 def make_memory_test_modes(spin_weight: int = -2) -> ModesArray:
+    from spectools.spherical.grids import GLGrid
+
     time_axis = np.linspace(-4.0, 4.0, 64)
-    modes = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=spin_weight)
+    modes = ModesArray(
+        ell_max=2,
+        time_axis=time_axis,
+        spin_weight=spin_weight,
+        Grid=GLGrid(L=4),
+    )
     modes.create_modes_array(ell_max=2, data_len=len(time_axis))
     signal = np.exp(-0.1 * time_axis**2) * np.exp(0.2j * time_axis)
     modes.set_mode_data(ell=2, emm=2, data=signal)
@@ -31,7 +39,9 @@ def test_displacement_memory_config_validation():
         DisplacementMemoryConfig(ell_min=1)
 
     with pytest.raises(ValueError, match="integration_constant"):
-        DisplacementMemoryConfig(integration_constant="free")  # type: ignore[arg-type]
+        DisplacementMemoryConfig(
+            integration_constant="free"  # type: ignore[arg-type]
+        )
 
 
 def test_compute_displacement_memory_validates_and_marks_kernel_boundary():
@@ -39,6 +49,41 @@ def test_compute_displacement_memory_validates_and_marks_kernel_boundary():
 
     with pytest.raises(NotImplementedError, match="spectral kernel"):
         modes.compute_displacement_memory()
+
+
+def test_compute_displacement_memory_source_projects_news_intensity():
+    news_modes = make_memory_test_modes()
+
+    source_modes = compute_displacement_memory_source_from_news(news_modes)
+
+    assert source_modes.spin_weight == 0
+    assert np.allclose(source_modes.time_axis, news_modes.time_axis)
+    assert source_modes.modes_data.shape[-1] == news_modes.data_len
+    assert np.all(np.isfinite(source_modes.modes_data))
+    assert np.max(np.abs(source_modes.modes_data)) > 0.0
+    assert (
+        source_modes.displacement_memory_source_metadata["source"]
+        == "|news|^2/(16*pi)"
+    )
+
+
+def test_compute_displacement_memory_source_zero_news_gives_zero_modes():
+    news_modes = make_memory_test_modes()
+    news_modes._modes_data = np.zeros_like(news_modes.modes_data)
+
+    source_modes = compute_displacement_memory_source_from_news(news_modes)
+
+    assert np.allclose(source_modes.modes_data, 0.0)
+
+
+def test_modes_array_memory_source_uses_existing_news_derivative_path():
+    strain_modes = make_memory_test_modes()
+
+    source_modes = strain_modes.compute_displacement_memory_source()
+
+    assert source_modes.spin_weight == 0
+    assert np.allclose(source_modes.time_axis, strain_modes.time_axis)
+    assert np.max(np.abs(source_modes.modes_data)) > 0.0
 
 
 def test_compute_displacement_memory_rejects_non_strain_spin_weight():

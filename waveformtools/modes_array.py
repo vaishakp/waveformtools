@@ -2167,6 +2167,19 @@ class ModesArray:
             **overrides,
         )
 
+    def compute_displacement_memory_source(self, config=None, **overrides):
+        """Return scalar modes of the nonlinear memory source."""
+        from waveformtools.memory import compute_displacement_memory_source_from_news
+
+        news_modes = self.get_news_from_strain(
+            method=overrides.get("news_method", "spline")
+        )
+        return compute_displacement_memory_source_from_news(
+            news_modes,
+            config=config,
+            **overrides,
+        )
+
     def with_displacement_memory(self, memory_modes=None, config=None, **overrides):
         """Return a copy of this waveform with displacement memory added."""
         from waveformtools.memory import with_displacement_memory
