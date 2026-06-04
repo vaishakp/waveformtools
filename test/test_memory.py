@@ -166,7 +166,8 @@ def test_compute_displacement_memory_from_news_inverts_bar_eth2_source():
 
 
 def test_memory_kernel_matches_balance_law_eth2_conjugate_operator():
-    from qlmtools.spin_coefficient import eth_n_modes_from_modes
+    spin_coefficient = pytest.importorskip("qlmtools.spin_coefficient")
+    eth_n_modes_from_modes = spin_coefficient.eth_n_modes_from_modes
 
     source_modes = make_scalar_memory_source_modes()
 
