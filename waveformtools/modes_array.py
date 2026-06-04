@@ -111,9 +111,11 @@ class ModesArray:
         key_ex=None,
         spin_weight=-2,
         actions="empty",
-        areal_radii=[],
+        areal_radii=None,
         Grid=None,
     ):
+        if areal_radii is None:
+            areal_radii = []
         self.label = label
         self.data_dir = data_dir
         self.file_name = file_name
@@ -1992,10 +1994,12 @@ class ModesArray:
     def plot_strongest_modes(self, 
                              nmodes=3,
                              save_fig=False,
-                             xlim=[-1200, 100],
+                             xlim=None,
                              ylim="auto",
                              nstop=1,
                              plot22=False,):
+        if xlim is None:
+            xlim = [-1200, 100]
         
         from waveformtools.compare import plot_modes
 
