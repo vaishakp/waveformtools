@@ -14,9 +14,14 @@ from typing import Any, Callable, Sequence
 
 import numpy as np
 
-from waveformtools.comparison.alignment import AlignmentSpec, PreparedModeData, prepare_mode_data
+from waveformtools.comparison.alignment import (
+    AlignmentSpec,
+    PreparedModeData,
+    prepare_mode_data,
+)
 from waveformtools.comparison.metadata import get_comparison_metadata
 from waveformtools.comparison.results import ComparisonResult
+from waveformtools.comparison.rotation import RotationSpec, rotate_modes
 
 ModeSelector = Sequence[tuple[int, int]] | None
 
@@ -146,6 +151,7 @@ def mode_match(
     modes: ModeSelector = None,
     phase_maximize: bool | None = None,
     alignment: AlignmentSpec | dict[str, Any] | None = None,
+    rotation: RotationSpec | dict[str, Any] | None = None,
     time_alignment: str | None = None,
     time_domain_policy: str | None = None,
     phase_alignment: str | None = None,
@@ -187,19 +193,21 @@ def mode_match(
     )
 
     selected_modes = common_modes(modes_a, modes_b, ell_min=ell_min, ell_max=ell_max, modes=modes)
+    rotation_spec = RotationSpec.from_value(rotation)
+    comparison_modes_b = rotate_modes(modes_b, rotation_spec, modes=selected_modes)
 
     optimization = None
     n_evaluations = 1
     if alignment_spec.optimize_time_shift:
         alignment_spec, optimization = _optimize_time_shift(
             modes_a,
-            modes_b,
+            comparison_modes_b,
             selected_modes,
             alignment_spec,
         )
         n_evaluations = optimization["n_evaluations"]
 
-    evaluation = _evaluate_prepared_match(modes_a, modes_b, selected_modes, alignment_spec)
+    evaluation = _evaluate_prepared_match(modes_a, comparison_modes_b, selected_modes, alignment_spec)
     prepared = evaluation["prepared"]
     match_value = evaluation["match"]
     if np.isfinite(match_value):
@@ -218,6 +226,7 @@ def mode_match(
         "n_modes": len(selected_modes),
         "modes": selected_modes,
         "alignment": alignment_spec.to_dict(),
+        "rotation": rotation_spec.to_dict(),
         "time_axis": prepared.diagnostics.to_dict(),
     }
     if optimization is not None:
@@ -233,6 +242,7 @@ def mode_match(
             "time_alignment": alignment_spec.time_alignment,
             "time_domain_policy": alignment_spec.time_domain_policy,
             "candidate_time_shift": alignment_spec.candidate_time_shift,
+            "rotation": rotation_spec.to_dict(),
         },
         optimizer=_optimizer_name(alignment_spec),
         optimizer_status="ok",

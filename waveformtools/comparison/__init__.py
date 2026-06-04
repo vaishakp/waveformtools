@@ -8,7 +8,7 @@ Importing this package installs lightweight comparison methods on
 - ``match``
 - ``mismatch``
 - ``residue_distance``
-- ``fitting_factor`` placeholder reserved for the optimizer-backed follow-up
+- ``fitting_factor``
 """
 
 from waveformtools.comparison.alignment import (
@@ -48,6 +48,7 @@ from waveformtools.comparison.results import (
     ComparisonResult,
     FittingFactorResult,
 )
+from waveformtools.comparison.rotation import RotationSpec, rotate_modes
 
 install_modes_array_methods()
 
@@ -58,6 +59,7 @@ __all__ = [
     "FittingFactorConfig",
     "ModeComparisonConfig",
     "PreparedModeData",
+    "RotationSpec",
     "TimeAxisDiagnostics",
     "WaveformMetadata",
     "attach_comparison_metadata",
@@ -75,5 +77,6 @@ __all__ = [
     "prepare_mode_data",
     "reference_time",
     "residue_distance",
+    "rotate_modes",
     "sampling_interval",
 ]
