@@ -25,6 +25,8 @@ class RotationSpec:
     gamma: float = 0.0
     optimize_angle: bool = False
     angle_bounds: tuple[float, float] | None = None
+    optimize_parameters: tuple[str, ...] = ()
+    parameter_bounds: Mapping[str, tuple[float, float]] | None = None
 
     def __post_init__(self) -> None:
         if self.kind not in _ALLOWED_ROTATION_KINDS:
@@ -38,10 +40,36 @@ class RotationSpec:
         self.gamma = float(self.gamma)
         if self.optimize_angle and self.kind != "z_axis":
             raise ValueError("optimize_angle=True currently requires kind='z_axis'.")
+        self.optimize_parameters = tuple(str(name) for name in self.optimize_parameters)
+        if self.optimize_parameters and self.kind != "wigner":
+            raise ValueError("optimize_parameters currently requires kind='wigner'.")
+        allowed_parameters = {"alpha", "beta", "gamma"}
+        invalid_parameters = set(self.optimize_parameters) - allowed_parameters
+        if invalid_parameters:
+            raise ValueError(
+                "Unsupported rotation optimize_parameters entries "
+                f"{sorted(invalid_parameters)}; choose from {sorted(allowed_parameters)}."
+            )
         if self.angle_bounds is not None:
             lo, hi = self.angle_bounds
             if not lo < hi:
                 raise ValueError("angle_bounds must be an increasing (lower, upper) pair.")
+            self.angle_bounds = (float(lo), float(hi))
+        if self.parameter_bounds is not None:
+            bounds: dict[str, tuple[float, float]] = {}
+            for name, value in self.parameter_bounds.items():
+                if name not in allowed_parameters:
+                    raise ValueError(
+                        f"Unsupported rotation parameter_bounds entry {name!r}; "
+                        f"choose from {sorted(allowed_parameters)}."
+                    )
+                lo, hi = value
+                if not lo < hi:
+                    raise ValueError(
+                        f"Bounds for rotation parameter {name!r} must be increasing."
+                    )
+                bounds[str(name)] = (float(lo), float(hi))
+            self.parameter_bounds = bounds
 
     def to_dict(self) -> dict[str, Any]:
         """Return a plain dictionary representation."""

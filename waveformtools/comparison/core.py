@@ -206,6 +206,15 @@ def mode_match(
             rotation_spec,
         )
         rotation_evaluations = rotation_optimization["n_evaluations"]
+    elif rotation_spec.optimize_parameters:
+        rotation_spec, rotation_optimization = _optimize_wigner_rotation(
+            modes_a,
+            modes_b,
+            selected_modes,
+            alignment_spec,
+            rotation_spec,
+        )
+        rotation_evaluations = rotation_optimization["n_evaluations"]
 
     comparison_modes_b = rotate_modes(modes_b, rotation_spec, modes=selected_modes)
 
@@ -495,11 +504,112 @@ def _optimize_z_rotation(
     return best_rotation, diagnostics
 
 
+def _optimize_wigner_rotation(
+    modes_a: Any,
+    modes_b: Any,
+    selected_modes: Sequence[tuple[int, int]],
+    alignment: AlignmentSpec,
+    rotation: RotationSpec,
+) -> tuple[RotationSpec, dict[str, Any]]:
+    parameters = tuple(rotation.optimize_parameters)
+    bounds = _wigner_parameter_bounds(rotation, parameters)
+    initial_values = np.array(
+        [float(getattr(rotation, parameter)) for parameter in parameters],
+        dtype=float,
+    )
+    n_evaluations = 0
+
+    def objective(values: np.ndarray) -> float:
+        nonlocal n_evaluations
+        n_evaluations += 1
+        trial_kwargs = {
+            parameter: float(value)
+            for parameter, value in zip(parameters, values)
+        }
+        trial_rotation = replace(rotation, **trial_kwargs)
+        trial_modes_b = rotate_modes(modes_b, trial_rotation, modes=selected_modes)
+        try:
+            evaluation = _evaluate_prepared_match(
+                modes_a,
+                trial_modes_b,
+                selected_modes,
+                alignment,
+            )
+        except ValueError:
+            return np.inf
+        match_value = evaluation["match"]
+        if not np.isfinite(match_value):
+            return np.inf
+        return 1.0 - float(np.clip(match_value, -1.0, 1.0))
+
+    try:
+        from scipy.optimize import minimize
+    except Exception as exc:  # pragma: no cover - scipy is normally available
+        raise ImportError(
+            "rotation optimize_parameters requires scipy.optimize.minimize"
+        ) from exc
+
+    result = minimize(
+        objective,
+        initial_values,
+        bounds=[bounds[parameter] for parameter in parameters],
+        method="L-BFGS-B",
+    )
+    best_values = {
+        parameter: float(value)
+        for parameter, value in zip(parameters, result.x)
+    }
+    best_rotation = replace(rotation, **best_values)
+    diagnostics = {
+        "parameters": parameters,
+        "bounds": bounds,
+        "initial_values": {
+            parameter: float(getattr(rotation, parameter))
+            for parameter in parameters
+        },
+        "best_values": best_values,
+        "best_mismatch": float(result.fun),
+        "success": bool(result.success),
+        "message": str(result.message),
+        "n_evaluations": int(n_evaluations),
+        "phase_degeneracy_possible": _rotation_phase_degeneracy_possible(
+            alignment,
+            parameters,
+        ),
+    }
+    return best_rotation, diagnostics
+
+
 def _rotation_angle_bounds(rotation: RotationSpec) -> tuple[float, float]:
     if rotation.angle_bounds is not None:
         return tuple(float(item) for item in rotation.angle_bounds)
     center = float(rotation.angle)
     return center - np.pi, center + np.pi
+
+
+def _wigner_parameter_bounds(
+    rotation: RotationSpec,
+    parameters: Sequence[str],
+) -> dict[str, tuple[float, float]]:
+    user_bounds = rotation.parameter_bounds or {}
+    bounds: dict[str, tuple[float, float]] = {}
+    for parameter in parameters:
+        if parameter in user_bounds:
+            bounds[parameter] = tuple(float(item) for item in user_bounds[parameter])
+            continue
+        center = float(getattr(rotation, parameter))
+        bounds[parameter] = (center - np.pi, center + np.pi)
+    return bounds
+
+
+def _rotation_phase_degeneracy_possible(
+    alignment: AlignmentSpec,
+    parameters: Sequence[str],
+) -> bool:
+    return (
+        alignment.phase_alignment in {"orbital_phase", "orbital_phase_and_global"}
+        and bool({"alpha", "gamma"}.intersection(parameters))
+    )
 
 
 def _time_shift_bounds(modes_a: Any, modes_b: Any, alignment: AlignmentSpec) -> tuple[float, float]:
@@ -568,6 +678,8 @@ def _optimizer_name(alignment: AlignmentSpec, rotation: RotationSpec | None = No
     parts: list[str] = []
     if rotation is not None and rotation.optimize_angle:
         parts.append("bounded_z_rotation")
+    if rotation is not None and rotation.optimize_parameters:
+        parts.append("bounded_wigner_rotation")
     if alignment.optimize_time_shift:
         parts.append("bounded_time_shift")
     if phase_optimizer is not None:
