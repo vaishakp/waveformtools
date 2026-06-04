@@ -218,7 +218,7 @@ class ModesArray:
 
         obj2 = self.deepcopy() 
         if isinstance(obj, self.__class__):
-            obj2._modes_data = obj.modes_data - obj.modes_data
+            obj2._modes_data = obj.modes_data - self.modes_data
         else:
             obj2._modes_data = obj - self.modes_data
 

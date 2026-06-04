@@ -11,16 +11,28 @@ from typing import Any, Callable
 
 import numpy as np
 
-from waveformtools.comparison.core import mode_match, mode_mismatch, residue_distance
+from waveformtools.comparison.core import (
+    mode_match,
+    mode_mismatch,
+    residue_distance,
+)
+from waveformtools.comparison.fitting_factor import fitting_factor
 from waveformtools.comparison.metadata import (
     WaveformMetadata,
     attach_comparison_metadata,
     get_comparison_metadata,
 )
-from waveformtools.comparison.results import ComparisonResult, FittingFactorResult
+from waveformtools.comparison.results import (
+    ComparisonResult,
+    FittingFactorResult,
+)
 
 
-def modes_attach_metadata(self: Any, metadata: WaveformMetadata | dict[str, Any] | None = None, **kwargs: Any) -> Any:
+def modes_attach_metadata(
+    self: Any,
+    metadata: WaveformMetadata | dict[str, Any] | None = None,
+    **kwargs: Any,
+) -> Any:
     """Attach comparison metadata to this modes object and return ``self``."""
 
     return attach_comparison_metadata(self, metadata, **kwargs)
@@ -52,23 +64,17 @@ def modes_residue_distance(
 ) -> ComparisonResult:
     """Compare residual fields computed from two modes objects."""
 
-    return residue_distance(self, other, residue_function=residue_function, **kwargs)
-
-
-def modes_fitting_factor(self: Any, *args: Any, **kwargs: Any) -> FittingFactorResult:
-    """Placeholder for waveform-family fitting-factor optimization.
-
-    The object API is reserved in this first PR, but full intrinsic/extrinsic
-    optimization is intentionally deferred until the fixed-frame comparison,
-    metadata, and convention scaffolding have tests.
-    """
-
-    raise NotImplementedError(
-        "ModesArray.fitting_factor is reserved but not implemented in this "
-        "first comparison-core PR. Use ModesArray.match for fixed-frame mode "
-        "matches. The optimizer-backed fitting-factor implementation will be "
-        "added in the next comparison PR."
+    return residue_distance(
+        self, other, residue_function=residue_function, **kwargs
     )
+
+
+def modes_fitting_factor(
+    self: Any, *args: Any, **kwargs: Any
+) -> FittingFactorResult:
+    """Optimize a generator-backed fitting factor against this modes object."""
+
+    return fitting_factor(self, *args, **kwargs)
 
 
 def install_modes_array_methods() -> None:
@@ -77,7 +83,10 @@ def install_modes_array_methods() -> None:
     The operation is idempotent.  It is called from ``waveformtools.comparison``.
     """
 
+    # pylint: disable=import-outside-toplevel
     from waveformtools.modes_array import ModesArray
+
+    # pylint: enable=import-outside-toplevel
 
     methods = {
         "attach_metadata": modes_attach_metadata,
