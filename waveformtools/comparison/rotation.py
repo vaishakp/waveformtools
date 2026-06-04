@@ -18,6 +18,8 @@ class RotationSpec:
 
     kind: RotationKind = "none"
     angle: float = 0.0
+    optimize_angle: bool = False
+    angle_bounds: tuple[float, float] | None = None
 
     def __post_init__(self) -> None:
         if self.kind not in _ALLOWED_ROTATION_KINDS:
@@ -26,6 +28,12 @@ class RotationSpec:
                 f"choose one of {sorted(_ALLOWED_ROTATION_KINDS)}."
             )
         self.angle = float(self.angle)
+        if self.optimize_angle and self.kind != "z_axis":
+            raise ValueError("optimize_angle=True currently requires kind='z_axis'.")
+        if self.angle_bounds is not None:
+            lo, hi = self.angle_bounds
+            if not lo < hi:
+                raise ValueError("angle_bounds must be an increasing (lower, upper) pair.")
 
     def to_dict(self) -> dict[str, Any]:
         """Return a plain dictionary representation."""

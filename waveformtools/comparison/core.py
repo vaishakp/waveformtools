@@ -194,18 +194,32 @@ def mode_match(
 
     selected_modes = common_modes(modes_a, modes_b, ell_min=ell_min, ell_max=ell_max, modes=modes)
     rotation_spec = RotationSpec.from_value(rotation)
+
+    rotation_optimization = None
+    rotation_evaluations = 0
+    if rotation_spec.optimize_angle:
+        rotation_spec, rotation_optimization = _optimize_z_rotation(
+            modes_a,
+            modes_b,
+            selected_modes,
+            alignment_spec,
+            rotation_spec,
+        )
+        rotation_evaluations = rotation_optimization["n_evaluations"]
+
     comparison_modes_b = rotate_modes(modes_b, rotation_spec, modes=selected_modes)
 
-    optimization = None
+    time_shift_optimization = None
+    time_shift_evaluations = 0
     n_evaluations = 1
     if alignment_spec.optimize_time_shift:
-        alignment_spec, optimization = _optimize_time_shift(
+        alignment_spec, time_shift_optimization = _optimize_time_shift(
             modes_a,
             comparison_modes_b,
             selected_modes,
             alignment_spec,
         )
-        n_evaluations = optimization["n_evaluations"]
+        time_shift_evaluations = time_shift_optimization["n_evaluations"]
 
     evaluation = _evaluate_prepared_match(modes_a, comparison_modes_b, selected_modes, alignment_spec)
     prepared = evaluation["prepared"]
@@ -229,8 +243,13 @@ def mode_match(
         "rotation": rotation_spec.to_dict(),
         "time_axis": prepared.diagnostics.to_dict(),
     }
-    if optimization is not None:
-        diagnostics["time_shift_optimization"] = optimization
+    if rotation_optimization is not None:
+        diagnostics["rotation_optimization"] = rotation_optimization
+    if time_shift_optimization is not None:
+        diagnostics["time_shift_optimization"] = time_shift_optimization
+
+    if rotation_evaluations or time_shift_evaluations:
+        n_evaluations = rotation_evaluations + time_shift_evaluations + 1
 
     return ComparisonResult(
         objective_name="mode_match",
@@ -244,7 +263,7 @@ def mode_match(
             "candidate_time_shift": alignment_spec.candidate_time_shift,
             "rotation": rotation_spec.to_dict(),
         },
-        optimizer=_optimizer_name(alignment_spec),
+        optimizer=_optimizer_name(alignment_spec, rotation_spec),
         optimizer_status="ok",
         n_objective_evaluations=n_evaluations,
         elapsed_s=time.perf_counter() - t0,
@@ -426,6 +445,63 @@ def _optimize_time_shift(
     return best_alignment, diagnostics
 
 
+def _optimize_z_rotation(
+    modes_a: Any,
+    modes_b: Any,
+    selected_modes: Sequence[tuple[int, int]],
+    alignment: AlignmentSpec,
+    rotation: RotationSpec,
+) -> tuple[RotationSpec, dict[str, Any]]:
+    bounds = _rotation_angle_bounds(rotation)
+    n_evaluations = 0
+
+    def objective(angle: float) -> float:
+        nonlocal n_evaluations
+        n_evaluations += 1
+        trial_rotation = replace(rotation, kind="z_axis", angle=float(angle))
+        trial_modes_b = rotate_modes(modes_b, trial_rotation, modes=selected_modes)
+        try:
+            evaluation = _evaluate_prepared_match(
+                modes_a,
+                trial_modes_b,
+                selected_modes,
+                alignment,
+            )
+        except ValueError:
+            return np.inf
+        match_value = evaluation["match"]
+        if not np.isfinite(match_value):
+            return np.inf
+        return 1.0 - float(np.clip(match_value, -1.0, 1.0))
+
+    try:
+        from scipy.optimize import minimize_scalar
+    except Exception as exc:  # pragma: no cover - scipy is normally available
+        raise ImportError("rotation optimize_angle=True requires scipy.optimize.minimize_scalar") from exc
+
+    result = minimize_scalar(objective, bounds=bounds, method="bounded")
+    best_angle = float(result.x)
+    best_rotation = replace(rotation, kind="z_axis", angle=best_angle)
+    diagnostics = {
+        "parameter": "rotation.angle",
+        "bounds": tuple(float(item) for item in bounds),
+        "initial_angle": float(rotation.angle),
+        "best_angle": best_angle,
+        "best_mismatch": float(result.fun),
+        "success": bool(result.success),
+        "message": str(result.message),
+        "n_evaluations": int(n_evaluations),
+    }
+    return best_rotation, diagnostics
+
+
+def _rotation_angle_bounds(rotation: RotationSpec) -> tuple[float, float]:
+    if rotation.angle_bounds is not None:
+        return tuple(float(item) for item in rotation.angle_bounds)
+    center = float(rotation.angle)
+    return center - np.pi, center + np.pi
+
+
 def _time_shift_bounds(modes_a: Any, modes_b: Any, alignment: AlignmentSpec) -> tuple[float, float]:
     if alignment.time_shift_bounds is not None:
         return tuple(float(item) for item in alignment.time_shift_bounds)
@@ -487,10 +563,15 @@ def _phase_optimizer_name(phase_alignment: str) -> str | None:
     return None
 
 
-def _optimizer_name(alignment: AlignmentSpec) -> str | None:
+def _optimizer_name(alignment: AlignmentSpec, rotation: RotationSpec | None = None) -> str | None:
     phase_optimizer = _phase_optimizer_name(alignment.phase_alignment)
+    parts: list[str] = []
+    if rotation is not None and rotation.optimize_angle:
+        parts.append("bounded_z_rotation")
     if alignment.optimize_time_shift:
-        if phase_optimizer is None:
-            return "bounded_time_shift"
-        return f"bounded_time_shift+{phase_optimizer}"
-    return phase_optimizer
+        parts.append("bounded_time_shift")
+    if phase_optimizer is not None:
+        parts.append(phase_optimizer)
+    if parts:
+        return "+".join(parts)
+    return None

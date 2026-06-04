@@ -161,6 +161,39 @@ def test_mode_match_accepts_fixed_candidate_rotation():
     assert rotated.best_parameters["rotation"]["angle"] == pytest.approx(-angle)
 
 
+def test_mode_match_optimizes_one_shared_z_rotation():
+    angle = 0.35
+    reference = make_test_modes(orbital_phase=0.0)
+    shifted = make_test_modes(orbital_phase=angle)
+
+    unoptimized = mode_match(
+        reference,
+        shifted,
+        time_alignment="none",
+        phase_alignment="none",
+    )
+    optimized = mode_match(
+        reference,
+        shifted,
+        time_alignment="none",
+        phase_alignment="none",
+        rotation={
+            "kind": "z_axis",
+            "optimize_angle": True,
+            "angle_bounds": (-0.8, 0.0),
+        },
+    )
+
+    assert optimized.match > unoptimized.match
+    assert optimized.match == pytest.approx(1.0, abs=1e-10)
+    assert optimized.best_parameters["rotation"]["angle"] == pytest.approx(
+        -angle, abs=2e-3
+    )
+    assert optimized.diagnostics["rotation"]["optimize_angle"] is True
+    assert optimized.diagnostics["rotation_optimization"]["parameter"] == "rotation.angle"
+    assert optimized.optimizer == "bounded_z_rotation"
+
+
 def test_default_alignment_crops_unequal_lengths_after_peak_alignment():
     dt = 0.1
     reference_time = np.arange(-10.0, 10.0 + 0.5 * dt, dt)
@@ -426,6 +459,27 @@ def test_fixed_candidate_fitting_factor_uses_comparison_rotation():
     assert result.best_parameters["alignment"]["rotation"]["kind"] == "z_axis"
     assert result.best_parameters["alignment"]["rotation"]["angle"] == pytest.approx(
         -angle
+    )
+
+
+def test_fixed_candidate_fitting_factor_uses_optimized_rotation():
+    angle = 0.35
+    reference = make_test_modes(orbital_phase=0.0)
+    shifted = make_test_modes(orbital_phase=angle)
+    comparison = ModeComparisonConfig(
+        alignment=AlignmentSpec(time_alignment="none", phase_alignment="none"),
+        rotation=RotationSpec(
+            kind="z_axis",
+            optimize_angle=True,
+            angle_bounds=(-0.8, 0.0),
+        ),
+    )
+
+    result = fixed_candidate_fitting_factor(reference, shifted, config=comparison)
+
+    assert result.match == pytest.approx(1.0, abs=1e-10)
+    assert result.best_parameters["alignment"]["rotation"]["angle"] == pytest.approx(
+        -angle, abs=2e-3
     )
 
 
