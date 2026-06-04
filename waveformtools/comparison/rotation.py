@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from math import factorial
 from typing import Any, Literal, Mapping, Sequence
 
 import numpy as np
 
-RotationKind = Literal["none", "z_axis"]
+RotationKind = Literal["none", "z_axis", "wigner"]
 
-_ALLOWED_ROTATION_KINDS = {"none", "z_axis"}
+_ALLOWED_ROTATION_KINDS = {"none", "z_axis", "wigner"}
 
 
 @dataclass(slots=True)
@@ -18,6 +19,9 @@ class RotationSpec:
 
     kind: RotationKind = "none"
     angle: float = 0.0
+    alpha: float = 0.0
+    beta: float = 0.0
+    gamma: float = 0.0
     optimize_angle: bool = False
     angle_bounds: tuple[float, float] | None = None
 
@@ -28,6 +32,9 @@ class RotationSpec:
                 f"choose one of {sorted(_ALLOWED_ROTATION_KINDS)}."
             )
         self.angle = float(self.angle)
+        self.alpha = float(self.alpha)
+        self.beta = float(self.beta)
+        self.gamma = float(self.gamma)
         if self.optimize_angle and self.kind != "z_axis":
             raise ValueError("optimize_angle=True currently requires kind='z_axis'.")
         if self.angle_bounds is not None:
@@ -71,10 +78,11 @@ def rotate_modes(
 ) -> Any:
     """Return a rotated copy of a modes object.
 
-    The first supported nontrivial case is a z-axis rotation, which acts on each
-    mode as ``h_lm -> exp(i m angle) h_lm``.  This keeps the operation entirely
-    in ``ModesArray`` mode space and applies one coherent physical rotation to
-    all selected modes.
+    ``kind='z_axis'`` acts on each mode as
+    ``h_lm -> exp(i m angle) h_lm``.  ``kind='wigner'`` applies the full
+    same-ell Wigner-D mixing implied by the supplied Euler angles.  Both modes
+    keep the operation entirely in ``ModesArray`` mode space and apply one
+    coherent physical rotation to all selected modes.
     """
 
     rotation_spec = RotationSpec.from_value(rotation)
@@ -85,6 +93,10 @@ def rotate_modes(
         modes = _available_modes_from_object(modes_obj)
 
     rotated = modes_obj.deepcopy() if hasattr(modes_obj, "deepcopy") else modes_obj
+    if rotation_spec.kind == "wigner":
+        _rotate_wigner_in_place(rotated, modes_obj, rotation_spec, modes)
+        return rotated
+
     for ell, emm in modes:
         data = np.asarray(modes_obj.mode(ell, emm), dtype=np.complex128)
         if rotation_spec.kind == "z_axis":
@@ -96,6 +108,30 @@ def rotate_modes(
         else:  # pragma: no cover - guarded by RotationSpec validation
             raise ValueError(f"Unsupported rotation kind={rotation_spec.kind!r}.")
     return rotated
+
+
+def _rotate_wigner_in_place(
+    rotated: Any,
+    modes_obj: Any,
+    rotation: RotationSpec,
+    modes: Sequence[tuple[int, int]],
+) -> None:
+    quat = _euler_zyz_quaternion(rotation.alpha, rotation.beta, rotation.gamma)
+    modes_by_ell: dict[int, list[int]] = {}
+    for ell, emm in modes:
+        modes_by_ell.setdefault(int(ell), []).append(int(emm))
+
+    for ell, emm_values in modes_by_ell.items():
+        unique_emms = sorted(set(emm_values))
+        source_data = {
+            emm: np.asarray(modes_obj.mode(ell, emm), dtype=np.complex128)
+            for emm in unique_emms
+        }
+        for emm in unique_emms:
+            rotated_data = np.zeros_like(source_data[emm], dtype=np.complex128)
+            for emp in unique_emms:
+                rotated_data += _wigner_d(quat, ell, emp, emm) * source_data[emp]
+            rotated.set_mode_data(ell=ell, emm=emm, data=rotated_data)
 
 
 def _available_modes_from_object(modes_obj: Any) -> list[tuple[int, int]]:
