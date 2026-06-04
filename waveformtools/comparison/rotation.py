@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from math import factorial
 from typing import Any, Literal, Mapping, Sequence
 
 import numpy as np
+
+from waveformtools.rotation_math import euler_zyz_quaternion, wigner_d
 
 RotationKind = Literal["none", "z_axis", "wigner"]
 
@@ -116,7 +117,7 @@ def _rotate_wigner_in_place(
     rotation: RotationSpec,
     modes: Sequence[tuple[int, int]],
 ) -> None:
-    quat = _euler_zyz_quaternion(rotation.alpha, rotation.beta, rotation.gamma)
+    quat = euler_zyz_quaternion(rotation.alpha, rotation.beta, rotation.gamma)
     modes_by_ell: dict[int, list[int]] = {}
     for ell, emm in modes:
         modes_by_ell.setdefault(int(ell), []).append(int(emm))
@@ -130,7 +131,7 @@ def _rotate_wigner_in_place(
         for emm in unique_emms:
             rotated_data = np.zeros_like(source_data[emm], dtype=np.complex128)
             for emp in unique_emms:
-                rotated_data += _wigner_d(quat, ell, emp, emm) * source_data[emp]
+                rotated_data += wigner_d(quat, ell, emp, emm) * source_data[emp]
             rotated.set_mode_data(ell=ell, emm=emm, data=rotated_data)
 
 
