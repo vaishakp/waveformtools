@@ -6,7 +6,15 @@ import numpy as np
 import pytest
 
 import waveformtools.comparison  # noqa: F401 - installs ModesArray methods
-from waveformtools.comparison import AlignmentSpec, WaveformMetadata, mode_match, residue_distance
+from waveformtools.comparison import (
+    AlignmentSpec,
+    FittingFactorConfig,
+    ModeComparisonConfig,
+    WaveformMetadata,
+    fixed_candidate_fitting_factor,
+    mode_match,
+    residue_distance,
+)
 from waveformtools.modes_array import ModesArray
 
 
@@ -35,7 +43,10 @@ def make_test_modes(
     modes.set_mode_data(
         ell=2,
         emm=2,
-        data=envelope * carrier * np.exp(1j * phase) * np.exp(2j * orbital_phase),
+        data=envelope
+        * carrier
+        * np.exp(1j * phase)
+        * np.exp(2j * orbital_phase),
     )
     modes.set_mode_data(
         ell=2,
@@ -72,15 +83,23 @@ def test_identity_mode_match_is_one():
     assert result.match == pytest.approx(1.0, abs=1e-12)
     assert result.mismatch == pytest.approx(0.0, abs=1e-12)
     assert result.diagnostics["n_modes"] >= 1
-    assert result.diagnostics["alignment"]["time_alignment"] == "peak_total_news_power"
-    assert result.diagnostics["alignment"]["time_domain_policy"] == "crop_to_overlap"
+    assert (
+        result.diagnostics["alignment"]["time_alignment"]
+        == "peak_total_news_power"
+    )
+    assert (
+        result.diagnostics["alignment"]["time_domain_policy"]
+        == "crop_to_overlap"
+    )
 
 
 def test_phase_maximized_mode_match_recovers_global_phase():
     reference = make_test_modes(phase=0.0)
     shifted = make_test_modes(phase=0.8)
 
-    phase_maximized = mode_match(reference, shifted, phase_alignment="global_complex")
+    phase_maximized = mode_match(
+        reference, shifted, phase_alignment="global_complex"
+    )
     fixed_phase = mode_match(reference, shifted, phase_alignment="none")
 
     assert phase_maximized.match == pytest.approx(1.0, abs=1e-12)
@@ -116,7 +135,10 @@ def test_default_alignment_crops_unequal_lengths_after_peak_alignment():
     assert result.match == pytest.approx(1.0, abs=1e-12)
     assert result.diagnostics["time_axis"]["n_samples"] == len(candidate_time)
     assert result.diagnostics["time_axis"]["policy"] == "crop_to_overlap"
-    assert result.diagnostics["alignment"]["time_alignment"] == "peak_total_news_power"
+    assert (
+        result.diagnostics["alignment"]["time_alignment"]
+        == "peak_total_news_power"
+    )
 
 
 def test_strict_time_policy_rejects_different_lengths():
@@ -132,7 +154,9 @@ def test_crop_to_overlap_rejects_different_sampling_rates():
     different_dt = make_test_modes(time_axis=np.linspace(-10.0, 10.0, 300))
 
     with pytest.raises(ValueError, match="compatible sampling rates"):
-        mode_match(reference, different_dt, time_domain_policy="crop_to_overlap")
+        mode_match(
+            reference, different_dt, time_domain_policy="crop_to_overlap"
+        )
 
 
 def test_resample_to_reference_handles_different_sampling_rates():
@@ -148,7 +172,9 @@ def test_resample_to_reference_handles_different_sampling_rates():
     )
 
     assert result.match > 0.999
-    assert result.diagnostics["time_axis"]["n_samples"] == len(reference.time_axis)
+    assert result.diagnostics["time_axis"]["n_samples"] == len(
+        reference.time_axis
+    )
     assert result.diagnostics["time_axis"]["policy"] == "resample_to_reference"
     assert result.diagnostics["alignment"]["time_alignment"] == "none"
 
@@ -166,15 +192,24 @@ def test_peak_22_resample_to_reference_uses_valid_overlap_for_different_sampling
     )
 
     assert result.match > 0.999
-    assert result.diagnostics["time_axis"]["n_samples"] <= len(reference.time_axis)
-    assert result.diagnostics["time_axis"]["n_samples"] >= len(reference.time_axis) - 1
+    assert result.diagnostics["time_axis"]["n_samples"] <= len(
+        reference.time_axis
+    )
+    assert (
+        result.diagnostics["time_axis"]["n_samples"]
+        >= len(reference.time_axis) - 1
+    )
     assert result.diagnostics["time_axis"]["policy"] == "resample_to_reference"
     assert result.diagnostics["alignment"]["time_alignment"] == "peak_22"
 
 
 def test_peak_total_power_alignment_handles_shifted_peak():
-    reference = make_test_modes(time_axis=np.linspace(-10.0, 10.0, 256), time_shift=0.0)
-    shifted = make_test_modes(time_axis=np.linspace(-7.0, 13.0, 256), time_shift=3.0)
+    reference = make_test_modes(
+        time_axis=np.linspace(-10.0, 10.0, 256), time_shift=0.0
+    )
+    shifted = make_test_modes(
+        time_axis=np.linspace(-7.0, 13.0, 256), time_shift=3.0
+    )
 
     unaligned = mode_match(
         reference,
@@ -197,8 +232,12 @@ def test_peak_total_power_alignment_handles_shifted_peak():
 
 
 def test_peak_total_news_power_alignment_handles_shifted_peak():
-    reference = make_test_modes(time_axis=np.linspace(-10.0, 10.0, 256), time_shift=0.0)
-    shifted = make_test_modes(time_axis=np.linspace(-7.0, 13.0, 256), time_shift=3.0)
+    reference = make_test_modes(
+        time_axis=np.linspace(-10.0, 10.0, 256), time_shift=0.0
+    )
+    shifted = make_test_modes(
+        time_axis=np.linspace(-7.0, 13.0, 256), time_shift=3.0
+    )
 
     unaligned = mode_match(
         reference,
@@ -217,7 +256,10 @@ def test_peak_total_news_power_alignment_handles_shifted_peak():
 
     assert aligned.match > unaligned.match
     assert aligned.match > 0.999
-    assert aligned.diagnostics["alignment"]["time_alignment"] == "peak_total_news_power"
+    assert (
+        aligned.diagnostics["alignment"]["time_alignment"]
+        == "peak_total_news_power"
+    )
 
 
 def test_get_news_from_strain_honors_method_argument():
@@ -232,6 +274,18 @@ def test_get_news_from_strain_honors_method_argument():
     expected = 1j * omega * signal
 
     assert np.max(np.abs(news.mode(2, 2)[8:-8] - expected[8:-8])) < 1e-5
+
+
+def test_modes_array_reflected_subtraction_uses_left_operand():
+    time_axis = np.linspace(-1.0, 1.0, 8)
+    left = make_test_modes(time_axis=time_axis)
+    right = make_test_modes(time_axis=time_axis)
+    left.set_mode_data(ell=2, emm=2, data=3.0 * np.ones_like(time_axis))
+    right.set_mode_data(ell=2, emm=2, data=np.ones_like(time_axis))
+
+    reflected = right.__rsub__(left)
+
+    assert np.allclose(reflected.mode(2, 2), 2.0)
 
 
 def test_time_shift_optimization_recovers_one_shared_shift():
@@ -259,10 +313,122 @@ def test_time_shift_optimization_recovers_one_shared_shift():
 
     assert optimized.match > unoptimized.match
     assert optimized.match > 0.999
-    assert optimized.best_parameters["candidate_time_shift"] == pytest.approx(-known_shift, abs=2e-2)
+    assert optimized.best_parameters["candidate_time_shift"] == pytest.approx(
+        -known_shift, abs=2e-2
+    )
     assert optimized.diagnostics["alignment"]["optimize_time_shift"] is True
-    assert optimized.diagnostics["time_axis"]["candidate_time_shift"] == pytest.approx(-known_shift, abs=2e-2)
-    assert optimized.diagnostics["time_shift_optimization"]["parameter"] == "candidate_time_shift"
+    assert optimized.diagnostics["time_axis"][
+        "candidate_time_shift"
+    ] == pytest.approx(-known_shift, abs=2e-2)
+    assert (
+        optimized.diagnostics["time_shift_optimization"]["parameter"]
+        == "candidate_time_shift"
+    )
+
+
+def test_comparison_config_normalizes_nested_alignment():
+    config = FittingFactorConfig.from_value(
+        {
+            "comparison": {
+                "ell_min": 2,
+                "ell_max": 2,
+                "alignment": {
+                    "time_alignment": "none",
+                    "phase_alignment": "none",
+                },
+            },
+            "variable_parameters": {"phase": (-1.0, 1.0)},
+            "initial_parameters": {"phase": 0.25},
+        }
+    )
+
+    assert isinstance(config.comparison, ModeComparisonConfig)
+    assert isinstance(config.comparison.alignment, AlignmentSpec)
+    assert config.comparison.alignment.time_alignment == "none"
+    assert config.variable_parameters["phase"] == (-1.0, 1.0)
+
+
+def test_fixed_candidate_fitting_factor_matches_mode_match():
+    reference = make_test_modes()
+    candidate = make_test_modes()
+    comparison = ModeComparisonConfig(
+        alignment=AlignmentSpec(
+            time_alignment="none", phase_alignment="global_complex"
+        )
+    )
+
+    match = mode_match(reference, candidate, alignment=comparison.alignment)
+    fitting = fixed_candidate_fitting_factor(
+        reference, candidate, config=comparison
+    )
+
+    assert fitting.objective_name == "fixed_candidate_fitting_factor"
+    assert fitting.match == pytest.approx(match.match, abs=1e-12)
+    assert fitting.candidate_generation_parameters == {}
+    assert (
+        fitting.diagnostics["comparison_config"]["alignment"]["time_alignment"]
+        == "none"
+    )
+
+
+def test_modes_array_fitting_factor_uses_generator_defaults():
+    reference = make_test_modes(phase=0.2)
+    calls = []
+
+    def generator(phase=0.2, amplitude=1.0):
+        calls.append({"phase": phase, "amplitude": amplitude})
+        modes = make_test_modes(phase=phase)
+        modes.set_mode_data(ell=2, emm=2, data=amplitude * modes.mode(2, 2))
+        return modes
+
+    result = reference.fitting_factor(
+        generator,
+        config=FittingFactorConfig(
+            comparison=ModeComparisonConfig(
+                alignment=AlignmentSpec(
+                    time_alignment="none", phase_alignment="none"
+                )
+            ),
+            fixed_parameters={},
+            optimizer="none",
+        ),
+    )
+
+    assert result.match == pytest.approx(1.0, abs=1e-12)
+    assert calls == [{"phase": 0.2, "amplitude": 1.0}]
+    assert result.n_waveform_generations == 1
+
+
+def test_fitting_factor_optimizes_user_selected_parameter():
+    target_phase = 0.35
+    reference = make_test_modes(phase=target_phase)
+
+    def generator(phase):
+        return make_test_modes(phase=phase)
+
+    result = reference.fitting_factor(
+        generator,
+        config=FittingFactorConfig(
+            comparison=ModeComparisonConfig(
+                alignment=AlignmentSpec(
+                    time_alignment="none", phase_alignment="none"
+                )
+            ),
+            variable_parameters={"phase": (-1.0, 1.0)},
+            initial_parameters={"phase": 0.0},
+            optimizer="scipy_minimize",
+            optimizer_options={"options": {"maxiter": 40}},
+        ),
+    )
+
+    assert result.match > 0.999
+    assert result.candidate_generation_parameters["phase"] == pytest.approx(
+        target_phase, abs=2e-3
+    )
+    assert result.best_parameters["phase"] == pytest.approx(
+        target_phase, abs=2e-3
+    )
+    assert result.n_waveform_generations >= 1
 
 
 def test_residue_distance_zero_for_identical_modes():
