@@ -8,6 +8,8 @@ h5py
 termcolor
 datetime
 sympy
+lalsuite
+pycbc
 numpydoc
 vlconf
 spectools

@@ -6,6 +6,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any, Literal, Mapping, Sequence
 
 from waveformtools.comparison.alignment import AlignmentSpec
+from waveformtools.comparison.rotation import RotationSpec
 
 ObjectiveName = Literal["mode_match"]
 FittingFactorOptimizer = Literal[
@@ -22,6 +23,7 @@ class ModeComparisonConfig:
     ell_max: int | None = None
     modes: Sequence[tuple[int, int]] | None = None
     alignment: AlignmentSpec = field(default_factory=AlignmentSpec)
+    rotation: RotationSpec = field(default_factory=RotationSpec)
     objective: ObjectiveName = "mode_match"
 
     def __post_init__(self) -> None:
@@ -37,6 +39,8 @@ class ModeComparisonConfig:
             )
         if not isinstance(self.alignment, AlignmentSpec):
             self.alignment = AlignmentSpec.from_value(self.alignment)
+        if not isinstance(self.rotation, RotationSpec):
+            self.rotation = RotationSpec.from_value(self.rotation)
         if self.modes is not None:
             self.modes = tuple((int(ell), int(emm)) for ell, emm in self.modes)
 
@@ -45,6 +49,7 @@ class ModeComparisonConfig:
 
         data = asdict(self)
         data["alignment"] = self.alignment.to_dict()
+        data["rotation"] = self.rotation.to_dict()
         return data
 
     @classmethod
@@ -72,6 +77,8 @@ class ModeComparisonConfig:
         )
         if "alignment" in data:
             data["alignment"] = AlignmentSpec.from_value(data["alignment"])
+        if "rotation" in data:
+            data["rotation"] = RotationSpec.from_value(data["rotation"])
         return cls(**data)
 
 

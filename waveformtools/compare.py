@@ -31,7 +31,7 @@ def plot_modes(
     wf1,
     nmodes=3,
     save_fig=False,
-    xlim=[-1200, 100],
+    xlim=None,
     ylim="auto",
     nstop=1,
     plot22=False,
@@ -56,6 +56,8 @@ def plot_modes(
     -------
     Plots
     """
+    if xlim is None:
+        xlim = [-1200, 100]
 
     from waveformtools.waveformtools import xtract_cphase
     # Start from l=2.
@@ -175,7 +177,7 @@ def plot_mode_differences(
     xlabel="t/M",
     ylabel=r"r\Psi_{4}^{(\ell m)}",
     labels=None,
-    xlim=[-1000, 100],
+    xlim=None,
 ):
     """Plot the fractional difference of the first `nmodes`
     dominant modes of the input waveforms.
@@ -194,6 +196,8 @@ def plot_mode_differences(
     -------
     Plots.
     """
+    if xlim is None:
+        xlim = [-1000, 100]
 
     # For phase computation.
     from waveformtools.waveformtools import xtract_cphase
