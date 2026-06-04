@@ -1,6 +1,5 @@
 from lal import CreateDict
 import numpy as np
-from pycbc.detector import Detector
 from waveformtools.waveformtools import find_maxloc_and_time, message
 from lal import MSUN_SI, MTSUN_SI, PC_SI, G_SI, C_SI
 from waveformtools.waveformtools import get_starting_angular_frequency
@@ -131,7 +130,8 @@ class WaveformModel:
                          detector_string):
         ''' t_coal is defined here to be the location of the peak of the 
         polarization '''
-        
+        from pycbc.detector import Detector
+
         ifo = Detector(detector_string)
         amp = np.absolute(hp+1j*hc)
         times = np.arange(0, len(hp)*self.delta_t, self.delta_t)

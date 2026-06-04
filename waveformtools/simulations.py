@@ -2,7 +2,8 @@
 
 import vlconf
 
-vlconf.conf_matplolib()
+if hasattr(vlconf, "conf_matplolib"):
+    vlconf.conf_matplolib()
 import numpy as np
 import scipy
 
@@ -203,7 +204,7 @@ class sim:
         strain_indexshifts=None,
         indexjn=None,
         distjn=None,
-        areal_radii={},
+        areal_radii=None,
         log_deltamultipoles2=None,
         log_multipoles2=None,
         log_deltamultipoles=None,
@@ -213,6 +214,9 @@ class sim:
         NP_1d=None,
     ):
         # Load the variables at initialization.
+        if areal_radii is None:
+            areal_radii = {}
+
         self.aliases = aliases or {}
         self.multipoles = multipoles or {}
         self.spin_multipoles = spin_multipoles or {}

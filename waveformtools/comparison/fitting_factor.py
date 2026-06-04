@@ -37,6 +37,7 @@ def fixed_candidate_fitting_factor(
         ell_max=comparison.ell_max,
         modes=comparison.modes,
         alignment=comparison.alignment,
+        rotation=comparison.rotation,
     )
     return _result_from_match(
         match_result,
@@ -87,6 +88,7 @@ def fitting_factor(  # pylint: disable=too-many-locals
             ell_max=ff_config.comparison.ell_max,
             modes=ff_config.comparison.modes,
             alignment=ff_config.comparison.alignment,
+            rotation=ff_config.comparison.rotation,
         )
         if best_match is None or _match_value(result) > _match_value(
             best_match

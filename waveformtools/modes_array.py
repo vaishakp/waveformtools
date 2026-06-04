@@ -111,9 +111,11 @@ class ModesArray:
         key_ex=None,
         spin_weight=-2,
         actions="empty",
-        areal_radii=[],
+        areal_radii=None,
         Grid=None,
     ):
+        if areal_radii is None:
+            areal_radii = []
         self.label = label
         self.data_dir = data_dir
         self.file_name = file_name
@@ -1992,10 +1994,12 @@ class ModesArray:
     def plot_strongest_modes(self, 
                              nmodes=3,
                              save_fig=False,
-                             xlim=[-1200, 100],
+                             xlim=None,
                              ylim="auto",
                              nstop=1,
                              plot22=False,):
+        if xlim is None:
+            xlim = [-1200, 100]
         
         from waveformtools.compare import plot_modes
 
@@ -2147,6 +2151,83 @@ class ModesArray:
     def get_news_from_strain(self, method='spline'):
         '''Return the waveform news by differentiating strain modes in time.'''
         return self.time_derivative(method=method)
+
+    def compute_displacement_memory(self, config=None, **overrides):
+        """Return opt-in displacement-memory strain modes.
+
+        The public API is present, but the spectral memory kernel is added in a
+        later batch. Until then this method validates inputs and raises
+        ``NotImplementedError`` from ``waveformtools.memory``.
+        """
+        from waveformtools.memory import compute_displacement_memory_from_strain
+
+        return compute_displacement_memory_from_strain(
+            self,
+            config=config,
+            **overrides,
+        )
+
+    def compute_displacement_memory_source(self, config=None, **overrides):
+        """Return scalar modes of the nonlinear memory source."""
+        from waveformtools.memory import compute_displacement_memory_source_from_news
+
+        news_modes = self.get_news_from_strain(
+            method=overrides.get("news_method", "spline")
+        )
+        return compute_displacement_memory_source_from_news(
+            news_modes,
+            config=config,
+            **overrides,
+        )
+
+    def diagnose_displacement_memory_finite_time(
+        self,
+        config=None,
+        **overrides,
+    ):
+        """Return finite-time diagnostics for displacement memory."""
+        from waveformtools.memory import (
+            diagnose_displacement_memory_finite_time,
+        )
+
+        return diagnose_displacement_memory_finite_time(
+            self,
+            config=config,
+            **overrides,
+        )
+
+    def diagnose_omitted_inspiral(self, **kwargs):
+        """Return start-of-waveform diagnostics for omitted inspiral."""
+        from waveformtools.memory import diagnose_omitted_inspiral
+
+        return diagnose_omitted_inspiral(self, **kwargs)
+
+    def with_displacement_memory(
+        self,
+        memory_modes=None,
+        config=None,
+        **overrides,
+    ):
+        """Return a copy of this waveform with displacement memory added."""
+        from waveformtools.memory import with_displacement_memory
+
+        return with_displacement_memory(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
+
+    def add_displacement_memory_in_place(self, memory_modes=None, config=None, **overrides):
+        """Add displacement memory to this waveform in place and return it."""
+        from waveformtools.memory import add_displacement_memory_in_place
+
+        return add_displacement_memory_in_place(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
 
     def compute_momentum_flux(self, news_modes):
 
