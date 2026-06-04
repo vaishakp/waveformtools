@@ -2180,7 +2180,34 @@ class ModesArray:
             **overrides,
         )
 
-    def with_displacement_memory(self, memory_modes=None, config=None, **overrides):
+    def diagnose_displacement_memory_finite_time(
+        self,
+        config=None,
+        **overrides,
+    ):
+        """Return finite-time diagnostics for displacement memory."""
+        from waveformtools.memory import (
+            diagnose_displacement_memory_finite_time,
+        )
+
+        return diagnose_displacement_memory_finite_time(
+            self,
+            config=config,
+            **overrides,
+        )
+
+    def diagnose_omitted_inspiral(self, **kwargs):
+        """Return start-of-waveform diagnostics for omitted inspiral."""
+        from waveformtools.memory import diagnose_omitted_inspiral
+
+        return diagnose_omitted_inspiral(self, **kwargs)
+
+    def with_displacement_memory(
+        self,
+        memory_modes=None,
+        config=None,
+        **overrides,
+    ):
         """Return a copy of this waveform with displacement memory added."""
         from waveformtools.memory import with_displacement_memory
 

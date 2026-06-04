@@ -10,6 +10,8 @@ from waveformtools.memory import (
     _source_modes_to_memory_strain,
     compute_displacement_memory_from_news,
     compute_displacement_memory_source_from_news,
+    diagnose_displacement_memory_finite_time,
+    diagnose_omitted_inspiral,
 )
 from waveformtools.modes_array import ModesArray
 
@@ -206,6 +208,52 @@ def test_modes_array_memory_source_uses_existing_news_derivative_path():
     assert source_modes.spin_weight == 0
     assert np.allclose(source_modes.time_axis, strain_modes.time_axis)
     assert np.max(np.abs(source_modes.modes_data)) > 0.0
+
+
+def test_finite_time_memory_diagnostic_reports_endpoint_sensitivity():
+    strain_modes = make_memory_test_modes()
+
+    diagnostic = diagnose_displacement_memory_finite_time(
+        strain_modes,
+        window_fraction=0.2,
+        start_indices=(0, 8, 16),
+    )
+    method_diagnostic = strain_modes.diagnose_displacement_memory_finite_time(
+        window_fraction=0.2,
+        start_indices=(0, 8, 16),
+    )
+
+    assert diagnostic["memory_endpoint_norm"] > 0.0
+    assert diagnostic["window_size"] == 13
+    assert len(diagnostic["start_index_sensitivity"]) == 3
+    assert np.isfinite(diagnostic["early_window_fraction_of_endpoint"])
+    assert np.isfinite(diagnostic["late_window_fraction_of_endpoint"])
+    assert method_diagnostic["memory_endpoint_norm"] == pytest.approx(
+        diagnostic["memory_endpoint_norm"]
+    )
+
+
+def test_omitted_inspiral_diagnostic_reports_initial_frequency():
+    strain_modes = make_memory_test_modes()
+
+    diagnostic = diagnose_omitted_inspiral(
+        strain_modes,
+        min_cycles=0.0,
+        high_initial_power_fraction=2.0,
+    )
+    method_diagnostic = strain_modes.diagnose_omitted_inspiral(
+        min_cycles=0.0,
+        high_initial_power_fraction=2.0,
+    )
+
+    assert diagnostic["mode"] == (2, 2)
+    assert diagnostic["initial_angular_frequency"] == pytest.approx(0.2)
+    assert diagnostic["total_cycles"] > 0.0
+    assert diagnostic["early_energy_fraction"] >= 0.0
+    assert diagnostic["omitted_inspiral_likely"] is False
+    assert method_diagnostic["initial_period"] == pytest.approx(
+        diagnostic["initial_period"]
+    )
 
 
 def test_compute_displacement_memory_rejects_non_strain_spin_weight():
