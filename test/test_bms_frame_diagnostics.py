@@ -75,6 +75,23 @@ def test_bms_frame_diagnostics_computes_flux_quantities():
     assert result.angular_momentum_radiated is not None
     assert result.angular_momentum_radiated.shape == (3,)
     assert np.all(np.isfinite(result.angular_momentum_radiated))
+    assert result.charge_diagnostics is not None
+    assert result.charge_diagnostics["available"]
+    proxies = result.charge_diagnostics["proxies"]
+    assert proxies["supermomentum_l0_energy"]["available"]
+    assert proxies["supermomentum_l0_energy"]["ell"] == 0
+    assert proxies["supermomentum_l1_linear_momentum"]["available"]
+    assert proxies["supermomentum_l1_linear_momentum"]["ell"] == 1
+    np.testing.assert_allclose(
+        proxies["supermomentum_l1_linear_momentum"]["vector"],
+        result.radiated_linear_momentum,
+    )
+    assert proxies["angular_momentum"]["available"]
+    assert proxies["mass_balance"]["available"]
+    mass_residual = 1.0 - 0.95 - result.energy_radiated
+    assert proxies["mass_balance"]["residual"] == pytest.approx(mass_residual)
+    assert not result.charge_diagnostics["absolute_bms_charges_computed"]
+    assert not result.charge_diagnostics["superrest_frame_fixed"]
     assert result.omitted_inspiral is not None
     assert result.omitted_inspiral["available"]
 
@@ -109,6 +126,23 @@ def test_bms_frame_diagnostics_can_disable_optional_fluxes():
     assert result.kick_velocity is None
     assert result.angular_momentum_radiated is None
     assert result.omitted_inspiral is None
+    assert result.charge_diagnostics is not None
+    proxies = result.charge_diagnostics["proxies"]
+    assert proxies["supermomentum_l0_energy"]["available"]
+    assert not proxies["supermomentum_l1_linear_momentum"]["available"]
+    assert not proxies["angular_momentum"]["available"]
+
+
+def test_bms_frame_diagnostics_can_disable_charge_summary():
+    modes = make_bms_diagnostic_modes()
+
+    result = compute_bms_frame_diagnostics(
+        modes,
+        compute_charge_diagnostics=False,
+    )
+
+    assert result.charge_diagnostics is None
+    assert result.to_dict()["charge_diagnostics"] is None
 
 
 def test_bms_frame_diagnostics_reports_optional_memory_errors():
@@ -131,6 +165,12 @@ def test_bms_frame_diagnostics_to_dict_is_json_friendly():
 
     assert isinstance(data["radiated_linear_momentum"], list)
     assert isinstance(data["kick_velocity"], list)
+    assert isinstance(
+        data["charge_diagnostics"]["proxies"][
+            "supermomentum_l1_linear_momentum"
+        ]["vector"],
+        list,
+    )
     assert data["diagnostics"]["news"]["spin_weight"] == -2
 
 
