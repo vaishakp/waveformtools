@@ -178,6 +178,14 @@ git push git@github.com-vaishakp:vaishakp/waveformtools.git <branch>:<branch>
 
 because the default SSH identity previously resolved to the wrong GitHub user.
 
+## Deferred Design Work
+
+- BMS alignment for waveform comparisons is intentionally postponed.
+  Add a design note/API sketch for a future `BMSAlignmentSpec` before
+  implementing anything. The design should separate preprocessing into a common
+  BMS/CoM frame from small residual nuisance optimization, and should avoid
+  free supertranslation optimization as a default fitting-factor option.
+
 ## Current Design Notes
 
 - Keep `spectools` and `qlmtools` as black-box dependencies.

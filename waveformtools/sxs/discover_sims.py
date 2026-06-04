@@ -143,24 +143,26 @@ class SimulationExplorer:
         bfi_project_name=None,
         bfi_home_dir=None,
         ref_time=None,
-        filter_items=[
-            "Sl. No",
-            "Status",
-            "ReqRefTime",
-            "Omega0",
-            "Omega_ref",
-            "Ncycles",
-            "Ncycles (2,2)",
-            "D0",
-            "MassRatio",
-            "ChiA",
-            "ChiA_ref",
-            "ChiB",
-            "ChiB_ref",
-            "ChiEff",
-            "ChiPrec",
-        ],
+        filter_items=None,
     ):
+        if filter_items is None:
+            filter_items = [
+                "Sl. No",
+                "Status",
+                "ReqRefTime",
+                "Omega0",
+                "Omega_ref",
+                "Ncycles",
+                "Ncycles (2,2)",
+                "D0",
+                "MassRatio",
+                "ChiA",
+                "ChiA_ref",
+                "ChiB",
+                "ChiB_ref",
+                "ChiEff",
+                "ChiPrec",
+            ]
         self._search_dir = Path(search_dir)
         self._prepared_waveforms_dir = Path(prepared_waveforms_dir)
         self._ref_time = ref_time
