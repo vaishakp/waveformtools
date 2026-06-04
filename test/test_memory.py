@@ -7,6 +7,7 @@ import pytest
 
 from waveformtools.memory import (
     DisplacementMemoryConfig,
+    _source_modes_to_memory_strain,
     compute_displacement_memory_from_news,
     compute_displacement_memory_source_from_news,
 )
@@ -34,6 +35,7 @@ def test_displacement_memory_config_validation():
     config = DisplacementMemoryConfig(ell_min=2, ell_max=4, memory_ell_max=4)
 
     assert config.to_dict()["integration_constant"] == "zero_at_start"
+    assert config.to_dict()["source_normalization"] == "news_squared"
 
     with pytest.raises(ValueError, match="ell_min"):
         DisplacementMemoryConfig(ell_min=1)
@@ -42,6 +44,14 @@ def test_displacement_memory_config_validation():
         DisplacementMemoryConfig(
             integration_constant="free"  # type: ignore[arg-type]
         )
+
+    with pytest.raises(ValueError, match="source_normalization"):
+        DisplacementMemoryConfig(
+            source_normalization="unknown"  # type: ignore[arg-type]
+        )
+
+    with pytest.raises(ValueError, match="source_scale"):
+        DisplacementMemoryConfig(source_scale=np.inf)
 
 
 def test_compute_displacement_memory_validates_and_marks_kernel_boundary():
@@ -72,7 +82,53 @@ def test_compute_displacement_memory_source_projects_news_intensity():
     assert np.max(np.abs(source_modes.modes_data)) > 0.0
     assert (
         source_modes.displacement_memory_source_metadata["source"]
+        == "|news|^2"
+    )
+    assert np.isclose(
+        source_modes.displacement_memory_source_metadata["source_factor"],
+        1.0,
+    )
+
+
+def test_memory_source_normalization_is_configurable():
+    news_modes = make_memory_test_modes()
+
+    news_squared_source = compute_displacement_memory_source_from_news(
+        news_modes
+    )
+    legacy_source = compute_displacement_memory_source_from_news(
+        news_modes,
+        source_normalization="balance_law_16pi",
+    )
+    scaled_source = compute_displacement_memory_source_from_news(
+        news_modes,
+        source_normalization="news_squared",
+        source_scale=0.25,
+    )
+
+    np.testing.assert_allclose(
+        news_squared_source.modes_data,
+        legacy_source.modes_data * (16.0 * np.pi),
+        rtol=1e-12,
+        atol=1e-12,
+    )
+    np.testing.assert_allclose(
+        scaled_source.modes_data,
+        0.25 * news_squared_source.modes_data,
+        rtol=1e-12,
+        atol=1e-12,
+    )
+    assert (
+        news_squared_source.displacement_memory_source_metadata["source"]
+        == "|news|^2"
+    )
+    assert (
+        legacy_source.displacement_memory_source_metadata["source"]
         == "|news|^2/(16*pi)"
+    )
+    assert (
+        scaled_source.displacement_memory_source_metadata["source"]
+        == "0.25*|news|^2"
     )
 
 
@@ -105,6 +161,31 @@ def test_compute_displacement_memory_from_news_inverts_bar_eth2_source():
         rtol=1e-12,
         atol=1e-12,
     )
+
+
+def test_memory_kernel_matches_balance_law_eth2_conjugate_operator():
+    from qlmtools.spin_coefficient import eth_n_modes_from_modes
+
+    source_modes = make_scalar_memory_source_modes()
+
+    memory_modes = _source_modes_to_memory_strain(
+        source_modes,
+        DisplacementMemoryConfig(memory_ell_max=source_modes.ell_max),
+        memory_ell_max=source_modes.ell_max,
+    )
+    recovered_source = eth_n_modes_from_modes(
+        memory_modes.time_derivative(method="spline").bar(),
+        memory_modes.Grid,
+        times=2,
+    )
+
+    for emm in range(-2, 3):
+        np.testing.assert_allclose(
+            recovered_source.mode(2, emm),
+            source_modes.mode(2, emm),
+            rtol=2e-2,
+            atol=2e-12,
+        )
 
 
 def test_compute_displacement_memory_from_news_zero_news_gives_zero_memory():
@@ -181,3 +262,22 @@ def cumulative_trapezoid_zero_at_start(xdata, ydata):
     increments = 0.5 * (ydata[..., 1:] + ydata[..., :-1]) * np.diff(xdata)
     integral[..., 1:] = np.cumsum(increments, axis=-1)
     return integral
+
+
+def make_scalar_memory_source_modes() -> ModesArray:
+    from spectools.spherical.grids import GLGrid
+
+    time_axis = np.linspace(-2.0, 2.0, 64)
+    source_modes = ModesArray(
+        ell_max=2,
+        time_axis=time_axis,
+        spin_weight=0,
+        Grid=GLGrid(L=4),
+    )
+    source_modes.create_modes_array(ell_max=2, data_len=len(time_axis))
+    source_modes.set_mode_data(ell=2, emm=-2, data=(0.3 - 0.2j) * time_axis)
+    source_modes.set_mode_data(ell=2, emm=-1, data=(-0.1 + 0.4j) * time_axis)
+    source_modes.set_mode_data(ell=2, emm=0, data=0.7 * time_axis)
+    source_modes.set_mode_data(ell=2, emm=1, data=(0.2 + 0.1j) * time_axis)
+    source_modes.set_mode_data(ell=2, emm=2, data=(-0.5 - 0.3j) * time_axis)
+    return source_modes
