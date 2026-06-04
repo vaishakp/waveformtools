@@ -136,6 +136,60 @@ def test_z_axis_rotation_applies_one_coherent_mode_phase():
     assert np.allclose(modes.mode(2, 2), make_test_modes(orbital_phase=0.0).mode(2, 2))
 
 
+def test_wigner_identity_rotation_matches_input_modes():
+    modes = make_test_modes()
+
+    rotated = rotate_modes(modes, RotationSpec(kind="wigner"))
+
+    assert np.allclose(rotated.mode(2, 2), modes.mode(2, 2))
+    assert np.allclose(rotated.mode(2, -2), modes.mode(2, -2))
+
+
+def test_wigner_z_axis_limit_matches_z_axis_rotation():
+    angle = 0.4
+    modes = make_test_modes()
+
+    z_axis = rotate_modes(modes, RotationSpec(kind="z_axis", angle=angle))
+    wigner = rotate_modes(modes, RotationSpec(kind="wigner", alpha=angle))
+
+    assert np.allclose(wigner.mode(2, 2), z_axis.mode(2, 2))
+    assert np.allclose(wigner.mode(2, -2), z_axis.mode(2, -2))
+
+
+def test_wigner_rotation_preserves_unselected_modes():
+    angle = 0.4
+    modes = make_test_modes()
+    original_m2 = np.array(modes.mode(2, -2), copy=True)
+
+    rotated = rotate_modes(
+        modes,
+        RotationSpec(kind="wigner", alpha=angle),
+        modes=[(2, 2)],
+    )
+
+    assert np.allclose(rotated.mode(2, 2), np.exp(2j * angle) * modes.mode(2, 2))
+    assert np.allclose(rotated.mode(2, -2), original_m2)
+
+
+def test_wigner_rotation_preserves_same_ell_power():
+    time_axis = np.linspace(-1.0, 1.0, 16)
+    modes = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=-2)
+    modes.create_modes_array(ell_max=2, data_len=len(time_axis))
+    signal = 1.0 + 0.1 * time_axis
+    modes.set_mode_data(ell=2, emm=2, data=signal)
+
+    rotated = rotate_modes(modes, RotationSpec(kind="wigner", beta=0.3))
+
+    original_power = sum(
+        np.abs(modes.mode(2, emm)) ** 2 for emm in range(-2, 3)
+    )
+    rotated_power = sum(
+        np.abs(rotated.mode(2, emm)) ** 2 for emm in range(-2, 3)
+    )
+    assert np.allclose(rotated_power, original_power, atol=1e-12)
+    assert np.max(np.abs(rotated.mode(2, 1))) > 0.0
+
+
 def test_mode_match_accepts_fixed_candidate_rotation():
     angle = 0.4
     reference = make_test_modes(orbital_phase=0.0)
