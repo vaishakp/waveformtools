@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from math import atan2, factorial, hypot
+from math import atan2, cos, factorial, hypot, sin
 
 import numpy as np
 
@@ -32,6 +32,31 @@ def z_rotation_quaternion(angle: float) -> np.ndarray:
     """Return a unit quaternion for a rotation about the z-axis."""
 
     return np.array([np.cos(0.5 * angle), 0.0, 0.0, np.sin(0.5 * angle)])
+
+
+def axis_angle_quaternion(axis: np.ndarray, angle: float) -> np.ndarray:
+    """Return a unit quaternion for a rotation about ``axis``."""
+
+    axis_unit = _unit_vector(axis, "axis")
+    half_angle = 0.5 * float(angle)
+    return np.array(
+        [
+            cos(half_angle),
+            *(sin(half_angle) * axis_unit),
+        ],
+        dtype=float,
+    )
+
+
+def quaternion_multiply(left: np.ndarray, right: np.ndarray) -> np.ndarray:
+    """Return the normalized Hamilton product ``left * right``."""
+
+    return _normalize_quaternion(
+        _quaternion_multiply(
+            _normalize_quaternion(left),
+            _normalize_quaternion(right),
+        )
+    )
 
 
 def quaternion_from_two_vectors(
