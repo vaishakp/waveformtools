@@ -2152,6 +2152,43 @@ class ModesArray:
         '''Return the waveform news by differentiating strain modes in time.'''
         return self.time_derivative(method=method)
 
+    def compute_displacement_memory(self, config=None, **overrides):
+        """Return opt-in displacement-memory strain modes.
+
+        The public API is present, but the spectral memory kernel is added in a
+        later batch. Until then this method validates inputs and raises
+        ``NotImplementedError`` from ``waveformtools.memory``.
+        """
+        from waveformtools.memory import compute_displacement_memory_from_strain
+
+        return compute_displacement_memory_from_strain(
+            self,
+            config=config,
+            **overrides,
+        )
+
+    def with_displacement_memory(self, memory_modes=None, config=None, **overrides):
+        """Return a copy of this waveform with displacement memory added."""
+        from waveformtools.memory import with_displacement_memory
+
+        return with_displacement_memory(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
+
+    def add_displacement_memory_in_place(self, memory_modes=None, config=None, **overrides):
+        """Add displacement memory to this waveform in place and return it."""
+        from waveformtools.memory import add_displacement_memory_in_place
+
+        return add_displacement_memory_in_place(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
+
     def compute_momentum_flux(self, news_modes):
 
         dPxdt = np.zeros(news_modes.data_len, dtype=np.float64)
