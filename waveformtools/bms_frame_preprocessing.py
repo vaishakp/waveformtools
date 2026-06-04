@@ -18,6 +18,7 @@ from waveformtools.bms_frame_diagnostics import (
     BMSFrameDiagnosticsConfig,
     BMSFrameDiagnosticsResult,
     compute_bms_frame_diagnostics,
+    summarize_low_order_bms_charge_diagnostics,
 )
 from waveformtools.comparison.rotation import RotationSpec, rotate_modes
 from waveformtools.rotation_math import (
@@ -150,6 +151,7 @@ class BMSFramePreprocessingReport:
     target_diagnostics: BMSFrameDiagnosticsResult | None
     candidate_diagnostics: BMSFrameDiagnosticsResult | None
     compatibility: dict[str, Any]
+    charge_diagnostics: dict[str, Any]
     transforms: dict[str, Any]
     assumptions: dict[str, Any]
     config: dict[str, Any]
@@ -169,6 +171,7 @@ class BMSFramePreprocessingReport:
                 else self.candidate_diagnostics.to_dict()
             ),
             "compatibility": self.compatibility,
+            "charge_diagnostics": self.charge_diagnostics,
             "transforms": self.transforms,
             "assumptions": self.assumptions,
             "config": self.config,
@@ -263,6 +266,10 @@ def preprocess_bms_frame(
         target_diagnostics=target_diagnostics,
         candidate_diagnostics=candidate_diagnostics,
         compatibility=compatibility,
+        charge_diagnostics=_paired_charge_diagnostics_report(
+            target_diagnostics,
+            candidate_diagnostics,
+        ),
         transforms=transforms,
         assumptions={
             "pn_eob_phenom_frame_comment": (
@@ -675,30 +682,40 @@ def _rotate_diagnostics_vectors(
     assumptions["rotated_by_bms_frame_preprocessing"] = True
     metadata = dict(diagnostics.diagnostics)
     metadata["rotated_by_bms_frame_preprocessing"] = True
+    rotated_linear_momentum = _rotate_optional_vector(
+        diagnostics.radiated_linear_momentum,
+        quat,
+        "radiated_linear_momentum",
+        np.inf,
+    )
+    rotated_kick_velocity = _rotate_optional_vector(
+        diagnostics.kick_velocity,
+        quat,
+        "kick_velocity",
+        np.inf,
+    )
+    rotated_angular_momentum = _rotate_optional_vector(
+        diagnostics.angular_momentum_radiated,
+        quat,
+        "angular_momentum_radiated",
+        np.inf,
+    )
     return BMSFrameDiagnosticsResult(
         energy_radiated=diagnostics.energy_radiated,
-        radiated_linear_momentum=_rotate_optional_vector(
-            diagnostics.radiated_linear_momentum,
-            quat,
-            "radiated_linear_momentum",
-            np.inf,
-        ),
-        kick_velocity=_rotate_optional_vector(
-            diagnostics.kick_velocity,
-            quat,
-            "kick_velocity",
-            np.inf,
-        ),
-        angular_momentum_radiated=_rotate_optional_vector(
-            diagnostics.angular_momentum_radiated,
-            quat,
-            "angular_momentum_radiated",
-            np.inf,
-        ),
+        radiated_linear_momentum=rotated_linear_momentum,
+        kick_velocity=rotated_kick_velocity,
+        angular_momentum_radiated=rotated_angular_momentum,
         memory_finite_time=diagnostics.memory_finite_time,
         omitted_inspiral=diagnostics.omitted_inspiral,
         assumptions=assumptions,
         diagnostics=metadata,
+        charge_diagnostics=summarize_low_order_bms_charge_diagnostics(
+            energy_radiated=diagnostics.energy_radiated,
+            radiated_linear_momentum=rotated_linear_momentum,
+            kick_velocity=rotated_kick_velocity,
+            angular_momentum_radiated=rotated_angular_momentum,
+            assumptions=assumptions,
+        ),
     )
 
 
@@ -745,6 +762,108 @@ def _direction_residual(target: np.ndarray, candidate: np.ndarray) -> float:
     target_unit = target / max(float(np.linalg.norm(target)), 1e-300)
     candidate_unit = candidate / max(float(np.linalg.norm(candidate)), 1e-300)
     return float(np.linalg.norm(target_unit - candidate_unit))
+
+
+def _paired_charge_diagnostics_report(
+    target: BMSFrameDiagnosticsResult | None,
+    candidate: BMSFrameDiagnosticsResult | None,
+) -> dict[str, Any]:
+    if target is None or candidate is None:
+        return {
+            "available": False,
+            "diagnostics_available": False,
+            "notes": "BMS-frame diagnostics were not computed.",
+        }
+    return {
+        "available": True,
+        "diagnostics_available": True,
+        "diagnostic_type": "paired_low_order_bms_flux_proxy_summary",
+        "target": target.charge_diagnostics,
+        "candidate": candidate.charge_diagnostics,
+        "comparison": {
+            "supermomentum_l0_energy": _relative_difference_summary(
+                target.energy_radiated,
+                candidate.energy_radiated,
+            ),
+            "supermomentum_l1_linear_momentum": _vector_difference_summary(
+                target.radiated_linear_momentum,
+                candidate.radiated_linear_momentum,
+            ),
+            "angular_momentum": _vector_difference_summary(
+                target.angular_momentum_radiated,
+                candidate.angular_momentum_radiated,
+            ),
+            "kick_velocity": _vector_difference_summary(
+                target.kick_velocity,
+                candidate.kick_velocity,
+            ),
+        },
+        "notes": (
+            "This is a diagnostics-only comparison of low-order radiated-flux "
+            "proxies. It does not equalize charges or modify waveform modes."
+        ),
+    }
+
+
+def _relative_difference_summary(
+    target_value: float | None,
+    candidate_value: float | None,
+) -> dict[str, Any]:
+    if target_value is None or candidate_value is None:
+        return {"available": False}
+    target_float = float(target_value)
+    candidate_float = float(candidate_value)
+    absolute_difference = candidate_float - target_float
+    scale = max(abs(target_float), abs(candidate_float), 1e-300)
+    return {
+        "available": True,
+        "target": target_float,
+        "candidate": candidate_float,
+        "absolute_difference": absolute_difference,
+        "relative_difference": abs(absolute_difference) / scale,
+    }
+
+
+def _vector_difference_summary(
+    target_value: np.ndarray | None,
+    candidate_value: np.ndarray | None,
+) -> dict[str, Any]:
+    if target_value is None or candidate_value is None:
+        return {"available": False}
+    target_vector, target_imaginary_norm = _summary_real_vector(target_value)
+    candidate_vector, candidate_imaginary_norm = _summary_real_vector(
+        candidate_value
+    )
+    target_norm = float(np.linalg.norm(target_vector))
+    candidate_norm = float(np.linalg.norm(candidate_vector))
+    difference_norm = float(np.linalg.norm(candidate_vector - target_vector))
+    scale = max(target_norm, candidate_norm, 1e-300)
+    direction_residual = None
+    if target_norm > 0.0 and candidate_norm > 0.0:
+        direction_residual = _direction_residual(
+            target_vector,
+            candidate_vector,
+        )
+    return {
+        "available": True,
+        "target_vector": [float(item) for item in target_vector],
+        "candidate_vector": [float(item) for item in candidate_vector],
+        "target_imaginary_norm": target_imaginary_norm,
+        "candidate_imaginary_norm": candidate_imaginary_norm,
+        "target_norm": target_norm,
+        "candidate_norm": candidate_norm,
+        "difference_norm": difference_norm,
+        "relative_norm_difference": abs(candidate_norm - target_norm) / scale,
+        "relative_vector_difference": difference_norm / scale,
+        "direction_residual": direction_residual,
+    }
+
+
+def _summary_real_vector(value: np.ndarray) -> tuple[np.ndarray, float]:
+    array = np.asarray(value).reshape(3)
+    vector = np.asarray(array.real, dtype=float)
+    imaginary_norm = float(np.linalg.norm(np.asarray(array.imag, dtype=float)))
+    return vector, imaginary_norm
 
 
 def _compatibility_report(
