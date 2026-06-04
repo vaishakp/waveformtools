@@ -2,9 +2,11 @@
 
 The current implementation exposes the public memory API and the first
 spectral building block: projection of the nonlinear memory source
-``|N|**2 / (16*pi)`` from an angular grid back to scalar modes.  The default
-memory strain kernel treats those scalar modes as the right-hand side of
-``bar_eth**2 h_mem`` and uses the corresponding spectral inverse.
+``|N|**2`` from an angular grid back to scalar modes.  The source
+normalization is configurable so convention checks can compare this default
+memory-flux source with the legacy ``|N|**2 / (16*pi)`` diagnostic convention.
+The default memory strain kernel treats those scalar modes as the right-hand
+side of ``bar_eth**2 h_mem`` and uses the corresponding spectral inverse.
 """
 
 from __future__ import annotations
@@ -16,6 +18,7 @@ import numpy as np
 
 MemoryIntegrationConstant = Literal["zero_at_start"]
 MemoryMethod = Literal["spectral"]
+MemorySourceNormalization = Literal["news_squared", "balance_law_16pi"]
 
 
 @dataclass(slots=True)
@@ -28,6 +31,8 @@ class DisplacementMemoryConfig:
     integration_constant: MemoryIntegrationConstant = "zero_at_start"
     method: MemoryMethod = "spectral"
     news_method: str = "spline"
+    source_normalization: MemorySourceNormalization = "news_squared"
+    source_scale: float = 1.0
 
     def __post_init__(self) -> None:
         self.ell_min = int(self.ell_min)
@@ -51,6 +56,17 @@ class DisplacementMemoryConfig:
             )
         if self.method != "spectral":
             raise ValueError("Only method='spectral' is supported.")
+        if self.source_normalization not in {
+            "news_squared",
+            "balance_law_16pi",
+        }:
+            raise ValueError(
+                "source_normalization must be 'news_squared' or "
+                "'balance_law_16pi'."
+            )
+        self.source_scale = float(self.source_scale)
+        if not np.isfinite(self.source_scale):
+            raise ValueError("source_scale must be finite.")
 
     def to_dict(self) -> dict[str, Any]:
         """Return a plain dictionary representation."""
@@ -129,7 +145,8 @@ def compute_displacement_memory_source_from_news(
     """Return scalar modes of the nonlinear memory source.
 
     The returned object has ``spin_weight=0`` and contains the angular
-    projection of ``|N|**2 / (16*pi)`` on the same time axis as ``news_modes``.
+    projection of the configured ``|N|**2`` source normalization on the same
+    time axis as ``news_modes``.
     This is the source data needed by the later spin -2 displacement-memory
     kernel; it is not itself the memory strain.
     """
@@ -140,7 +157,8 @@ def compute_displacement_memory_source_from_news(
 
     ell_max = _source_ell_max(news_modes, memory_config)
     angular_news = news_modes.evaluate_angular(ell_max=ell_max)
-    source = np.abs(angular_news) ** 2 / (16.0 * np.pi)
+    source_factor = _source_normalization_factor(memory_config)
+    source = source_factor * np.abs(angular_news) ** 2
     source = _angular_data_time_first(source, news_modes)
     projection_ell_max = _source_projection_ell_max(
         news_modes,
@@ -169,7 +187,8 @@ def compute_displacement_memory_source_from_news(
         {
             "included": True,
             "config": memory_config.to_dict(),
-            "source": "|news|^2/(16*pi)",
+            "source": _source_description(memory_config),
+            "source_factor": source_factor,
             "implementation": "angular_projection",
         },
     )
@@ -300,6 +319,30 @@ def _source_projection_ell_max(
     return min(2 * source_ell_max, grid_limit)
 
 
+def _source_normalization_factor(config: DisplacementMemoryConfig) -> float:
+    if config.source_normalization == "news_squared":
+        base_factor = 1.0
+    elif config.source_normalization == "balance_law_16pi":
+        base_factor = 1.0 / (16.0 * np.pi)
+    else:  # pragma: no cover - guarded by config validation.
+        raise ValueError(
+            f"Unknown source_normalization={config.source_normalization!r}."
+        )
+    return config.source_scale * base_factor
+
+
+def _source_description(config: DisplacementMemoryConfig) -> str:
+    if config.source_normalization == "news_squared":
+        base = "|news|^2"
+    elif config.source_normalization == "balance_law_16pi":
+        base = "|news|^2/(16*pi)"
+    else:  # pragma: no cover - guarded by config validation.
+        base = f"|news|^2[{config.source_normalization}]"
+    if config.source_scale == 1.0:
+        return base
+    return f"{config.source_scale:g}*{base}"
+
+
 def _memory_ell_max(
     modes_obj: Any,
     config: DisplacementMemoryConfig,
@@ -348,7 +391,7 @@ def _source_modes_to_memory_strain(
             memory_modes.set_mode_data(
                 ell=ell,
                 emm=emm,
-                data=integrated_source / eigenvalue,
+                data=np.conjugate(integrated_source) / eigenvalue,
             )
     return memory_modes
 
