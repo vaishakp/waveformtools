@@ -161,6 +161,69 @@ Fixed:
 - Remove import-time `print(package_directory)`.
 - Added `test/test_import_hygiene.py`.
 
+### Batch 7: displacement-memory source and strain kernel
+
+Implemented:
+
+- `waveformtools/memory.py`
+  - opt-in displacement-memory API now computes a scalar memory source
+    `|news|^2/(16*pi)` and projects it through `SphericalArray.to_modes_array`.
+  - `compute_displacement_memory_from_news` maps the integrated scalar source
+    to spin `-2` memory modes using a `bar_eth^2` spectral inverse.
+  - The spin coefficient is taken from
+    `qlmtools.spin_coefficient.analytic_spin_raise_basis_factor` so the ladder
+    coefficient convention is centralized in `qlmtools`.
+- `waveformtools/modes_array.py`
+  - added `ModesArray.compute_displacement_memory_source`.
+- `waveformtools/spherical_array.py`
+  - fixed `to_modes_array` for time-dependent angular data by normalizing to
+    `(time, theta, phi)` before calling `TwoDIntegral`.
+  - fixed a missing local `ModesArray` import in `to_modes_array`.
+- `test/test_memory.py`
+  - source projection, zero-news, and spectral-inverse tests.
+- `test/test_spherical_array.py`
+  - regression test for projecting time-dependent angular data.
+- `test/test_memory_real_balance_law.py`
+  - gated real-waveform balance-law diagnostics. Skipped by default unless
+    `WAVEFORMTOOLS_RUN_REAL_WAVEFORM_TESTS=1`.
+  - larger diagnostics additionally require
+    `WAVEFORMTOOLS_RUN_LARGE_MEMORY_TESTS=1`.
+
+Local `bhive` diagnostics:
+
+- Small `NRSur7dq4`, `ell_max=2`:
+  - RMS residual original: `2.09180243e-02`
+  - RMS residual with memory: `2.08370857e-02`
+  - RMS ratio: `9.96130677e-01`
+  - `l00` original: `-4.48324105e-07 - 1.54249528e-09j`
+  - `l00` with memory: `-4.48346777e-07 - 1.54032612e-09j`
+  - `|l00|` ratio: `1.00005055e+00`
+- Full `NRSur7dq4`, `f_lower=0`, `f_ref=20Hz`, `ell_max=4`:
+  - `n_times`: `6658`
+  - RMS residual original: `1.77555029e-02`
+  - RMS residual with memory: `1.76524580e-02`
+  - RMS ratio: `9.94196455e-01`
+  - `l00` original: `-4.51012650e-07 - 1.57822590e-09j`
+  - `l00` with memory: `-4.51036373e-07 - 1.57588049e-09j`
+  - `|l00|` ratio: `1.00005258e+00`
+- `SEOBNRv5PHM`, `f_lower=15Hz`, `ell_max=5`:
+  - `n_times`: `3942`
+  - RMS residual original: `1.82081653e-02`
+  - RMS residual with memory: `1.81102667e-02`
+  - RMS ratio: `9.94623366e-01`
+  - `l00` original: `-2.06979920e-08 + 2.48634526e-25j`
+  - `l00` with memory: `-2.06956700e-08 - 5.17202036e-19j`
+  - `|l00|` ratio: `9.99887815e-01`
+
+Interpretation:
+
+- Memory lowers the full RMS balance-law residual by about `0.5%` in all
+  tested real-waveform cases.
+- The `l=0,m=0` residual component improves for `SEOBNRv5PHM`, but is slightly
+  larger for `NRSur7dq4`. Keep `l00` as a printed diagnostic, not a hard
+  assertion, until the memory normalization/sign and finite-time/infinite-time
+  conventions are audited more deeply.
+
 ## Later Work After Audit Batches
 
 - Re-run targeted tests:

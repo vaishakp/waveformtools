@@ -47,8 +47,17 @@ def test_displacement_memory_config_validation():
 def test_compute_displacement_memory_validates_and_marks_kernel_boundary():
     modes = make_memory_test_modes()
 
-    with pytest.raises(NotImplementedError, match="spectral kernel"):
-        modes.compute_displacement_memory()
+    memory_modes = modes.compute_displacement_memory()
+
+    assert memory_modes.spin_weight == -2
+    assert memory_modes.ell_max == modes.ell_max
+    assert np.allclose(memory_modes.time_axis, modes.time_axis)
+    assert np.allclose(memory_modes.modes_data[..., 0], 0.0)
+    assert np.max(np.abs(memory_modes.modes_data)) > 0.0
+    assert (
+        memory_modes.displacement_memory_metadata["implementation"]
+        == "bar_eth2_inverse"
+    )
 
 
 def test_compute_displacement_memory_source_projects_news_intensity():
@@ -74,6 +83,38 @@ def test_compute_displacement_memory_source_zero_news_gives_zero_modes():
     source_modes = compute_displacement_memory_source_from_news(news_modes)
 
     assert np.allclose(source_modes.modes_data, 0.0)
+
+
+def test_compute_displacement_memory_from_news_inverts_bar_eth2_source():
+    news_modes = make_memory_test_modes()
+    source_modes = compute_displacement_memory_source_from_news(
+        news_modes,
+        memory_ell_max=news_modes.ell_max,
+    )
+
+    memory_modes = compute_displacement_memory_from_news(news_modes)
+
+    eigenvalue = np.sqrt((2 - 1) * 2 * (2 + 1) * (2 + 2))
+    expected_integral = cumulative_trapezoid_zero_at_start(
+        news_modes.time_axis,
+        source_modes.mode(2, 0),
+    )
+    np.testing.assert_allclose(
+        memory_modes.mode(2, 0) * eigenvalue,
+        expected_integral,
+        rtol=1e-12,
+        atol=1e-12,
+    )
+
+
+def test_compute_displacement_memory_from_news_zero_news_gives_zero_memory():
+    news_modes = make_memory_test_modes()
+    news_modes._modes_data = np.zeros_like(news_modes.modes_data)
+
+    memory_modes = compute_displacement_memory_from_news(news_modes)
+
+    assert memory_modes.spin_weight == -2
+    assert np.allclose(memory_modes.modes_data, 0.0)
 
 
 def test_modes_array_memory_source_uses_existing_news_derivative_path():
@@ -133,3 +174,10 @@ def test_with_displacement_memory_rejects_incompatible_memory_modes():
 
     with pytest.raises(ValueError, match="same time axis"):
         modes.with_displacement_memory(memory_modes=memory)
+
+
+def cumulative_trapezoid_zero_at_start(xdata, ydata):
+    integral = np.zeros_like(ydata, dtype=np.result_type(ydata, complex))
+    increments = 0.5 * (ydata[..., 1:] + ydata[..., :-1]) * np.diff(xdata)
+    integral[..., 1:] = np.cumsum(increments, axis=-1)
+    return integral
