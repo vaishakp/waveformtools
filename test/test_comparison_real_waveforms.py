@@ -19,6 +19,7 @@ import os
 import numpy as np
 import pytest
 
+from waveformtools.bms_frame_diagnostics import compute_bms_frame_diagnostics
 from waveformtools.comparison import (
     AlignmentSpec,
     FittingFactorConfig,
@@ -401,6 +402,24 @@ def test_real_waveform_cross_model_fitting_factor_smoke(real_model_pair):
     assert optimized_rms_residue <= fixed_rms_residue + 1e-8
     assert optimized.best_parameters["alignment"]["candidate_time_shift"] != 0.0
     assert optimized.best_parameters["alignment"]["rotation"]["kind"] == "z_axis"
+
+
+def test_real_phenomxphm_fd_to_td_modes_have_physical_scale():
+    phenom = _generate_real_modes("IMRPhenomXPHM")
+
+    h22_peak = float(np.max(np.abs(phenom.mode(2, 2))))
+    diagnostics = compute_bms_frame_diagnostics(
+        phenom,
+        {
+            "initial_mass": 1.0,
+            "final_mass": 0.95,
+            "compute_memory_finite_time": False,
+        },
+    )
+
+    assert 0.1 < h22_peak < 2.0
+    assert diagnostics.energy_radiated is not None
+    assert 1e-3 < diagnostics.energy_radiated < 0.2
 
 
 def test_real_waveform_generator_fitting_factor_accepts_user_params(real_model_pair):
