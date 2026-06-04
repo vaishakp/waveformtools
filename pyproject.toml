@@ -12,6 +12,12 @@ disable= "W0311"
 max-line-length = 120
 ignore = ['E203']
 
+[tool.pytest.ini_options]
+markers = [
+    "integration: optional integration tests",
+    "real_waveform: optional tests that generate real waveform modes",
+]
+
 [build-system]
 #requires = ["setuptools"]
 requires = ["hatchling", "hatch-requirements-txt"]
