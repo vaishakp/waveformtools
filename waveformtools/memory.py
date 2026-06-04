@@ -195,6 +195,152 @@ def compute_displacement_memory_source_from_news(
     return source_modes
 
 
+def diagnose_displacement_memory_finite_time(
+    strain_modes: Any,
+    config: DisplacementMemoryConfig | Mapping[str, Any] | None = None,
+    window_fraction: float = 0.1,
+    start_indices: list[int] | tuple[int, ...] | None = None,
+    **overrides: Any,
+) -> dict[str, Any]:
+    """Return diagnostics for finite-time displacement-memory sensitivity."""
+
+    memory_config = DisplacementMemoryConfig.from_value(config, **overrides)
+    _validate_strain_modes(strain_modes, memory_config)
+    time_axis = np.asarray(strain_modes.time_axis, dtype=float)
+    news_modes = strain_modes.get_news_from_strain(
+        method=memory_config.news_method
+    )
+    source_modes = compute_displacement_memory_source_from_news(
+        news_modes,
+        memory_config,
+        memory_ell_max=_memory_ell_max(news_modes, memory_config),
+    )
+    memory_modes = _source_modes_to_memory_strain(
+        source_modes,
+        memory_config,
+        memory_ell_max=_memory_ell_max(news_modes, memory_config),
+    )
+
+    window_size = _diagnostic_window_size(len(time_axis), window_fraction)
+    starts = _diagnostic_start_indices(len(time_axis), start_indices)
+    full_endpoint_norm = _mode_data_vector_norm(
+        memory_modes.modes_data[..., -1]
+    )
+    early_endpoint_norm = _memory_endpoint_norm_from_interval(
+        source_modes,
+        memory_config,
+        0,
+        window_size,
+    )
+    late_endpoint_norm = _memory_endpoint_norm_from_interval(
+        source_modes,
+        memory_config,
+        len(time_axis) - window_size,
+        len(time_axis),
+    )
+
+    return {
+        "time_start": float(time_axis[0]),
+        "time_end": float(time_axis[-1]),
+        "duration": float(time_axis[-1] - time_axis[0]),
+        "window_size": window_size,
+        "window_fraction": float(window_fraction),
+        "memory_endpoint_norm": full_endpoint_norm,
+        "early_window_endpoint_norm": early_endpoint_norm,
+        "late_window_endpoint_norm": late_endpoint_norm,
+        "early_window_fraction_of_endpoint": _safe_ratio(
+            early_endpoint_norm,
+            full_endpoint_norm,
+        ),
+        "late_window_fraction_of_endpoint": _safe_ratio(
+            late_endpoint_norm,
+            full_endpoint_norm,
+        ),
+        "start_index_sensitivity": [
+            {
+                "start_index": int(start_index),
+                "start_time": float(time_axis[start_index]),
+                "endpoint_norm": _memory_endpoint_norm_from_interval(
+                    source_modes,
+                    memory_config,
+                    start_index,
+                    len(time_axis),
+                ),
+            }
+            for start_index in starts
+        ],
+        "config": memory_config.to_dict(),
+    }
+
+
+def diagnose_omitted_inspiral(
+    strain_modes: Any,
+    news_modes: Any | None = None,
+    mode: tuple[int, int] = (2, 2),
+    news_method: str = "spline",
+    early_window_fraction: float = 0.1,
+    min_cycles: float = 3.0,
+    high_initial_power_fraction: float = 0.05,
+) -> dict[str, Any]:
+    """Return start-of-waveform diagnostics for omitted inspiral."""
+
+    config = DisplacementMemoryConfig(news_method=news_method)
+    _validate_strain_modes(strain_modes, config)
+    time_axis = np.asarray(strain_modes.time_axis, dtype=float)
+    if news_modes is None:
+        news_modes = strain_modes.get_news_from_strain(method=news_method)
+    _validate_news_modes(news_modes, config)
+
+    ell, emm = mode
+    mode_data = np.asarray(strain_modes.mode(ell, emm), dtype=np.complex128)
+    phase = np.unwrap(np.angle(mode_data))
+    omega = np.gradient(phase, time_axis)
+    window_size = _diagnostic_window_size(
+        len(time_axis),
+        early_window_fraction,
+    )
+    initial_omega = float(np.median(np.abs(omega[:window_size])))
+    total_cycles = float(abs(phase[-1] - phase[0]) / (2.0 * np.pi))
+    early_cycles = float(
+        abs(phase[window_size - 1] - phase[0]) / (2.0 * np.pi)
+    )
+    initial_period = np.inf
+    if initial_omega > 0.0:
+        initial_period = float(2.0 * np.pi / initial_omega)
+
+    power = np.asarray(strain_modes.get_power_from_news_modes(news_modes))
+    peak_power = float(np.max(power))
+    initial_power = float(power[0])
+    early_power_median = float(np.median(power[:window_size]))
+    total_energy = float(_trapezoid(power, time_axis))
+    early_energy = float(
+        _trapezoid(power[:window_size], time_axis[:window_size])
+    )
+    initial_power_fraction = _safe_ratio(initial_power, peak_power)
+    early_power_fraction = _safe_ratio(early_power_median, peak_power)
+    early_energy_fraction = _safe_ratio(early_energy, total_energy)
+
+    starts_near_peak = initial_power_fraction > high_initial_power_fraction
+    starts_short = total_cycles < min_cycles
+    return {
+        "mode": (int(ell), int(emm)),
+        "time_start": float(time_axis[0]),
+        "time_end": float(time_axis[-1]),
+        "duration": float(time_axis[-1] - time_axis[0]),
+        "initial_angular_frequency": initial_omega,
+        "initial_period": initial_period,
+        "total_cycles": total_cycles,
+        "early_window_cycles": early_cycles,
+        "early_window_size": window_size,
+        "initial_power_fraction_of_peak": initial_power_fraction,
+        "early_power_fraction_of_peak": early_power_fraction,
+        "early_energy_fraction": early_energy_fraction,
+        "starts_short": bool(starts_short),
+        "starts_near_peak": bool(starts_near_peak),
+        "omitted_inspiral_likely": bool(starts_short or starts_near_peak),
+    }
+
+
 def with_displacement_memory(
     strain_modes: Any,
     memory_modes: Any | None = None,
@@ -341,6 +487,65 @@ def _source_description(config: DisplacementMemoryConfig) -> str:
     if config.source_scale == 1.0:
         return base
     return f"{config.source_scale:g}*{base}"
+
+
+def _diagnostic_window_size(data_len: int, fraction: float) -> int:
+    fraction = float(fraction)
+    if not np.isfinite(fraction) or fraction <= 0.0 or fraction > 1.0:
+        raise ValueError("diagnostic window fraction must be in (0, 1].")
+    return max(2, min(int(data_len), int(np.ceil(fraction * data_len))))
+
+
+def _diagnostic_start_indices(
+    data_len: int,
+    start_indices: list[int] | tuple[int, ...] | None,
+) -> list[int]:
+    if start_indices is None:
+        proposed = [0, int(round(0.05 * data_len)), int(round(0.1 * data_len))]
+    else:
+        proposed = [int(index) for index in start_indices]
+    return sorted({max(0, min(index, data_len - 2)) for index in proposed})
+
+
+def _memory_endpoint_norm_from_interval(
+    source_modes: Any,
+    config: DisplacementMemoryConfig,
+    start_index: int,
+    stop_index: int,
+) -> float:
+    endpoint_values = []
+    ell_min = max(2, config.ell_min)
+    for ell, emm_list in source_modes.modes_list:
+        if ell < ell_min:
+            continue
+        eigenvalue = _bar_eth2_eigenvalue(ell)
+        for emm in emm_list:
+            integrated_source = _trapezoid(
+                np.asarray(source_modes.mode(ell, emm))[
+                    start_index:stop_index
+                ],
+                np.asarray(source_modes.time_axis)[start_index:stop_index],
+            )
+            endpoint_values.append(
+                np.conjugate(integrated_source) / eigenvalue
+            )
+    return _mode_data_vector_norm(np.asarray(endpoint_values))
+
+
+def _mode_data_vector_norm(data: np.ndarray) -> float:
+    return float(np.sqrt(np.sum(np.abs(data) ** 2)))
+
+
+def _safe_ratio(numerator: float, denominator: float) -> float:
+    if denominator == 0.0:
+        return np.nan
+    return float(numerator / denominator)
+
+
+def _trapezoid(ydata: np.ndarray, xdata: np.ndarray) -> Any:
+    if hasattr(np, "trapezoid"):
+        return np.trapezoid(ydata, x=xdata, axis=-1)
+    return np.trapz(ydata, x=xdata, axis=-1)
 
 
 def _memory_ell_max(
