@@ -101,8 +101,6 @@ def compute_supertransl_alpha(supertransl_alpha_modes, theta, phi):
     # The final function
     supertransl_alpha_sphere = 0
 
-    theta = np.pi / 2
-    phi = 0.0
     for item in keys_list:
         ell = int(item[1])
         for m_index in range(2 * ell + 1):
@@ -294,4 +292,3 @@ def compute_angular_momentum(strain_modes,
     dJz = spline_dJz_dt.integral(t_start, t_end)
 
     return np.array([dJx, dJy, dJz])
-

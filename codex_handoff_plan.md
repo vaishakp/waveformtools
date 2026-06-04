@@ -123,25 +123,16 @@ Added:
 
 - `test/test_integrate.py`
 
-## Remaining Batches
-
 ### Batch 4: BMS angular argument bug
 
-Issue:
+Fixed:
 
 - `waveformtools/BMS.py::compute_supertransl_alpha` accepts `theta, phi` but
-  overwrites them with:
+  previously overwrote them internally with `theta = np.pi / 2`, `phi = 0.0`.
+- Removed those assignments.
+- Added `test/test_bms.py`.
 
-```python
-theta = np.pi / 2
-phi = 0.0
-```
-
-Plan:
-
-- Remove those assignments.
-- Add a focused test proving different angular inputs produce expected values.
-- Use existing public function behavior only; do not inspect black-box deps.
+## Remaining Batches
 
 ### Batch 5: fitting-factor result namespace
 
