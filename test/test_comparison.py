@@ -709,6 +709,51 @@ def test_fitting_factor_optimizes_user_selected_parameter():
     assert result.n_waveform_generations >= 1
 
 
+def test_fitting_factor_forwards_arbitrary_user_parameter_dict():
+    target_phase = 0.45
+    reference = make_test_modes(phase=target_phase)
+    calls = []
+
+    def generator(parameters):
+        calls.append(dict(parameters))
+        assert parameters["approximant"] == "synthetic-family"
+        assert parameters["total_mass"] == 75.0
+        assert parameters["spin1_theta"] == 0.6
+        phase = parameters["reference_phase"] + 0.05 * parameters["mass_ratio"]
+        return make_test_modes(phase=phase)
+
+    result = reference.fitting_factor(
+        generator,
+        config=FittingFactorConfig(
+            comparison=ModeComparisonConfig(
+                alignment=AlignmentSpec(
+                    time_alignment="none", phase_alignment="none"
+                )
+            ),
+            variable_parameters={"reference_phase": (-1.0, 1.0)},
+            fixed_parameters={
+                "approximant": "synthetic-family",
+                "total_mass": 75.0,
+                "mass_ratio": 2.0,
+                "spin1_theta": 0.6,
+            },
+            initial_parameters={"reference_phase": 0.0},
+            optimizer="scipy_minimize",
+            optimizer_options={"options": {"maxiter": 40}},
+            generator_call_style="dict",
+        ),
+    )
+
+    assert result.match > 0.999
+    best_reference_phase = result.best_parameters["generator"][
+        "reference_phase"
+    ]
+    assert best_reference_phase == pytest.approx(target_phase - 0.1, abs=2e-3)
+    assert calls
+    assert "reference_phase" in calls[0]
+    assert "mass_ratio" in calls[0]
+
+
 def test_fitting_factor_namespaces_generator_and_alignment_parameters():
     reference = make_test_modes()
 
