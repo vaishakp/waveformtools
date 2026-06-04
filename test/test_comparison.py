@@ -142,6 +142,7 @@ def test_resample_to_reference_handles_different_sampling_rates():
     result = mode_match(
         reference,
         candidate,
+        time_alignment="none",
         time_domain_policy="resample_to_reference",
         resample_method="linear",
     )
@@ -149,6 +150,26 @@ def test_resample_to_reference_handles_different_sampling_rates():
     assert result.match > 0.999
     assert result.diagnostics["time_axis"]["n_samples"] == len(reference.time_axis)
     assert result.diagnostics["time_axis"]["policy"] == "resample_to_reference"
+    assert result.diagnostics["alignment"]["time_alignment"] == "none"
+
+
+def test_peak_22_resample_to_reference_uses_valid_overlap_for_different_sampling_rates():
+    reference = make_test_modes(time_axis=np.linspace(-10.0, 10.0, 256))
+    candidate = make_test_modes(time_axis=np.linspace(-10.0, 10.0, 300))
+
+    result = mode_match(
+        reference,
+        candidate,
+        time_alignment="peak_22",
+        time_domain_policy="resample_to_reference",
+        resample_method="linear",
+    )
+
+    assert result.match > 0.999
+    assert result.diagnostics["time_axis"]["n_samples"] <= len(reference.time_axis)
+    assert result.diagnostics["time_axis"]["n_samples"] >= len(reference.time_axis) - 1
+    assert result.diagnostics["time_axis"]["policy"] == "resample_to_reference"
+    assert result.diagnostics["alignment"]["time_alignment"] == "peak_22"
 
 
 def test_peak_total_power_alignment_handles_shifted_peak():
