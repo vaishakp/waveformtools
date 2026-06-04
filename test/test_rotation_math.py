@@ -5,8 +5,10 @@ from __future__ import annotations
 import numpy as np
 
 from waveformtools.rotation_math import (
+    axis_angle_quaternion,
     euler_zyz_quaternion,
     quaternion_from_two_vectors,
+    quaternion_multiply,
     quaternion_rotate_vector,
     quaternion_to_euler_zyz,
     wigner_d,
@@ -48,3 +50,34 @@ def test_quaternion_to_euler_zyz_round_trips_local_convention():
     round_trip = euler_zyz_quaternion(alpha, beta, gamma)
 
     np.testing.assert_allclose(round_trip, quat, atol=1e-14)
+
+
+def test_axis_angle_quaternion_rotates_about_axis():
+    quat = axis_angle_quaternion(np.array([0.0, 0.0, 1.0]), np.pi / 2.0)
+
+    rotated = quaternion_rotate_vector(quat, np.array([1.0, 0.0, 0.0]))
+
+    np.testing.assert_allclose(rotated, [0.0, 1.0, 0.0], atol=1e-14)
+
+
+def test_quaternion_multiply_composes_rotations():
+    rotate_x_to_z = quaternion_from_two_vectors(
+        np.array([1.0, 0.0, 0.0]),
+        np.array([0.0, 0.0, 1.0]),
+    )
+    rotate_y_to_x_about_z = axis_angle_quaternion(
+        np.array([0.0, 0.0, 1.0]),
+        -np.pi / 2.0,
+    )
+    composed = quaternion_multiply(rotate_y_to_x_about_z, rotate_x_to_z)
+
+    np.testing.assert_allclose(
+        quaternion_rotate_vector(composed, np.array([1.0, 0.0, 0.0])),
+        [0.0, 0.0, 1.0],
+        atol=1e-14,
+    )
+    np.testing.assert_allclose(
+        quaternion_rotate_vector(composed, np.array([0.0, 1.0, 0.0])),
+        [1.0, 0.0, 0.0],
+        atol=1e-14,
+    )
