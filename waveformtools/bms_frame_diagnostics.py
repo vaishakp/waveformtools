@@ -32,6 +32,7 @@ class BMSFrameDiagnosticsConfig:
     compute_energy: bool = True
     compute_linear_momentum: bool = True
     compute_angular_momentum: bool = True
+    compute_charge_diagnostics: bool = True
     compute_memory_finite_time: bool = False
     compute_omitted_inspiral: bool = True
     omitted_inspiral_mode: tuple[int, int] = (2, 2)
@@ -102,6 +103,7 @@ class BMSFrameDiagnosticsResult:
     omitted_inspiral: dict[str, Any] | None
     assumptions: dict[str, Any]
     diagnostics: dict[str, Any]
+    charge_diagnostics: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-friendly dictionary representation."""
@@ -119,6 +121,7 @@ class BMSFrameDiagnosticsResult:
             "omitted_inspiral": _to_jsonable(self.omitted_inspiral),
             "assumptions": _to_jsonable(self.assumptions),
             "diagnostics": _to_jsonable(self.diagnostics),
+            "charge_diagnostics": _to_jsonable(self.charge_diagnostics),
         }
 
 
@@ -207,6 +210,15 @@ def compute_bms_frame_diagnostics(
         diagnostics_config,
         energy_radiated=energy_radiated,
     )
+    charge_diagnostics = None
+    if diagnostics_config.compute_charge_diagnostics:
+        charge_diagnostics = summarize_low_order_bms_charge_diagnostics(
+            energy_radiated=energy_radiated,
+            radiated_linear_momentum=radiated_linear_momentum,
+            kick_velocity=kick_velocity,
+            angular_momentum_radiated=angular_momentum_radiated,
+            assumptions=assumptions,
+        )
     diagnostics = {
         "config": diagnostics_config.to_dict(),
         "news": _news_metadata(news_modes),
@@ -233,7 +245,102 @@ def compute_bms_frame_diagnostics(
         omitted_inspiral=omitted_inspiral,
         assumptions=assumptions,
         diagnostics=diagnostics,
+        charge_diagnostics=charge_diagnostics,
     )
+
+
+def summarize_low_order_bms_charge_diagnostics(
+    *,
+    energy_radiated: float | None,
+    radiated_linear_momentum: np.ndarray | None,
+    kick_velocity: np.ndarray | None,
+    angular_momentum_radiated: np.ndarray | None,
+    assumptions: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Return diagnostics-only low-order BMS charge proxies.
+
+    These entries are radiated-flux summaries useful for frame checks.  They
+    are not absolute BMS charges and do not determine a superrest frame.
+    """
+
+    assumption_data = {} if assumptions is None else dict(assumptions)
+    return {
+        "available": True,
+        "diagnostic_type": "low_order_bms_flux_proxy_summary",
+        "absolute_bms_charges_computed": False,
+        "mode_resolved_supermomentum_computed": False,
+        "superrest_frame_fixed": False,
+        "component_basis": "Cartesian xyz for vector proxies",
+        "spherical_harmonic_normalization": (
+            "No mode-resolved supermomentum coefficients are computed here."
+        ),
+        "proxies": {
+            "supermomentum_l0_energy": _scalar_charge_proxy(
+                name="supermomentum_l0_energy",
+                value=energy_radiated,
+                ell=0,
+                description=(
+                    "Radiated-energy flux proxy for the l=0 "
+                    "supermomentum balance."
+                ),
+            ),
+            "supermomentum_l1_linear_momentum": _vector_charge_proxy(
+                name="supermomentum_l1_linear_momentum",
+                value=radiated_linear_momentum,
+                ell=1,
+                description=(
+                    "Radiated-linear-momentum flux proxy for the l=1 "
+                    "supermomentum balance."
+                ),
+            ),
+            "kick_velocity": _vector_charge_proxy(
+                name="kick_velocity",
+                value=kick_velocity,
+                ell=1,
+                description=(
+                    "Final-mass-normalized recoil proxy when final_mass is "
+                    "provided."
+                ),
+            ),
+            "angular_momentum": _vector_charge_proxy(
+                name="angular_momentum",
+                value=angular_momentum_radiated,
+                ell=1,
+                description="Radiated angular-momentum flux vector.",
+            ),
+            "mass_balance": _mass_balance_proxy(
+                energy_radiated=energy_radiated,
+                assumptions=assumption_data,
+            ),
+        },
+        "unavailable": [
+            {
+                "name": "absolute_supermomentum_lm",
+                "reason": (
+                    "Requires endpoint/cut assumptions beyond waveform fluxes."
+                ),
+            },
+            {
+                "name": "moreschi_supermomentum",
+                "reason": (
+                    "Requires a dedicated convention and angular "
+                    "mode-resolved implementation."
+                ),
+            },
+            {
+                "name": "center_of_mass_or_boost_charge",
+                "reason": (
+                    "Requires fixing additional BMS-frame data, not just "
+                    "radiated fluxes."
+                ),
+            },
+        ],
+        "notes": (
+            "Use these values as low-order frame diagnostics. Do not equalize "
+            "them automatically unless a higher-level workflow explicitly "
+            "chooses a physical model for the transformation or repair."
+        ),
+    }
 
 
 def _assumption_metadata(
@@ -255,6 +362,109 @@ def _assumption_metadata(
         "superrest_frame_not_fixed": True,
         "moreschi_supermomentum_not_computed": True,
     }
+
+
+def _scalar_charge_proxy(
+    *,
+    name: str,
+    value: float | None,
+    ell: int,
+    description: str,
+) -> dict[str, Any]:
+    if value is None:
+        return {
+            "available": False,
+            "name": name,
+            "ell": ell,
+            "description": description,
+        }
+    return {
+        "available": True,
+        "name": name,
+        "ell": ell,
+        "value": float(value),
+        "description": description,
+    }
+
+
+def _vector_charge_proxy(
+    *,
+    name: str,
+    value: np.ndarray | None,
+    ell: int,
+    description: str,
+) -> dict[str, Any]:
+    if value is None:
+        return {
+            "available": False,
+            "name": name,
+            "ell": ell,
+            "description": description,
+        }
+    vector, imaginary_norm = _summary_real_vector(value)
+    norm = float(np.linalg.norm(vector))
+    direction = None
+    if norm > 0.0:
+        direction = vector / norm
+    return {
+        "available": True,
+        "name": name,
+        "ell": ell,
+        "vector": vector,
+        "norm": norm,
+        "direction": direction,
+        "imaginary_norm": imaginary_norm,
+        "used_real_part": bool(imaginary_norm > 0.0),
+        "description": description,
+    }
+
+
+def _mass_balance_proxy(
+    *,
+    energy_radiated: float | None,
+    assumptions: Mapping[str, Any],
+) -> dict[str, Any]:
+    initial_mass = assumptions.get("initial_mass")
+    final_mass = assumptions.get("final_mass")
+    final_mass_from_initial = assumptions.get(
+        "final_mass_from_initial_minus_radiation"
+    )
+    available = (
+        initial_mass is not None
+        and final_mass is not None
+        and energy_radiated is not None
+    )
+    result = {
+        "available": available,
+        "name": "mass_balance",
+        "description": (
+            "Bookkeeping diagnostic for initial_mass - final_mass - "
+            "energy_radiated."
+        ),
+        "initial_mass": initial_mass,
+        "final_mass": final_mass,
+        "energy_radiated": energy_radiated,
+        "final_mass_from_initial_minus_radiation": final_mass_from_initial,
+    }
+    if not available:
+        return result
+
+    residual = float(initial_mass) - float(final_mass) - float(energy_radiated)
+    scale = max(abs(float(initial_mass)), 1e-300)
+    result.update(
+        {
+            "residual": residual,
+            "relative_residual": residual / scale,
+        }
+    )
+    return result
+
+
+def _summary_real_vector(value: np.ndarray) -> tuple[np.ndarray, float]:
+    array = np.asarray(value).reshape(3)
+    vector = np.asarray(array.real, dtype=float)
+    imaginary_norm = float(np.linalg.norm(np.asarray(array.imag, dtype=float)))
+    return vector, imaginary_norm
 
 
 def _news_metadata(news_modes: Any) -> dict[str, Any]:
