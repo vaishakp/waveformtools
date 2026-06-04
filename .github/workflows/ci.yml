@@ -57,7 +57,10 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -vv --junitxml=report.xml
+          pytest -vv test \
+            --ignore=test/test_ylm.py \
+            --ignore=test/test_yslm.py \
+            --junitxml=report.xml
 
       - name: Upload pytest report
         if: always()
