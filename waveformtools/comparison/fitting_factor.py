@@ -280,8 +280,10 @@ def _result_from_match(  # pylint: disable=too-many-arguments
     n_objective_evaluations: int | None = None,
     elapsed_s: float | None = None,
 ) -> FittingFactorResult:
-    best_parameters = dict(match_result.best_parameters)
-    best_parameters.update(candidate_generation_parameters)
+    best_parameters = {
+        "alignment": dict(match_result.best_parameters),
+        "generator": dict(candidate_generation_parameters),
+    }
     return FittingFactorResult(
         objective_name=objective_name,
         match=match_result.match,

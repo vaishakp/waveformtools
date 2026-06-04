@@ -132,20 +132,15 @@ Fixed:
 - Removed those assignments.
 - Added `test/test_bms.py`.
 
-## Remaining Batches
-
 ### Batch 5: fitting-factor result namespace
 
-Issue:
+Fixed:
 
 - `FittingFactorResult.best_parameters` currently flattens alignment nuisance
   parameters and generator parameters into one dict.
 - This can collide with physical generator parameters such as
   `candidate_time_shift`, `orbital_phase`, or `phase_alignment`.
-
-Plan:
-
-- Store nested best parameters:
+- Stores nested best parameters:
 
 ```python
 best_parameters = {
@@ -155,7 +150,10 @@ best_parameters = {
 ```
 
 - Keep `candidate_generation_parameters` populated for backward readability.
-- Update tests accordingly.
+- Updated tests accordingly, including a collision regression for a generator
+  parameter named `candidate_time_shift`.
+
+## Remaining Batches
 
 ### Batch 6: import hygiene
 

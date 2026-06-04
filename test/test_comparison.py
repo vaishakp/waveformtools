@@ -365,6 +365,8 @@ def test_fixed_candidate_fitting_factor_matches_mode_match():
     assert fitting.objective_name == "fixed_candidate_fitting_factor"
     assert fitting.match == pytest.approx(match.match, abs=1e-12)
     assert fitting.candidate_generation_parameters == {}
+    assert fitting.best_parameters["generator"] == {}
+    assert fitting.best_parameters["alignment"]["phase_alignment"] == "global_complex"
     assert (
         fitting.diagnostics["comparison_config"]["alignment"]["time_alignment"]
         == "none"
@@ -425,10 +427,39 @@ def test_fitting_factor_optimizes_user_selected_parameter():
     assert result.candidate_generation_parameters["phase"] == pytest.approx(
         target_phase, abs=2e-3
     )
-    assert result.best_parameters["phase"] == pytest.approx(
+    assert result.best_parameters["generator"]["phase"] == pytest.approx(
         target_phase, abs=2e-3
     )
+    assert result.best_parameters["alignment"]["candidate_time_shift"] == 0.0
     assert result.n_waveform_generations >= 1
+
+
+def test_fitting_factor_namespaces_generator_and_alignment_parameters():
+    reference = make_test_modes()
+
+    def generator(candidate_time_shift=0.25):
+        assert candidate_time_shift == 0.25
+        return make_test_modes()
+
+    result = reference.fitting_factor(
+        generator,
+        config=FittingFactorConfig(
+            comparison=ModeComparisonConfig(
+                alignment=AlignmentSpec(
+                    time_alignment="none",
+                    phase_alignment="global_complex",
+                    candidate_time_shift=0.0,
+                )
+            ),
+            fixed_parameters={"candidate_time_shift": 0.25},
+            optimizer="none",
+        ),
+    )
+
+    assert result.match == pytest.approx(1.0, abs=1e-12)
+    assert result.candidate_generation_parameters["candidate_time_shift"] == 0.25
+    assert result.best_parameters["generator"]["candidate_time_shift"] == 0.25
+    assert result.best_parameters["alignment"]["candidate_time_shift"] == 0.0
 
 
 def test_residue_distance_zero_for_identical_modes():
