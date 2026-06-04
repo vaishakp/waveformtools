@@ -283,6 +283,8 @@ class SphericalArray:
             label = self.label
 
         # Create a mode array for the decomposed_waveform
+        from waveformtools.modes_array import ModesArray as modes_array
+
         waveform_modes = modes_array(
             label=label, ell_max=ell_max, spin_weight=spin_weight
         )
@@ -313,6 +315,19 @@ class SphericalArray:
 
         from waveformtools.integrate import TwoDIntegral
 
+        data = np.asarray(self.data)
+        angular_shape = theta.shape
+        if data.shape == (*angular_shape, self.data_len):
+            data_time_first = np.moveaxis(data, -1, 0)
+        elif data.shape == (self.data_len, *angular_shape):
+            data_time_first = data
+        else:
+            raise ValueError(
+                "SphericalArray data must have shape "
+                f"{(*angular_shape, self.data_len)} or "
+                f"{(self.data_len, *angular_shape)} for to_modes_array()."
+            )
+
         for mode in modes_list:
             ell, all_emms = mode
 
@@ -339,9 +354,7 @@ class SphericalArray:
                 # print("Shape", Ybasis_fun.shape, self.data.shape)
                 # integrand = np.tensordot(self.data,
                 # Ybasis_fun, axes=((0, 1), (0, 1)))
-                integrand = np.transpose(
-                    np.transpose(self.data, (2, 0, 1)) * Ybasis_fun, (1, 2, 0)
-                )
+                integrand = data_time_first * Ybasis_fun[np.newaxis, :, :]
 
                 # integrand = self.data * Ybasis_fun
                 multipole_ell_emm = TwoDIntegral(integrand, self.Grid)

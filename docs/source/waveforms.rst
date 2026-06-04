@@ -33,6 +33,65 @@ The `modes_array` class provides a basic container for holding modes data of suc
 11. Centre of mass corrections.
 
 
+Fitting factors
+---------------
+
+Importing ``waveformtools.comparison`` attaches comparison helpers to
+``ModesArray`` objects, including ``match``, ``mismatch`` and
+``fitting_factor``.  The fitting-factor interface accepts any waveform
+generator that returns a ``ModesArray``.  Users choose the parameters to
+optimize by naming them in ``FittingFactorConfig.variable_parameters`` and
+supplying bounds:
+
+.. code-block:: python
+
+    from waveformtools.comparison import (
+        AlignmentSpec,
+        FittingFactorConfig,
+        ModeComparisonConfig,
+    )
+
+    def candidate_generator(**parameters):
+        # Convert these user-chosen parameters into the model/backend call.
+        return make_candidate_modes(**parameters)
+
+    result = target_modes.fitting_factor(
+        candidate_generator,
+        config=FittingFactorConfig(
+            comparison=ModeComparisonConfig(
+                modes=[(2, -2), (2, 2)],
+                alignment=AlignmentSpec(
+                    time_alignment="peak_total_news_power",
+                    time_domain_policy="resample_to_reference",
+                    phase_alignment="orbital_phase_and_global",
+                ),
+            ),
+            fixed_parameters={"approximant": "IMRPhenomXPHM"},
+            variable_parameters={
+                "q": (1.0, 6.0),
+                "chi1z": (-0.8, 0.8),
+                "phi_ref": (-3.14159, 3.14159),
+            },
+            initial_parameters={"q": 2.0, "chi1z": 0.2, "phi_ref": 0.0},
+            optimizer="scipy_minimize",
+        ),
+    )
+
+``fixed_parameters`` and each optimizer trial are passed to the generator.
+The parameter names are not interpreted by waveformtools, so they can describe
+intrinsic parameters, extrinsic parameters, backend flags, spin-angle
+coordinates, phase conventions, or any other model-specific settings.  If the
+generator naturally accepts one dictionary instead of keyword arguments, set
+``generator_call_style="dict"``.
+
+Alignment and frame nuisance parameters are configured separately in
+``ModeComparisonConfig``.  For example, use ``AlignmentSpec`` for common time
+and phase alignment, and ``RotationSpec`` for fixed or optimized z-axis/Wigner
+rotations.  The result stores the best generator parameters under
+``result.best_parameters["generator"]`` and the best alignment/rotation
+parameters under ``result.best_parameters["alignment"]``.
+
+
 The simple "gen" data format
 ----------------------------
 
@@ -68,5 +127,4 @@ Interface to `waveformtools.waveformtools`
 ------------------------------------------
 
 The `waveformtools.waveformtools` module is a toolkit to carryout various transformations of the waveforms. Please see its description file for further details.
-
 

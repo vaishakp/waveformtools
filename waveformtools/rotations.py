@@ -56,11 +56,9 @@ THE SOFTWARE.
 import warnings as _warnings
 
 import numpy as np
-
-import scri
-import quaternion
-
 from scipy.interpolate import UnivariateSpline as _spline
+
+from waveformtools.rotation_math import wigner_d, z_rotation_quaternion
 
 # In some of the ringdowns we find that coprecessing frame quaternions jump
 # around wildly as the amplitude becomes small and it becomes hard to define a
@@ -204,6 +202,8 @@ def coprecessingQuatAndWaveform(t, h,
         use_news=False):
     """ Transfroms from inertial frame to coprecessing frame using scri.
     """
+    import quaternion
+    import scri
 
     w = scri.WaveformModes(
           dataType = scri.h,
@@ -255,6 +255,7 @@ def omegaOrb_from_waveform(t, h, return_amp=False):
     called omegaOrb to match the old GWFrames function. So, this
     is NOT the frequency in the coprecessing frame.
     """
+    import scri
 
     w = scri.WaveformModes(
           dataType = scri.h,
@@ -304,41 +305,12 @@ def _wignerD(q, L, mp, m):
     """
 (Code adapted to python from GWFrames)
     """
-    if abs(mp) > L or abs(m) > L:
-        raise ValueError("Bad indices")
-    ra = q[0] + 1.j*q[3]
-    rb = q[2] + 1.j*q[1]
-    ra_small = (abs(ra) < 1.e-12)
-    rb_small = (abs(rb) < 1.e-12)
-    i1 = np.where((1 - ra_small)*(1 - rb_small))[0]
-    i2 = np.where(ra_small)[0]
-    i3 = np.where((1 - ra_small)*rb_small)[0]
-    res = 0. * ra
-
-    # Determine res at i2: it's 0 unless mp == -m
-    if mp==(-m):
-        if (L+mp)%2 == 0:
-            res[i2] = rb**(2*m)
-        else:
-            res[i2] = rb**(2*m)
-
-    # Determine res at i3: it's 0 unless mp == m
-    if mp == m:
-        res[i3] = ra**(2*m)
-
-    # Determine res at i1, where we can safely divide by ra and rb
-    ra = ra[i1]
-    rb = rb[i1]
-
-    absRRatioSquared = (abs(rb)/abs(ra))**2
-    rhoMin = max(0, mp-m)
-    rhoMax = min(L+mp, L-m)
-    factor = _wignerCoef(L, mp, m)*(abs(ra)**(2*(L-m)))*(ra**(m+mp))*(rb**(m-mp))
-    s = 0.
-    for rho in range(rhoMax, rhoMin-1, -1):
-        s = ((-1)**rho)*_binom(L+mp, rho)*_binom(L-mp, L-rho-m) + (s*absRRatioSquared)
-    res[i1] = factor*s*(absRRatioSquared**rhoMin)
-    return res
+    q = np.asarray(q, dtype=float)
+    if q.ndim == 1:
+        return np.array([wigner_d(q, L, mp, m)])
+    if q.ndim != 2 or q.shape[0] != 4:
+        raise ValueError("Expected q to have shape (4,) or (4, n_times).")
+    return np.array([wigner_d(q[:, idx], L, mp, m) for idx in range(q.shape[1])])
 
 #-------------------------------------------------------------------------
 def rotateWaveform(t, quat, h, inverse=0):
@@ -368,6 +340,8 @@ def transformWaveform(t, quat, h, inverse=0):
     Use inverse=1 if h is in the inertial frame and you want the
     coprecessing frame waveform.
     """
+    import quaternion
+    import scri
 
     if inverse:
         quat = quatInv(quat)
@@ -404,7 +378,7 @@ def alignVec_quat(vec):
 #-------------------------------------------------------------------------
 def zRotationQuat(phi):
     """Returns a unit quaternion that will rotate about the z-axis"""
-    return np.array([np.cos(phi/2.), 0., 0., np.sin(phi/2.)])
+    return z_rotation_quaternion(phi)
 
 #-------------------------------------------------------------------------
 def lHat_from_quat(quat):

@@ -420,10 +420,12 @@ class PrepareSXSWaveform:
         skip_beginning_fraction=0.01,
         skip_ending_fraction=0.10,
         file_format="NRAR",
-        extrap_enn_list=[-1, 2, 3, 4, 5, 6],
+        extrap_enn_list=None,
     ):
         """Apply CoM correction to a waveform"""
         from scri.SpEC.com_motion import remove_avg_com_motion
+        if extrap_enn_list is None:
+            extrap_enn_list = [-1, 2, 3, 4, 5, 6]
 
         try:
             files = os.listdir(self.extrap_out_dir)
@@ -475,10 +477,12 @@ class PrepareSXSWaveform:
         skip_beginning_fraction=0.01,
         skip_ending_fraction=0.10,
         file_format="NRAR",
-        extrap_enn_list=[-1, 2, 3, 4, 5, 6],
+        extrap_enn_list=None,
         upload=False,
     ):
         """Carry out extrapolation + CoM correction"""
+        if extrap_enn_list is None:
+            extrap_enn_list = [-1, 2, 3, 4, 5, 6]
         self.join_waveform_h5_files(verbose=verbose)
 
         self.extrapolate(ChMass=ChMass, UseStupidNRARFormat=UseStupidNRARFormat)
