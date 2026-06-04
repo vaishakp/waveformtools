@@ -10,10 +10,12 @@ from waveformtools.comparison import (
     AlignmentSpec,
     FittingFactorConfig,
     ModeComparisonConfig,
+    RotationSpec,
     WaveformMetadata,
     fixed_candidate_fitting_factor,
     mode_match,
     residue_distance,
+    rotate_modes,
 )
 from waveformtools.modes_array import ModesArray
 
@@ -121,6 +123,42 @@ def test_orbital_phase_alignment_uses_single_m_dependent_phase():
     assert fixed_phase.match < 1.0
     assert aligned.match > 0.999
     assert aligned.best_parameters["orbital_phase"] is not None
+
+
+def test_z_axis_rotation_applies_one_coherent_mode_phase():
+    angle = 0.4
+    modes = make_test_modes(orbital_phase=0.0)
+
+    rotated = rotate_modes(modes, RotationSpec(kind="z_axis", angle=angle))
+
+    assert np.allclose(rotated.mode(2, 2), np.exp(2j * angle) * modes.mode(2, 2))
+    assert np.allclose(rotated.mode(2, -2), np.exp(-2j * angle) * modes.mode(2, -2))
+    assert np.allclose(modes.mode(2, 2), make_test_modes(orbital_phase=0.0).mode(2, 2))
+
+
+def test_mode_match_accepts_fixed_candidate_rotation():
+    angle = 0.4
+    reference = make_test_modes(orbital_phase=0.0)
+    shifted = make_test_modes(orbital_phase=angle)
+
+    unrotated = mode_match(
+        reference,
+        shifted,
+        time_alignment="none",
+        phase_alignment="none",
+    )
+    rotated = mode_match(
+        reference,
+        shifted,
+        time_alignment="none",
+        phase_alignment="none",
+        rotation={"kind": "z_axis", "angle": -angle},
+    )
+
+    assert unrotated.match < 1.0
+    assert rotated.match == pytest.approx(1.0, abs=1e-12)
+    assert rotated.diagnostics["rotation"]["kind"] == "z_axis"
+    assert rotated.best_parameters["rotation"]["angle"] == pytest.approx(-angle)
 
 
 def test_default_alignment_crops_unequal_lengths_after_peak_alignment():
@@ -370,6 +408,24 @@ def test_fixed_candidate_fitting_factor_matches_mode_match():
     assert (
         fitting.diagnostics["comparison_config"]["alignment"]["time_alignment"]
         == "none"
+    )
+
+
+def test_fixed_candidate_fitting_factor_uses_comparison_rotation():
+    angle = 0.4
+    reference = make_test_modes(orbital_phase=0.0)
+    shifted = make_test_modes(orbital_phase=angle)
+    comparison = ModeComparisonConfig(
+        alignment=AlignmentSpec(time_alignment="none", phase_alignment="none"),
+        rotation=RotationSpec(kind="z_axis", angle=-angle),
+    )
+
+    result = fixed_candidate_fitting_factor(reference, shifted, config=comparison)
+
+    assert result.match == pytest.approx(1.0, abs=1e-12)
+    assert result.best_parameters["alignment"]["rotation"]["kind"] == "z_axis"
+    assert result.best_parameters["alignment"]["rotation"]["angle"] == pytest.approx(
+        -angle
     )
 
 
