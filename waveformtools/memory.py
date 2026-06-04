@@ -2,9 +2,9 @@
 
 The current implementation exposes the public memory API and the first
 spectral building block: projection of the nonlinear memory source
-``|N|**2 / (16*pi)`` from an angular grid back to scalar modes.  The final
-spin -2 displacement-memory strain kernel is intentionally kept separate until
-the tensor inversion conventions are fixed and tested.
+``|N|**2 / (16*pi)`` from an angular grid back to scalar modes.  The default
+memory strain kernel treats those scalar modes as the right-hand side of
+``bar_eth**2 h_mem`` and uses the corresponding spectral inverse.
 """
 
 from __future__ import annotations
@@ -106,11 +106,19 @@ def compute_displacement_memory_from_news(
 
     memory_config = DisplacementMemoryConfig.from_value(config, **overrides)
     _validate_news_modes(news_modes, memory_config)
-    raise NotImplementedError(
-        "The displacement-memory spectral kernel is not implemented yet. "
-        "The scalar memory-source projection is available through "
-        "compute_displacement_memory_source_from_news()."
+    memory_ell_max = _memory_ell_max(news_modes, memory_config)
+    source_modes = compute_displacement_memory_source_from_news(
+        news_modes,
+        memory_config,
+        memory_ell_max=memory_ell_max,
     )
+    memory_modes = _source_modes_to_memory_strain(
+        source_modes,
+        memory_config,
+        memory_ell_max=memory_ell_max,
+    )
+    _record_memory_metadata(memory_modes, memory_config, {})
+    return memory_modes
 
 
 def compute_displacement_memory_source_from_news(
@@ -292,6 +300,82 @@ def _source_projection_ell_max(
     return min(2 * source_ell_max, grid_limit)
 
 
+def _memory_ell_max(
+    modes_obj: Any,
+    config: DisplacementMemoryConfig,
+) -> int:
+    ell_max = int(getattr(modes_obj, "ell_max"))
+    if config.memory_ell_max is None:
+        return ell_max
+    return config.memory_ell_max
+
+
+def _source_modes_to_memory_strain(
+    source_modes: Any,
+    config: DisplacementMemoryConfig,
+    memory_ell_max: int,
+) -> Any:
+    from waveformtools.dataIO import construct_mode_list
+    from waveformtools.modes_array import ModesArray
+
+    time_axis = np.asarray(source_modes.time_axis, dtype=float)
+    memory_modes = ModesArray(
+        label="displacement_memory_time_domain",
+        ell_max=memory_ell_max,
+        time_axis=time_axis,
+        spin_weight=-2,
+        Grid=source_modes.Grid,
+    )
+    memory_modes.create_modes_array(
+        ell_max=memory_ell_max,
+        data_len=len(time_axis),
+    )
+    memory_modes.modes_list = construct_mode_list(
+        memory_ell_max,
+        spin_weight=-2,
+    )
+
+    ell_min = max(2, config.ell_min)
+    for ell, emm_list in memory_modes.modes_list:
+        if ell < ell_min:
+            continue
+        eigenvalue = _bar_eth2_eigenvalue(ell)
+        for emm in emm_list:
+            integrated_source = _cumulative_trapezoid_zero_at_start(
+                time_axis,
+                source_modes.mode(ell, emm),
+            )
+            memory_modes.set_mode_data(
+                ell=ell,
+                emm=emm,
+                data=integrated_source / eigenvalue,
+            )
+    return memory_modes
+
+
+def _bar_eth2_eigenvalue(ell: int) -> float:
+    from qlmtools.spin_coefficient import analytic_spin_raise_basis_factor
+
+    return float(
+        analytic_spin_raise_basis_factor(
+            ell=ell,
+            emm=0,
+            spin_weight=0,
+            times=2,
+        )
+    )
+
+
+def _cumulative_trapezoid_zero_at_start(
+    xdata: np.ndarray,
+    ydata: np.ndarray,
+) -> np.ndarray:
+    integral = np.zeros_like(ydata, dtype=np.result_type(ydata, complex))
+    increments = 0.5 * (ydata[..., 1:] + ydata[..., :-1]) * np.diff(xdata)
+    integral[..., 1:] = np.cumsum(increments, axis=-1)
+    return integral
+
+
 def _validate_compatible_memory_modes(
     strain_modes: Any,
     memory_modes: Any,
@@ -325,6 +409,6 @@ def _record_memory_metadata(
         {
             "included": True,
             "config": memory_config.to_dict(),
-            "implementation": "api_skeleton",
+            "implementation": "bar_eth2_inverse",
         },
     )
