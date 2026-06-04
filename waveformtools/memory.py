@@ -602,16 +602,7 @@ def _source_modes_to_memory_strain(
 
 
 def _bar_eth2_eigenvalue(ell: int) -> float:
-    from qlmtools.spin_coefficient import analytic_spin_raise_basis_factor
-
-    return float(
-        analytic_spin_raise_basis_factor(
-            ell=ell,
-            emm=0,
-            spin_weight=0,
-            times=2,
-        )
-    )
+    return float(np.sqrt((ell - 1) * ell * (ell + 1) * (ell + 2)))
 
 
 def _cumulative_trapezoid_zero_at_start(
