@@ -21,6 +21,7 @@ import pytest
 
 from waveformtools.comparison import (
     AlignmentSpec,
+    FittingFactorConfig,
     ModeComparisonConfig,
     RotationSpec,
     fixed_candidate_fitting_factor,
@@ -78,18 +79,23 @@ def _generate_real_modes(approximant: str):
             "Set WAVEFORMTOOLS_RUN_REAL_WAVEFORM_TESTS=1 to run real-waveform tests."
         )
 
+    modes = _generate_real_modes_from_parameters(_base_parameters(approximant))
+    _require_populated_modes(modes, approximant)
+    return modes
+
+
+def _generate_real_modes_from_parameters(parameters):
     pytest.importorskip("lal")
     pytest.importorskip("lalsimulation")
 
     from waveformtools.models.lal import LALWaveformModel
 
-    model = LALWaveformModel(parameters_dict=_base_parameters(approximant))
+    model = LALWaveformModel(parameters_dict=dict(parameters))
     try:
         modes = model.get_td_waveform_modes(dimensionless=True)
     except Exception as exc:
+        approximant = parameters.get("approximant", "unknown")
         pytest.skip(f"{approximant} mode generation unavailable: {exc}")
-
-    _require_populated_modes(modes, approximant)
     return modes
 
 
@@ -395,3 +401,48 @@ def test_real_waveform_cross_model_fitting_factor_smoke(real_model_pair):
     assert optimized_rms_residue <= fixed_rms_residue + 1e-8
     assert optimized.best_parameters["alignment"]["candidate_time_shift"] != 0.0
     assert optimized.best_parameters["alignment"]["rotation"]["kind"] == "z_axis"
+
+
+def test_real_waveform_generator_fitting_factor_accepts_user_params(real_model_pair):
+    nrsur = real_model_pair["NRSur7dq4"]
+    selected_modes = _available_ell2_modes(nrsur)
+    base_candidate_parameters = _base_parameters("IMRPhenomXPHM")
+    calls = []
+
+    def candidate_generator(**user_parameters):
+        parameters = dict(base_candidate_parameters)
+        parameters.update(user_parameters)
+        calls.append(dict(user_parameters))
+        return _generate_real_modes_from_parameters(parameters)
+
+    result = nrsur.fitting_factor(
+        candidate_generator,
+        config=FittingFactorConfig(
+            comparison=ModeComparisonConfig(
+                modes=selected_modes,
+                alignment=AlignmentSpec(
+                    time_alignment="peak_total_news_power",
+                    time_domain_policy="resample_to_reference",
+                    phase_alignment="orbital_phase_and_global",
+                    optimize_time_shift=False,
+                    orbital_phase_samples=65,
+                ),
+            ),
+            variable_parameters={"phi_ref": (-0.1, 0.5)},
+            fixed_parameters={
+                "approximant": "IMRPhenomXPHM",
+                "ell_max": 2,
+            },
+            initial_parameters={
+                "phi_ref": base_candidate_parameters["phi_ref"]
+            },
+            optimizer="scipy_minimize",
+            optimizer_options={"options": {"maxiter": 2}},
+        ),
+    )
+
+    assert np.isfinite(result.match)
+    assert np.isfinite(result.mismatch)
+    assert result.n_waveform_generations >= 1
+    assert "phi_ref" in result.best_parameters["generator"]
+    assert "phi_ref" in calls[0]
