@@ -3,7 +3,7 @@
 The comparison core uses this module to make all alignment choices explicit.
 The default behavior is deliberately useful for unequal-length waveforms:
 
-1. align the two time axes by the peak of the (2,2) mode,
+1. align the two time axes by the peak of the total selected-mode news power,
 2. require compatible sampling rates,
 3. crop/truncate both waveforms to their common overlapping interval.
 
@@ -12,6 +12,7 @@ The first implemented subset supports:
 - no time alignment,
 - peak-of-(2,2) alignment,
 - peak-of-total-mode-power alignment,
+- peak-of-total-news-power alignment,
 - strict common-grid comparisons,
 - crop/truncate-to-overlap comparisons,
 - resampling the candidate waveform to the reference grid,
@@ -30,7 +31,7 @@ from typing import Any, Literal, Mapping, Sequence
 
 import numpy as np
 
-TimeAlignment = Literal["none", "peak_22", "peak_total_power"]
+TimeAlignment = Literal["none", "peak_22", "peak_total_power", "peak_total_news_power"]
 TimeDomainPolicy = Literal["error", "crop_to_overlap", "resample_to_reference"]
 PhaseAlignment = Literal[
     "none",
@@ -40,7 +41,7 @@ PhaseAlignment = Literal[
 ]
 ResampleMethod = Literal["linear", "cubic"]
 
-_ALLOWED_TIME_ALIGNMENTS = {"none", "peak_22", "peak_total_power"}
+_ALLOWED_TIME_ALIGNMENTS = {"none", "peak_22", "peak_total_power", "peak_total_news_power"}
 _ALLOWED_TIME_DOMAIN_POLICIES = {"error", "crop_to_overlap", "resample_to_reference"}
 _ALLOWED_PHASE_ALIGNMENTS = {
     "none",
@@ -80,11 +81,13 @@ class AlignmentSpec:
         Number of grid points used by the initial orbital-phase search.
     """
 
-    time_alignment: TimeAlignment = "peak_22"
+    time_alignment: TimeAlignment = "peak_total_news_power"
     time_domain_policy: TimeDomainPolicy = "crop_to_overlap"
     phase_alignment: PhaseAlignment = "global_complex"
     resample_method: ResampleMethod = "linear"
     candidate_time_shift: float = 0.0
+    optimize_time_shift: bool = False
+    time_shift_bounds: tuple[float, float] | None = None
     time_axis_rtol: float = 1e-10
     time_axis_atol: float = 1e-12
     minimum_overlap_samples: int = 8
@@ -115,6 +118,10 @@ class AlignmentSpec:
             raise ValueError("minimum_overlap_samples must be at least 2.")
         if self.orbital_phase_samples < 8:
             raise ValueError("orbital_phase_samples must be at least 8.")
+        if self.time_shift_bounds is not None:
+            lo, hi = self.time_shift_bounds
+            if not lo < hi:
+                raise ValueError("time_shift_bounds must be an increasing (lower, upper) pair.")
 
     def to_dict(self) -> dict[str, Any]:
         """Return a plain dictionary representation."""
@@ -284,12 +291,26 @@ def reference_time(modes_obj: Any, selected_modes: Sequence[tuple[int, int]], mo
         amp = np.abs(np.asarray(modes_obj.mode(2, 2), dtype=np.complex128))
         return float(time_axis[int(np.argmax(amp))])
     if mode == "peak_total_power":
-        power = np.zeros_like(time_axis, dtype=float)
-        for ell, emm in selected_modes:
-            data = np.asarray(modes_obj.mode(ell, emm), dtype=np.complex128)
-            power += np.abs(data) ** 2
+        power = _total_mode_power(modes_obj, selected_modes)
         return float(time_axis[int(np.argmax(power))])
+    if mode == "peak_total_news_power":
+        if not hasattr(modes_obj, "get_news_from_strain") or len(time_axis) < 4:
+            power = _total_mode_power(modes_obj, selected_modes)
+            return float(time_axis[int(np.argmax(power))])
+        news_modes = modes_obj.get_news_from_strain()
+        news_time_axis = np.asarray(news_modes.time_axis, dtype=float)
+        power = _total_mode_power(news_modes, selected_modes)
+        return float(news_time_axis[int(np.argmax(power))])
     raise ValueError(f"Unsupported time alignment mode: {mode!r}")
+
+
+def _total_mode_power(modes_obj: Any, selected_modes: Sequence[tuple[int, int]]) -> np.ndarray:
+    time_axis = np.asarray(modes_obj.time_axis, dtype=float)
+    power = np.zeros_like(time_axis, dtype=float)
+    for ell, emm in selected_modes:
+        data = np.asarray(modes_obj.mode(ell, emm), dtype=np.complex128)
+        power += np.abs(data) ** 2
+    return power
 
 
 def sampling_interval(time_axis: np.ndarray, rtol: float, atol: float) -> tuple[float | None, bool]:
