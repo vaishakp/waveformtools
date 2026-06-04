@@ -72,7 +72,7 @@ def test_identity_mode_match_is_one():
     assert result.match == pytest.approx(1.0, abs=1e-12)
     assert result.mismatch == pytest.approx(0.0, abs=1e-12)
     assert result.diagnostics["n_modes"] >= 1
-    assert result.diagnostics["alignment"]["time_alignment"] == "peak_22"
+    assert result.diagnostics["alignment"]["time_alignment"] == "peak_total_news_power"
     assert result.diagnostics["alignment"]["time_domain_policy"] == "crop_to_overlap"
 
 
@@ -116,7 +116,7 @@ def test_default_alignment_crops_unequal_lengths_after_peak_alignment():
     assert result.match == pytest.approx(1.0, abs=1e-12)
     assert result.diagnostics["time_axis"]["n_samples"] == len(candidate_time)
     assert result.diagnostics["time_axis"]["policy"] == "crop_to_overlap"
-    assert result.diagnostics["alignment"]["time_alignment"] == "peak_22"
+    assert result.diagnostics["alignment"]["time_alignment"] == "peak_total_news_power"
 
 
 def test_strict_time_policy_rejects_different_lengths():
@@ -194,6 +194,75 @@ def test_peak_total_power_alignment_handles_shifted_peak():
     assert aligned.match > unaligned.match
     assert aligned.match > 0.999
     assert aligned.diagnostics["time_axis"]["reference_time_b"] != 0.0
+
+
+def test_peak_total_news_power_alignment_handles_shifted_peak():
+    reference = make_test_modes(time_axis=np.linspace(-10.0, 10.0, 256), time_shift=0.0)
+    shifted = make_test_modes(time_axis=np.linspace(-7.0, 13.0, 256), time_shift=3.0)
+
+    unaligned = mode_match(
+        reference,
+        shifted,
+        time_alignment="none",
+        time_domain_policy="resample_to_reference",
+        phase_alignment="global_complex",
+    )
+    aligned = mode_match(
+        reference,
+        shifted,
+        time_alignment="peak_total_news_power",
+        time_domain_policy="resample_to_reference",
+        phase_alignment="global_complex",
+    )
+
+    assert aligned.match > unaligned.match
+    assert aligned.match > 0.999
+    assert aligned.diagnostics["alignment"]["time_alignment"] == "peak_total_news_power"
+
+
+def test_get_news_from_strain_honors_method_argument():
+    time_axis = np.linspace(-10.0, 10.0, 512)
+    omega = 0.7
+    modes = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=-2)
+    modes.create_modes_array(ell_max=2, data_len=len(time_axis))
+    signal = np.exp(1j * omega * time_axis)
+    modes.set_mode_data(ell=2, emm=2, data=signal)
+
+    news = modes.get_news_from_strain(method="spline")
+    expected = 1j * omega * signal
+
+    assert np.max(np.abs(news.mode(2, 2)[8:-8] - expected[8:-8])) < 1e-5
+
+
+def test_time_shift_optimization_recovers_one_shared_shift():
+    time_axis = np.linspace(-12.0, 12.0, 512)
+    known_shift = 0.35
+    reference = make_test_modes(time_axis=time_axis, time_shift=0.0)
+    shifted = make_test_modes(time_axis=time_axis, time_shift=known_shift)
+
+    unoptimized = mode_match(
+        reference,
+        shifted,
+        time_alignment="none",
+        time_domain_policy="resample_to_reference",
+        phase_alignment="global_complex",
+    )
+    optimized = mode_match(
+        reference,
+        shifted,
+        time_alignment="none",
+        time_domain_policy="resample_to_reference",
+        phase_alignment="global_complex",
+        optimize_time_shift=True,
+        time_shift_bounds=(-0.7, 0.0),
+    )
+
+    assert optimized.match > unoptimized.match
+    assert optimized.match > 0.999
+    assert optimized.best_parameters["candidate_time_shift"] == pytest.approx(-known_shift, abs=2e-2)
+    assert optimized.diagnostics["alignment"]["optimize_time_shift"] is True
+    assert optimized.diagnostics["time_axis"]["candidate_time_shift"] == pytest.approx(-known_shift, abs=2e-2)
+    assert optimized.diagnostics["time_shift_optimization"]["parameter"] == "candidate_time_shift"
 
 
 def test_residue_distance_zero_for_identical_modes():

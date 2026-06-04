@@ -2145,12 +2145,8 @@ class ModesArray:
         return violations
     
     def get_news_from_strain(self, method='spline'):
-        ''' '''
-        news = deepcopy(self)
-        #news._time_axis = deepcopy(news.time_axis)
-        news = self.time_derivative(method='spline')
-
-        return news
+        '''Return the waveform news by differentiating strain modes in time.'''
+        return self.time_derivative(method=method)
 
     def compute_momentum_flux(self, news_modes):
 
