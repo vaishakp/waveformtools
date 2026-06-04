@@ -9,6 +9,7 @@ optimization is layered on top of this core in later PRs.
 from __future__ import annotations
 
 import time
+from dataclasses import replace
 from typing import Any, Callable, Sequence
 
 import numpy as np
@@ -150,6 +151,8 @@ def mode_match(
     phase_alignment: str | None = None,
     resample_method: str | None = None,
     candidate_time_shift: float | None = None,
+    optimize_time_shift: bool | None = None,
+    time_shift_bounds: tuple[float, float] | None = None,
     time_axis_rtol: float | None = None,
     time_axis_atol: float | None = None,
 ) -> ComparisonResult:
@@ -177,27 +180,48 @@ def mode_match(
         phase_alignment=phase_alignment,
         resample_method=resample_method,
         candidate_time_shift=candidate_time_shift,
+        optimize_time_shift=optimize_time_shift,
+        time_shift_bounds=time_shift_bounds,
         time_axis_rtol=time_axis_rtol,
         time_axis_atol=time_axis_atol,
     )
 
     selected_modes = common_modes(modes_a, modes_b, ell_min=ell_min, ell_max=ell_max, modes=modes)
-    prepared = prepare_mode_data(modes_a, modes_b, selected_modes, alignment_spec)
-    inner, best_phase, raw_inner = _phase_aligned_inner_product(prepared)
-    norm_a = _prepared_norm(prepared.modes_a, prepared.selected_modes, prepared.time_axis)
-    norm_b = _prepared_norm(prepared.modes_b, prepared.selected_modes, prepared.time_axis)
 
-    if norm_a == 0.0 or norm_b == 0.0:
-        match_value = np.nan
-    else:
-        match_value = float(inner / (norm_a * norm_b))
+    optimization = None
+    n_evaluations = 1
+    if alignment_spec.optimize_time_shift:
+        alignment_spec, optimization = _optimize_time_shift(
+            modes_a,
+            modes_b,
+            selected_modes,
+            alignment_spec,
+        )
+        n_evaluations = optimization["n_evaluations"]
 
+    evaluation = _evaluate_prepared_match(modes_a, modes_b, selected_modes, alignment_spec)
+    prepared = evaluation["prepared"]
+    match_value = evaluation["match"]
     if np.isfinite(match_value):
-        # Guard against harmless numerical overshoots for identical arrays.
         match_value = float(np.clip(match_value, -1.0, 1.0))
         mismatch_value = 1.0 - match_value
     else:
         mismatch_value = np.nan
+
+    diagnostics = {
+        "raw_inner_product_real": float(evaluation["raw_inner"].real),
+        "raw_inner_product_imag": float(evaluation["raw_inner"].imag),
+        "raw_inner_product_abs": float(abs(evaluation["raw_inner"])),
+        "phase_aligned_inner": float(evaluation["inner"]),
+        "norm_a": evaluation["norm_a"],
+        "norm_b": evaluation["norm_b"],
+        "n_modes": len(selected_modes),
+        "modes": selected_modes,
+        "alignment": alignment_spec.to_dict(),
+        "time_axis": prepared.diagnostics.to_dict(),
+    }
+    if optimization is not None:
+        diagnostics["time_shift_optimization"] = optimization
 
     return ComparisonResult(
         objective_name="mode_match",
@@ -205,26 +229,16 @@ def mode_match(
         mismatch=mismatch_value,
         best_parameters={
             "phase_alignment": alignment_spec.phase_alignment,
-            "orbital_phase": best_phase,
+            "orbital_phase": evaluation["best_phase"],
             "time_alignment": alignment_spec.time_alignment,
             "time_domain_policy": alignment_spec.time_domain_policy,
             "candidate_time_shift": alignment_spec.candidate_time_shift,
         },
-        optimizer=_phase_optimizer_name(alignment_spec.phase_alignment),
+        optimizer=_optimizer_name(alignment_spec),
         optimizer_status="ok",
+        n_objective_evaluations=n_evaluations,
         elapsed_s=time.perf_counter() - t0,
-        diagnostics={
-            "raw_inner_product_real": float(raw_inner.real),
-            "raw_inner_product_imag": float(raw_inner.imag),
-            "raw_inner_product_abs": float(abs(raw_inner)),
-            "phase_aligned_inner": float(inner),
-            "norm_a": norm_a,
-            "norm_b": norm_b,
-            "n_modes": len(selected_modes),
-            "modes": selected_modes,
-            "alignment": alignment_spec.to_dict(),
-            "time_axis": prepared.diagnostics.to_dict(),
-        },
+        diagnostics=diagnostics,
         target_metadata=get_comparison_metadata(modes_a),
         candidate_metadata=get_comparison_metadata(modes_b),
     )
@@ -333,6 +347,104 @@ def _phase_aligned_inner_product(prepared: PreparedModeData) -> tuple[float, flo
     raise ValueError(f"Unsupported phase_alignment={phase_alignment!r}")
 
 
+def _evaluate_prepared_match(
+    modes_a: Any,
+    modes_b: Any,
+    selected_modes: Sequence[tuple[int, int]],
+    alignment: AlignmentSpec,
+) -> dict[str, Any]:
+    prepared = prepare_mode_data(modes_a, modes_b, selected_modes, alignment)
+    inner, best_phase, raw_inner = _phase_aligned_inner_product(prepared)
+    norm_a = _prepared_norm(prepared.modes_a, prepared.selected_modes, prepared.time_axis)
+    norm_b = _prepared_norm(prepared.modes_b, prepared.selected_modes, prepared.time_axis)
+    if norm_a == 0.0 or norm_b == 0.0:
+        match_value = np.nan
+    else:
+        match_value = float(inner / (norm_a * norm_b))
+    return {
+        "prepared": prepared,
+        "inner": inner,
+        "best_phase": best_phase,
+        "raw_inner": raw_inner,
+        "norm_a": norm_a,
+        "norm_b": norm_b,
+        "match": match_value,
+    }
+
+
+def _optimize_time_shift(
+    modes_a: Any,
+    modes_b: Any,
+    selected_modes: Sequence[tuple[int, int]],
+    alignment: AlignmentSpec,
+) -> tuple[AlignmentSpec, dict[str, Any]]:
+    base_alignment = replace(alignment, time_domain_policy="resample_to_reference")
+    bounds = _time_shift_bounds(modes_a, modes_b, base_alignment)
+    n_evaluations = 0
+
+    def objective(candidate_shift: float) -> float:
+        nonlocal n_evaluations
+        n_evaluations += 1
+        trial_alignment = replace(base_alignment, candidate_time_shift=float(candidate_shift))
+        try:
+            evaluation = _evaluate_prepared_match(modes_a, modes_b, selected_modes, trial_alignment)
+        except ValueError:
+            return np.inf
+        match_value = evaluation["match"]
+        if not np.isfinite(match_value):
+            return np.inf
+        return 1.0 - float(np.clip(match_value, -1.0, 1.0))
+
+    try:
+        from scipy.optimize import minimize_scalar
+    except Exception as exc:  # pragma: no cover - scipy is normally available
+        raise ImportError("optimize_time_shift=True requires scipy.optimize.minimize_scalar") from exc
+
+    result = minimize_scalar(objective, bounds=bounds, method="bounded")
+    best_shift = float(result.x)
+    best_alignment = replace(base_alignment, candidate_time_shift=best_shift)
+    diagnostics = {
+        "parameter": "candidate_time_shift",
+        "bounds": tuple(float(item) for item in bounds),
+        "initial_shift": float(alignment.candidate_time_shift),
+        "best_shift": best_shift,
+        "best_mismatch": float(result.fun),
+        "success": bool(result.success),
+        "message": str(result.message),
+        "n_evaluations": int(n_evaluations),
+    }
+    return best_alignment, diagnostics
+
+
+def _time_shift_bounds(modes_a: Any, modes_b: Any, alignment: AlignmentSpec) -> tuple[float, float]:
+    if alignment.time_shift_bounds is not None:
+        return tuple(float(item) for item in alignment.time_shift_bounds)
+
+    dt_values = []
+    for modes_obj in (modes_a, modes_b):
+        time_axis = np.asarray(modes_obj.time_axis, dtype=float)
+        dt, uniform = _sampling_interval_for_bounds(time_axis)
+        if uniform and dt is not None:
+            dt_values.append(abs(dt))
+    if dt_values:
+        half_width = 5.0 * max(dt_values)
+    else:
+        time_a = np.asarray(modes_a.time_axis, dtype=float)
+        time_b = np.asarray(modes_b.time_axis, dtype=float)
+        span = min(float(time_a[-1] - time_a[0]), float(time_b[-1] - time_b[0]))
+        half_width = 0.05 * span
+    center = float(alignment.candidate_time_shift)
+    return center - half_width, center + half_width
+
+
+def _sampling_interval_for_bounds(time_axis: np.ndarray) -> tuple[float | None, bool]:
+    if len(time_axis) < 2:
+        return None, False
+    diffs = np.diff(time_axis)
+    dt = float(np.median(diffs))
+    return dt, bool(np.allclose(diffs, dt, rtol=1e-10, atol=1e-12))
+
+
 def _maximize_orbital_phase(prepared: PreparedModeData) -> tuple[float, complex]:
     n = int(prepared.alignment.orbital_phase_samples)
     phases = np.linspace(0.0, 2.0 * np.pi, n, endpoint=False)
@@ -363,3 +475,12 @@ def _phase_optimizer_name(phase_alignment: str) -> str | None:
     if phase_alignment in {"orbital_phase", "orbital_phase_and_global"}:
         return "grid_orbital_phase"
     return None
+
+
+def _optimizer_name(alignment: AlignmentSpec) -> str | None:
+    phase_optimizer = _phase_optimizer_name(alignment.phase_alignment)
+    if alignment.optimize_time_shift:
+        if phase_optimizer is None:
+            return "bounded_time_shift"
+        return f"bounded_time_shift+{phase_optimizer}"
+    return phase_optimizer
