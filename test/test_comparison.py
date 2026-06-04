@@ -62,6 +62,26 @@ def make_test_modes(
     return modes
 
 
+def make_full_ell2_modes(*, time_axis: np.ndarray | None = None) -> ModesArray:
+    """Construct synthetic data with all ell=2 modes populated."""
+
+    if time_axis is None:
+        time_axis = np.linspace(-6.0, 6.0, 160)
+    envelope = np.exp(-0.04 * time_axis**2)
+    modes = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=-2)
+    modes.create_modes_array(ell_max=2, data_len=len(time_axis))
+    for index, emm in enumerate(range(-2, 3), start=1):
+        amplitude = 0.15 + 0.12 * index
+        frequency = 0.25 + 0.08 * index
+        phase = 0.17 * index
+        modes.set_mode_data(
+            ell=2,
+            emm=emm,
+            data=amplitude * envelope * np.exp(1j * (frequency * time_axis + phase)),
+        )
+    return modes
+
+
 def test_attach_metadata_round_trip():
     modes = make_test_modes()
     modes.attach_metadata(
@@ -246,6 +266,97 @@ def test_mode_match_optimizes_one_shared_z_rotation():
     assert optimized.diagnostics["rotation"]["optimize_angle"] is True
     assert optimized.diagnostics["rotation_optimization"]["parameter"] == "rotation.angle"
     assert optimized.optimizer == "bounded_z_rotation"
+
+
+def test_mode_match_optimizes_wigner_beta_rotation():
+    reference = make_full_ell2_modes()
+    candidate = rotate_modes(reference, RotationSpec(kind="wigner", beta=0.25))
+
+    unoptimized = mode_match(
+        reference,
+        candidate,
+        time_alignment="none",
+        phase_alignment="none",
+    )
+    optimized = mode_match(
+        reference,
+        candidate,
+        time_alignment="none",
+        phase_alignment="none",
+        rotation=RotationSpec(
+            kind="wigner",
+            optimize_parameters=("beta",),
+            parameter_bounds={"beta": (-0.5, 0.1)},
+        ),
+    )
+
+    assert optimized.match > unoptimized.match
+    assert optimized.match > 0.999
+    assert optimized.best_parameters["rotation"]["beta"] == pytest.approx(
+        -0.25, abs=2e-3
+    )
+    assert optimized.diagnostics["rotation_optimization"]["parameters"] == ("beta",)
+    assert optimized.optimizer == "bounded_wigner_rotation"
+
+
+def test_mode_match_optimizes_full_wigner_rotation():
+    reference = make_full_ell2_modes()
+    alpha = 0.12
+    beta = 0.18
+    gamma = -0.09
+    candidate = rotate_modes(
+        reference,
+        RotationSpec(kind="wigner", alpha=alpha, beta=beta, gamma=gamma),
+    )
+
+    optimized = mode_match(
+        reference,
+        candidate,
+        time_alignment="none",
+        phase_alignment="none",
+        rotation=RotationSpec(
+            kind="wigner",
+            optimize_parameters=("alpha", "beta", "gamma"),
+            parameter_bounds={
+                "alpha": (-0.1, 0.2),
+                "beta": (-0.3, 0.0),
+                "gamma": (-0.2, 0.1),
+            },
+        ),
+    )
+
+    assert optimized.match > 0.999
+    assert optimized.best_parameters["rotation"]["alpha"] == pytest.approx(
+        -gamma, abs=1e-2
+    )
+    assert optimized.best_parameters["rotation"]["beta"] == pytest.approx(
+        -beta, abs=1e-2
+    )
+    assert optimized.best_parameters["rotation"]["gamma"] == pytest.approx(
+        -alpha, abs=1e-2
+    )
+
+
+def test_wigner_rotation_optimization_flags_phase_degeneracy():
+    reference = make_full_ell2_modes()
+    candidate = rotate_modes(reference, RotationSpec(kind="wigner", beta=0.1))
+
+    result = mode_match(
+        reference,
+        candidate,
+        time_alignment="none",
+        phase_alignment="orbital_phase_and_global",
+        rotation=RotationSpec(
+            kind="wigner",
+            optimize_parameters=("alpha", "beta"),
+            parameter_bounds={"alpha": (-0.2, 0.2), "beta": (-0.2, 0.0)},
+        ),
+    )
+
+    assert result.match > 0.999
+    assert result.diagnostics["rotation_optimization"][
+        "phase_degeneracy_possible"
+    ] is True
 
 
 def test_default_alignment_crops_unequal_lengths_after_peak_alignment():
