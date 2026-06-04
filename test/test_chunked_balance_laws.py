@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from waveformtools.chunked_balance_laws import compare_chunked_to_full_rhs
 from waveformtools.modes_array import ModesArray
 
 
 def test_chunked_rhs_matches_full_rhs_for_smooth_synthetic_modes():
+    pytest.importorskip("waveform_balance_laws.laws")
+
     from spectools.spherical.grids import GLGrid
 
     grid = GLGrid(L=4)
