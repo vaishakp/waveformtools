@@ -1,8 +1,10 @@
 """Opt-in displacement-memory helpers for waveform mode arrays.
 
-This module intentionally starts with validation and API plumbing only.  The
-spectral memory kernel will be added in a later batch once the angular
-projection conventions are fixed and tested.
+The current implementation exposes the public memory API and the first
+spectral building block: projection of the nonlinear memory source
+``|N|**2 / (16*pi)`` from an angular grid back to scalar modes.  The final
+spin -2 displacement-memory strain kernel is intentionally kept separate until
+the tensor inversion conventions are fixed and tested.
 """
 
 from __future__ import annotations
@@ -30,17 +32,23 @@ class DisplacementMemoryConfig:
     def __post_init__(self) -> None:
         self.ell_min = int(self.ell_min)
         if self.ell_min < 2:
-            raise ValueError("ell_min must be at least 2 for displacement memory.")
+            raise ValueError(
+                "ell_min must be at least 2 for displacement memory."
+            )
         if self.ell_max is not None:
             self.ell_max = int(self.ell_max)
             if self.ell_max < self.ell_min:
-                raise ValueError("ell_max must be greater than or equal to ell_min.")
+                raise ValueError(
+                    "ell_max must be greater than or equal to ell_min."
+                )
         if self.memory_ell_max is not None:
             self.memory_ell_max = int(self.memory_ell_max)
             if self.memory_ell_max < 2:
                 raise ValueError("memory_ell_max must be at least 2.")
         if self.integration_constant != "zero_at_start":
-            raise ValueError("Only integration_constant='zero_at_start' is supported.")
+            raise ValueError(
+                "Only integration_constant='zero_at_start' is supported."
+            )
         if self.method != "spectral":
             raise ValueError("Only method='spectral' is supported.")
 
@@ -68,7 +76,9 @@ class DisplacementMemoryConfig:
                 "memory config must be a DisplacementMemoryConfig, a mapping, "
                 f"or None; got {type(value)!r}."
             )
-        data.update({key: val for key, val in overrides.items() if val is not None})
+        data.update(
+            {key: val for key, val in overrides.items() if val is not None}
+        )
         return cls(**data)
 
 
@@ -81,7 +91,9 @@ def compute_displacement_memory_from_strain(
 
     memory_config = DisplacementMemoryConfig.from_value(config, **overrides)
     _validate_strain_modes(strain_modes, memory_config)
-    news_modes = strain_modes.get_news_from_strain(method=memory_config.news_method)
+    news_modes = strain_modes.get_news_from_strain(
+        method=memory_config.news_method
+    )
     return compute_displacement_memory_from_news(news_modes, memory_config)
 
 
@@ -96,8 +108,64 @@ def compute_displacement_memory_from_news(
     _validate_news_modes(news_modes, memory_config)
     raise NotImplementedError(
         "The displacement-memory spectral kernel is not implemented yet. "
-        "This batch only exposes the opt-in API and validation surface."
+        "The scalar memory-source projection is available through "
+        "compute_displacement_memory_source_from_news()."
     )
+
+
+def compute_displacement_memory_source_from_news(
+    news_modes: Any,
+    config: DisplacementMemoryConfig | Mapping[str, Any] | None = None,
+    **overrides: Any,
+) -> Any:
+    """Return scalar modes of the nonlinear memory source.
+
+    The returned object has ``spin_weight=0`` and contains the angular
+    projection of ``|N|**2 / (16*pi)`` on the same time axis as ``news_modes``.
+    This is the source data needed by the later spin -2 displacement-memory
+    kernel; it is not itself the memory strain.
+    """
+
+    memory_config = DisplacementMemoryConfig.from_value(config, **overrides)
+    _validate_news_modes(news_modes, memory_config)
+    _validate_grid(news_modes)
+
+    ell_max = _source_ell_max(news_modes, memory_config)
+    angular_news = news_modes.evaluate_angular(ell_max=ell_max)
+    source = np.abs(angular_news) ** 2 / (16.0 * np.pi)
+    source = _angular_data_time_first(source, news_modes)
+    projection_ell_max = _source_projection_ell_max(
+        news_modes,
+        memory_config,
+        ell_max,
+    )
+    from waveformtools.spherical_array import SphericalArray
+
+    source_array = SphericalArray(
+        label="memory_source_time_domain",
+        time_axis=np.asarray(news_modes.time_axis, dtype=float),
+        data=np.moveaxis(source, 0, -1),
+        data_len=len(news_modes.time_axis),
+        Grid=news_modes.Grid,
+        spin_weight=0,
+        ell_max=projection_ell_max,
+    )
+    source_modes = source_array.to_modes_array(
+        Grid=news_modes.Grid,
+        spin_weight=0,
+        ell_max=projection_ell_max,
+    )
+    setattr(
+        source_modes,
+        "displacement_memory_source_metadata",
+        {
+            "included": True,
+            "config": memory_config.to_dict(),
+            "source": "|news|^2/(16*pi)",
+            "implementation": "angular_projection",
+        },
+    )
+    return source_modes
 
 
 def with_displacement_memory(
@@ -139,40 +207,107 @@ def add_displacement_memory_in_place(
     return strain_modes
 
 
-def _validate_strain_modes(strain_modes: Any, config: DisplacementMemoryConfig) -> None:
+def _validate_strain_modes(
+    strain_modes: Any,
+    config: DisplacementMemoryConfig,
+) -> None:
     _validate_modes_common(strain_modes, config)
     if int(getattr(strain_modes, "spin_weight", -2)) != -2:
-        raise ValueError("Displacement memory requires spin_weight=-2 strain modes.")
+        raise ValueError(
+            "Displacement memory requires spin_weight=-2 strain modes."
+        )
     if not hasattr(strain_modes, "get_news_from_strain"):
         raise TypeError("strain_modes must provide get_news_from_strain().")
 
 
-def _validate_news_modes(news_modes: Any, config: DisplacementMemoryConfig) -> None:
+def _validate_news_modes(
+    news_modes: Any,
+    config: DisplacementMemoryConfig,
+) -> None:
     _validate_modes_common(news_modes, config)
     if int(getattr(news_modes, "spin_weight", -2)) != -2:
-        raise ValueError("Displacement memory requires spin_weight=-2 news modes.")
+        raise ValueError(
+            "Displacement memory requires spin_weight=-2 news modes."
+        )
 
 
-def _validate_modes_common(modes_obj: Any, config: DisplacementMemoryConfig) -> None:
+def _validate_modes_common(
+    modes_obj: Any,
+    config: DisplacementMemoryConfig,
+) -> None:
     time_axis = np.asarray(getattr(modes_obj, "time_axis", None), dtype=float)
     if time_axis.ndim != 1 or len(time_axis) < 2:
-        raise ValueError("Displacement memory requires a one-dimensional time axis.")
+        raise ValueError(
+            "Displacement memory requires a one-dimensional time axis."
+        )
     if not np.all(np.isfinite(time_axis)):
-        raise ValueError("Displacement memory requires finite time-axis values.")
+        raise ValueError(
+            "Displacement memory requires finite time-axis values."
+        )
     if not np.all(np.diff(time_axis) > 0.0):
-        raise ValueError("Displacement memory requires a strictly increasing time axis.")
+        raise ValueError(
+            "Displacement memory requires a strictly increasing time axis."
+        )
     ell_max = int(getattr(modes_obj, "ell_max"))
     if ell_max < config.ell_min:
         raise ValueError("Input modes do not contain the requested ell range.")
 
 
-def _validate_compatible_memory_modes(strain_modes: Any, memory_modes: Any) -> None:
+def _validate_grid(modes_obj: Any) -> None:
+    grid = getattr(modes_obj, "Grid", None)
+    if grid is None or not hasattr(grid, "meshgrid"):
+        raise ValueError("Memory source projection requires a spherical Grid.")
+
+
+def _source_ell_max(modes_obj: Any, config: DisplacementMemoryConfig) -> int:
+    ell_max = int(getattr(modes_obj, "ell_max"))
+    if config.ell_max is not None:
+        ell_max = min(ell_max, config.ell_max)
+    return ell_max
+
+
+def _angular_data_time_first(data: np.ndarray, modes_obj: Any) -> np.ndarray:
+    time_len = len(modes_obj.time_axis)
+    theta, phi = modes_obj.Grid.meshgrid
+    angular_shape = theta.shape
+    if data.shape == (time_len, *angular_shape):
+        return data
+    if data.shape == (*angular_shape, time_len):
+        return np.moveaxis(data, -1, 0)
+    raise ValueError(
+        "Angular data has shape "
+        f"{data.shape}; expected {(time_len, *angular_shape)} "
+        f"or {(*angular_shape, time_len)}."
+    )
+
+
+def _source_projection_ell_max(
+    modes_obj: Any,
+    config: DisplacementMemoryConfig,
+    source_ell_max: int,
+) -> int:
+    if config.memory_ell_max is not None:
+        return config.memory_ell_max
+    grid_limit = int(getattr(modes_obj.Grid, "L", 2 * source_ell_max))
+    return min(2 * source_ell_max, grid_limit)
+
+
+def _validate_compatible_memory_modes(
+    strain_modes: Any,
+    memory_modes: Any,
+) -> None:
     if int(getattr(memory_modes, "spin_weight", -2)) != -2:
         raise ValueError("memory_modes must have spin_weight=-2.")
-    if int(getattr(strain_modes, "ell_max")) != int(getattr(memory_modes, "ell_max")):
-        raise ValueError("memory_modes must use the same ell_max as strain_modes.")
+    if int(getattr(strain_modes, "ell_max")) != int(
+        getattr(memory_modes, "ell_max")
+    ):
+        raise ValueError(
+            "memory_modes must use the same ell_max as strain_modes."
+        )
     if not np.allclose(strain_modes.time_axis, memory_modes.time_axis):
-        raise ValueError("memory_modes must use the same time axis as strain_modes.")
+        raise ValueError(
+            "memory_modes must use the same time axis as strain_modes."
+        )
 
 
 def _record_memory_metadata(
@@ -180,7 +315,10 @@ def _record_memory_metadata(
     config: DisplacementMemoryConfig | Mapping[str, Any] | None,
     overrides: Mapping[str, Any],
 ) -> None:
-    memory_config = DisplacementMemoryConfig.from_value(config, **dict(overrides))
+    memory_config = DisplacementMemoryConfig.from_value(
+        config,
+        **dict(overrides),
+    )
     setattr(
         modes_obj,
         "displacement_memory_metadata",
