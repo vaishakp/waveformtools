@@ -75,7 +75,7 @@ def fixed_frequency_integrator(
         )
         message(f"Using cutoff frequency {omega0}", message_verbosity=1)
 
-    if not utilde_conven:
+    if utilde_conven is None:
         # Compute the FFT of data
         from numpy.fft import ifft
         from spectools.fourier.transforms import compute_fft, unset_fft_conven
@@ -99,10 +99,11 @@ def fixed_frequency_integrator(
         Nlen = len(udata_time)
 
     else:
+        if freq_axis is None:
+            raise ValueError("Please supply freq_axis along with utilde_conven.")
+        utilde_conven = np.array(utilde_conven, copy=True)
+        freq_axis = np.asarray(freq_axis)
         Nlen = len(utilde_conven)
-        assert (
-            np.array(freq_axis) != np.array(None)
-        ).all(), "Please supply the frequency axis along with utilde_conven"
 
     # df = np.diff(freq_axis)[0]
     df = scipy.stats.mode(np.diff(freq_axis))[0]
@@ -117,7 +118,8 @@ def fixed_frequency_integrator(
     omega_axis = construct_ffi_omega_axis(freq_axis, omega0, zero_index)
 
     # Set the zero frequency element separately.
-    utilde_conven[zero_index] = zero_mode
+    if zero_index is not None:
+        utilde_conven[zero_index] = zero_mode
 
     # Integrate in frequency space
     utilde_integ_n = np.power((-1j / omega_axis), order) * utilde_conven
