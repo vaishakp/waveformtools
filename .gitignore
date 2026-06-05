@@ -25,4 +25,4 @@ waveformtools/devel_nb
 *.pkl
 **/dev/
 *.orig
-
+outputs/
