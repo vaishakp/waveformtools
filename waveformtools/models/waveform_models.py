@@ -1,5 +1,6 @@
 from lal import CreateDict
 import numpy as np
+from pathlib import Path
 from waveformtools.waveformtools import find_maxloc_and_time, message
 from lal import MSUN_SI, MTSUN_SI, PC_SI, G_SI, C_SI
 from waveformtools.waveformtools import get_starting_angular_frequency
@@ -87,6 +88,98 @@ class WaveformModel:
         self.parameters_dict.update(parameters_dict)
         #self.parameters_dict['phi_ref'] = self.parameters_dict['coa_phase']
         self.set_parameters()
+
+    def _standardize_generated_modes(
+        self,
+        wfm,
+        *,
+        domain=None,
+        dimensionless=None,
+        generator=None,
+    ):
+        from waveformtools.comparison.conventions import (
+            standardize_generated_modes_in_place,
+        )
+        from waveformtools.comparison.metadata import (
+            WaveformMetadata,
+            attach_comparison_metadata,
+            get_comparison_metadata,
+        )
+
+        existing_metadata = get_comparison_metadata(wfm).to_dict()
+        safe_parameters = self._metadata_safe_parameters()
+        safe_parameters.update(
+            {
+                "generation_domain": domain,
+                "dimensionless_output": dimensionless,
+            }
+        )
+        existing_parameters = existing_metadata.get("parameters") or {}
+        metadata_parameters = {**existing_parameters, **safe_parameters}
+        metadata_dict = {
+            **existing_metadata,
+            "approximant": self.parameters_dict.get("approximant"),
+            "parameters": metadata_parameters,
+            "mass1": self.parameters_dict.get("mass1"),
+            "mass2": self.parameters_dict.get("mass2"),
+            "total_mass": self.Mtotal,
+            "mass_ratio": self._safe_mass_ratio(),
+            "spin1": self._spin_tuple_from_parameters("spin1"),
+            "spin2": self._spin_tuple_from_parameters("spin2"),
+            "f_ref": self.parameters_dict.get("f_ref"),
+            "f_lower": self.parameters_dict.get("f_lower"),
+            "mode_output_frame": self.parameters_dict.get(
+                "mode_output_frame",
+            ),
+            "reference_time_or_frequency": domain,
+            "generator": generator or self.__class__.__name__,
+        }
+        attach_comparison_metadata(
+            wfm,
+            WaveformMetadata.from_mapping(metadata_dict),
+        )
+        _, diagnostics = standardize_generated_modes_in_place(wfm)
+        setattr(wfm, "mode_convention_diagnostics", diagnostics)
+        return wfm
+
+    def _metadata_safe_parameters(self):
+        excluded = {"lal_dict", "model", "eob_generator"}
+        return {
+            key: self._metadata_safe_value(value)
+            for key, value in self.parameters_dict.items()
+            if key not in excluded
+        }
+
+    def _metadata_safe_value(self, value):
+        if isinstance(value, np.ndarray):
+            return value.tolist()
+        if isinstance(value, np.generic):
+            return value.item()
+        if isinstance(value, Path):
+            return str(value)
+        if isinstance(value, (list, tuple)):
+            return [self._metadata_safe_value(item) for item in value]
+        if isinstance(value, dict):
+            return {
+                str(key): self._metadata_safe_value(item)
+                for key, item in value.items()
+            }
+        if isinstance(value, (str, int, float, bool)) or value is None:
+            return value
+        return str(value)
+
+    def _safe_mass_ratio(self):
+        mass1 = self.parameters_dict.get("mass1")
+        mass2 = self.parameters_dict.get("mass2")
+        if mass1 is None or mass2 in (None, 0):
+            return None
+        return mass1 / mass2
+
+    def _spin_tuple_from_parameters(self, prefix):
+        keys = (f"{prefix}x", f"{prefix}y", f"{prefix}z")
+        if not all(key in self.parameters_dict for key in keys):
+            return None
+        return tuple(float(self.parameters_dict[key]) for key in keys)
 
     
     @property

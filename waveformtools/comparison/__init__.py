@@ -25,6 +25,14 @@ from waveformtools.comparison.config import (
     FittingFactorConfig,
     ModeComparisonConfig,
 )
+from waveformtools.comparison.conventions import (
+    APPROXIMANT_MODE_CONVENTIONS,
+    CANONICAL_MODE_CONVENTION,
+    ModeConventionEntry,
+    canonicalize_modes_for_comparison,
+    mode_convention_for_approximant,
+    standardize_generated_modes_in_place,
+)
 from waveformtools.comparison.core import (
     AlignedModeData,
     aligned_mode_arrays,
@@ -58,10 +66,13 @@ install_modes_array_methods()
 __all__ = [
     "AlignmentSpec",
     "AlignedModeData",
+    "APPROXIMANT_MODE_CONVENTIONS",
+    "CANONICAL_MODE_CONVENTION",
     "ComparisonResult",
     "FittingFactorResult",
     "FittingFactorConfig",
     "ModeComparisonConfig",
+    "ModeConventionEntry",
     "PreparedModeData",
     "RotationSpec",
     "TimeAxisDiagnostics",
@@ -69,6 +80,7 @@ __all__ = [
     "aligned_mode_arrays",
     "attach_comparison_metadata",
     "available_modes",
+    "canonicalize_modes_for_comparison",
     "common_modes",
     "fitting_factor",
     "fixed_candidate_fitting_factor",
@@ -78,6 +90,7 @@ __all__ = [
     "mode_match",
     "mode_mismatch",
     "mode_norm",
+    "mode_convention_for_approximant",
     "overlap_interval",
     "prepare_mode_data",
     "prepare_aligned_mode_data",
@@ -85,4 +98,5 @@ __all__ = [
     "residue_distance",
     "rotate_modes",
     "sampling_interval",
+    "standardize_generated_modes_in_place",
 ]

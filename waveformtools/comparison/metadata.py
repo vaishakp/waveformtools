@@ -36,6 +36,11 @@ class WaveformMetadata:
 
     spin_input_frame: str | None = None
     mode_output_frame: str | None = None
+    mode_convention: str | None = None
+    raw_mode_convention: str | None = None
+    mode_convention_source: str | None = None
+    canonicalization_applied: str | None = None
+    mode_convention_history: list[dict[str, Any]] = field(default_factory=list)
     z_axis_definition: str | None = None
     x_axis_definition: str | None = None
     reference_time_or_frequency: str | None = None

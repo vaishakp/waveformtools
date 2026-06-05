@@ -24,6 +24,7 @@ class ModeComparisonConfig:
     modes: Sequence[tuple[int, int]] | None = None
     alignment: AlignmentSpec = field(default_factory=AlignmentSpec)
     rotation: RotationSpec = field(default_factory=RotationSpec)
+    canonicalize_mode_conventions: bool = True
     objective: ObjectiveName = "mode_match"
 
     def __post_init__(self) -> None:
