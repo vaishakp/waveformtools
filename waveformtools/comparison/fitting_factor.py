@@ -38,6 +38,9 @@ def fixed_candidate_fitting_factor(
         modes=comparison.modes,
         alignment=comparison.alignment,
         rotation=comparison.rotation,
+        canonicalize_mode_conventions=(
+            comparison.canonicalize_mode_conventions
+        ),
     )
     return _result_from_match(
         match_result,
@@ -89,6 +92,9 @@ def fitting_factor(  # pylint: disable=too-many-locals
             modes=ff_config.comparison.modes,
             alignment=ff_config.comparison.alignment,
             rotation=ff_config.comparison.rotation,
+            canonicalize_mode_conventions=(
+                ff_config.comparison.canonicalize_mode_conventions
+            ),
         )
         if best_match is None or _match_value(result) > _match_value(
             best_match
