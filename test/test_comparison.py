@@ -12,11 +12,14 @@ from waveformtools.comparison import (
     ModeComparisonConfig,
     RotationSpec,
     WaveformMetadata,
+    canonicalize_modes_for_comparison,
     fixed_candidate_fitting_factor,
+    mode_convention_for_approximant,
     mode_match,
     prepare_aligned_mode_data,
     residue_distance,
     rotate_modes,
+    standardize_generated_modes_in_place,
 )
 from waveformtools.modes_array import ModesArray
 
@@ -257,6 +260,203 @@ def test_h22_only_orbital_and_global_phase_alignment_is_degenerate():
         )
         > 0.1
     )
+
+
+def test_registered_nrsur_modes_are_canonicalized_before_match():
+    reference = make_test_modes()
+    reference.attach_metadata(
+        approximant="SEOBNRv5PHM",
+        mode_convention="canonical_strain_lm",
+    )
+    raw_nrsur = make_test_modes().bar()
+    raw_nrsur.attach_metadata(approximant="NRSur7dq4")
+
+    uncanonicalized = mode_match(
+        reference,
+        raw_nrsur,
+        modes=[(2, 2)],
+        time_alignment="none",
+        time_domain_policy="error",
+        phase_alignment="orbital_phase",
+        canonicalize_mode_conventions=False,
+    )
+    canonicalized = mode_match(
+        reference,
+        raw_nrsur,
+        modes=[(2, 2)],
+        time_alignment="none",
+        time_domain_policy="error",
+        phase_alignment="orbital_phase",
+    )
+    replay = prepare_aligned_mode_data(reference, raw_nrsur, canonicalized)
+
+    assert mode_convention_for_approximant("NRSur7dq4") is not None
+    assert uncanonicalized.match < 0.1
+    assert canonicalized.match == pytest.approx(1.0, abs=1e-12)
+    assert canonicalized.diagnostics["mode_conventions"]["candidate"][
+        "applied"
+    ] is True
+    assert canonicalized.diagnostics["mode_conventions"]["candidate"][
+        "canonical_transform"
+    ] == "complex_conjugate"
+    assert (
+        canonicalized.candidate_metadata.canonicalization_applied
+        == "complex_conjugate"
+    )
+    assert (
+        normalized_rms_from_arrays(
+            replay.reference_modes,
+            replay.candidate_modes,
+            replay.selected_modes,
+        )
+        < 1e-10
+    )
+
+
+def test_mode_convention_registry_uses_exact_approximant_keys():
+    reference = make_test_modes()
+    fake_sur = make_test_modes().bar()
+    fake_sur.attach_metadata(approximant="FakeSurModel")
+
+    result = mode_match(
+        reference,
+        fake_sur,
+        modes=[(2, 2)],
+        time_alignment="none",
+        time_domain_policy="error",
+        phase_alignment="orbital_phase",
+    )
+
+    assert mode_convention_for_approximant("FakeSurModel") is None
+    assert result.match < 0.1
+    assert result.diagnostics["mode_conventions"]["candidate"][
+        "registered"
+    ] is False
+    assert result.diagnostics["mode_conventions"]["candidate"][
+        "applied"
+    ] is False
+
+
+def test_mode_convention_canonicalization_is_idempotent():
+    reference = make_test_modes()
+    raw_nrsur = make_test_modes().bar()
+    raw_nrsur.attach_metadata(approximant="NRSur7dq4")
+
+    canonical_nrsur, first_diagnostics = canonicalize_modes_for_comparison(
+        raw_nrsur
+    )
+    canonical_nrsur, second_diagnostics = canonicalize_modes_for_comparison(
+        canonical_nrsur
+    )
+    result = mode_match(
+        reference,
+        canonical_nrsur,
+        modes=[(2, 2)],
+        time_alignment="none",
+        time_domain_policy="error",
+        phase_alignment="orbital_phase",
+    )
+
+    assert first_diagnostics["applied"] is True
+    assert second_diagnostics["already_canonical"] is True
+    assert second_diagnostics["applied"] is False
+    assert result.match == pytest.approx(1.0, abs=1e-12)
+
+
+def test_generation_standardization_mutates_nrsur_modes_and_records_history():
+    reference = make_test_modes()
+    raw_nrsur = make_test_modes().bar()
+    raw_nrsur.attach_metadata(approximant="NRSur7dq4")
+
+    standardized, diagnostics = standardize_generated_modes_in_place(raw_nrsur)
+
+    assert standardized is raw_nrsur
+    assert diagnostics["applied"] is True
+    assert diagnostics["canonical_transform"] == "complex_conjugate"
+    assert np.allclose(raw_nrsur.mode(2, 2), reference.mode(2, 2))
+    metadata = raw_nrsur.get_comparison_metadata()
+    assert metadata.mode_convention == "canonical_strain_lm"
+    assert metadata.raw_mode_convention == (
+        "lal_surrogate_complex_conjugate_strain_lm"
+    )
+    assert metadata.canonicalization_applied == "complex_conjugate"
+    assert metadata.mode_convention_history[-1]["stage"] == (
+        "waveform_generation"
+    )
+    assert (
+        "standardize_mode_convention(complex_conjugate)"
+        in raw_nrsur.actions
+    )
+
+    saved_metadata = raw_nrsur.get_metadata()["comparison_metadata"]
+    assert isinstance(saved_metadata, dict)
+    assert saved_metadata["mode_convention_history"][-1]["stage"] == (
+        "waveform_generation"
+    )
+
+
+def test_generation_standardization_is_idempotent():
+    raw_nrsur = make_test_modes().bar()
+    raw_nrsur.attach_metadata(approximant="NRSur7dq4")
+
+    standardize_generated_modes_in_place(raw_nrsur)
+    modes_after_first = np.array(raw_nrsur.modes_data, copy=True)
+    actions_after_first = raw_nrsur.actions
+    _, diagnostics = standardize_generated_modes_in_place(raw_nrsur)
+
+    assert diagnostics["already_canonical"] is True
+    assert diagnostics["applied"] is False
+    assert np.allclose(raw_nrsur.modes_data, modes_after_first)
+    assert raw_nrsur.actions == actions_after_first
+    assert len(raw_nrsur.get_comparison_metadata().mode_convention_history) == 1
+
+
+def test_waveform_model_generation_hook_standardizes_and_merges_metadata():
+    from waveformtools.models.waveform_models import WaveformModel
+
+    model = WaveformModel(
+        {
+            "approximant": "NRSur7dq4",
+            "mass1": 40.0,
+            "mass2": 20.0,
+            "spin1x": 0.0,
+            "spin1y": 0.0,
+            "spin1z": 0.0,
+            "spin2x": 0.0,
+            "spin2y": 0.0,
+            "spin2z": 0.0,
+            "f_lower": 0.0,
+            "f_ref": 20.0,
+        }
+    )
+    reference = make_test_modes()
+    raw_nrsur = make_test_modes().bar()
+    raw_nrsur.attach_metadata(
+        parameters={"preexisting": "kept"},
+        mode_convention_history=[{"stage": "pre_generation"}],
+    )
+
+    standardized = model._standardize_generated_modes(
+        raw_nrsur,
+        domain="td",
+        dimensionless=True,
+        generator="synthetic_generator",
+    )
+
+    assert standardized is raw_nrsur
+    assert np.allclose(standardized.mode(2, 2), reference.mode(2, 2))
+    metadata = standardized.get_comparison_metadata()
+    assert metadata.approximant == "NRSur7dq4"
+    assert metadata.parameters["preexisting"] == "kept"
+    assert metadata.parameters["generation_domain"] == "td"
+    assert metadata.parameters["dimensionless_output"] is True
+    assert metadata.mass_ratio == pytest.approx(2.0)
+    assert metadata.generator == "synthetic_generator"
+    assert [item["stage"] for item in metadata.mode_convention_history] == [
+        "pre_generation",
+        "waveform_generation",
+    ]
+    assert standardized.mode_convention_diagnostics["applied"] is True
 
 
 def test_continuous_orbital_phase_alignment_refines_grid_result():

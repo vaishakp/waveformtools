@@ -326,7 +326,12 @@ class LALWaveformModel(WaveformModel):
         if dimensionless:
             wfm_td = self.non_dimensionalize_td_waveform_modes(wfm_td, **self.parameters_dict)
 
-        return wfm_td
+        return self._standardize_generated_modes(
+            wfm_td,
+            domain='td',
+            dimensionless=dimensionless,
+            generator='LALWaveformModel.get_td_waveform_modes',
+        )
     
 
     def get_fd_waveform_modes(self, dimensionless=True, **parameters_dict):
@@ -336,10 +341,17 @@ class LALWaveformModel(WaveformModel):
         Tapering conventions: default lal 
         '''
         self.update_parameters(parameters_dict)
-        waveform_modes_list = self._choose_fd_modes()
+        wfm_fd = self._get_fd_waveform_modes_unstandardized()
+        return self._standardize_generated_modes(
+            wfm_fd,
+            domain='fd',
+            dimensionless=dimensionless,
+            generator='LALWaveformModel.get_fd_waveform_modes',
+        )
 
-        wfm_fd = self._load_lal_modes(waveform_modes_list, domain='fd')
-        return wfm_fd
+    def _get_fd_waveform_modes_unstandardized(self):
+        waveform_modes_list = self._choose_fd_modes()
+        return self._load_lal_modes(waveform_modes_list, domain='fd')
 
     def get_fd_waveform_modes_as_td(self, dimensionless=True, undo_warp=True, **parameters_dict):
         """Generate FD modes and return them in the current TD convention.
@@ -361,13 +373,18 @@ class LALWaveformModel(WaveformModel):
         """
 
         self.update_parameters(parameters_dict)
-        wfm_fd = self.get_fd_waveform_modes(dimensionless=False)
+        wfm_fd = self._get_fd_waveform_modes_unstandardized()
         wfm_td = lal_fd_modes_to_td_modes(wfm_fd, undo_warp=undo_warp)
 
         if dimensionless:
             wfm_td = self.non_dimensionalize_td_waveform_modes(wfm_td, **self.parameters_dict)
 
-        return wfm_td
+        return self._standardize_generated_modes(
+            wfm_td,
+            domain='fd_as_td',
+            dimensionless=dimensionless,
+            generator='LALWaveformModel.get_fd_waveform_modes_as_td',
+        )
 
     def get_fd_waveform_modes_as_td_physical_window(
         self,
@@ -397,7 +414,7 @@ class LALWaveformModel(WaveformModel):
         """
 
         self.update_parameters(parameters_dict)
-        wfm_fd = self.get_fd_waveform_modes(dimensionless=False)
+        wfm_fd = self._get_fd_waveform_modes_unstandardized()
         wfm_td = lal_fd_modes_to_td_modes(wfm_fd, undo_warp=False)
 
         if dimensionless:
@@ -414,7 +431,15 @@ class LALWaveformModel(WaveformModel):
             set_peak_time_to_zero=set_peak_time_to_zero,
         )
 
-        return wfm_td
+        return self._standardize_generated_modes(
+            wfm_td,
+            domain='fd_as_td_physical_window',
+            dimensionless=dimensionless,
+            generator=(
+                'LALWaveformModel.'
+                'get_fd_waveform_modes_as_td_physical_window'
+            ),
+        )
 
     # Explicit public aliases. These make the output type unambiguous while
     # preserving the historical method names above.
