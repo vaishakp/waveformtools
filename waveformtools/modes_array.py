@@ -304,6 +304,8 @@ class ModesArray:
             if key in unnecessary_keys:
                 pass
             else:
+                if key == "comparison_metadata" and hasattr(val, "to_dict"):
+                    val = val.to_dict()
                 metadata.update({key: val})
 
         if metadata['data_dir'] is not None:
