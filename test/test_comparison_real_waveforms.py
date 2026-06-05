@@ -27,9 +27,9 @@ from waveformtools.comparison import (
     RotationSpec,
     fixed_candidate_fitting_factor,
     mode_match,
+    prepare_aligned_mode_data,
     rotate_modes,
 )
-from waveformtools.comparison.alignment import prepare_mode_data
 
 pytestmark = [pytest.mark.integration, pytest.mark.real_waveform]
 
@@ -133,39 +133,16 @@ def _available_ell2_modes(modes) -> list[tuple[int, int]]:
 
 
 def _normalized_rms_residue(
-    modes_a,
-    modes_b,
-    selected_modes,
-    alignment,
-    rotation,
-    *,
-    orbital_phase: float | None = None,
+    aligned,
 ) -> float:
-    alignment_spec = AlignmentSpec.from_value(alignment)
-    rotation_spec = RotationSpec.from_value(rotation)
-    rotated_b = rotate_modes(modes_b, rotation_spec, modes=selected_modes)
-    prepared = prepare_mode_data(modes_a, rotated_b, selected_modes, alignment_spec)
-    phase_adjusted_b = {}
-    orbital_phase = 0.0 if orbital_phase is None else float(orbital_phase)
-    for ell, emm in prepared.selected_modes:
-        phase_adjusted_b[(ell, emm)] = (
-            np.exp(1j * emm * orbital_phase) * prepared.modes_b[(ell, emm)]
-        )
-
-    if alignment_spec.phase_alignment in {"global_complex", "orbital_phase_and_global"}:
-        overlap = 0.0j
-        for mode in prepared.selected_modes:
-            overlap += np.vdot(phase_adjusted_b[mode], prepared.modes_a[mode])
-        global_phase = np.angle(overlap)
-        for mode in prepared.selected_modes:
-            phase_adjusted_b[mode] = np.exp(1j * global_phase) * phase_adjusted_b[mode]
-
     numerator = 0.0
     denominator = 0.0
-    for mode in prepared.selected_modes:
-        diff = prepared.modes_a[mode] - phase_adjusted_b[mode]
+    for mode in aligned.selected_modes:
+        diff = aligned.reference_modes[mode] - aligned.candidate_modes[mode]
         numerator += float(np.mean(np.abs(diff) ** 2))
-        denominator += float(np.mean(np.abs(prepared.modes_a[mode]) ** 2))
+        denominator += float(
+            np.mean(np.abs(aligned.reference_modes[mode]) ** 2)
+        )
     return float(np.sqrt(numerator / max(denominator, 1e-300)))
 
 
@@ -183,15 +160,7 @@ def test_real_waveform_self_match(real_modes):
     assert result.match == pytest.approx(1.0, abs=1e-12)
     assert result.mismatch == pytest.approx(0.0, abs=1e-12)
     assert _normalized_rms_residue(
-        real_modes,
-        real_modes,
-        selected_modes,
-        AlignmentSpec(
-            time_alignment="none",
-            time_domain_policy="error",
-            phase_alignment="none",
-        ),
-        RotationSpec(),
+        prepare_aligned_mode_data(real_modes, real_modes, result)
     ) == pytest.approx(0.0, abs=1e-12)
 
 
@@ -219,17 +188,12 @@ def test_real_waveform_z_rotation_recovery(real_modes):
     )
 
     assert result.match > 0.999
-    assert _normalized_rms_residue(
-        real_modes,
-        candidate,
-        selected_modes,
-        AlignmentSpec(
-            time_alignment="none",
-            time_domain_policy="error",
-            phase_alignment="none",
-        ),
-        RotationSpec.from_value(result.best_parameters["rotation"]),
-    ) < 5e-3
+    assert (
+        _normalized_rms_residue(
+            prepare_aligned_mode_data(real_modes, candidate, result)
+        )
+        < 5e-3
+    )
     assert result.best_parameters["rotation"]["angle"] == pytest.approx(
         -angle, abs=2e-3
     )
@@ -262,17 +226,12 @@ def test_real_waveform_wigner_beta_rotation_recovery(real_modes):
     )
 
     assert result.match > 0.999
-    assert _normalized_rms_residue(
-        real_modes,
-        candidate,
-        selected_modes,
-        AlignmentSpec(
-            time_alignment="none",
-            time_domain_policy="error",
-            phase_alignment="none",
-        ),
-        RotationSpec.from_value(result.best_parameters["rotation"]),
-    ) < 5e-3
+    assert (
+        _normalized_rms_residue(
+            prepare_aligned_mode_data(real_modes, candidate, result)
+        )
+        < 5e-3
+    )
     assert result.best_parameters["rotation"]["beta"] == pytest.approx(
         -beta, abs=4e-3
     )
@@ -305,30 +264,29 @@ def test_real_waveform_fixed_candidate_fitting_factor(real_modes):
     )
 
     assert result.match > 0.999
-    assert _normalized_rms_residue(
-        real_modes,
-        candidate,
-        selected_modes,
-        AlignmentSpec(
-            time_alignment="none",
-            time_domain_policy="error",
-            phase_alignment="none",
-        ),
-        RotationSpec.from_value(result.best_parameters["alignment"]["rotation"]),
-    ) < 5e-3
-    assert result.best_parameters["alignment"]["rotation"]["angle"] == pytest.approx(
-        -0.15, abs=2e-3
+    assert (
+        _normalized_rms_residue(
+            prepare_aligned_mode_data(real_modes, candidate, result)
+        )
+        < 5e-3
     )
+    assert result.best_parameters["alignment"]["rotation"][
+        "angle"
+    ] == pytest.approx(-0.15, abs=2e-3)
 
 
 def test_real_waveform_cross_model_fitting_factor_smoke(real_model_pair):
     nrsur = real_model_pair["NRSur7dq4"]
     phenom = real_model_pair["IMRPhenomXPHM"]
     selected_modes = sorted(
-        set(_available_ell2_modes(nrsur)).intersection(_available_ell2_modes(phenom))
+        set(_available_ell2_modes(nrsur)).intersection(
+            _available_ell2_modes(phenom)
+        )
     )
     if len(selected_modes) < 2:
-        pytest.skip("Need at least two common ell=2 modes for cross-model comparison.")
+        pytest.skip(
+            "Need at least two common ell=2 modes for cross-model comparison."
+        )
 
     fixed = fixed_candidate_fitting_factor(
         nrsur,
@@ -352,7 +310,7 @@ def test_real_waveform_cross_model_fitting_factor_smoke(real_model_pair):
             alignment=AlignmentSpec(
                 time_alignment="peak_total_news_power",
                 time_domain_policy="resample_to_reference",
-                phase_alignment="orbital_phase_and_global",
+                phase_alignment="global_complex",
                 optimize_time_shift=True,
                 orbital_phase_samples=257,
             ),
@@ -369,30 +327,10 @@ def test_real_waveform_cross_model_fitting_factor_smoke(real_model_pair):
     assert np.isfinite(fixed.mismatch)
     assert np.isfinite(optimized.mismatch)
     fixed_rms_residue = _normalized_rms_residue(
-        nrsur,
-        phenom,
-        selected_modes,
-        AlignmentSpec.from_value(
-            fixed.diagnostics["comparison_config"]["alignment"],
-            candidate_time_shift=fixed.best_parameters["alignment"][
-                "candidate_time_shift"
-            ],
-        ),
-        fixed.best_parameters["alignment"]["rotation"],
-        orbital_phase=fixed.best_parameters["alignment"]["orbital_phase"],
+        prepare_aligned_mode_data(nrsur, phenom, fixed)
     )
     optimized_rms_residue = _normalized_rms_residue(
-        nrsur,
-        phenom,
-        selected_modes,
-        AlignmentSpec.from_value(
-            optimized.diagnostics["comparison_config"]["alignment"],
-            candidate_time_shift=optimized.best_parameters["alignment"][
-                "candidate_time_shift"
-            ],
-        ),
-        optimized.best_parameters["alignment"]["rotation"],
-        orbital_phase=optimized.best_parameters["alignment"]["orbital_phase"],
+        prepare_aligned_mode_data(nrsur, phenom, optimized)
     )
     assert np.isfinite(fixed_rms_residue)
     assert np.isfinite(optimized_rms_residue)
@@ -401,7 +339,9 @@ def test_real_waveform_cross_model_fitting_factor_smoke(real_model_pair):
     assert optimized.match >= fixed.match - 1e-8
     assert optimized_rms_residue <= fixed_rms_residue + 1e-8
     assert optimized.best_parameters["alignment"]["candidate_time_shift"] != 0.0
-    assert optimized.best_parameters["alignment"]["rotation"]["kind"] == "z_axis"
+    assert (
+        optimized.best_parameters["alignment"]["rotation"]["kind"] == "z_axis"
+    )
 
 
 def test_real_phenomxphm_fd_to_td_modes_have_physical_scale():
@@ -422,7 +362,9 @@ def test_real_phenomxphm_fd_to_td_modes_have_physical_scale():
     assert 1e-3 < diagnostics.energy_radiated < 0.2
 
 
-def test_real_waveform_generator_fitting_factor_accepts_user_params(real_model_pair):
+def test_real_waveform_generator_fitting_factor_accepts_user_params(
+    real_model_pair,
+):
     nrsur = real_model_pair["NRSur7dq4"]
     selected_modes = _available_ell2_modes(nrsur)
     base_candidate_parameters = _base_parameters("IMRPhenomXPHM")
