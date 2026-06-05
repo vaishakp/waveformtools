@@ -19,6 +19,9 @@ from waveformtools.comparison.alignment import (
     PreparedModeData,
     prepare_mode_data,
 )
+from waveformtools.comparison.conventions import (
+    canonicalize_modes_for_comparison,
+)
 from waveformtools.comparison.metadata import get_comparison_metadata
 from waveformtools.comparison.results import ComparisonResult
 from waveformtools.comparison.rotation import RotationSpec, rotate_modes
@@ -211,6 +214,7 @@ def mode_match(
     phase_degeneracy_tol: float | None = None,
     time_shift_grid_samples: int | None = None,
     allow_phase_rotation_degeneracy: bool | None = None,
+    canonicalize_mode_conventions: bool = True,
 ) -> ComparisonResult:
     """Compute a normalized mode match with explicit alignment choices.
 
@@ -231,6 +235,10 @@ def mode_match(
         Backwards-compatible shorthand.  If supplied, it overrides
         ``phase_alignment`` with ``global_complex`` when true and ``none`` when
         false.
+    canonicalize_mode_conventions:
+        If true, transform registered approximant-specific raw mode
+        conventions into the canonical comparison convention before mode
+        selection, rotation, alignment, and inner products.
     """
 
     t0 = time.perf_counter()
@@ -254,8 +262,25 @@ def mode_match(
         allow_phase_rotation_degeneracy=allow_phase_rotation_degeneracy,
     )
 
+    comparison_modes_a, target_mode_conventions = (
+        canonicalize_modes_for_comparison(
+            modes_a,
+            enabled=canonicalize_mode_conventions,
+        )
+    )
+    comparison_modes_b, candidate_mode_conventions = (
+        canonicalize_modes_for_comparison(
+            modes_b,
+            enabled=canonicalize_mode_conventions,
+        )
+    )
+
     selected_modes = common_modes(
-        modes_a, modes_b, ell_min=ell_min, ell_max=ell_max, modes=modes
+        comparison_modes_a,
+        comparison_modes_b,
+        ell_min=ell_min,
+        ell_max=ell_max,
+        modes=modes,
     )
     rotation_spec = RotationSpec.from_value(rotation)
     _validate_phase_rotation_degeneracy(alignment_spec, rotation_spec)
@@ -264,8 +289,8 @@ def mode_match(
     rotation_evaluations = 0
     if rotation_spec.optimize_angle:
         rotation_spec, rotation_optimization = _optimize_z_rotation(
-            modes_a,
-            modes_b,
+            comparison_modes_a,
+            comparison_modes_b,
             selected_modes,
             alignment_spec,
             rotation_spec,
@@ -273,8 +298,8 @@ def mode_match(
         rotation_evaluations = rotation_optimization["n_evaluations"]
     elif rotation_spec.optimize_parameters:
         rotation_spec, rotation_optimization = _optimize_wigner_rotation(
-            modes_a,
-            modes_b,
+            comparison_modes_a,
+            comparison_modes_b,
             selected_modes,
             alignment_spec,
             rotation_spec,
@@ -282,7 +307,7 @@ def mode_match(
         rotation_evaluations = rotation_optimization["n_evaluations"]
 
     comparison_modes_b = rotate_modes(
-        modes_b, rotation_spec, modes=selected_modes
+        comparison_modes_b, rotation_spec, modes=selected_modes
     )
 
     time_shift_optimization = None
@@ -290,7 +315,7 @@ def mode_match(
     n_evaluations = 1
     if alignment_spec.optimize_time_shift:
         alignment_spec, time_shift_optimization = _optimize_time_shift(
-            modes_a,
+            comparison_modes_a,
             comparison_modes_b,
             selected_modes,
             alignment_spec,
@@ -298,7 +323,10 @@ def mode_match(
         time_shift_evaluations = time_shift_optimization["n_evaluations"]
 
     evaluation = _evaluate_prepared_match(
-        modes_a, comparison_modes_b, selected_modes, alignment_spec
+        comparison_modes_a,
+        comparison_modes_b,
+        selected_modes,
+        alignment_spec,
     )
     prepared = evaluation["prepared"]
     match_value = evaluation["match"]
@@ -331,6 +359,13 @@ def mode_match(
         "alignment": alignment_spec.to_dict(),
         "rotation": rotation_spec.to_dict(),
         "time_axis": prepared.diagnostics.to_dict(),
+        "mode_conventions": {
+            "canonicalize_mode_conventions": bool(
+                canonicalize_mode_conventions
+            ),
+            "target": target_mode_conventions,
+            "candidate": candidate_mode_conventions,
+        },
     }
     if rotation_optimization is not None:
         diagnostics["rotation_optimization"] = rotation_optimization
@@ -358,8 +393,8 @@ def mode_match(
         n_objective_evaluations=n_evaluations,
         elapsed_s=time.perf_counter() - t0,
         diagnostics=diagnostics,
-        target_metadata=get_comparison_metadata(modes_a),
-        candidate_metadata=get_comparison_metadata(modes_b),
+        target_metadata=get_comparison_metadata(comparison_modes_a),
+        candidate_metadata=get_comparison_metadata(comparison_modes_b),
     )
 
 
@@ -388,6 +423,23 @@ def prepare_aligned_mode_data(
     This helper should be used by plotting and diagnostics instead of manually
     applying only ``orbital_phase``.
     """
+
+    mode_conventions = result.diagnostics.get("mode_conventions", {})
+    canonicalize_mode_conventions = bool(
+        mode_conventions.get("canonicalize_mode_conventions", False)
+    )
+    reference_modes, _reference_mode_conventions = (
+        canonicalize_modes_for_comparison(
+            reference_modes,
+            enabled=canonicalize_mode_conventions,
+        )
+    )
+    candidate_modes, _candidate_mode_conventions = (
+        canonicalize_modes_for_comparison(
+            candidate_modes,
+            enabled=canonicalize_mode_conventions,
+        )
+    )
 
     parameters = _result_alignment_parameters(result)
     alignment = AlignmentSpec.from_value(
