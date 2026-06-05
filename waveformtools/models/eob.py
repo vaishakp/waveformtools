@@ -78,9 +78,17 @@ class EOBWaveformModel(WaveformModel):
         wfm_td = self.td_waveform_modes
 
         if not dimensionless:
-            wfm_td = self.dimensionalize_td_waveform_modes(wfm_td, self.parameters_dict)
+            wfm_td = self.dimensionalize_td_waveform_modes(
+                wfm_td,
+                **self.parameters_dict,
+            )
             
-        return wfm_td
+        return self._standardize_generated_modes(
+            wfm_td,
+            domain='td',
+            dimensionless=dimensionless,
+            generator='EOBWaveformModel.get_td_waveform_modes',
+        )
 
     def get_td_modes(self, **parameters_dict):
         return self.get_td_waveform_modes(**parameters_dict)
