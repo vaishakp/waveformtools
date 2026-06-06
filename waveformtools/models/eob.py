@@ -23,15 +23,58 @@ class EOBWaveformModel(WaveformModel):
 
         super().__init__(parameters_dict=parameters_dict, *args, **kwargs)
 
+        self.deviation_dict = deviation_dict
+        self.settings = {}
+        self._refresh_derived_parameters()
+        self.td_waveform_modes = None
+
+    def _refresh_derived_parameters(self):
         self.chi_1 = np.array([self.parameters_dict['spin1x'], self.parameters_dict['spin1y'], self.parameters_dict['spin1z']])
         self.chi_2 = np.array([self.parameters_dict['spin2x'], self.parameters_dict['spin2y'], self.parameters_dict['spin2z']])
-        self.settings = deviation_dict
-        
-        # Greater than 1, with m1 > m2
+
+        # Greater than 1, with m1 > m2.
         self.mass_ratio = self.parameters_dict['mass1']/self.parameters_dict['mass2']
         self.delta_t_dimless = self.parameters_dict["delta_t"]/(self.Mtotal * self.MTSUN_SI)
-        self.settings.update({"dt" : self.parameters_dict["delta_t"]})
-        self.td_waveform_modes = None
+
+        self.settings = dict(self.deviation_dict)
+        self.settings.update({
+            "dt": self.parameters_dict["delta_t"],
+            "M": self.Mtotal,
+        })
+        for key in (
+            "lmax_nyquist",
+            "lmax",
+            "postadiabatic",
+            "postadiabatic_type",
+            "initial_conditions",
+            "initial_conditions_postadiabatic_type",
+            "r_size_input",
+            "dA_dict",
+            "dw_dict",
+            "domega_dict",
+            "dtau_dict",
+            "dTpeak",
+            "da6",
+            "ddSO",
+            "tol_PA",
+            "rtol_ode",
+            "atol_ode",
+            "deltaT_sampling",
+            "omega_prec_deviation",
+            "enable_antisymmetric_modes",
+            "antisymmetric_modes",
+            "antisymmetric_modes_hm",
+            "ivs_mrd",
+            "antisymmetric_fits_version",
+            "convention_coprecessing_phase22_set_to_0_at_reference_frequency",
+            "convention_t0_set_to_0_at_coprecessing_amplitude22_peak",
+        ):
+            if key in self.parameters_dict:
+                self.settings.update({key: self.parameters_dict[key]})
+        for key in ("return_modes", "mode_array", "ModeArray"):
+            if key in self.parameters_dict:
+                self.settings.update({"return_modes": self.parameters_dict[key]})
+                break
 
     def capabilities(self):
         """Return the output capabilities advertised by this backend."""
@@ -51,6 +94,7 @@ class EOBWaveformModel(WaveformModel):
         from waveformtools.models.utils import get_modes_array_from_eob_modes_dict
         
         self.update_parameters(parameters_dict)
+        self._refresh_derived_parameters()
         self.time_axis, self.modes_dict, self.model = generate_modes_opt(self.mass_ratio,
                                                                     self.chi_1,
                                                                     self.chi_2,
