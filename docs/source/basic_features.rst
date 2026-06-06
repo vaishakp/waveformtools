@@ -69,6 +69,7 @@ This package contains implementations of customized algorithms and techniques.  
 
     * Progress bar to display progress of loops.
 
-    * A custom print function with message prioritization.
+    * A logging-backed ``message`` function with verbosity levels and
+      bracketed caller names.
 
     * Saving data to disk with protocol support (binary, text, etc.)   
