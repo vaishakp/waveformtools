@@ -17,14 +17,16 @@ operate on the objects of pycbc's builtin classes.
 4. Any suggestions, comments, critisism invited to vaishak@gmail.com!
 """
 
-import datetime
+import logging
 import os
 import pickle
 
 # import statistics
 import sys
-import traceback
-from inspect import getframeinfo, stack
+from datetime import datetime
+from inspect import currentframe
+from logging import FileHandler
+from pathlib import Path
 
 try:
     import vlconf
@@ -48,15 +50,119 @@ import scipy
 from matplotlib import pyplot as plt
 from termcolor import colored
 
+_MESSAGE_LOGGER_ROOT = "waveformtools"
+_MESSAGE_LOG_FORMAT = "[%(name)s] [%(levelname)s] %(message)s"
+_MESSAGE_FILE_HANDLER: FileHandler | None = None
+_MESSAGE_FILE_HANDLER_PATH: Path | None = None
+_MESSAGE_FILE_LOGGERS: set[logging.Logger] = set()
+
+
+def _message_level(message_verbosity: int) -> int:
+    if message_verbosity <= 0:
+        return logging.ERROR
+    if message_verbosity == 1:
+        return logging.WARNING
+    if message_verbosity == 2:
+        return logging.INFO
+    return logging.DEBUG
+
+
+def _verbosity_value(value, attr_name: str) -> int:
+    if value is not None:
+        return int(value)
+    return int(getattr(vlconf, attr_name))
+
+
+def _message_text(args, sep: str) -> str:
+    return sep.join(str(item) for item in args)
+
+
+def _caller_logger_name() -> str:
+    frame = currentframe()
+    caller_frame = frame.f_back.f_back if frame and frame.f_back else None
+    if caller_frame is None:
+        return _MESSAGE_LOGGER_ROOT
+
+    module_name = caller_frame.f_globals.get("__name__", _MESSAGE_LOGGER_ROOT)
+    function_name = caller_frame.f_code.co_name
+    if function_name == "<module>":
+        return str(module_name)
+    return f"{module_name}.{function_name}"
+
+
+def _message_log_file_path() -> Path:
+    stamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    return Path("logs") / f"{stamp}.log"
+
+
+def _message_base_logger() -> logging.Logger:
+    logger = logging.getLogger(_MESSAGE_LOGGER_ROOT)
+    logger.setLevel(logging.DEBUG)
+    return logger
+
+
+def _ensure_message_file_handler() -> None:
+    global _MESSAGE_FILE_HANDLER, _MESSAGE_FILE_HANDLER_PATH
+
+    log_path = _message_log_file_path()
+    if (
+        _MESSAGE_FILE_HANDLER is not None
+        and _MESSAGE_FILE_HANDLER_PATH == log_path
+    ):
+        return
+
+    base_logger = _message_base_logger()
+    if _MESSAGE_FILE_HANDLER is not None:
+        base_logger.removeHandler(_MESSAGE_FILE_HANDLER)
+        for logger in _MESSAGE_FILE_LOGGERS:
+            logger.removeHandler(_MESSAGE_FILE_HANDLER)
+        _MESSAGE_FILE_LOGGERS.clear()
+        _MESSAGE_FILE_HANDLER.close()
+
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    handler = FileHandler(log_path, mode="a", encoding="utf-8")
+    handler.setFormatter(logging.Formatter(_MESSAGE_LOG_FORMAT))
+    handler.setLevel(logging.DEBUG)
+    base_logger.addHandler(handler)
+    _MESSAGE_FILE_HANDLER = handler
+    _MESSAGE_FILE_HANDLER_PATH = log_path
+
+
+def _attach_message_file_handler(logger: logging.Logger) -> None:
+    if _MESSAGE_FILE_HANDLER is None:
+        return
+    if logger.name.startswith(f"{_MESSAGE_LOGGER_ROOT}."):
+        return
+    if _MESSAGE_FILE_HANDLER in logger.handlers:
+        return
+    logger.addHandler(_MESSAGE_FILE_HANDLER)
+    _MESSAGE_FILE_LOGGERS.add(logger)
+
+
+def _reset_message_logging_for_tests() -> None:
+    """Reset message logging handlers used by tests."""
+    global _MESSAGE_FILE_HANDLER, _MESSAGE_FILE_HANDLER_PATH
+
+    if _MESSAGE_FILE_HANDLER is None:
+        return
+    base_logger = _message_base_logger()
+    base_logger.removeHandler(_MESSAGE_FILE_HANDLER)
+    for logger in _MESSAGE_FILE_LOGGERS:
+        logger.removeHandler(_MESSAGE_FILE_HANDLER)
+    _MESSAGE_FILE_LOGGERS.clear()
+    _MESSAGE_FILE_HANDLER.close()
+    _MESSAGE_FILE_HANDLER = None
+    _MESSAGE_FILE_HANDLER_PATH = None
+
 
 def message(
     *args,
     message_verbosity=2,
-    print_verbosity=vlconf.print_verbosity,
-    log_verbosity=vlconf.log_verbosity,
+    print_verbosity=None,
+    log_verbosity=None,
     **kwargs,
 ):
-    """The print function with verbosity levels and logging facility.
+    """Print and log messages with waveformtools verbosity levels.
 
     Notes
     -----
@@ -65,13 +171,14 @@ def message(
     * message_verbosity: Each message carries with it a verbosity level.
                          More the verbosity less the priority.
                          Default value is 2 i.e. informational.
-    * print_verbosity: prints all messages above this level of verbosity.
-    * log_verbosity: logs all messages above this level of verbosity.
+    * print_verbosity: prints all messages at or above this priority.
+    * log_verbosity: logs all messages at or above this priority.
 
     Verbosity levels:
     * 0: Errors
     * 1: Warnings
     * 2: Information
+    * 3 and above: Debug output
 
     Parameters
     ----------
@@ -86,30 +193,35 @@ def message(
     Returns
     -------
     1: int
-       messages to stdout and logging of messages,
-       while the function returns 1.
+       messages to stdout and logging of messages, while preserving the
+       historic return value.
     """
 
-    # If message verbosity matches the global verbosity level, then print
-    if message_verbosity <= print_verbosity:
-        print(*args, **kwargs)
-    if log_verbosity <= message_verbosity:
-        now = str(datetime.datetime.now())
-        tstamp = (now[:10] + "_" + now[11:16]).replace(":", "-")
-        caller = getframeinfo(stack()[1][0])
-        # frameinfo = getframeinfo(currentframe())
-        if not os.path.isdir("logs"):
-            os.mkdir("logs")
+    message_verbosity = int(message_verbosity)
+    resolved_print_verbosity = _verbosity_value(
+        print_verbosity, "print_verbosity"
+    )
+    resolved_log_verbosity = _verbosity_value(log_verbosity, "log_verbosity")
 
-        with open("logs/" + tstamp + ".log", "a") as log_file:
-            if message_verbosity == -1:
-                for line in traceback.format_stack():
-                    log_file.write(line.strip())
-            log_file.write("\n")
-            log_file.write(
-                "{}:{}\t{}".format(caller.filename, caller.lineno, *args)
-            )
-            log_file.write("\n")
+    sep = kwargs.get("sep", " ")
+    end = kwargs.get("end", "\n")
+    file = kwargs.get("file", sys.stdout)
+    flush = kwargs.get("flush", False)
+
+    logger_name = _caller_logger_name()
+    level = _message_level(message_verbosity)
+    level_name = logging.getLevelName(level)
+    text = _message_text(args, sep)
+    formatted_text = f"[{logger_name}] [{level_name}] {text}"
+
+    if message_verbosity <= resolved_print_verbosity:
+        print(formatted_text, end=end, file=file, flush=flush)
+    if message_verbosity <= resolved_log_verbosity:
+        _ensure_message_file_handler()
+        logger = logging.getLogger(logger_name)
+        logger.setLevel(logging.DEBUG)
+        _attach_message_file_handler(logger)
+        logger.log(level, text, stack_info=message_verbosity == -1)
     return 1
 
 
@@ -957,9 +1069,9 @@ def fill_gaps_in_data(data, k=5):
         interp_data = []
         interp_data.append(proper_timeaxis)
 
-        from scipy.interpolate import (
-            InterpolatedUnivariateSpline as interpolator,
-        )
+        from scipy.interpolate import InterpolatedUnivariateSpline
+
+        interpolator = InterpolatedUnivariateSpline
 
         for index in range(1, s1):
             interp_data.append(
@@ -2460,7 +2572,6 @@ def match_wfs(all_time_axes, all_waveforms, delta_t="auto"):
         # message(time_axis, wf1, wf2)
 
     from spectools.fourier.fft import compute_fft, compute_ifft
-    from spectools.fourier.fft import compute_fft, compute_ifft
 
     # The Fspace waveforms
     faxis, wf1_tilde = compute_fft(wf1, delta_t)
@@ -2613,7 +2724,6 @@ def match_wfs_pycbc(all_time_axes, all_waveforms):
     mid = int(len(time_axis2) / 2)
     phase_shift = np.mean(delta_phase[mid - 100 : mid + 100])
 
-    from spectools.fourier.fft import compute_fft, compute_ifft
     from spectools.fourier.fft import compute_fft, compute_ifft
 
     faxis0, wf1_tilde = compute_fft(waveform1, delta_t_1)
@@ -3165,9 +3275,9 @@ def interp_resam_wfs(wavf_data, old_taxis, new_taxis, kind="cubic", k=None):
 
     # Interpolate
     if k is not None:
-        from scipy.interpolate import (
-            InterpolatedUnivariateSpline as interpolator,
-        )
+        from scipy.interpolate import InterpolatedUnivariateSpline
+
+        interpolator = InterpolatedUnivariateSpline
 
         interp_amp_data = interpolator(old_taxis, amp, k=k)
         amp_res = interp_amp_data.get_residual()
@@ -3418,8 +3528,10 @@ def find_maxloc_and_time(times, amp):
 
 def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     ''' '''
-    from waveformtools.modes_array import ModesArray
     from lal import MTSUN_SI
+
+    from waveformtools.modes_array import ModesArray
+
     # Explain this factor
     # One M *MTSUN is due to the dimensionalization
     # of the time axis. What about the extra M?
@@ -3478,8 +3590,10 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
 
 def load_lal_fd_modes_to_modes_array(lal_modes, Mtotal=1):
     ''' '''
-    from waveformtools.modes_array import ModesArray
     from lal import MTSUN_SI
+
+    from waveformtools.modes_array import ModesArray
+
     # Explain this factor
     # One M *MTSUN is due to the dimensionalization
     # of the time axis. What about the extra M?
