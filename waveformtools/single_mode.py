@@ -44,6 +44,12 @@ class SingleMode:
         label=None,
         sine_power=0,
     ):
+        """Initialize a compact spin-weighted mode container.
+
+        The object can be constructed from an existing flattened mode array,
+        a nested mode dictionary, or a vectorized representation supplied by
+        spectral helpers.
+        """
         self._label = label
         self._modes_data = modes_data
         self._zero_modes = zero_modes
@@ -110,26 +116,32 @@ class SingleMode:
 
     @property
     def label(self):
+        """Human-readable label for this mode container."""
         return self._label
 
     @property
     def vec_modes(self):
+        """Vectorized mode data used for alternate construction paths."""
         return self._vec_modes
 
     @property
     def extra_mode_axes_shape(self):
+        """Shape of any non-angular axes carried by the mode data."""
         return self._extra_mode_axes_shape
 
     @property
     def tol(self):
+        """Tolerance used when classifying zero and non-zero modes."""
         return self._tol
 
     @property
     def Grid(self):
+        """Angular grid associated with this mode container."""
         return self._Grid
 
     @property
     def func(self):
+        """Angular function used to build the modes, if retained."""
         return self._func
 
     @property
@@ -140,10 +152,12 @@ class SingleMode:
 
     @property
     def n_modes(self):
+        """Number of spin-weight-compatible modes up to ``ell_max``."""
         return (self.ell_max+1)**2 - self.spin_weight**2
     
     @property
     def modes_data(self):
+        """Raw flattened mode data array."""
         return self._modes_data
 
     @property
@@ -181,6 +195,7 @@ class SingleMode:
 
     @property
     def modes_list(self):
+        """List of available ``(ell, m)`` mode labels."""
         message(f"ell_max of modes list {self.ell_max}", message_verbosity=3)
         message(f"spin weight {self.spin_weight}", message_verbosity=3)
 
@@ -197,6 +212,7 @@ class SingleMode:
 
     @property
     def ell_max(self):
+        """Maximum spherical-harmonic degree represented by this object."""
         if self.Grid is not None:
             if self.Grid.grid_type == "GL":
                 if self._ell_max is None:
@@ -218,6 +234,7 @@ class SingleMode:
         return self._spin_weight
 
     def zero_modes(self, tol=1e-8):
+        """Return cached or newly computed modes below ``tol``."""
         re_eval = False
 
         if not self._zero_modes:
@@ -239,6 +256,7 @@ class SingleMode:
         return self._zero_modes
 
     def non_zero_modes(self, tol=None):
+        """Return cached or newly computed modes above ``tol``."""
         re_eval = False
 
         if not self._non_zero_modes:
@@ -524,6 +542,7 @@ class SingleMode:
         self.power_ell = power
 
     def compare_modes(self, other_modes, prec=18):
+        """Assert that common modes agree with ``other_modes`` to ``prec``."""
         ell_max1 = self.ell_max
         ell_max2 = other_modes.ell_max
 
