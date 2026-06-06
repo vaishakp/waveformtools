@@ -119,6 +119,12 @@ class ModesArray:
         areal_radii=None,
         Grid=None,
     ):
+        """Initialize a modes container and its metadata.
+
+        The modal data are stored with a flattened leading mode axis and a
+        final time or frequency axis. ``spin_weight`` controls the allowed
+        ``ell`` range and the SWSH basis used by angular reconstruction.
+        """
         if areal_radii is None:
             areal_radii = []
         self.label = label
@@ -161,28 +167,35 @@ class ModesArray:
 
     @property
     def extra_mode_axes_shape(self):
+        """Shape of any axes between the mode axis and time/frequency axis."""
         return self._extra_mode_axes_shape
 
     @property
     def actions(self):
+        """Bookkeeping string or history describing operations on the data."""
         return self._actions
 
     @property
     def spin_weight(self):
+        """Spin weight of the stored modal expansion."""
         return self._spin_weight
 
     @property
     def Grid(self):
+        """Angular grid associated with this modes object, if available."""
         return self._Grid
 
     @property
     def n_modes(self):
+        """Number of spin-weight-compatible modes up to ``ell_max``."""
         return (self.ell_max+1)**2 - self.spin_weight**2
     
     def deepcopy(self):
+        """Return a deep copy of this modes object."""
         return deepcopy(self)
 
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        """Support selected NumPy ufuncs on modes objects."""
         if ufunc == np.conjugate:
             cma = self.deepcopy()
             cma._modes_data = np.conjugate(self._modes_data)
@@ -192,6 +205,7 @@ class ModesArray:
         return NotImplemented
     
     def __add__(self, obj):
+        """Return a copy with ``obj`` added to the mode data."""
 
         obj2 = self.deepcopy() 
         if isinstance(obj, self.__class__):
@@ -202,6 +216,7 @@ class ModesArray:
         return obj2
 
     def __radd__(self, obj):
+        """Return a copy with ``obj`` added from the left."""
 
         obj2 = self.deepcopy()
         if isinstance(obj, self.__class__):
@@ -212,6 +227,7 @@ class ModesArray:
         return obj2
 
     def __sub__(self, obj):
+        """Return a copy with ``obj`` subtracted from the mode data."""
 
         obj2 = self.deepcopy()
         if isinstance(obj, self.__class__):
@@ -222,6 +238,7 @@ class ModesArray:
         return obj2
 
     def __rsub__(self, obj):
+        """Return a copy representing ``obj`` minus this mode data."""
 
         obj2 = self.deepcopy() 
         if isinstance(obj, self.__class__):
@@ -232,6 +249,10 @@ class ModesArray:
         return obj2
     
     def __mul__(self, obj):
+        """Return a copy with mode data multiplied by ``obj``.
+
+        Multiplication by another modes object adds spin weights.
+        """
 
         obj2 = self.deepcopy()
         if isinstance(obj, self.__class__):
@@ -243,6 +264,7 @@ class ModesArray:
         return obj2
     
     def __rmul__(self, obj):
+        """Return a copy with left multiplication by ``obj``."""
 
         obj2 = self.deepcopy() 
         if isinstance(obj, self.__class__):
@@ -254,6 +276,10 @@ class ModesArray:
         return obj2
     
     def __truediv__(self, obj):
+        """Return a copy with mode data divided by ``obj``.
+
+        Division by another modes object subtracts spin weights.
+        """
 
         obj2 = self.deepcopy() 
         if isinstance(obj, self.__class__):
@@ -264,6 +290,7 @@ class ModesArray:
         return obj2
     
     def __rtruediv__(self, obj):
+        """Return a copy representing ``obj`` divided by this mode data."""
 
         obj2 = self.deepcopy() 
         if isinstance(obj, self.__class__):
@@ -275,6 +302,7 @@ class ModesArray:
         return obj2
     
     def __getitem__(self, index):
+        """Return a one-sample slice along the time/frequency axis."""
 
         aslice = self.deepcopy()
         aslice._modes_data = self.modes_data[..., index]
@@ -283,6 +311,7 @@ class ModesArray:
         return aslice
     
     def __len__(self):
+        """Return the length of the time or frequency axis, if defined."""
         if not (np.array(self.time_axis) == np.array(None)).any():
             return len(self.time_axis)
         elif not (np.array(self.frequency_axis) == np.array(None)).any():
@@ -360,6 +389,7 @@ class ModesArray:
 
     @time_axis.setter
     def time_axis(self, time_axis):
+        """Set the time axis."""
         self._time_axis = time_axis
 
     @property
@@ -369,9 +399,11 @@ class ModesArray:
 
     @modes_data.setter
     def modes_data(self, modes_data):
+        """Set the raw modal data array."""
         self._modes_data = modes_data
 
     def create_time_axis(self, data_len):
+        """Initialize a zero-valued time axis of length ``data_len``."""
         message(f"Created time axis of length {data_len}", message_verbosity=3)
         self._time_axis = np.zeros(data_len)
 
@@ -1064,6 +1096,7 @@ class ModesArray:
         return waveform_tilde_modes
 
     def find_max_intensity_loc(self):
+        """Return index and time of the maximum summed modal intensity."""
         
         intensity = np.sum(np.absolute(self.modes_data)**2, axis=0)
 
@@ -1080,6 +1113,7 @@ class ModesArray:
     
     @property
     def duration(self):
+        """Duration spanned by the current time axis."""
         return self.time_axis[-1] - self.time_axis[0]
     
     def to_time_basis(self):
@@ -1089,7 +1123,7 @@ class ModesArray:
         -------
         waveform_modes: ModesArray
                          A ModesArray containing the modes
-                         in frequency basis.
+                         in time basis.
         """
 
         # Create a new modes array
@@ -2019,6 +2053,7 @@ class ModesArray:
                              ylim="auto",
                              nstop=1,
                              plot22=False,):
+        """Plot the strongest modes using ``waveformtools.compare.plot_modes``."""
         if xlim is None:
             xlim = [-1200, 100]
         
@@ -2032,6 +2067,7 @@ class ModesArray:
                          plot22)
         
     def get_non_zero_modes(self, threshold=1e-4, threshold_n_points=10):
+        """Return modes above ``threshold`` for enough time samples."""
 
         non_zero_modes = []
         for ell, emm_list in self.modes_list:
@@ -2045,6 +2081,7 @@ class ModesArray:
         return non_zero_modes
     
     def time_derivative(self, mode=None, method="spline"):
+        """Return a modes object differentiated along the time axis."""
 
         #if mode is None:
         #    # modes_list = self.modes_list
@@ -2082,6 +2119,7 @@ class ModesArray:
         return d_wfm
 
     def time_integral(self, a=None, b=None, method='SP'):
+        """Return time-integrated mode coefficients on ``[a, b]``."""
         modes_list = self.modes_list
         int_wf_modes = SingleMode(spin_weight=self.spin_weight,
                                   ell_max=self.ell_max,
@@ -2118,6 +2156,7 @@ class ModesArray:
                                      v_kick, 
                                      Grid=None,
                                      ):
+        """Compute waveform balance-law violations with external wbal tools."""
 
         if Grid is None:
             Grid = self.Grid
@@ -2138,6 +2177,7 @@ class ModesArray:
                                      v_kick, 
                                      Grid=None,
                                      debug=False):
+        """Compute balance-law violations in the debug-compatible path."""
 
         if Grid is None:
             Grid = self.Grid
@@ -2157,6 +2197,7 @@ class ModesArray:
                                                  psi2_modes, 
                                                  Grid=None,
                                                  debug=False):
+        """Compute finite-time balance-law violations using ``psi2_modes``."""
 
         if Grid is None:
             Grid = self.Grid
@@ -2252,6 +2293,7 @@ class ModesArray:
         )
 
     def compute_momentum_flux(self, news_modes):
+        """Return the linear-momentum flux components from news modes."""
 
         dPxdt = np.zeros(news_modes.data_len, dtype=np.float64)
         dPydt = np.zeros(news_modes.data_len, dtype=np.float64)
@@ -2273,6 +2315,7 @@ class ModesArray:
         return dPxdt, dPydt, dPzdt
     
     def compute_kick(self, Mfinal=1):
+        """Return recoil velocity from the integrated momentum flux."""
         news_modes = self.get_news_from_strain()
         dPxdt, dPydt, dPzdt = self.compute_momentum_flux(news_modes)
         p_kick = compute_impulse_from_force(news_modes.time_axis, 
@@ -2284,6 +2327,7 @@ class ModesArray:
         return v_kick
     
     def compute_kick_direct(self, Mfinal=1):
+        """Return recoil velocity by integrating angular news intensity."""
         from waveformtools.integrate import TwoDIntegral
         news_modes = self.get_news_from_strain()
         news = news_modes.evaluate_angular()
@@ -2308,6 +2352,7 @@ class ModesArray:
         return v_kick.real
     
     def crop(self, start_idx, end_idx):
+        """Return a copy cropped along the time/frequency axis."""
 
         cropped_wfm = self.deepcopy()
         cropped_wfm._time_axis = self.time_axis[start_idx:end_idx]
@@ -2316,6 +2361,7 @@ class ModesArray:
         return cropped_wfm
 
     def get_power_from_news_modes(self, news_modes):
+        """Return radiated power from news modes in the modal norm."""
 
         power = np.sum(np.absolute(news_modes.modes_data )**2, axis=0)/(16*np.pi)
 
@@ -2327,6 +2373,7 @@ class ModesArray:
                                 t_end=None, 
                                 since_peak=False,
                                 inspiral_only=False):
+        """Integrate radiated energy over the selected time interval."""
     
         if news_modes is None:
             news_modes = self.get_news_from_strain()
@@ -2360,6 +2407,7 @@ class ModesArray:
                                           t_end=None,
                                           since_peak=False,
                                           inspiral_only=False):
+        """Return angular momentum radiated over the selected time interval."""
         
         if news_modes is None:
             news_modes = self.get_news_from_strain()

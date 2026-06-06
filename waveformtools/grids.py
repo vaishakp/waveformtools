@@ -29,6 +29,11 @@ class UniformGrid:
         integration_method="MP",
         grid_type="Uniform",
     ):
+        """Initialize a uniform spherical-polar grid.
+
+        The stored ``ntheta`` and ``nphi`` include ghost zones. The active
+        grid excludes ``nghosts`` points at each boundary.
+        """
         # Number of gridpoints along phi direction including ghost points.
         self.nphi = nphi
         # Number of gridpoints along theta direction including ghost points.
@@ -46,25 +51,22 @@ class UniformGrid:
 
     @property
     def grid_type(self):
+        """String label identifying this grid convention."""
         return self._grid_type
 
     @property
     def npix(self):
-        # Return the total number of pixels, including the ghost zones present
-        # at one iteration.
+        """Total number of grid points, including ghost zones."""
         return (self.ntheta) * (self.nphi)
 
     @property
     def npix_act(self):
-        # Return the actual number of pixels, excluding the ghost zones present
-        # at one iteration.
+        """Number of active grid points, excluding ghost zones."""
         return (self.ntheta - 2 * self.nghosts) * (self.nphi - 2 * self.nghosts)
 
     @property
     def npix_max(self):
-        # Return the (max) total number of pixels,
-        # including the ghost and buffer
-        # zones at one iteration.
+        """Maximum allocated grid-point count, including buffers."""
         return (self.nthetamax) * (self.nphimax)
 
     @property
@@ -83,17 +85,17 @@ class UniformGrid:
 
     @property
     def dtheta(self):
-        # Return the coodinate spacing d\theta
+        """Uniform coordinate spacing in theta on the active grid."""
         return np.pi / (self.ntheta - 2 * self.nghosts)
 
     @property
     def dphi(self):
-        # Return the coordinate spacing d\phi
+        """Uniform coordinate spacing in phi on the active grid."""
         return 2 * np.pi / (self.nphi - 2 * self.nghosts)
 
     @property
     def nbuffer(self):
-        # Return the coordinate spacing d\phi
+        """Number of theta buffer points beyond the current grid."""
         return self.nthetamax - self.ntheta
 
     @property
@@ -324,6 +326,12 @@ class GLGrid:
         integration_method="GL",
         grid_type="GL",
     ):
+        """Initialize a Gauss-Legendre angular grid.
+
+        If ``L`` is supplied, the active grid has ``L + 1`` theta points and
+        ``2 * (L + 1)`` phi points. Ghost zones are included in ``ntheta`` and
+        ``nphi`` but not in ``meshgrid``.
+        """
         # Number of gridpoints along phi direction including ghost points.
         self._nphi = nphi
         # Number of gridpoints along theta direction including ghost points.
@@ -390,6 +398,7 @@ class GLGrid:
 
     @property
     def grid_type(self):
+        """String label identifying this grid convention."""
         return self._grid_type
 
     def nphi(self):

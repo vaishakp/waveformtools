@@ -14,6 +14,7 @@ fact_dict = {0: 1, 1: 1}
 
 
 def factorial(number):
+    """Return ``number!`` using the module-level factorial cache."""
     if number not in fact_dict.keys():
         fact_dict.update({number: factorial(number - 1) * number})
 
@@ -274,6 +275,7 @@ def Yslm(spin_weight, ell, emm, theta, phi):
 
 
 def check_Yslm_theta(theta_grid, threshold=1e-6):
+    """Move theta samples slightly away from coordinate singularities."""
     theta_list = np.array(theta_grid).flatten()
 
     locs = np.where(abs(theta_list) < threshold)

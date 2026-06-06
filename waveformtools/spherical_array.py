@@ -81,6 +81,11 @@ class SphericalArray:
         spin_weight=-2,
         ell_max=8,
     ):
+        """Initialize angular-grid waveform data and metadata.
+
+        ``data`` is expected on the angular grid represented by ``Grid`` with
+        the final axis carrying time or frequency samples.
+        """
         self._label = label
         self._data_len = data_len
         # self.base_dir = base_dir  # The base directory containing the
@@ -95,38 +100,47 @@ class SphericalArray:
 
     @property
     def label(self):
+        """Human-readable label for this spherical data object."""
         return self._label
 
     @property
     def ell_max(self):
+        """Maximum spherical-harmonic degree used for mode conversion."""
         return self._ell_max
 
     @property
     def time_axis(self):
+        """Time samples associated with the final data axis."""
         return self._time_axis
 
     @property
     def frequency_axis(self):
+        """Frequency samples associated with the final data axis."""
         return self._frequency_axis
 
     @property
     def data(self):
+        """Complex angular data array on ``Grid``."""
         return self._data
 
     @property
     def data_dir(self):
+        """Directory from which this data was loaded, if known."""
         return self._data_dir
 
     @property
     def file_name(self):
+        """Input file name associated with this data, if known."""
         return self._file_name
 
     @property
     def spin_weight(self):
+        """Spin weight of the angular field."""
         return self._spin_weight
 
     @property
     def Grid(self):
+        """Angular grid on which ``data`` is sampled."""
         return self._Grid
 
     def delta_t(self, value=None):
