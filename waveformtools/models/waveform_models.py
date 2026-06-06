@@ -49,18 +49,13 @@ class WaveformModel:
                                     ]
         self.parameters_dict['model']=None
         self.parameters_dict['lal_dict'] = CreateDict()
+        self._ensure_omega0_parameter()
         self.set_parameters()
         self.MSUN_SI = MSUN_SI
         self.MTSUN_SI = MTSUN_SI
         self.G_SI = G_SI
         self.PC_SI = PC_SI
         self.C_SI = C_SI
-        
-        if 'omega0' not in self.parameters_dict:
-            if 'f_lower' not in self.parameters_dict:
-                raise KeyError("Please supply omega0 or f_lower")
-            else:
-                self.parameters_dict.update({"omega0":np.pi*self.parameters_dict['f_lower']})
 
 
     def __getstate__(self):
@@ -73,7 +68,15 @@ class WaveformModel:
         
         self.__dict__.update(state)
         self.parameters_dict['lal_dict'] = CreateDict()
+        self._ensure_omega0_parameter()
         self.set_parameters()
+
+    def _ensure_omega0_parameter(self, force_from_f_lower=False):
+        if "omega0" in self.parameters_dict and not force_from_f_lower:
+            return
+        if "f_lower" not in self.parameters_dict:
+            raise KeyError("Please supply omega0 or f_lower")
+        self.parameters_dict.update({"omega0": np.pi * self.parameters_dict["f_lower"]})
     
     def set_parameters(self):
 
@@ -85,7 +88,11 @@ class WaveformModel:
     
     def update_parameters(self, parameters_dict):
         
+        force_omega0_from_f_lower = (
+            "f_lower" in parameters_dict and "omega0" not in parameters_dict
+        )
         self.parameters_dict.update(parameters_dict)
+        self._ensure_omega0_parameter(force_from_f_lower=force_omega0_from_f_lower)
         #self.parameters_dict['phi_ref'] = self.parameters_dict['coa_phase']
         self.set_parameters()
 
@@ -400,7 +407,25 @@ class WaveformModel:
         mu = m1*m2
         eob_parameters_dict = parameters_dict.copy()
 
-        if self.f_lower==0 or self.omega0==0:
+        explicit_omega0 = eob_parameters_dict.get("omega0")
+        explicit_f_lower = eob_parameters_dict.get("f_lower")
+        has_explicit_omega0 = (
+            explicit_omega0 is not None
+            and np.isfinite(float(explicit_omega0))
+            and float(explicit_omega0) > 0.0
+        )
+        has_explicit_f_lower = (
+            explicit_f_lower is not None
+            and np.isfinite(float(explicit_f_lower))
+            and float(explicit_f_lower) > 0.0
+        )
+        if has_explicit_f_lower and not has_explicit_omega0:
+            eob_parameters_dict.update({"omega0": np.pi * float(explicit_f_lower)})
+            has_explicit_omega0 = True
+
+        if not (has_explicit_omega0 or has_explicit_f_lower) and (
+            self.f_lower==0 or self.omega0==0
+        ):
             wfm    = self.get_td_waveform_modes(**parameters_dict)
             omega0_dimless = get_starting_angular_frequency(wfm.mode(2,2), 
                                                     wfm.delta_t(),
