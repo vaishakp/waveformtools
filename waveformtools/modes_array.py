@@ -1,33 +1,38 @@
-from copy import deepcopy
+import math
 import sys
+from copy import deepcopy
+from pathlib import Path
 
 import h5py
 import numpy as np
-import math
-
+from scipy.interpolate import InterpolatedUnivariateSpline
+from spectools.spherical.grids import UniformGrid
+from spectools.spherical.swsh import Yslm_vec
 from sympy import comp
 
 from waveformtools import dataIO
+from waveformtools.BMS import (
+    compute_angular_momentum,
+    compute_impulse_from_force,
+    compute_linear_momentum_contribution_from_news,
+)
 from waveformtools.dataIO import (
     construct_mode_list,
     get_iteration_numbers_from_keys,
     sort_keys,
 )
-from spectools.spherical.grids import UniformGrid
-from spectools.spherical.grids import UniformGrid
-from spectools.spherical.swsh import Yslm_vec
-from spectools.spherical.swsh import Yslm_vec
-from waveformtools.waveformtools import interp_resam_wfs, message, get_nr_frame_angles_from_lal
-from pathlib import Path
 from waveformtools.integrate import fixed_frequency_integrator
+from waveformtools.single_mode import SingleMode
 from waveformtools.waveformtools import (
-    get_starting_angular_frequency as sang_f,
+    get_nr_frame_angles_from_lal,
+)
+from waveformtools.waveformtools import get_starting_angular_frequency as sang_f
+from waveformtools.waveformtools import (
+    interp_resam_wfs,
+    message,
+    roll,
 )
 
-from waveformtools.single_mode import SingleMode
-from scipy.interpolate import InterpolatedUnivariateSpline
-from waveformtools.BMS import compute_linear_momentum_contribution_from_news, compute_impulse_from_force, compute_angular_momentum
-from waveformtools.waveformtools import roll
 
 class ModesArray:
     """A class that holds mode array of waveforms
@@ -1039,7 +1044,6 @@ class ModesArray:
         )
 
         from spectools.fourier.transforms import compute_fft
-        from spectools.fourier.transforms import compute_fft
 
         for mode in self.modes_list:
             # Ge the ell value
@@ -1147,8 +1151,7 @@ class ModesArray:
     def to_time_basis_pycbc_2(self):
         ''' Use pycbc to transform to time domain '''
 
-        from pycbc import types
-        from pycbc import fft
+        from pycbc import fft, types
 
         created=False
         for ell, emm_list in self.modes_list:
@@ -1467,7 +1470,6 @@ class ModesArray:
         """
 
         from spectools.spherical.grids import UniformGrid
-        from spectools.spherical.grids import UniformGrid
 
         # Construct a spherical grid.
         if Grid is None:
@@ -1525,9 +1527,7 @@ class ModesArray:
 
         # Integrate,
         from waveformtools.integrate import fixed_frequency_integrator
-        from waveformtools.waveformtools import (
-            get_starting_angular_frequency as sang_f,
-        )
+        from waveformtools.waveformtools import get_starting_angular_frequency as sang_f
 
         omega_st = omega0
         for item in self.modes_list:
@@ -1922,10 +1922,12 @@ class ModesArray:
     def evaluate_angular(
         self, theta=None, phi=None, ell_max=None, max_t_steps=None
     ):
-        """Evaluate the expansion at requested angular coordinates
-        by generating SWSHs in parallel and vectorizing the
-        summation"""
-        from spectools.spherical.Yslm_mp import Yslm_mp
+        """Evaluate the expansion at requested angular coordinates.
+
+        If ``theta`` and ``phi`` are omitted, evaluate on ``self.Grid``.
+        If they are provided, evaluate only on those simultaneous angular
+        points, ignoring ``self.Grid`` as an evaluation target.
+        """
         from spectools.spherical.Yslm_mp import Yslm_mp
 
         if ell_max is None:
@@ -1934,14 +1936,31 @@ class ModesArray:
         if max_t_steps is None:
             max_t_steps = self.data_len
 
-        if (np.array(theta) == np.array(None)).all() or (
-            np.array(phi) == np.array(None)
-        ).all():
+        theta_is_none = theta is None
+        phi_is_none = phi is None
+        if theta_is_none != phi_is_none:
+            raise ValueError("theta and phi must be supplied together.")
+
+        basis_grid = None
+        if theta_is_none and phi_is_none:
+            if self.Grid is None:
+                raise ValueError(
+                    "evaluate_angular() requires self.Grid when theta and "
+                    "phi are omitted."
+                )
             theta, phi = self.Grid.meshgrid
+            basis_grid = self.Grid
+        elif np.shape(theta) != np.shape(phi):
+            raise ValueError("theta and phi must have matching shapes.")
 
         sYlm = Yslm_mp(
-            ell_max=ell_max, spin_weight=self.spin_weight, theta=theta, phi=phi,
-            Grid=self.Grid, cache=False)
+            ell_max=ell_max,
+            spin_weight=self.spin_weight,
+            theta=theta,
+            phi=phi,
+            Grid=basis_grid,
+            cache=False,
+        )
 
         sYlm.run()
         sYlm_funcs_vec = sYlm.sYlm_modes._modes_data
@@ -2035,6 +2054,7 @@ class ModesArray:
 
         d_wfm = deepcopy(self)
         from waveformtools.differentiate import derivative
+
         # dt = self.delta_t
         # for ell, emm_list in modes_list:
         #    for emm in range(-ell, ell+1):
