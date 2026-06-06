@@ -33,14 +33,26 @@ class ModeConventionEntry:
 
 
 APPROXIMANT_MODE_CONVENTIONS: dict[str, ModeConventionEntry] = {
-    "NRSur7dq4": ModeConventionEntry(
-        approximant="NRSur7dq4",
-        raw_mode_convention="lal_surrogate_complex_conjugate_strain_lm",
+    "SEOBNRv5PHM": ModeConventionEntry(
+        approximant="SEOBNRv5PHM",
+        raw_mode_convention="pyseobnr_complex_conjugate_strain_lm",
         canonical_transform="complex_conjugate",
         note=(
-            "Local SEOBNRv5PHM/NRSur7dq4 h22 diagnostics show SEOB h22 "
-            "matches conj(NRSur h22), equivalently NRSur h2,-2 for "
-            "non-spinning cases."
+            "The canonical comparison convention follows the raw NRSur7dq4 "
+            "and IMRPhenomXPHM mode convention. Local pyseobnr "
+            "SEOBNRv5PHM diagnostics show this approximant matches the "
+            "canonical convention after complex conjugation."
+        ),
+    ),
+    "SEOBNRv5HM": ModeConventionEntry(
+        approximant="SEOBNRv5HM",
+        raw_mode_convention="pyseobnr_complex_conjugate_strain_lm",
+        canonical_transform="complex_conjugate",
+        note=(
+            "The canonical comparison convention follows the raw NRSur7dq4 "
+            "and IMRPhenomXPHM mode convention. Local pyseobnr SEOBNRv5HM "
+            "h22 diagnostics show this approximant matches the canonical "
+            "convention after complex conjugation."
         ),
     ),
 }

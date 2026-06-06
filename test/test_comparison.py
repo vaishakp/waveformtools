@@ -262,18 +262,19 @@ def test_h22_only_orbital_and_global_phase_alignment_is_degenerate():
     )
 
 
-def test_registered_nrsur_modes_are_canonicalized_before_match():
+@pytest.mark.parametrize("approximant", ["SEOBNRv5PHM", "SEOBNRv5HM"])
+def test_registered_v5_eob_modes_are_canonicalized_before_match(approximant):
     reference = make_test_modes()
     reference.attach_metadata(
-        approximant="SEOBNRv5PHM",
+        approximant="NRSur7dq4",
         mode_convention="canonical_strain_lm",
     )
-    raw_nrsur = make_test_modes().bar()
-    raw_nrsur.attach_metadata(approximant="NRSur7dq4")
+    raw_seob = make_test_modes().bar()
+    raw_seob.attach_metadata(approximant=approximant)
 
     uncanonicalized = mode_match(
         reference,
-        raw_nrsur,
+        raw_seob,
         modes=[(2, 2)],
         time_alignment="none",
         time_domain_policy="error",
@@ -282,15 +283,16 @@ def test_registered_nrsur_modes_are_canonicalized_before_match():
     )
     canonicalized = mode_match(
         reference,
-        raw_nrsur,
+        raw_seob,
         modes=[(2, 2)],
         time_alignment="none",
         time_domain_policy="error",
         phase_alignment="orbital_phase",
     )
-    replay = prepare_aligned_mode_data(reference, raw_nrsur, canonicalized)
+    replay = prepare_aligned_mode_data(reference, raw_seob, canonicalized)
 
-    assert mode_convention_for_approximant("NRSur7dq4") is not None
+    assert mode_convention_for_approximant("NRSur7dq4") is None
+    assert mode_convention_for_approximant(approximant) is not None
     assert uncanonicalized.match < 0.1
     assert canonicalized.match == pytest.approx(1.0, abs=1e-12)
     assert canonicalized.diagnostics["mode_conventions"]["candidate"][
@@ -311,6 +313,27 @@ def test_registered_nrsur_modes_are_canonicalized_before_match():
         )
         < 1e-10
     )
+
+
+def test_nrsur_modes_are_treated_as_canonical():
+    reference = make_test_modes()
+    raw_nrsur = make_test_modes()
+    raw_nrsur.attach_metadata(approximant="NRSur7dq4")
+
+    canonicalized, diagnostics = canonicalize_modes_for_comparison(raw_nrsur)
+    result = mode_match(
+        reference,
+        raw_nrsur,
+        modes=[(2, 2)],
+        time_alignment="none",
+        time_domain_policy="error",
+        phase_alignment="orbital_phase",
+    )
+
+    assert canonicalized is raw_nrsur
+    assert diagnostics["registered"] is False
+    assert diagnostics["applied"] is False
+    assert result.match == pytest.approx(1.0, abs=1e-12)
 
 
 def test_mode_convention_registry_uses_exact_approximant_keys():
@@ -337,20 +360,21 @@ def test_mode_convention_registry_uses_exact_approximant_keys():
     ] is False
 
 
-def test_mode_convention_canonicalization_is_idempotent():
+@pytest.mark.parametrize("approximant", ["SEOBNRv5PHM", "SEOBNRv5HM"])
+def test_mode_convention_canonicalization_is_idempotent(approximant):
     reference = make_test_modes()
-    raw_nrsur = make_test_modes().bar()
-    raw_nrsur.attach_metadata(approximant="NRSur7dq4")
+    raw_seob = make_test_modes().bar()
+    raw_seob.attach_metadata(approximant=approximant)
 
-    canonical_nrsur, first_diagnostics = canonicalize_modes_for_comparison(
-        raw_nrsur
+    canonical_seob, first_diagnostics = canonicalize_modes_for_comparison(
+        raw_seob
     )
-    canonical_nrsur, second_diagnostics = canonicalize_modes_for_comparison(
-        canonical_nrsur
+    canonical_seob, second_diagnostics = canonicalize_modes_for_comparison(
+        canonical_seob
     )
     result = mode_match(
         reference,
-        canonical_nrsur,
+        canonical_seob,
         modes=[(2, 2)],
         time_alignment="none",
         time_domain_policy="error",
@@ -363,21 +387,24 @@ def test_mode_convention_canonicalization_is_idempotent():
     assert result.match == pytest.approx(1.0, abs=1e-12)
 
 
-def test_generation_standardization_mutates_nrsur_modes_and_records_history():
+@pytest.mark.parametrize("approximant", ["SEOBNRv5PHM", "SEOBNRv5HM"])
+def test_generation_standardization_mutates_v5_eob_modes_and_records_history(
+    approximant,
+):
     reference = make_test_modes()
-    raw_nrsur = make_test_modes().bar()
-    raw_nrsur.attach_metadata(approximant="NRSur7dq4")
+    raw_seob = make_test_modes().bar()
+    raw_seob.attach_metadata(approximant=approximant)
 
-    standardized, diagnostics = standardize_generated_modes_in_place(raw_nrsur)
+    standardized, diagnostics = standardize_generated_modes_in_place(raw_seob)
 
-    assert standardized is raw_nrsur
+    assert standardized is raw_seob
     assert diagnostics["applied"] is True
     assert diagnostics["canonical_transform"] == "complex_conjugate"
-    assert np.allclose(raw_nrsur.mode(2, 2), reference.mode(2, 2))
-    metadata = raw_nrsur.get_comparison_metadata()
+    assert np.allclose(raw_seob.mode(2, 2), reference.mode(2, 2))
+    metadata = raw_seob.get_comparison_metadata()
     assert metadata.mode_convention == "canonical_strain_lm"
     assert metadata.raw_mode_convention == (
-        "lal_surrogate_complex_conjugate_strain_lm"
+        "pyseobnr_complex_conjugate_strain_lm"
     )
     assert metadata.canonicalization_applied == "complex_conjugate"
     assert metadata.mode_convention_history[-1]["stage"] == (
@@ -385,38 +412,42 @@ def test_generation_standardization_mutates_nrsur_modes_and_records_history():
     )
     assert (
         "standardize_mode_convention(complex_conjugate)"
-        in raw_nrsur.actions
+        in raw_seob.actions
     )
 
-    saved_metadata = raw_nrsur.get_metadata()["comparison_metadata"]
+    saved_metadata = raw_seob.get_metadata()["comparison_metadata"]
     assert isinstance(saved_metadata, dict)
     assert saved_metadata["mode_convention_history"][-1]["stage"] == (
         "waveform_generation"
     )
 
 
-def test_generation_standardization_is_idempotent():
-    raw_nrsur = make_test_modes().bar()
-    raw_nrsur.attach_metadata(approximant="NRSur7dq4")
+@pytest.mark.parametrize("approximant", ["SEOBNRv5PHM", "SEOBNRv5HM"])
+def test_generation_standardization_is_idempotent(approximant):
+    raw_seob = make_test_modes().bar()
+    raw_seob.attach_metadata(approximant=approximant)
 
-    standardize_generated_modes_in_place(raw_nrsur)
-    modes_after_first = np.array(raw_nrsur.modes_data, copy=True)
-    actions_after_first = raw_nrsur.actions
-    _, diagnostics = standardize_generated_modes_in_place(raw_nrsur)
+    standardize_generated_modes_in_place(raw_seob)
+    modes_after_first = np.array(raw_seob.modes_data, copy=True)
+    actions_after_first = raw_seob.actions
+    _, diagnostics = standardize_generated_modes_in_place(raw_seob)
 
     assert diagnostics["already_canonical"] is True
     assert diagnostics["applied"] is False
-    assert np.allclose(raw_nrsur.modes_data, modes_after_first)
-    assert raw_nrsur.actions == actions_after_first
-    assert len(raw_nrsur.get_comparison_metadata().mode_convention_history) == 1
+    assert np.allclose(raw_seob.modes_data, modes_after_first)
+    assert raw_seob.actions == actions_after_first
+    assert len(raw_seob.get_comparison_metadata().mode_convention_history) == 1
 
 
-def test_waveform_model_generation_hook_standardizes_and_merges_metadata():
+@pytest.mark.parametrize("approximant", ["SEOBNRv5PHM", "SEOBNRv5HM"])
+def test_waveform_model_generation_hook_standardizes_and_merges_metadata(
+    approximant,
+):
     from waveformtools.models.waveform_models import WaveformModel
 
     model = WaveformModel(
         {
-            "approximant": "NRSur7dq4",
+            "approximant": approximant,
             "mass1": 40.0,
             "mass2": 20.0,
             "spin1x": 0.0,
@@ -430,23 +461,23 @@ def test_waveform_model_generation_hook_standardizes_and_merges_metadata():
         }
     )
     reference = make_test_modes()
-    raw_nrsur = make_test_modes().bar()
-    raw_nrsur.attach_metadata(
+    raw_seob = make_test_modes().bar()
+    raw_seob.attach_metadata(
         parameters={"preexisting": "kept"},
         mode_convention_history=[{"stage": "pre_generation"}],
     )
 
     standardized = model._standardize_generated_modes(
-        raw_nrsur,
+        raw_seob,
         domain="td",
         dimensionless=True,
         generator="synthetic_generator",
     )
 
-    assert standardized is raw_nrsur
+    assert standardized is raw_seob
     assert np.allclose(standardized.mode(2, 2), reference.mode(2, 2))
     metadata = standardized.get_comparison_metadata()
-    assert metadata.approximant == "NRSur7dq4"
+    assert metadata.approximant == approximant
     assert metadata.parameters["preexisting"] == "kept"
     assert metadata.parameters["generation_domain"] == "td"
     assert metadata.parameters["dimensionless_output"] is True
