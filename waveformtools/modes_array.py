@@ -1,3 +1,4 @@
+import functools
 import math
 import sys
 from copy import deepcopy
@@ -2211,8 +2212,14 @@ class ModesArray:
         
         return violations
     
+    @functools.cached_property
+    def _news_modes_spline(self):
+        return self.time_derivative(method='spline')
+
     def get_news_from_strain(self, method='spline'):
         '''Return the waveform news by differentiating strain modes in time.'''
+        if method == 'spline':
+            return self._news_modes_spline
         return self.time_derivative(method=method)
 
     def compute_displacement_memory(self, config=None, **overrides):
