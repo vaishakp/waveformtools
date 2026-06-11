@@ -878,6 +878,25 @@ def _optimize_time_shift(
     return best_alignment, diagnostics
 
 
+def _boundary_taper(N: int, alpha: float) -> np.ndarray:
+    """Split-cosine (Tukey) taper of length N with fractional width alpha.
+
+    Returns ones in the interior and a half-cosine ramp over the first and last
+    ``ceil(alpha/2 * N)`` samples.  alpha=0 → rectangular (all ones);
+    alpha=1 → Hann.  Used to suppress circular-boundary artefacts in the
+    roll and ifft time-shift methods.
+    """
+    if alpha <= 0.0:
+        return np.ones(N, dtype=float)
+    width = max(1, int(np.ceil(alpha / 2 * N)))
+    window = np.ones(N, dtype=float)
+    t = np.arange(width, dtype=float)
+    ramp = 0.5 * (1.0 - np.cos(np.pi * t / width))
+    window[:width] = ramp
+    window[N - width:] = ramp[::-1]
+    return window
+
+
 def _time_shift_grid_search_and_refine(
     objective: "Callable[[float], float]",
     bounds: tuple[float, float],
@@ -1012,6 +1031,19 @@ def _optimize_time_shift_roll(
 
     stack_a = np.stack([prepared_0.modes_a[m] for m in selected_modes])
     stack_b0 = np.stack([prepared_0.modes_b[m] for m in selected_modes])
+
+    taper_alpha = getattr(alignment, "time_shift_taper_alpha", 0.0)
+    if taper_alpha > 0.0:
+        taper = _boundary_taper(N, taper_alpha)
+        stack_a = stack_a * taper
+        stack_b0 = stack_b0 * taper
+        norm_a = float(np.sqrt(max(
+            np.real(np.sum(_trapz_complex_axis(np.conj(stack_a) * stack_a, time_axis))), 0.0
+        )))
+        norm_b = float(np.sqrt(max(
+            np.real(np.sum(_trapz_complex_axis(np.conj(stack_b0) * stack_b0, time_axis))), 0.0
+        )))
+
     m_values = np.fromiter(
         (emm for _ell, emm in selected_modes), dtype=float, count=len(selected_modes)
     )
