@@ -20,7 +20,6 @@ Welcome to waveformtools' documentation!
    waveforms
    waveformtools
    sxs
-   sphinx-quickstart
    
 Indices and tables
 ==================
@@ -28,5 +27,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
 

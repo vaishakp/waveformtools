@@ -110,3 +110,51 @@ jobs:
             -not -path "./build/*" \
             -not -path "./dist/*" \
             -print0 | xargs -0 pylint
+
+  docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: "3.11"
+          activate-environment: waveformtools-docs
+          channels: conda-forge,defaults
+          channel-priority: strict
+          miniforge-variant: Miniforge3
+          use-mamba: true
+          auto-update-conda: false
+
+      - name: Install documentation dependencies
+        run: |
+          mamba install -y -c conda-forge \
+            python=3.11 \
+            gxx_linux-64 \
+            fftw \
+            numpy \
+            scipy \
+            h5py \
+            matplotlib \
+            numba \
+            termcolor
+          python -m pip install --upgrade pip
+          python -m pip install -r docs/requirements.txt
+          python -m pip install .
+
+      - name: Build Sphinx documentation
+        run: |
+          sphinx-build -b html docs/source docs/_build/html
+
+      - name: Upload documentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-html
+          path: docs/_build/html

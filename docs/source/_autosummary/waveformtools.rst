@@ -3,29 +3,12 @@
 
 .. automodule:: waveformtools
 
-   
-   
-   
 
-   
-   
    .. rubric:: Functions
 
    .. autosummary::
-   
-      get_version
-   
-   
 
-   
-   
-   
-
-   
-   
-   
-
-
+      read_git_version
 
 .. rubric:: Modules
 
@@ -33,19 +16,32 @@
    :toctree:
    :recursive:
 
-   waveformtools.BMS
-   waveformtools.CoM
-   waveformtools.compare
-   waveformtools.dataIO
-   waveformtools.diagnostics
-   waveformtools.differentiate
-   waveformtools.extrapolate
-   waveformtools.grids
-   waveformtools.integrate
-   waveformtools.legacy
-   waveformtools.simulations
-   waveformtools.spherical
-   waveformtools.transforms
-   waveformtools.waveforms
-   waveformtools.waveformtools
-
+   BMS
+   CoM
+   balance_law_repair
+   bms_frame_diagnostics
+   bms_frame_preprocessing
+   chunked_balance_laws
+   compare
+   comparison
+   config
+   dataIO
+   diagnostics
+   differentiate
+   extrapolate
+   fd_to_td
+   grids
+   integrate
+   legacy
+   memory
+   modes_array
+   rotation_math
+   rotations
+   simulations
+   single_mode
+   spherical
+   spherical_array
+   transforms
+   waveform_corrections
+   waveforms
+   waveformtools
