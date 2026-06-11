@@ -10,8 +10,9 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
 import sys
+from importlib import metadata
+from pathlib import Path
 
 import sphinx
 from recommonmark.parser import CommonMarkParser
@@ -21,25 +22,13 @@ from recommonmark.parser import CommonMarkParser
 
 # -- Project information -----------------------------------------------------
 
-# Load the package into pythonpath
-cwd = os.getcwd()
-print("CurrWD", cwd)
+repo_root = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(repo_root))
 
-pack_path = cwd + "/../../"
-sys.path.append(pack_path)
-
-print("Pythonpath:", sys.path)
-# with open('../../public/date.txt', 'r') as f:
-#    proj_vers = f.readline()
-
-# Fetch the latest commit version
-dvers = os.popen("git log -1 --date=short | grep Date").read()
-
-print("Date fetched", dvers)
-print("Version string", dvers[8:-1])
-proj_vers = dvers
-print("Parsed version:", proj_vers)
-waveformtools_version = proj_vers  # get_version()
+try:
+    waveformtools_version = metadata.version("waveformtools")
+except metadata.PackageNotFoundError:
+    from waveformtools import __version__ as waveformtools_version
 
 # -- Project information -----------------------------------------------------
 
@@ -74,6 +63,7 @@ extensions = [
 
 
 autosummary_generate = True
+numpydoc_class_members_toctree = False
 
 autodoc_docstring_signature = True
 if sphinx.version_info < (1, 8):
@@ -89,7 +79,6 @@ else:
 
 # import numba
 import inspect
-
 
 # def process_numba_docstring(app, what, name, obj, options, signature, return_annotation):
 #    if type(obj) is not numba.core.registry.CPUDispatcher:
@@ -147,7 +136,6 @@ html_theme_options = {
     "analytics_id": "G-XXXXXXXXXX",  #  Provided by Google in your dashboard
     #'analytics_anonymize_ip': False,
     #'logo_only': False,
-    "display_version": True,
     #'prev_next_buttons_location': 'bottom',
     #'style_external_links': False,
     #'vcs_pageview_mode': '',
