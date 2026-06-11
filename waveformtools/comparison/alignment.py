@@ -65,6 +65,7 @@ _ALLOWED_PHASE_ALIGNMENTS = {
 }
 _ALLOWED_RESAMPLE_METHODS = {"linear", "cubic"}
 _ALLOWED_ORBITAL_PHASE_OPTIMIZERS = {"grid", "continuous"}
+_ALLOWED_TIME_SHIFT_METHODS = {"grid", "roll", "ifft"}
 
 
 @dataclass(slots=True)
@@ -105,6 +106,17 @@ class AlignmentSpec:
     time_shift_grid_samples:
         Optional coarse-grid sample count for time-shift optimization. When
         omitted the grid is chosen from the overlap bounds and sampling rate.
+    time_shift_method:
+        Algorithm used to optimize the candidate time shift.
+        ``"grid"`` (default): re-runs ``prepare_mode_data`` at each candidate
+        shift — exact but slow for large grids.
+        ``"roll"``: prepares mode arrays once at Δt=0, then applies each
+        candidate shift as an integer-sample roll plus a sub-sample FD phase
+        correction — avoids repeated resampling, slight circular-boundary
+        artefact at array edges.
+        ``"ifft"``: precomputes the full per-mode cross-correlation via a
+        single batched FFT/IFFT, then reads off overlaps at any shift as an
+        O(1) array lookup — no integration in the time-shift loop.
     allow_phase_rotation_degeneracy:
         Opt in to simultaneous orbital-phase and z-axis rotation optimization.
         By default this degenerate combination raises a clear error.
@@ -124,6 +136,7 @@ class AlignmentSpec:
     orbital_phase_optimizer: OrbitalPhaseOptimizer = "continuous"
     phase_degeneracy_tol: float = 1e-10
     time_shift_grid_samples: int | None = None
+    time_shift_method: Literal["grid", "roll", "ifft"] = "grid"
     allow_phase_rotation_degeneracy: bool = False
 
     def __post_init__(self) -> None:
@@ -173,6 +186,11 @@ class AlignmentSpec:
                 raise ValueError(
                     "time_shift_bounds must be an increasing (lower, upper) pair."
                 )
+        if self.time_shift_method not in _ALLOWED_TIME_SHIFT_METHODS:
+            raise ValueError(
+                f"Unsupported time_shift_method={self.time_shift_method!r}; "
+                f"choose one of {sorted(_ALLOWED_TIME_SHIFT_METHODS)}."
+            )
 
     def to_dict(self) -> dict[str, Any]:
         """Return a plain dictionary representation."""
