@@ -305,13 +305,19 @@ def test_registered_v5_eob_modes_are_canonicalized_before_match(approximant):
         canonicalized.candidate_metadata.canonicalization_applied
         == "complex_conjugate"
     )
+    # The recovered orbital phase comes from a bounded minimize_scalar refine at
+    # a flat (quadratic) maximum, so its location is only resolvable to about
+    # sqrt(machine-eps) ~ 1e-8 in phase regardless of arithmetic order. The match
+    # itself is exact (1.0 +/- 1e-12, asserted above); the replayed RMS just
+    # reflects that residual phase noise. Tolerance is set above the optimizer's
+    # float-precision floor rather than below it.
     assert (
         normalized_rms_from_arrays(
             replay.reference_modes,
             replay.candidate_modes,
             replay.selected_modes,
         )
-        < 1e-10
+        < 1e-7
     )
 
 

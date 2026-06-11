@@ -138,6 +138,17 @@ def _trapz_complex(values: np.ndarray, time_axis: np.ndarray) -> complex:
     return complex(np.trapz(values, time_axis))
 
 
+def _trapz_complex_axis(values: np.ndarray, time_axis: np.ndarray) -> np.ndarray:
+    """Vectorized complex trapezoidal integral along the last (time) axis.
+
+    ``values`` has shape ``(n_modes, n_time)``; returns a length ``n_modes``
+    complex array holding each mode's integral. Equivalent to calling
+    :func:`_trapz_complex` per row, but in a single numpy call.
+    """
+    trapz = np.trapezoid if hasattr(np, "trapezoid") else np.trapz
+    return np.asarray(trapz(values, time_axis, axis=-1), dtype=complex)
+
+
 def mode_inner_product(
     modes_a: Any,
     modes_b: Any,
@@ -583,6 +594,52 @@ def residue_distance(
     )
 
 
+def _prepared_mode_overlaps(
+    arrays_a: dict[tuple[int, int], np.ndarray],
+    arrays_b: dict[tuple[int, int], np.ndarray],
+    selected_modes: Sequence[tuple[int, int]],
+    time_axis: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Per-mode time-domain overlaps ``J_lm = integral conj(a_lm) b_lm dt``.
+
+    The orbital-phase factor ``exp(i m phi)`` is constant in time, so it
+    factors out of the integral and these overlaps do not depend on the
+    orbital phase. Computing them once -- vectorized over all modes in a single
+    trapezoidal integration -- lets the orbital-phase search reuse them without
+    re-integrating, and replaces the per-mode Python loop with one array op.
+
+    Returns ``(m_values, overlaps)``: the ``m`` index of each selected mode and
+    the corresponding complex overlap, both ordered like ``selected_modes``.
+    """
+    if not selected_modes:
+        return np.zeros(0, dtype=float), np.zeros(0, dtype=complex)
+    stack_a = np.stack([arrays_a[mode] for mode in selected_modes])
+    stack_b = np.stack([arrays_b[mode] for mode in selected_modes])
+    overlaps = _trapz_complex_axis(np.conjugate(stack_a) * stack_b, time_axis)
+    m_values = np.fromiter(
+        (emm for _ell, emm in selected_modes),
+        dtype=float,
+        count=len(selected_modes),
+    )
+    return m_values, overlaps
+
+
+def _inner_from_overlaps(
+    m_values: np.ndarray,
+    overlaps: np.ndarray,
+    orbital_phase: float = 0.0,
+) -> complex:
+    """Combine precomputed per-mode overlaps at a given orbital phase.
+
+    ``<a, b>(phi) = sum_lm exp(i m phi) J_lm`` -- a scalar reduction with no
+    time integration, since ``overlaps`` already holds the integrals ``J_lm``.
+    """
+    if overlaps.size == 0:
+        return 0.0j
+    phase = np.exp(1j * m_values * float(orbital_phase))
+    return complex(np.sum(phase * overlaps))
+
+
 def _prepared_inner_product(
     arrays_a: dict[tuple[int, int], np.ndarray],
     arrays_b: dict[tuple[int, int], np.ndarray],
@@ -591,16 +648,10 @@ def _prepared_inner_product(
     *,
     orbital_phase: float = 0.0,
 ) -> complex:
-    total = 0.0j
-    for ell, emm in selected_modes:
-        phase_factor = np.exp(1j * emm * orbital_phase)
-        total += _trapz_complex(
-            np.conjugate(arrays_a[(ell, emm)])
-            * phase_factor
-            * arrays_b[(ell, emm)],
-            time_axis,
-        )
-    return total
+    m_values, overlaps = _prepared_mode_overlaps(
+        arrays_a, arrays_b, selected_modes, time_axis
+    )
+    return _inner_from_overlaps(m_values, overlaps, orbital_phase)
 
 
 def _prepared_norm(
@@ -608,22 +659,25 @@ def _prepared_norm(
     selected_modes: Sequence[tuple[int, int]],
     time_axis: np.ndarray,
 ) -> float:
-    total = 0.0j
-    for mode in selected_modes:
-        data = arrays[mode]
-        total += _trapz_complex(np.conjugate(data) * data, time_axis)
+    if not selected_modes:
+        return 0.0
+    stack = np.stack([arrays[mode] for mode in selected_modes])
+    total = complex(
+        np.sum(_trapz_complex_axis(np.conjugate(stack) * stack, time_axis))
+    )
     return float(np.sqrt(max(total.real, 0.0)))
 
 
 def _phase_aligned_inner_product(
     prepared: PreparedModeData,
 ) -> _PhaseAlignmentEvaluation:
-    raw = _prepared_inner_product(
+    m_values, overlaps = _prepared_mode_overlaps(
         prepared.modes_a,
         prepared.modes_b,
         prepared.selected_modes,
         prepared.time_axis,
     )
+    raw = _inner_from_overlaps(m_values, overlaps, 0.0)
     phase_alignment = prepared.alignment.phase_alignment
 
     if phase_alignment == "none":
@@ -658,7 +712,7 @@ def _phase_aligned_inner_product(
             },
         )
 
-    phase_result = _maximize_orbital_phase(prepared, raw)
+    phase_result = _maximize_orbital_phase(prepared, raw, m_values, overlaps)
     if phase_alignment == "orbital_phase":
         return _PhaseAlignmentEvaluation(
             inner=float(phase_result["inner"].real),
@@ -1082,11 +1136,13 @@ def _orbital_phase_score(prepared: PreparedModeData, inner: complex) -> float:
 
 def _maximize_orbital_phase_grid(
     prepared: PreparedModeData,
+    m_values: np.ndarray,
+    overlaps: np.ndarray,
 ) -> dict[str, Any]:
     n = int(prepared.alignment.orbital_phase_samples)
     phases = np.linspace(0.0, 2.0 * np.pi, n, endpoint=False)
     values = np.array(
-        [_orbital_phase_inner(prepared, float(phase)) for phase in phases]
+        [_inner_from_overlaps(m_values, overlaps, float(phase)) for phase in phases]
     )
     scores = np.array(
         [_orbital_phase_score(prepared, complex(value)) for value in values],
@@ -1117,9 +1173,12 @@ def _maximize_orbital_phase_grid(
 
 
 def _maximize_orbital_phase(
-    prepared: PreparedModeData, raw_inner: complex
+    prepared: PreparedModeData,
+    raw_inner: complex,
+    m_values: np.ndarray,
+    overlaps: np.ndarray,
 ) -> dict[str, Any]:
-    grid = _maximize_orbital_phase_grid(prepared)
+    grid = _maximize_orbital_phase_grid(prepared, m_values, overlaps)
     diagnostics = {
         "phase_alignment": prepared.alignment.phase_alignment,
         "orbital_phase_optimizer": prepared.alignment.orbital_phase_optimizer,
@@ -1173,7 +1232,7 @@ def _maximize_orbital_phase(
 
     def objective(candidate_phase: float) -> float:
         wrapped_phase = float(candidate_phase % (2.0 * np.pi))
-        candidate_inner = _orbital_phase_inner(prepared, wrapped_phase)
+        candidate_inner = _inner_from_overlaps(m_values, overlaps, wrapped_phase)
         return -_orbital_phase_score(prepared, candidate_inner)
 
     phase = float(grid["phase"])
@@ -1192,7 +1251,7 @@ def _maximize_orbital_phase(
         options={"xatol": 1e-12},
     )
     refined_phase = float(result.x % (2.0 * np.pi))
-    refined_inner = _orbital_phase_inner(prepared, refined_phase)
+    refined_inner = _inner_from_overlaps(m_values, overlaps, refined_phase)
     refined_score = _orbital_phase_score(prepared, refined_inner)
     if (
         result.success
