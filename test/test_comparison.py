@@ -1004,6 +1004,50 @@ def test_get_news_from_strain_honors_method_argument():
     assert np.max(np.abs(news.mode(2, 2)[8:-8] - expected[8:-8])) < 1e-5
 
 
+def test_get_news_from_strain_cached_returns_same_object():
+    """Second call must return the identical object, not a recomputed one."""
+    time_axis = np.linspace(-10.0, 10.0, 256)
+    modes = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=-2)
+    modes.create_modes_array(ell_max=2, data_len=len(time_axis))
+    modes.set_mode_data(ell=2, emm=2, data=np.exp(0.5j * time_axis))
+
+    first = modes.get_news_from_strain()
+    second = modes.get_news_from_strain()
+    assert first is second
+
+
+def test_get_news_from_strain_non_spline_method_not_cached():
+    """Non-default method bypasses the cache and returns a fresh object."""
+    time_axis = np.linspace(-10.0, 10.0, 256)
+    modes = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=-2)
+    modes.create_modes_array(ell_max=2, data_len=len(time_axis))
+    modes.set_mode_data(ell=2, emm=2, data=np.exp(0.5j * time_axis))
+
+    spline_news = modes.get_news_from_strain(method="spline")
+    # A non-spline call must not return the cached spline object.
+    other_news = modes.get_news_from_strain(method="FD")
+    assert other_news is not spline_news
+
+
+def test_get_news_from_strain_cache_correctness():
+    """Cached result must equal a freshly differentiated signal."""
+    time_axis = np.linspace(-10.0, 10.0, 512)
+    omega = 0.4
+    modes = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=-2)
+    modes.create_modes_array(ell_max=2, data_len=len(time_axis))
+    modes.set_mode_data(ell=2, emm=2, data=np.exp(1j * omega * time_axis))
+
+    cached = modes.get_news_from_strain()
+    # Call again to confirm the cached value is numerically identical to first.
+    again = modes.get_news_from_strain()
+    assert np.array_equal(
+        np.asarray(cached.mode(2, 2)), np.asarray(again.mode(2, 2))
+    )
+    # And that the derivative is physically correct.
+    expected = 1j * omega * np.exp(1j * omega * time_axis)
+    assert np.max(np.abs(cached.mode(2, 2)[8:-8] - expected[8:-8])) < 1e-5
+
+
 def test_modes_array_reflected_subtraction_uses_left_operand():
     time_axis = np.linspace(-1.0, 1.0, 8)
     left = make_test_modes(time_axis=time_axis)
