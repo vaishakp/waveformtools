@@ -776,6 +776,12 @@ def _optimize_time_shift(
     selected_modes: Sequence[tuple[int, int]],
     alignment: AlignmentSpec,
 ) -> tuple[AlignmentSpec, dict[str, Any]]:
+    method = getattr(alignment, "time_shift_method", "grid")
+    if method == "roll":
+        return _optimize_time_shift_roll(modes_a, modes_b, selected_modes, alignment)
+    if method == "ifft":
+        return _optimize_time_shift_ifft(modes_a, modes_b, selected_modes, alignment)
+
     base_alignment = replace(
         alignment, time_domain_policy="resample_to_reference"
     )
@@ -870,6 +876,287 @@ def _optimize_time_shift(
         "n_evaluations": int(n_grid + n_refinement_evaluations),
     }
     return best_alignment, diagnostics
+
+
+def _boundary_taper(N: int, alpha: float) -> np.ndarray:
+    """Split-cosine (Tukey) taper of length N with fractional width alpha.
+
+    Returns ones in the interior and a half-cosine ramp over the first and last
+    ``ceil(alpha/2 * N)`` samples.  alpha=0 → rectangular (all ones);
+    alpha=1 → Hann.  Used to suppress circular-boundary artefacts in the
+    roll and ifft time-shift methods.
+    """
+    if alpha <= 0.0:
+        return np.ones(N, dtype=float)
+    width = max(1, int(np.ceil(alpha / 2 * N)))
+    window = np.ones(N, dtype=float)
+    t = np.arange(width, dtype=float)
+    ramp = 0.5 * (1.0 - np.cos(np.pi * t / width))
+    window[:width] = ramp
+    window[N - width:] = ramp[::-1]
+    return window
+
+
+def _time_shift_grid_search_and_refine(
+    objective: "Callable[[float], float]",
+    bounds: tuple[float, float],
+    n_grid: int,
+    base_alignment: Any,
+) -> tuple[Any, dict]:
+    """Shared grid-search + scalar-refine logic for all time-shift methods.
+
+    ``objective(shift) -> 1 - match`` is called by the caller-supplied
+    function; this helper handles the coarse grid, ``minimize_scalar``
+    refinement, and building the diagnostics dict in the standard format.
+    """
+    from dataclasses import replace as _replace
+
+    try:
+        from scipy.optimize import minimize_scalar
+    except Exception as exc:  # pragma: no cover
+        raise ImportError(
+            "optimize_time_shift=True requires scipy.optimize.minimize_scalar"
+        ) from exc
+
+    grid_shifts = np.linspace(bounds[0], bounds[1], n_grid)
+    grid_objectives = np.array(
+        [objective(float(s)) for s in grid_shifts], dtype=float
+    )
+    finite = np.isfinite(grid_objectives)
+    if not np.any(finite):
+        raise ValueError(
+            "Time-shift optimization found no finite objective values."
+        )
+    finite_indices = np.flatnonzero(finite)
+    grid_best_index = int(
+        finite_indices[int(np.argmin(grid_objectives[finite]))]
+    )
+    grid_best_shift = float(grid_shifts[grid_best_index])
+    grid_best_objective = float(grid_objectives[grid_best_index])
+
+    left_index = max(grid_best_index - 1, 0)
+    right_index = min(grid_best_index + 1, len(grid_shifts) - 1)
+    refine_bounds = (
+        float(grid_shifts[left_index]),
+        float(grid_shifts[right_index]),
+    )
+    if not refine_bounds[0] < refine_bounds[1]:
+        refine_bounds = tuple(float(x) for x in bounds)
+
+    n_refinement_evaluations = 0
+
+    def counted_objective(shift: float) -> float:
+        nonlocal n_refinement_evaluations
+        n_refinement_evaluations += 1
+        return objective(shift)
+
+    result = minimize_scalar(
+        counted_objective, bounds=refine_bounds, method="bounded"
+    )
+    refined_objective = float(result.fun)
+    if (
+        result.success
+        and np.isfinite(refined_objective)
+        and refined_objective <= grid_best_objective
+    ):
+        best_shift = float(result.x)
+        best_objective = refined_objective
+    else:
+        best_shift = grid_best_shift
+        best_objective = grid_best_objective
+
+    best_alignment = _replace(base_alignment, candidate_time_shift=best_shift)
+    diagnostics = {
+        "parameter": "candidate_time_shift",
+        "bounds": tuple(float(x) for x in bounds),
+        "refinement_bounds": refine_bounds,
+        "initial_shift": float(base_alignment.candidate_time_shift),
+        "coarse_grid_best_shift": grid_best_shift,
+        "coarse_grid_best_mismatch": grid_best_objective,
+        "refined_best_shift": float(result.x),
+        "refined_best_mismatch": refined_objective,
+        "best_shift": best_shift,
+        "best_mismatch": best_objective,
+        "success": bool(result.success),
+        "message": str(result.message),
+        "n_grid_evaluations": int(n_grid),
+        "n_refinement_evaluations": int(n_refinement_evaluations),
+        "n_evaluations": int(n_grid + n_refinement_evaluations),
+    }
+    return best_alignment, diagnostics
+
+
+def _optimize_time_shift_roll(
+    modes_a: Any,
+    modes_b: Any,
+    selected_modes: Sequence[tuple[int, int]],
+    alignment: Any,
+) -> tuple[Any, dict]:
+    """Time-shift optimizer: prepare once, shift via integer roll + FD correction.
+
+    Calls ``prepare_mode_data`` exactly once at Δt=0 to build the stacked
+    mode arrays on the common reference grid.  Each candidate shift is applied
+    by rolling the candidate stack by the nearest integer number of samples
+    (O(n_modes × N) in-place) followed by a sub-sample phase-ramp correction
+    in the frequency domain to reach spectral accuracy.  The mode overlaps
+    ``J_lm`` are then computed with a single vectorized trapezoid call.
+
+    Cost relative to ``"grid"``: one ``prepare_mode_data`` call instead of
+    ``n_grid + n_refine`` calls; the per-step cost drops from full resampling
+    to one FFT/IFFT pair on the stacked array.
+    """
+    from dataclasses import replace as _replace
+
+    base_alignment = _replace(alignment, time_domain_policy="resample_to_reference")
+    bounds = _time_shift_bounds(modes_a, modes_b, base_alignment)
+
+    prepared_0 = prepare_mode_data(
+        modes_a, modes_b, selected_modes,
+        _replace(base_alignment, candidate_time_shift=0.0),
+    )
+    time_axis = prepared_0.time_axis
+    N = len(time_axis)
+    dt = float(time_axis[1] - time_axis[0]) if N > 1 else 1.0
+
+    norm_a = _prepared_norm(prepared_0.modes_a, selected_modes, time_axis)
+    norm_b = _prepared_norm(prepared_0.modes_b, selected_modes, time_axis)
+
+    if not selected_modes or norm_a == 0.0 or norm_b == 0.0:
+        best_alignment = _replace(base_alignment, candidate_time_shift=0.0)
+        return best_alignment, {
+            "parameter": "candidate_time_shift", "bounds": bounds,
+            "best_shift": 0.0, "n_evaluations": 0,
+            "n_grid_evaluations": 0, "n_refinement_evaluations": 0,
+        }
+
+    stack_a = np.stack([prepared_0.modes_a[m] for m in selected_modes])
+    stack_b0 = np.stack([prepared_0.modes_b[m] for m in selected_modes])
+
+    taper_alpha = getattr(alignment, "time_shift_taper_alpha", 0.0)
+    if taper_alpha > 0.0:
+        taper = _boundary_taper(N, taper_alpha)
+        stack_a = stack_a * taper
+        stack_b0 = stack_b0 * taper
+        norm_a = float(np.sqrt(max(
+            np.real(np.sum(_trapz_complex_axis(np.conj(stack_a) * stack_a, time_axis))), 0.0
+        )))
+        norm_b = float(np.sqrt(max(
+            np.real(np.sum(_trapz_complex_axis(np.conj(stack_b0) * stack_b0, time_axis))), 0.0
+        )))
+
+    m_values = np.fromiter(
+        (emm for _ell, emm in selected_modes), dtype=float, count=len(selected_modes)
+    )
+    freqs = np.fft.fftfreq(N, d=dt)
+
+    def j_lm_at_shift(delta_t: float) -> np.ndarray:
+        n_samples = int(np.round(delta_t / dt))
+        residual_dt = delta_t - n_samples * dt
+        # candidate_time_shift=delta_t shifts time_b by +delta_t, so the grid
+        # method evaluates b at (t - delta_t).  Rolling by n_samples reproduces
+        # this: roll(b, n)[i] = b[i - n] = b(t_i - n*dt) = b(t_i - delta_t).
+        rolled = np.roll(stack_b0, n_samples, axis=-1)
+        if abs(residual_dt) > 1e-14 * abs(dt):
+            phase = np.exp(-2j * np.pi * freqs * residual_dt)
+            B_hat = np.fft.fft(rolled, axis=-1)
+            rolled = np.fft.ifft(B_hat * phase[np.newaxis, :], axis=-1)
+        return _trapz_complex_axis(np.conj(stack_a) * rolled, time_axis)
+
+    def objective(delta_t: float) -> float:
+        j_lm = j_lm_at_shift(float(delta_t))
+        raw = _inner_from_overlaps(m_values, j_lm, 0.0)
+        phase_result = _maximize_orbital_phase(prepared_0, raw, m_values, j_lm)
+        inner = complex(phase_result["inner"])
+        match = float(np.real(inner) / (norm_a * norm_b))
+        return 1.0 - float(np.clip(match, -1.0, 1.0))
+
+    n_grid = _time_shift_grid_sample_count(modes_a, modes_b, bounds, base_alignment)
+    return _time_shift_grid_search_and_refine(objective, bounds, n_grid, base_alignment)
+
+
+def _optimize_time_shift_ifft(
+    modes_a: Any,
+    modes_b: Any,
+    selected_modes: Sequence[tuple[int, int]],
+    alignment: Any,
+) -> tuple[Any, dict]:
+    """Time-shift optimizer: precompute full cross-correlation via batched FFT.
+
+    Calls ``prepare_mode_data`` once, zero-pads to 2N to suppress circular
+    aliasing, then computes the per-mode cross-correlation array
+    ``C_lm[k] ≈ ∫ conj(a_lm(t)) b_lm(t + k·dt) dt`` in one batched
+    ``rfft`` / ``irfft`` pass.  At each candidate shift Δt, the per-mode
+    overlaps ``J_lm(Δt) = C_lm[-Δt/dt]`` are read off as O(1) array lookups
+    — no integration in the time-shift loop.
+
+    Cost: three batched FFTs (fixed, independent of grid size) plus the same
+    phase-search arithmetic as the other methods.  The phase optimizer reuses
+    the existing ``_maximize_orbital_phase`` machinery on the looked-up
+    ``J_lm`` values.
+    """
+    from dataclasses import replace as _replace
+
+    base_alignment = _replace(alignment, time_domain_policy="resample_to_reference")
+    bounds = _time_shift_bounds(modes_a, modes_b, base_alignment)
+
+    prepared_0 = prepare_mode_data(
+        modes_a, modes_b, selected_modes,
+        _replace(base_alignment, candidate_time_shift=0.0),
+    )
+    time_axis = prepared_0.time_axis
+    N = len(time_axis)
+    dt = float(time_axis[1] - time_axis[0]) if N > 1 else 1.0
+
+    norm_a = _prepared_norm(prepared_0.modes_a, selected_modes, time_axis)
+    norm_b = _prepared_norm(prepared_0.modes_b, selected_modes, time_axis)
+
+    if not selected_modes or norm_a == 0.0 or norm_b == 0.0:
+        best_alignment = _replace(base_alignment, candidate_time_shift=0.0)
+        return best_alignment, {
+            "parameter": "candidate_time_shift", "bounds": bounds,
+            "best_shift": 0.0, "n_evaluations": 0,
+            "n_grid_evaluations": 0, "n_refinement_evaluations": 0,
+        }
+
+    stack_a = np.stack([prepared_0.modes_a[m] for m in selected_modes])
+    stack_b = np.stack([prepared_0.modes_b[m] for m in selected_modes])
+    m_values = np.fromiter(
+        (emm for _ell, emm in selected_modes), dtype=float, count=len(selected_modes)
+    )
+
+    # Zero-pad to 2N to avoid circular aliasing across the full shift range.
+    N_pad = 2 * N
+    A_hat = np.fft.fft(stack_a, n=N_pad, axis=-1)  # (n_modes, N_pad)
+    B_hat = np.fft.fft(stack_b, n=N_pad, axis=-1)
+
+    # Circular cross-correlation via DFT:
+    # C_lm[k] = Σ_n conj(a_lm[n]) b_lm[(n+k) mod N_pad]
+    #          = N_pad * ifft(conj(A_hat) * B_hat)[k]
+    # Scaled to approximate the trapezoid integral:
+    # J_lm(lag=k·dt) ≈ dt * C_lm[k]
+    # ifft(conj(A)*B)[k] = (1/N_pad) Σ_f conj(A[f])*B[f]*exp(2πikf/N_pad)
+    # At k=0 this equals Σ_n conj(a[n])*b[n] (Parseval for zero-padded arrays),
+    # so dt * ifft(...)[k] gives the trapezoid-approximated cross-correlation
+    # at lag k·dt without any additional N_pad factor.
+    xcorr = dt * np.fft.ifft(
+        np.conj(A_hat) * B_hat, axis=-1
+    )  # (n_modes, N_pad), complex
+
+    def j_lm_at_shift(delta_t: float) -> np.ndarray:
+        # b_lm(t - Δt): lag = -Δt → index round(-Δt/dt) mod N_pad
+        k = int(np.round(-delta_t / dt)) % N_pad
+        return xcorr[:, k].astype(complex)
+
+    def objective(delta_t: float) -> float:
+        j_lm = j_lm_at_shift(float(delta_t))
+        raw = _inner_from_overlaps(m_values, j_lm, 0.0)
+        phase_result = _maximize_orbital_phase(prepared_0, raw, m_values, j_lm)
+        inner = complex(phase_result["inner"])
+        match = float(np.real(inner) / (norm_a * norm_b))
+        return 1.0 - float(np.clip(match, -1.0, 1.0))
+
+    n_grid = _time_shift_grid_sample_count(modes_a, modes_b, bounds, base_alignment)
+    return _time_shift_grid_search_and_refine(objective, bounds, n_grid, base_alignment)
 
 
 def _optimize_z_rotation(
