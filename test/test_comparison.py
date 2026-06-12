@@ -1054,6 +1054,76 @@ def test_get_news_from_strain_cache_correctness():
     assert np.max(np.abs(cached.mode(2, 2)[8:-8] - expected[8:-8])) < 1e-5
 
 
+@pytest.mark.parametrize("method_a,method_b", [
+    ("grid", "roll"),
+    ("grid", "ifft"),
+    ("roll", "ifft"),
+])
+def test_time_shift_methods_agree(method_a, method_b):
+    """All three time-shift methods must recover the same shift and mismatch."""
+    N = 2048
+    dt = 1.0 / 4096.0
+    time_axis = np.arange(N, dtype=float) * dt
+    omega = 2 * np.pi * 30.0
+    envelope = np.exp(-((time_axis - time_axis[N // 2]) ** 2) / (2 * 0.05 ** 2))
+    signal = (np.cos(omega * time_axis) + 1j * np.sin(omega * time_axis)) * envelope
+
+    # Candidate is the reference shifted by a known amount (≈ 5 samples)
+    true_shift = 5 * dt
+    shifted_axis = time_axis + true_shift
+    shifted_signal = (
+        np.interp(time_axis, shifted_axis, signal.real)
+        + 1j * np.interp(time_axis, shifted_axis, signal.imag)
+    ).astype(np.complex128)
+
+    modes_a = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=-2)
+    modes_a.create_modes_array(ell_max=2, data_len=N)
+    modes_a.set_mode_data(ell=2, emm=2, data=signal)
+    modes_b = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=-2)
+    modes_b.create_modes_array(ell_max=2, data_len=N)
+    modes_b.set_mode_data(ell=2, emm=2, data=shifted_signal)
+
+    selected = [(2, 2)]
+
+    def run(method):
+        from waveformtools.comparison.alignment import AlignmentSpec
+        from waveformtools.comparison.core import mode_match
+        alignment = AlignmentSpec(
+            time_alignment="none",
+            time_domain_policy="resample_to_reference",
+            phase_alignment="none",
+            optimize_time_shift=True,
+            time_shift_bounds=(-20 * dt, 20 * dt),
+            time_shift_grid_samples=81,
+            time_shift_method=method,
+        )
+        return mode_match(modes_a, modes_b, modes=selected, alignment=alignment)
+
+    result_a = run(method_a)
+    result_b = run(method_b)
+
+    mismatch_a = result_a.mismatch
+    mismatch_b = result_b.mismatch
+    shift_a = result_a.diagnostics["time_shift_optimization"]["best_shift"]
+    shift_b = result_b.diagnostics["time_shift_optimization"]["best_shift"]
+
+    assert abs(mismatch_a - mismatch_b) < 5e-4, (
+        f"mismatch disagreement between {method_a!r} and {method_b!r}: "
+        f"{mismatch_a:.6f} vs {mismatch_b:.6f}"
+    )
+    assert abs(shift_a - shift_b) < 2 * dt, (
+        f"shift disagreement between {method_a!r} and {method_b!r}: "
+        f"{shift_a:.6f} vs {shift_b:.6f}"
+    )
+    # b = signal(t - true_shift), so the optimizer should find candidate_time_shift
+    # = -true_shift to align it back.  Both methods must agree on sign/magnitude.
+    for label, shift in [(method_a, shift_a), (method_b, shift_b)]:
+        assert abs(shift + true_shift) < 2 * dt, (
+            f"{label!r} recovered shift {shift:.6f} s, "
+            f"expected {-true_shift:.6f} s (within 2 samples = {2*dt:.6f} s)"
+        )
+
+
 def test_modes_array_reflected_subtraction_uses_left_operand():
     time_axis = np.linspace(-1.0, 1.0, 8)
     left = make_test_modes(time_axis=time_axis)
