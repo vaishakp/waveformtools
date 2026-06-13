@@ -15,6 +15,8 @@ modes_array: A data-type.
 """
 import os
 
+from waveformtools.conventions import WAVEFORM_CONVENTIONS, get_waveform_conventions
+
 package_directory = os.path.dirname(os.path.abspath(__file__))
 
 
