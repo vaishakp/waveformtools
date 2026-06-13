@@ -208,6 +208,112 @@ To plot the modes
 ```
 ![](./docs/images/RIT-BBH-001.png){: .shadow}
 
+# LAL mode storage conventions and `load_lal_modes_to_modes_array`
+
+This section documents how waveformtools stores LAL time-domain and
+frequency-domain modes, how that representation differs from the raw LAL
+output, and what limitations apply when using FD modes for matched filtering.
+
+## Two-sided frequency axis
+
+LAL's `SimInspiralChooseFDModes` returns a `SphHarmFrequencySeries` whose
+underlying `fdata` axis is **two-sided and sorted**: it runs from
+`-f_max` up through 0 to `+f_max`.  With default parameters this produces
+an array of `N = 2*ceil(f_upper/delta_f) + 1` bins.
+
+For IMRPhenomXPHM (and other FD approximants):
+
+- **Positive-m modes** (e.g., (l=2, m=2)) carry physical content at
+  **negative frequencies** in this sorted representation.
+- **Negative-m modes** (e.g., (l=2, m=−2)) carry physical content at
+  **positive frequencies**.
+
+Both start from `f_lower` (e.g., 20 Hz), not from `2×f_ISCO`.  The
+placement is a consequence of the GW convention for the two-sided spectrum,
+not a model-domain cutoff.
+
+Empirical check for M=75 M☉, f_lower=20 Hz (Schwarzschild 2×f_ISCO ≈ 59 Hz):
+
+```
+(2,  2) first nonzero frequency: −20 Hz    ← positive-m, negative-freq side
+(2, −2) first nonzero frequency: +20 Hz    ← negative-m, positive-freq side
+(3,  3) first nonzero frequency: −20 Hz
+(4,  4) first nonzero frequency: −20 Hz
+```
+
+## `load_lal_modes_to_modes_array` storage
+
+`waveformtools.waveformtools.load_lal_modes_to_modes_array(lal_modes, ...)` iterates
+the raw linked-list of modes (both positive and negative m for each ℓ).
+
+For time-domain LAL modes it stores
+
+```python
+stored_td[l, m](t) = np.conjugate(mode.data.data)
+```
+
+For frequency-domain LAL modes it stores
+
+```python
+stored_fd[l, m](f) = (1/N) * np.conjugate(mode.data.data)
+```
+
+where `mode.data.data` is the full `N`-element two-sided FD array.  Key points:
+
+- **All modes are stored**, including negative m.  Calling code must sum over
+  both signs of m to reconstruct the strain.
+- **A conjugate is taken for both TD and FD LAL modes**.  This flips the sign
+  of the imaginary part relative to the raw LAL output.
+- **A factor `1/N` normalisation is applied only to FD modes**.  This cancels
+  the implicit `N` from an IFFT if you want time-domain modes, but must be
+  accounted for if you use the stored modes in a purely frequency-domain
+  context.
+
+For FD approximants such as IMRPhenomXPHM, `get_td_waveform_modes()` routes
+through `get_fd_waveform_modes_as_td()`.  That path recovers the raw LAL FD
+samples as `conj(stored_fd) * N`, applies a direct inverse FFT, and conjugates
+the TD result so the final object follows waveformtools' TD mode convention.
+
+## `ModesArray.evaluate_angular(theta, phi)`
+
+Reconstructs the strain at orientation `(θ, φ)` via
+
+```
+h(f; θ, φ) = Σ_{l,m} stored[l,m](f) · ₋₂Y_{lm}(θ, φ)
+```
+
+summed over **all** stored (l, m) pairs (positive and negative m).  The
+two-sided frequency axis is preserved; the caller is responsible for
+extracting the desired frequency range.
+
+## Comparison with `SphHarmFrequencySeriesGetMode`
+
+LAL's `SphHarmFrequencySeriesGetMode(hlms, l, m)` is a helper that extracts a
+single mode and returns a `COMPLEX16FrequencySeries` on the **standard f≥0 LAL
+grid** (bin k → k·Δf).  For positive-m modes (e.g., (2,2)), whose physical
+content sits at negative frequencies in the two-sided sorted representation,
+this standard-grid extraction can return only the positive-frequency tail.  In
+practice this can look like the mode starts near the merger/ringdown region
+(often around `2×f_ISCO`, depending on the system and model) even though the
+underlying two-sided linked-list data contain the inspiral from `f_lower`.
+
+Code that uses `SphHarmFrequencySeriesGetMode` directly (e.g.,
+`paralleltempatebank.waveform.generate_waveform_modes`) can therefore obtain
+positive-m FD modes that miss the inspiral even though the underlying waveform
+covers the full range from `f_lower`.  Using `load_lal_modes_to_modes_array` +
+the raw linked list (as waveformtools does) captures the full two-sided
+frequency range.
+
+## Summary table
+
+| Approach | Frequency range | Negative-m modes | Normalisation |
+|---|---|---|---|
+| `SphHarmFrequencySeriesGetMode(hlms, l, m)` | nonnegative-frequency helper grid; may miss positive-m inspiral content | separate call | raw LAL units |
+| `load_lal_modes_to_modes_array(..., domain="td")` | LAL TD linked-list time axis | included automatically | conjugate |
+| `load_lal_modes_to_modes_array(..., domain="fd")` | two-sided linked-list axis, f_lower to f_upper support | included automatically | conjugate, scaled by 1/N |
+
+---
+
 # Documentation
 
 The documentation for this module is available at [Link to the Documentation](https://waveformtools.readthedocs.io/en/latest/). This was built automatically using Read the Docs.
