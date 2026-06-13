@@ -35,6 +35,37 @@ The `modes_array` class provides a basic container for holding modes data of suc
 12. Centre of mass corrections.
 
 
+LAL mode conventions
+--------------------
+
+LAL-backed waveform modes loaded through
+``waveformtools.waveformtools.load_lal_modes_to_modes_array`` are stored in a
+waveformtools convention, not as raw LAL arrays.  The loader walks the raw LAL
+linked list and keeps both positive and negative :math:`m` modes.
+
+For time-domain LAL modes, waveformtools stores
+``conj(raw_lal_mode(t))``.  For frequency-domain LAL modes, waveformtools
+stores ``conj(raw_lal_mode(f)) / N``, where ``N`` is the number of samples on
+the two-sided LAL frequency axis.  Code that uses these stored FD modes as
+raw LAL frequency-domain modes must undo the conjugation and ``1/N`` scaling.
+
+For FD approximants such as ``IMRPhenomXPHM``, the LAL
+``SimInspiralChooseFDModes`` linked-list data use a sorted two-sided frequency
+axis running from negative to positive frequencies.  Positive-:math:`m` modes
+carry their physical inspiral content on the negative-frequency side, while
+negative-:math:`m` modes carry it on the positive-frequency side.  This is why
+waveformtools reads the linked list directly: helper APIs that extract a single
+mode onto a nonnegative-frequency LAL grid can miss positive-:math:`m` inspiral
+content and make the mode look as if it starts near the merger/ringdown
+frequency rather than at ``f_lower``.
+
+When ``get_td_waveform_modes()`` is called for an FD approximant,
+waveformtools routes through ``get_fd_waveform_modes_as_td()``.  That path
+recovers raw LAL FD samples from the stored convention, applies the inverse
+FFT, and conjugates the result so the returned time-domain ``ModesArray``
+follows the same waveformtools TD mode convention.
+
+
 Fitting factors
 ---------------
 
