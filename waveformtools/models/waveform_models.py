@@ -1,9 +1,13 @@
 from lal import CreateDict
 import numpy as np
 from pathlib import Path
-from waveformtools.waveformtools import find_maxloc_and_time, message
 from lal import MSUN_SI, MTSUN_SI, PC_SI, G_SI, C_SI
-from waveformtools.waveformtools import get_starting_angular_frequency
+
+
+def _message(*args, **kwargs):
+    from waveformtools.waveformtools import message
+
+    return message(*args, **kwargs)
 
 
 class WaveformModel:
@@ -235,6 +239,8 @@ class WaveformModel:
         ifo = Detector(detector_string)
         amp = np.absolute(hp+1j*hc)
         times = np.arange(0, len(hp)*self.delta_t, self.delta_t)
+        from waveformtools.waveformtools import find_maxloc_and_time
+
         t_maxloc, _, _ = find_maxloc_and_time(times, amp)
         det_times = (times - t_maxloc)
         det_times += extrinsic_parameters['t_coal']
@@ -353,14 +359,14 @@ class WaveformModel:
         
         wfm = self.get_td_waveform_modes(dimensionless=True, **parameters_dict)
         E0 = self.get_corresponding_eob_hamiltonian(**parameters_dict)
-        message(f"EoB Hamiltonain {E0}", message_verbosity=1)
+        _message(f"EoB Hamiltonain {E0}", message_verbosity=1)
 
         news_modes = wfm.get_news_from_strain()
-        message(f"Length", news_modes.data_len, message_verbosity=1)
+        _message(f"Length", news_modes.data_len, message_verbosity=1)
         Erad = wfm.compute_energy_radiated(news_modes=news_modes)
         Mfinal_rad = E0 - Erad
-        message(f"Energy radiated {Erad}", message_verbosity=1)
-        message(f"Final mass from energy radiated {Mfinal_rad}", message_verbosity=1)
+        _message(f"Energy radiated {Erad}", message_verbosity=1)
+        _message(f"Final mass from energy radiated {Mfinal_rad}", message_verbosity=1)
         Mfinal_eob = self.eob_generator.model.final_mass
 
         if 'EOB' in parameters_dict['approximant']:
@@ -373,11 +379,11 @@ class WaveformModel:
             Mfinal = Mfinal_rad
 
         error = 100*(Mfinal_eob/Mfinal_rad -1)
-        message(f"Final mass from EoB {Mfinal_eob}", message_verbosity=1)
-        message(f"%error {error}", message_verbosity=1)
+        _message(f"Final mass from EoB {Mfinal_eob}", message_verbosity=1)
+        _message(f"%error {error}", message_verbosity=1)
 
         v_kick = wfm.compute_kick(Mfinal=Mfinal)
-        message(f"Kick velocity {v_kick}", message_verbosity=1)
+        _message(f"Kick velocity {v_kick}", message_verbosity=1)
         
         if chunk_size is None:
             violations = wfm.compute_waveform_balance_law_debug(M_adm=E0, 
@@ -436,6 +442,8 @@ class WaveformModel:
             self.f_lower==0 or self.omega0==0
         ):
             wfm    = self.get_td_waveform_modes(**parameters_dict)
+            from waveformtools.waveformtools import get_starting_angular_frequency
+
             omega0_dimless = get_starting_angular_frequency(wfm.mode(2,2), 
                                                     wfm.delta_t(),
                                                     npoints=250

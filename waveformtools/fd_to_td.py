@@ -1,7 +1,5 @@
 import numpy as np
 
-from waveformtools.modes_array import ModesArray
-
 
 def lal_fd_modes_to_td_modes(wfm_fd, undo_warp=True):
     """Convert LAL two-sided FD modes to TD modes.
@@ -24,6 +22,8 @@ def lal_fd_modes_to_td_modes(wfm_fd, undo_warp=True):
     delta_f = float(wfm_fd.delta_f)
     if not np.isfinite(delta_f) or delta_f <= 0.0:
         raise ValueError("LAL FD modes require a positive finite delta_f.")
+
+    from waveformtools.modes_array import ModesArray
 
     wfm_td = ModesArray(
         label=f"{wfm_fd.label} -> time_domain",
@@ -52,6 +52,7 @@ def lal_fd_modes_to_td_modes(wfm_fd, undo_warp=True):
 def fd_modes_to_td_modes(wfm_fd, undo_warp=True):
     """Inverse-FFT an FD ModesArray mode by mode."""
     from spectools.fourier.transforms import compute_ifft
+    from waveformtools.modes_array import ModesArray
 
     wfm_td = ModesArray(
         label=f"{wfm_fd.label} -> time_domain",

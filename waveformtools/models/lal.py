@@ -5,7 +5,6 @@ import lalsimulation
 from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralFD, SimInspiralGetApproximantFromString, SimInspiralChooseTDModes, SimInspiralChooseFDModes
 from lalsimulation import SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion, SimInspiralWaveformParamsInsertPhenomXPrecVersion
 from lal import MSUN_SI, PC_SI, CreateDict
-from waveformtools.waveformtools import load_lal_modes_to_modes_array, message
 from waveformtools.fd_to_td import (
     lal_fd_modes_to_td_modes,
     prepare_physical_td_window,
@@ -21,6 +20,12 @@ APPROXIMANT_DOMAINS = {
     "SEOBNRv5PHM": "td",
     "IMRPhenomXPHM": "fd",
 }
+
+
+def _message(*args, **kwargs):
+    from waveformtools.waveformtools import message
+
+    return message(*args, **kwargs)
 
 
 class LALWaveformModel(WaveformModel):
@@ -240,7 +245,7 @@ class LALWaveformModel(WaveformModel):
             else:
                 raise KeyError(f"Unknown approximant/domain for {apx}")
         
-        message(f"Apx type {apx_domain}", message_verbosity=2)
+        _message(f"Apx type {apx_domain}", message_verbosity=2)
         return apx_domain
 
     def get_approximant_type_auto(self, apx):
@@ -291,6 +296,8 @@ class LALWaveformModel(WaveformModel):
                                                 )
 
     def _load_lal_modes(self, waveform_modes_list, domain):
+        from waveformtools.waveformtools import load_lal_modes_to_modes_array
+
         return load_lal_modes_to_modes_array(lal_modes=waveform_modes_list, 
                                              domain=domain,
                                              Mtotal=self.Mtotal)
@@ -311,7 +318,7 @@ class LALWaveformModel(WaveformModel):
             waveform_modes_list = self._choose_td_modes()
             wfm_td = self._load_lal_modes(waveform_modes_list, domain='td')
         except Exception as ex:
-            message(
+            _message(
                 "TD mode generation failed; trying FD modes and converting to TD. "
                 f"Original exception: {ex}",
                 message_verbosity=1,
