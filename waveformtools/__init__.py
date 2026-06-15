@@ -15,9 +15,29 @@ modes_array: A data-type.
 """
 import os
 
-from waveformtools.conventions import WAVEFORM_CONVENTIONS, get_waveform_conventions
-
 package_directory = os.path.dirname(os.path.abspath(__file__))
+
+__all__ = [
+    "WAVEFORM_CONVENTIONS",
+    "get_waveform_conventions",
+    "read_git_version",
+]
+
+
+def get_waveform_conventions():
+    """Return waveform convention descriptors without eager import overhead."""
+
+    from waveformtools.conventions import get_waveform_conventions as _get
+
+    return _get()
+
+
+def __getattr__(name):
+    if name == "WAVEFORM_CONVENTIONS":
+        from waveformtools.conventions import WAVEFORM_CONVENTIONS
+
+        return WAVEFORM_CONVENTIONS
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 def read_git_version():
