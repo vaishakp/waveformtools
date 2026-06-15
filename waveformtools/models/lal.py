@@ -4,15 +4,12 @@ import numpy as np
 import lalsimulation
 from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralFD, SimInspiralGetApproximantFromString, SimInspiralChooseTDModes, SimInspiralChooseFDModes
 from lalsimulation import SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion, SimInspiralWaveformParamsInsertPhenomXPrecVersion
-from lal import MSUN_SI, MTSUN_SI, PC_SI, CreateDict, G_SI, C_SI
-from pycbc.waveform import td_approximants, fd_approximants
-from waveformtools.waveformtools import load_lal_modes_to_modes_array, get_starting_angular_frequency, message
-from waveformtools.models.eob import EOBWaveformModel
+from lal import MSUN_SI, PC_SI, CreateDict
+from waveformtools.waveformtools import load_lal_modes_to_modes_array, message
 from waveformtools.fd_to_td import (
     lal_fd_modes_to_td_modes,
     prepare_physical_td_window,
 )
-from scipy.interpolate import InterpolatedUnivariateSpline
 
 
 # Explicit overrides for approximants whose preferred generation domain is known
@@ -233,12 +230,15 @@ class LALWaveformModel(WaveformModel):
 
         if apx in APPROXIMANT_DOMAINS:
             apx_domain = APPROXIMANT_DOMAINS[apx]
-        elif apx in fd_approximants():
-            apx_domain = 'fd'
-        elif apx in td_approximants():
-            apx_domain = 'td'
         else:
-            raise KeyError(f"Unknown approximant/domain for {apx}")
+            from pycbc.waveform import fd_approximants, td_approximants
+
+            if apx in fd_approximants():
+                apx_domain = 'fd'
+            elif apx in td_approximants():
+                apx_domain = 'td'
+            else:
+                raise KeyError(f"Unknown approximant/domain for {apx}")
         
         message(f"Apx type {apx_domain}", message_verbosity=2)
         return apx_domain

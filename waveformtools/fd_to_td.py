@@ -36,15 +36,13 @@ def lal_fd_modes_to_td_modes(wfm_fd, undo_warp=True):
     )
     wfm_td.create_modes_array()
 
-    for ell, emm_list in wfm_fd.modes_list:
-        for emm in emm_list:
-            lal_fd_data = _recover_lal_fd_samples(wfm_fd.mode(ell, emm))
-            time_data = np.conjugate(
-                wfm_fd.data_len
-                * delta_f
-                * np.fft.ifft(np.fft.ifftshift(lal_fd_data))
-            )
-            wfm_td.set_mode_data(ell=ell, emm=emm, data=time_data)
+    lal_fd_data = _recover_lal_fd_samples(wfm_fd._modes_data)
+    time_data = np.conjugate(
+        wfm_fd.data_len
+        * delta_f
+        * np.fft.ifft(np.fft.ifftshift(lal_fd_data, axes=-1), axis=-1)
+    )
+    wfm_td.set_mode_data(data=time_data)
 
     if undo_warp:
         wfm_td.undo_warp()
@@ -83,7 +81,7 @@ def _recover_lal_fd_samples(stored_mode):
     """Undo waveformtools' historical LAL FD loader convention."""
 
     stored = np.asarray(stored_mode, dtype=np.complex128)
-    return np.conjugate(stored) * stored.size
+    return np.conjugate(stored) * stored.shape[-1]
 
 
 def recenter_modes_at_peak(

@@ -250,14 +250,23 @@ class WaveformModel:
 
         Mtotal = parameters_dict["mass1"] + parameters_dict["mass2"]
         wfm_td.time_axis = wfm_td.time_axis/(Mtotal*MTSUN_SI)
-        wfm_td._modes_data = wfm_td.modes_data*parameters_dict['distance']*PC_SI*1e6*(C_SI**2)/(G_SI*Mtotal*MSUN_SI)
+        wfm_td._modes_data *= (
+            parameters_dict['distance']
+            * PC_SI
+            * 1e6
+            * (C_SI**2)
+            / (G_SI * Mtotal * MSUN_SI)
+        )
         return wfm_td
 
     def dimensionalize_td_waveform_modes(self, wfm_td, **parameters_dict):
 
         Mtotal = parameters_dict["mass1"] + parameters_dict["mass2"]
         wfm_td.time_axis = wfm_td.time_axis*(Mtotal*MTSUN_SI)
-        wfm_td._modes_data = wfm_td.modes_data * (G_SI*Mtotal*MSUN_SI)/(parameters_dict['distance']*PC_SI*1e6*(C_SI**2))
+        wfm_td._modes_data *= (
+            (G_SI * Mtotal * MSUN_SI)
+            / (parameters_dict['distance'] * PC_SI * 1e6 * (C_SI**2))
+        )
         return wfm_td
 
     def compute_infinite_time_balance_laws(
