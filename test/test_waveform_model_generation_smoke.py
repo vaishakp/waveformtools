@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 
 def _assert_populated_h22_modes(modes):
@@ -43,6 +44,8 @@ def test_lal_waveform_model_generates_modes():
 
 
 def test_eob_waveform_model_generates_modes():
+    pytest.importorskip("pyseobnr.generate_waveform")
+
     from waveformtools.models.eob import EOBWaveformModel
 
     model = EOBWaveformModel(
@@ -73,6 +76,8 @@ def test_eob_waveform_model_generates_modes():
 
 
 def test_teobresums_waveform_model_generates_modes():
+    pytest.importorskip("EOBRun_module")
+
     from waveformtools.models.teobresums import TEOBResumSWaveformModel
 
     model = TEOBResumSWaveformModel(
