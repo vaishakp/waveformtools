@@ -57,7 +57,7 @@ class TEOBResumSWaveformModel(WaveformModel):
             "td_modes": True,
             "fd_modes": False,
             "fd_modes_as_td": False,
-            "td_polarizations": True,
+            "td_polarizations": False,
             "fd_polarizations": False,
             "td_projection": True,
             "fd_projection": False,
