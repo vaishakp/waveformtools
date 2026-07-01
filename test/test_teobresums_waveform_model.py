@@ -19,6 +19,19 @@ def test_teobresums_approximant_detection():
     assert not is_teobresums_approximant("SEOBNRv5PHM")
 
 
+def test_teobresums_python_extension_is_installed():
+    import EOBRun_module
+
+    assert callable(EOBRun_module.EOBRunPy)
+
+
+def test_teobresums_capabilities_match_public_api():
+    model = TEOBResumSWaveformModel(parameters_dict={"f_lower": 20.0})
+
+    assert model.capabilities()["td_modes"] is True
+    assert model.capabilities()["td_polarizations"] is False
+
+
 def test_signed_mode_key_mapping():
     assert mode_to_teob_key(2, 2) == "1"
     assert mode_to_teob_key(2, -2) == "-1"
