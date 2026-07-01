@@ -4,6 +4,7 @@ import sys
 from types import SimpleNamespace
 
 import numpy as np
+import pytest
 
 from waveformtools.models.teobresums import (
     TEOBResumSWaveformModel,
@@ -20,7 +21,7 @@ def test_teobresums_approximant_detection():
 
 
 def test_teobresums_python_extension_is_installed():
-    import EOBRun_module
+    EOBRun_module = pytest.importorskip("EOBRun_module")
 
     assert callable(EOBRun_module.EOBRunPy)
 
