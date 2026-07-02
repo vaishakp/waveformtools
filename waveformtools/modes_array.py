@@ -894,7 +894,21 @@ class ModesArray:
                 # self._modes_data[ell, emm_index] = data
         else:
             raise KeyError
-        
+
+        self._invalidate_strain_derived_caches()
+
+    def _invalidate_strain_derived_caches(self):
+        """Drop cached quantities derived from the strain mode data.
+
+        ``_news_modes_spline`` is a ``functools.cached_property`` computed by
+        differentiating the strain.  When the strain data is mutated (e.g. by
+        ``set_mode_data`` during a memory/balance-law correction, or on a
+        ``deepcopy`` whose modes are then edited) the cache would otherwise stay
+        stale and ``get_news_from_strain`` would return the pre-mutation news.
+        Popping it from ``__dict__`` forces a recompute on next access.
+        """
+        self.__dict__.pop("_news_modes_spline", None)
+
     def set_mode_data_at_t_step(
         self, t_step, time_stamp, ell, emm, data, extra_mode_indices=None
     ):
@@ -945,6 +959,8 @@ class ModesArray:
                 message_verbosity=4,
             )
             self._modes_data[vec_idx, ..., t_step] = data
+
+        self._invalidate_strain_derived_caches()
 
     def to_spherical_array(self, Grid, meth_info, spin_weight=None):
         """Obtain the spherical array from the modes array.
