@@ -1,0 +1,108 @@
+name: Optional waveform backends
+
+on:
+  workflow_dispatch:
+    inputs:
+      teobresums_pip_package:
+        description: "Optional pip package spec that provides EOBRun_module"
+        required: false
+        default: ""
+      require_teobresums:
+        description: "Fail if EOBRun_module is unavailable after installation"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  optional-backends:
+    name: Optional backend smoke tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: "3.11"
+          activate-environment: waveformtools-optional
+          channels: conda-forge,defaults
+          channel-priority: strict
+          miniforge-variant: Miniforge3
+          use-mamba: true
+          auto-update-conda: false
+
+      - name: Install runtime and optional dependencies
+        run: |
+          mamba install -y -c conda-forge \
+            python=3.11 \
+            gxx_linux-64 \
+            fftw \
+            numpy \
+            scipy \
+            h5py \
+            matplotlib \
+            numba \
+            termcolor
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+          python -m pip install -r requirements.txt
+          python -m pip install -r optional-requirements.txt
+          python -m pip install .
+
+      - name: Install TEOBResumS package spec
+        if: ${{ inputs.teobresums_pip_package != '' }}
+        run: |
+          python -m pip install "${{ inputs.teobresums_pip_package }}"
+
+      - name: Report optional backend availability
+        env:
+          REQUIRE_TEOBRESUMS: ${{ inputs.require_teobresums }}
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import os
+          import sys
+
+          checks = {
+              "pyseobnr.generate_waveform": "pySEOBNR",
+              "EOBRun_module": "TEOBResumS",
+          }
+          available = {}
+          for module_name, label in checks.items():
+              found = importlib.util.find_spec(module_name) is not None
+              available[module_name] = found
+              print(f"{label}: {'available' if found else 'unavailable'}")
+
+          require_teobresums = os.environ.get("REQUIRE_TEOBRESUMS") == "true"
+          if require_teobresums and not available["EOBRun_module"]:
+              print(
+                  "EOBRun_module is required but unavailable.",
+                  file=sys.stderr,
+              )
+              raise SystemExit(1)
+          PY
+
+      - name: Run optional backend smoke tests
+        env:
+          MPLCONFIGDIR: /tmp/matplotlib-cache
+          NUMBA_CACHE_DIR: /tmp/waveformtools-numba-cache
+        run: |
+          pytest -vv \
+            test/test_teobresums_waveform_model.py \
+            test/test_waveform_model_generation_smoke.py \
+            -rs \
+            --junitxml=optional-backends-report.xml
+
+      - name: Upload optional backend pytest report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: optional-backends-pytest-report
+          path: optional-backends-report.xml
