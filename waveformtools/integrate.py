@@ -304,7 +304,7 @@ def DriscollHealy2DInteg(func, info):
 
     integrand_sum = 0.0
 
-    func *= np.sin(theta_grid)
+    func = func * np.sin(theta_grid)
 
     # Skip the poles (ix=0 and ix=NTheta), as the weight there is zero
     # theta_1d = np.pi* np.arange(1, NTheta)/NTheta
@@ -479,7 +479,7 @@ def Simpson2DInteg(func, info):
     Px = int(NTheta / 2)
     Py = int(NPhi / 2)
 
-    func *= np.sin(theta_grid)
+    func = func * np.sin(theta_grid)
 
     # Around corners
     integrand_sum += (
