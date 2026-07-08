@@ -3575,15 +3575,15 @@ def load_lal_modes_to_modes_array(lal_modes, Mtotal=1, domain='fd'):
     ell = ell_max
     emm = ell_max
 
-    for ell1 in range(ell_max, -1, -1):
-        for emm1 in range(ell1, -ell1-1, -1):
-            if nm is not None:
-                ell = nm.l
-                emm = nm.m
-                assert ell1==ell, f"ell mode index exception. Expected {ell1}, Got: {ell}"
-                assert emm1==emm, f"emm mode index exception. Expected {emm1}, Got: {emm}"
-                wfm.set_mode_data(ell=ell, emm=emm, data=factor*np.conjugate(nm.mode.data.data))
-                nm =  nm.next
+    # Walk the lalsim linked list order-agnostically: some approximants
+    # (e.g. IMRPhenomTPHM) return a SPARSE mode set in non-canonical order;
+    # modes absent from the list stay zero in the pre-created modes array.
+    while nm is not None:
+        ell = nm.l
+        emm = nm.m
+        if ell <= ell_max:
+            wfm.set_mode_data(ell=ell, emm=emm, data=factor*np.conjugate(nm.mode.data.data))
+        nm = nm.next
 
     return wfm
 
@@ -3621,14 +3621,14 @@ def load_lal_fd_modes_to_modes_array(lal_modes, Mtotal=1):
     ell = ell_max
     emm = ell_max
 
-    for ell1 in range(ell_max, -1, -1):
-        for emm1 in range(ell1, -ell1-1, -1):
-            if nm is not None:
-                ell = nm.l
-                emm = nm.m
-                assert ell1==ell, f"ell mode index exception. Expected {ell1}, Got: {ell}"
-                assert emm1==emm, f"emm mode index exception. Expected {emm1}, Got: {emm}"
-                wfm.set_mode_data(ell=ell, emm=emm, data=factor*np.conjugate(nm.mode.data.data))
-                nm =  nm.next
+    # Walk the lalsim linked list order-agnostically: some approximants
+    # (e.g. IMRPhenomTPHM) return a SPARSE mode set in non-canonical order;
+    # modes absent from the list stay zero in the pre-created modes array.
+    while nm is not None:
+        ell = nm.l
+        emm = nm.m
+        if ell <= ell_max:
+            wfm.set_mode_data(ell=ell, emm=emm, data=factor*np.conjugate(nm.mode.data.data))
+        nm = nm.next
 
     return wfm
