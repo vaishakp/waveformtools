@@ -9,9 +9,13 @@ from waveformtools.memory import (
     DisplacementMemoryConfig,
     _source_modes_to_memory_strain,
     compute_displacement_memory_from_news,
+    compute_displacement_memory_from_strain,
     compute_displacement_memory_source_from_news,
     diagnose_displacement_memory_finite_time,
     diagnose_omitted_inspiral,
+    remove_displacement_memory_in_place,
+    with_displacement_memory,
+    without_displacement_memory,
 )
 from waveformtools.modes_array import ModesArray
 
@@ -304,6 +308,152 @@ def test_with_displacement_memory_rejects_incompatible_memory_modes():
 
     with pytest.raises(ValueError, match="same time axis"):
         modes.with_displacement_memory(memory_modes=memory)
+
+
+def test_without_displacement_memory_exact_subtraction_roundtrip():
+    modes = make_memory_test_modes()
+    memory_modes = compute_displacement_memory_from_strain(modes)
+
+    with_memory = with_displacement_memory(modes, memory_modes=memory_modes)
+    recovered = without_displacement_memory(
+        with_memory,
+        memory_modes=memory_modes,
+    )
+
+    scale = np.max(np.abs(modes.modes_data))
+    np.testing.assert_allclose(
+        recovered.modes_data,
+        modes.modes_data,
+        rtol=0.0,
+        atol=1e-15 * scale,
+    )
+    metadata = recovered.displacement_memory_metadata
+    assert metadata["included"] is False
+    assert metadata["removed"] is True
+    assert metadata["removal"]["mode"] == "exact_subtraction"
+
+
+def test_without_displacement_memory_fixed_point_roundtrip():
+    modes = make_memory_test_modes()
+
+    with_memory = with_displacement_memory(modes)
+    recovered = without_displacement_memory(with_memory)
+
+    scale = np.max(np.abs(modes.modes_data))
+    np.testing.assert_allclose(
+        recovered.modes_data,
+        modes.modes_data,
+        atol=1e-9 * scale,
+    )
+    removal = recovered.displacement_memory_metadata["removal"]
+    assert removal["mode"] == "fixed_point"
+    assert removal["converged"] is True
+    assert removal["iterations"] >= 2
+    assert removal["residual_history"][-1] <= removal["tolerance"]
+
+
+def test_remove_displacement_memory_in_place_fixed_point():
+    modes = make_memory_test_modes()
+    original_data = np.array(modes.modes_data, copy=True)
+    modes.add_displacement_memory_in_place()
+
+    returned = remove_displacement_memory_in_place(modes)
+
+    assert returned is modes
+    scale = np.max(np.abs(original_data))
+    np.testing.assert_allclose(
+        modes.modes_data,
+        original_data,
+        atol=1e-9 * scale,
+    )
+    assert modes.displacement_memory_metadata["removed"] is True
+
+
+def test_fixed_point_removal_raises_on_non_convergence():
+    modes = make_memory_test_modes()
+    with_memory = with_displacement_memory(modes)
+
+    with pytest.raises(RuntimeError, match="did not converge"):
+        without_displacement_memory(
+            with_memory,
+            removal_tolerance=1e-16,
+            removal_max_iterations=1,
+        )
+
+
+def test_removal_config_validation():
+    with pytest.raises(ValueError, match="removal_tolerance"):
+        DisplacementMemoryConfig(removal_tolerance=0.0)
+
+    with pytest.raises(ValueError, match="removal_tolerance"):
+        DisplacementMemoryConfig(removal_tolerance=np.inf)
+
+    with pytest.raises(ValueError, match="removal_max_iterations"):
+        DisplacementMemoryConfig(removal_max_iterations=0)
+
+
+def test_arithmetic_ops_invalidate_news_cache():
+    modes = make_memory_test_modes()
+    news_before = modes.get_news_from_strain()
+
+    doubled = modes + modes
+    news_doubled = doubled.get_news_from_strain()
+
+    np.testing.assert_allclose(
+        news_doubled.modes_data,
+        2.0 * news_before.modes_data,
+        rtol=1e-12,
+        atol=1e-12,
+    )
+
+
+@pytest.mark.parametrize(
+    "operate",
+    [
+        lambda m: m + m,
+        lambda m: 1.0 + m,
+        lambda m: m - 0.5 * m,
+        lambda m: 1.0 - m,
+        lambda m: m * 3.0,
+        lambda m: 3.0 * m,
+        lambda m: m / 2.0,
+        lambda m: m[5],
+        lambda m: np.conjugate(m),
+        lambda m: m.time_derivative(method="FD"),
+    ],
+    ids=[
+        "add",
+        "radd",
+        "sub",
+        "rsub",
+        "mul",
+        "rmul",
+        "truediv",
+        "getitem",
+        "conjugate",
+        "time_derivative_FD",
+    ],
+)
+def test_mutating_ops_drop_cached_news_spline(operate):
+    modes = make_memory_test_modes()
+    modes.get_news_from_strain()
+    assert "_news_modes_spline" in modes.__dict__
+
+    result = operate(modes)
+
+    assert "_news_modes_spline" not in result.__dict__
+
+
+def test_add_displacement_memory_in_place_invalidates_news_cache():
+    modes = make_memory_test_modes()
+    news_before = np.array(
+        modes.get_news_from_strain().modes_data, copy=True
+    )
+
+    modes.add_displacement_memory_in_place()
+
+    news_after = modes.get_news_from_strain().modes_data
+    assert not np.allclose(news_after, news_before)
 
 
 def cumulative_trapezoid_zero_at_start(xdata, ydata):
