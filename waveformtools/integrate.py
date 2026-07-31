@@ -304,7 +304,7 @@ def DriscollHealy2DInteg(func, info):
 
     integrand_sum = 0.0
 
-    func *= np.sin(theta_grid)
+    func = func * np.sin(theta_grid)
 
     # Skip the poles (ix=0 and ix=NTheta), as the weight there is zero
     # theta_1d = np.pi* np.arange(1, NTheta)/NTheta
@@ -479,7 +479,7 @@ def Simpson2DInteg(func, info):
     Px = int(NTheta / 2)
     Py = int(NPhi / 2)
 
-    func *= np.sin(theta_grid)
+    func = func * np.sin(theta_grid)
 
     # Around corners
     integrand_sum += (
@@ -566,15 +566,65 @@ def GaussLegendre2DInteg(func, info):
     return integral
 
 
+# cache of interpolating-spline integration weights, keyed by (grid signature, k).
+# The definite integral of an interpolating spline over its full domain is a
+# linear functional of the samples, integral = w . y, with w depending only on
+# the abscissae -- so it is computed once per time grid and reused.
+_SPLINE_WEIGHT_CACHE = {}
+
+
+def _spline_integral_weights(x, k=5):
+    """Weights ``w`` such that ``w @ y`` equals
+    ``InterpolatedUnivariateSpline(x, y, k).integral(x[0], x[-1])``.
+
+    Derived from FITPACK's B-spline representation: the spline coefficients are
+    ``c = A^{-1} y`` (``A`` the banded collocation matrix ``B_j(x_i)``) and the
+    full-domain integral is ``q . c`` with ``q_j = (t_{j+k+1} - t_j) / (k+1)``
+    the B-spline integrals, so ``w = A^{-T} q``.  Matches the per-sample FITPACK
+    result to ~1e-14 (machine precision) at a fraction of the cost, and lets the
+    whole (theta, phi) grid integrate in one vectorised contraction."""
+    from scipy.interpolate import BSpline
+    from scipy.sparse import csc_matrix
+    from scipy.sparse.linalg import spsolve
+
+    x = np.ascontiguousarray(x, dtype=float)
+    key = (k, x.shape[0], float(x[0]), float(x[-1]), hash(x.tobytes()))
+    cached = _SPLINE_WEIGHT_CACHE.get(key)
+    if cached is not None:
+        return cached
+    spl = InterpolatedUnivariateSpline(x, np.zeros_like(x), k=k)
+    t = spl._eval_args[0]                       # knots (k+1 multiplicity at ends)
+    ncoef = len(t) - k - 1
+    q = (t[k + 1:k + 1 + ncoef] - t[:ncoef]) / (k + 1)
+    A = BSpline.design_matrix(x, t, k)          # (n, ncoef) sparse, banded
+    w = spsolve(csc_matrix(A.T), q)
+    if len(_SPLINE_WEIGHT_CACHE) > 8:           # bounded; grids rarely vary
+        _SPLINE_WEIGHT_CACHE.clear()
+    _SPLINE_WEIGHT_CACHE[key] = w
+    return w
+
+
 def twod_time_integral(times, twod_func_ts, a=None, b=None):
     ''' Integrate a twoD array in time '''
-    
-    xdata = times
+
+    xdata = np.asarray(times)
+    full = (a is None or a == xdata[0]) and (b is None or b == xdata[-1])
+    if full:
+        # Fast path: full-domain integral is a linear functional of the samples,
+        # so contract the shared weight vector against every (theta, phi) column
+        # at once instead of fitting a quintic spline per grid point.
+        try:
+            w = _spline_integral_weights(xdata, k=5)
+            return np.tensordot(w, twod_func_ts, axes=([0], [0]))
+        except Exception as excep:  # pragma: no cover - fall back to exact loop
+            message(f"twod_time_integral fast path failed ({excep}); "
+                    "using per-point splines", message_verbosity=1)
+
     if a is None:
         a = xdata[0]
     if b is None:
         b = xdata[-1]
-        
+
     ntime, ntheta, nphi = twod_func_ts.shape
     ans = np.zeros((ntheta ,nphi), dtype=np.complex128)
 

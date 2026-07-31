@@ -33,6 +33,8 @@ class DisplacementMemoryConfig:
     news_method: str = "spline"
     source_normalization: MemorySourceNormalization = "news_squared"
     source_scale: float = 1.0
+    removal_tolerance: float = 1e-10
+    removal_max_iterations: int = 25
 
     def __post_init__(self) -> None:
         self.ell_min = int(self.ell_min)
@@ -67,6 +69,17 @@ class DisplacementMemoryConfig:
         self.source_scale = float(self.source_scale)
         if not np.isfinite(self.source_scale):
             raise ValueError("source_scale must be finite.")
+        self.removal_tolerance = float(self.removal_tolerance)
+        if (
+            not np.isfinite(self.removal_tolerance)
+            or self.removal_tolerance <= 0.0
+        ):
+            raise ValueError(
+                "removal_tolerance must be finite and positive."
+            )
+        self.removal_max_iterations = int(self.removal_max_iterations)
+        if self.removal_max_iterations < 1:
+            raise ValueError("removal_max_iterations must be at least 1.")
 
     def to_dict(self) -> dict[str, Any]:
         """Return a plain dictionary representation."""
@@ -376,8 +389,151 @@ def add_displacement_memory_in_place(
         **overrides,
     )
     strain_modes._modes_data = with_memory.modes_data
+    invalidate = getattr(
+        strain_modes, "_invalidate_strain_derived_caches", None
+    )
+    if invalidate is not None:
+        invalidate()
     _record_memory_metadata(strain_modes, config, overrides)
     return strain_modes
+
+
+def without_displacement_memory(
+    strain_modes: Any,
+    memory_modes: Any | None = None,
+    config: DisplacementMemoryConfig | Mapping[str, Any] | None = None,
+    **overrides: Any,
+) -> Any:
+    """Return a copy of ``strain_modes`` with displacement memory removed.
+
+    If ``memory_modes`` is given, the removal is the exact subtraction
+    inverse of :func:`with_displacement_memory` called with the same
+    ``memory_modes``.  Otherwise the memory-free strain is found by
+    fixed-point iteration ``h0 <- h - M(h0)`` starting from ``h0 = h``,
+    where ``M`` is :func:`compute_displacement_memory_from_strain` with the
+    supplied config.  The fixed point satisfies ``h0 + M(h0) = h``, so the
+    round trip ``without(with(h0)) == h0`` holds to ``removal_tolerance``.
+    A one-shot subtraction ``h - M(h)`` is NOT that inverse: ``M`` evaluated
+    on the memory-carrying strain differs at second order.
+    """
+
+    memory_config = DisplacementMemoryConfig.from_value(config, **overrides)
+    if memory_modes is not None:
+        _validate_compatible_memory_modes(strain_modes, memory_modes)
+        out = strain_modes - memory_modes
+        removal_info: dict[str, Any] = {"mode": "exact_subtraction"}
+    else:
+        _validate_strain_modes(strain_modes, memory_config)
+        out, removal_info = _fixed_point_memory_removal(
+            strain_modes,
+            lambda modes: compute_displacement_memory_from_strain(
+                modes,
+                memory_config,
+            ),
+            tolerance=memory_config.removal_tolerance,
+            max_iterations=memory_config.removal_max_iterations,
+            quantity_label="displacement memory",
+        )
+    _record_memory_removal_metadata(out, memory_config, removal_info)
+    return out
+
+
+def remove_displacement_memory_in_place(
+    strain_modes: Any,
+    memory_modes: Any | None = None,
+    config: DisplacementMemoryConfig | Mapping[str, Any] | None = None,
+    **overrides: Any,
+) -> Any:
+    """Remove displacement memory from ``strain_modes`` in place."""
+
+    without_memory = without_displacement_memory(
+        strain_modes,
+        memory_modes=memory_modes,
+        config=config,
+        **overrides,
+    )
+    strain_modes._modes_data = without_memory.modes_data
+    invalidate = getattr(
+        strain_modes, "_invalidate_strain_derived_caches", None
+    )
+    if invalidate is not None:
+        invalidate()
+    setattr(
+        strain_modes,
+        "displacement_memory_metadata",
+        getattr(without_memory, "displacement_memory_metadata"),
+    )
+    return strain_modes
+
+
+def _fixed_point_memory_removal(
+    strain_modes: Any,
+    compute_memory: Any,
+    *,
+    tolerance: float,
+    max_iterations: int,
+    quantity_label: str,
+) -> tuple[Any, dict[str, Any]]:
+    """Solve ``h0 + M(h0) = h`` for ``h0`` by fixed-point iteration.
+
+    ``M`` is bilinear in the waveform, so the iteration map
+    ``G(x) = h - M(x)`` is a contraction with factor of order
+    ``|memory| / |h|``; convergence is measured by the maximum
+    mode-amplitude change between iterates relative to the maximum
+    amplitude of the input strain.
+    """
+
+    scale = float(np.max(np.abs(strain_modes.modes_data)))
+    if scale == 0.0 or not np.isfinite(scale):
+        scale = 1.0
+    h_prev = strain_modes.deepcopy()
+    residual_history: list[float] = []
+    converged = False
+    iterations = 0
+    for iterations in range(1, int(max_iterations) + 1):
+        memory_iterate = compute_memory(h_prev)
+        h_next = strain_modes - memory_iterate
+        delta = float(
+            np.max(np.abs(h_next.modes_data - h_prev.modes_data))
+        )
+        residual_history.append(delta / scale)
+        h_prev = h_next
+        if delta <= tolerance * scale:
+            converged = True
+            break
+    if not converged:
+        raise RuntimeError(
+            f"Fixed-point {quantity_label} removal did not converge within "
+            f"{max_iterations} iterations; last relative change "
+            f"{residual_history[-1]:.3e} exceeds tolerance {tolerance:.3e}."
+        )
+    info = {
+        "mode": "fixed_point",
+        "converged": True,
+        "iterations": int(iterations),
+        "residual_history": residual_history,
+        "tolerance": float(tolerance),
+        "max_iterations": int(max_iterations),
+    }
+    return h_prev, info
+
+
+def _record_memory_removal_metadata(
+    modes_obj: Any,
+    config: DisplacementMemoryConfig,
+    removal_info: Mapping[str, Any],
+) -> None:
+    setattr(
+        modes_obj,
+        "displacement_memory_metadata",
+        {
+            "included": False,
+            "removed": True,
+            "removal": dict(removal_info),
+            "config": config.to_dict(),
+            "implementation": "bar_eth2_inverse",
+        },
+    )
 
 
 def _validate_strain_modes(
