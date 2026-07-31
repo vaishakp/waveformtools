@@ -201,6 +201,7 @@ class ModesArray:
             cma = self.deepcopy()
             cma._modes_data = np.conjugate(self._modes_data)
             cma._spin_weight=int(np.sign(cma.spin_weight)*cma.spin_weight)
+            cma._invalidate_strain_derived_caches()
             return cma
         
         return NotImplemented
@@ -208,12 +209,13 @@ class ModesArray:
     def __add__(self, obj):
         """Return a copy with ``obj`` added to the mode data."""
 
-        obj2 = self.deepcopy() 
+        obj2 = self.deepcopy()
         if isinstance(obj, self.__class__):
             obj2._modes_data = self.modes_data + obj.modes_data
         else:
             obj2._modes_data = self.modes_data + obj
 
+        obj2._invalidate_strain_derived_caches()
         return obj2
 
     def __radd__(self, obj):
@@ -225,6 +227,7 @@ class ModesArray:
         else:
             obj2._modes_data = self.modes_data + obj
 
+        obj2._invalidate_strain_derived_caches()
         return obj2
 
     def __sub__(self, obj):
@@ -236,17 +239,19 @@ class ModesArray:
         else:
             obj2._modes_data = self.modes_data - obj
 
+        obj2._invalidate_strain_derived_caches()
         return obj2
 
     def __rsub__(self, obj):
         """Return a copy representing ``obj`` minus this mode data."""
 
-        obj2 = self.deepcopy() 
+        obj2 = self.deepcopy()
         if isinstance(obj, self.__class__):
             obj2._modes_data = obj.modes_data - self.modes_data
         else:
             obj2._modes_data = obj - self.modes_data
 
+        obj2._invalidate_strain_derived_caches()
         return obj2
     
     def __mul__(self, obj):
@@ -262,18 +267,20 @@ class ModesArray:
         else:
             obj2._modes_data = self.modes_data*obj
 
+        obj2._invalidate_strain_derived_caches()
         return obj2
     
     def __rmul__(self, obj):
         """Return a copy with left multiplication by ``obj``."""
 
-        obj2 = self.deepcopy() 
+        obj2 = self.deepcopy()
         if isinstance(obj, self.__class__):
             obj2._modes_data = self.modes_data * obj.modes_data
             obj2._spin_weight = self.spin_weight + obj.spin_weight
         else:
             obj2._modes_data = obj*self.modes_data
 
+        obj2._invalidate_strain_derived_caches()
         return obj2
     
     def __truediv__(self, obj):
@@ -282,24 +289,26 @@ class ModesArray:
         Division by another modes object subtracts spin weights.
         """
 
-        obj2 = self.deepcopy() 
+        obj2 = self.deepcopy()
         if isinstance(obj, self.__class__):
             obj2._modes_data = self.modes_data / obj.modes_data
             obj2._spin_weight = self.spin_weight - obj.spin_weight
         else:
             obj2._modes_data= self.modes_data /obj
+        obj2._invalidate_strain_derived_caches()
         return obj2
     
     def __rtruediv__(self, obj):
         """Return a copy representing ``obj`` divided by this mode data."""
 
-        obj2 = self.deepcopy() 
+        obj2 = self.deepcopy()
         if isinstance(obj, self.__class__):
             obj2._modes_data = obj.modes_data/self.modes_data
             obj2._spin_weight = obj.spin_weight - self.spin_weight
         else:
             obj2._modes_data = obj/self.modes_data
 
+        obj2._invalidate_strain_derived_caches()
         return obj2
     
     def __getitem__(self, index):
@@ -309,6 +318,7 @@ class ModesArray:
         aslice._modes_data = self.modes_data[..., index]
         aslice._time_axis = np.array([self.time_axis[index]])
 
+        aslice._invalidate_strain_derived_caches()
         return aslice
     
     def __len__(self):
@@ -374,7 +384,11 @@ class ModesArray:
         """
         vec_index = ell**2 + emm + ell
 
-        ang_mode_data = self.modes_data[vec_index]
+        # index the raw array then copy the single mode; the ``modes_data``
+        # property copies the *entire* modes array on every access, so going
+        # through it here duplicated all modes just to return one (a dominant
+        # cost on long buffers).  This returns the same independent copy.
+        ang_mode_data = np.array(self._modes_data[vec_index])
 
         if self.extra_mode_axes:
             if not (np.array(extra_indices) == np.array(None)).all():
@@ -2116,6 +2130,7 @@ class ModesArray:
         if "FD" in method:
             d_data = derivative(self.time_axis, self.modes_data, method=method)
             d_wfm._modes_data = d_data
+            d_wfm._invalidate_strain_derived_caches()
         else:
             modes_list = self.modes_list
 
@@ -2309,6 +2324,116 @@ class ModesArray:
         from waveformtools.memory import add_displacement_memory_in_place
 
         return add_displacement_memory_in_place(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
+
+    def without_displacement_memory(
+        self,
+        memory_modes=None,
+        config=None,
+        **overrides,
+    ):
+        """Return a copy of this waveform with displacement memory removed.
+
+        With explicit ``memory_modes`` this is the exact subtraction inverse
+        of ``with_displacement_memory``; otherwise the memory-free strain is
+        found by fixed-point iteration (see
+        ``waveformtools.memory.without_displacement_memory``).
+        """
+        from waveformtools.memory import without_displacement_memory
+
+        return without_displacement_memory(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
+
+    def remove_displacement_memory_in_place(
+        self,
+        memory_modes=None,
+        config=None,
+        **overrides,
+    ):
+        """Remove displacement memory from this waveform in place."""
+        from waveformtools.memory import remove_displacement_memory_in_place
+
+        return remove_displacement_memory_in_place(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
+
+    def compute_spin_memory(self, config=None, **overrides):
+        """Return opt-in spin-memory strain modes (curl-flux source)."""
+        from waveformtools.spin_memory import compute_spin_memory_from_strain
+
+        return compute_spin_memory_from_strain(
+            self,
+            config=config,
+            **overrides,
+        )
+
+    def compute_spin_memory_source(self, config=None, **overrides):
+        """Return scalar modes of the magnetic-parity (curl) flux source."""
+        from waveformtools.spin_memory import (
+            compute_spin_memory_source_from_strain,
+        )
+
+        return compute_spin_memory_source_from_strain(
+            self,
+            config=config,
+            **overrides,
+        )
+
+    def with_spin_memory(self, memory_modes=None, config=None, **overrides):
+        """Return a copy of this waveform with spin memory added."""
+        from waveformtools.spin_memory import with_spin_memory
+
+        return with_spin_memory(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
+
+    def add_spin_memory_in_place(self, memory_modes=None, config=None, **overrides):
+        """Add spin memory to this waveform in place and return it."""
+        from waveformtools.spin_memory import add_spin_memory_in_place
+
+        return add_spin_memory_in_place(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
+
+    def without_spin_memory(self, memory_modes=None, config=None, **overrides):
+        """Return a copy of this waveform with spin memory removed.
+
+        With explicit ``memory_modes`` this is the exact subtraction inverse
+        of ``with_spin_memory``; otherwise the memory-free strain is found by
+        fixed-point iteration (see
+        ``waveformtools.spin_memory.without_spin_memory``).
+        """
+        from waveformtools.spin_memory import without_spin_memory
+
+        return without_spin_memory(
+            self,
+            memory_modes=memory_modes,
+            config=config,
+            **overrides,
+        )
+
+    def remove_spin_memory_in_place(self, memory_modes=None, config=None, **overrides):
+        """Remove spin memory from this waveform in place."""
+        from waveformtools.spin_memory import remove_spin_memory_in_place
+
+        return remove_spin_memory_in_place(
             self,
             memory_modes=memory_modes,
             config=config,
