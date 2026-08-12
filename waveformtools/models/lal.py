@@ -4,6 +4,7 @@ import numpy as np
 import lalsimulation
 from lalsimulation import SimInspiralChooseTDWaveform, SimInspiralFD, SimInspiralGetApproximantFromString, SimInspiralChooseTDModes, SimInspiralChooseFDModes
 from lalsimulation import SimInspiralWaveformParamsInsertPhenomXHMReleaseVersion, SimInspiralWaveformParamsInsertPhenomXPrecVersion
+from lalsimulation import SimInspiralWaveformParamsInsertTidalLambda1, SimInspiralWaveformParamsInsertTidalLambda2
 from lal import MSUN_SI, PC_SI, CreateDict
 from waveformtools.fd_to_td import (
     lal_fd_modes_to_td_modes,
@@ -92,6 +93,52 @@ class LALWaveformModel(WaveformModel):
             if self.PhenomXPrecVersion is not None:
                 SimInspiralWaveformParamsInsertPhenomXPrecVersion(self.lal_dict, self.PhenomXPrecVersion)
 
+    #: Accepted spellings of the tidal deformabilities, in the order they are
+    #: preferred. ``lambda1`` matches this class's own namespace (``mass1``,
+    #: ``spin1x``, ``distance``); ``lambda_1`` is what bilby and tdanalysis use.
+    #: BOTH are accepted on purpose. A caller who passes the spelling this class
+    #: did not expect would otherwise get lambda = 0 -- a BBH waveform returned
+    #: for a BNS request, with no error and a perfectly plausible posterior.
+    _TIDAL_ALIASES = {1: ("lambda1", "lambda_1"), 2: ("lambda2", "lambda_2")}
+
+    def _tidal_value(self, index):
+        """``lambda_i`` from the parameter dict, whichever spelling was used.
+
+        Returns 0.0 when absent, which is the LALSimulation default and is
+        correct for a point-particle approximant. Disagreeing duplicates raise
+        rather than resolving by precedence: silently preferring one spelling
+        over the other is how a run ends up analysing a tidal deformability
+        nobody asked for.
+        """
+        present = {name: self.parameters_dict[name]
+                   for name in self._TIDAL_ALIASES[index]
+                   if self.parameters_dict.get(name) is not None}
+        if not present:
+            return 0.0
+        values = set(float(v) for v in present.values())
+        if len(values) > 1:
+            raise ValueError(
+                f"conflicting values for the tidal deformability of body "
+                f"{index}: {present}. These are aliases of one parameter; pass "
+                "only one of them.")
+        return float(values.pop())
+
+    def add_tidal_parameters_to_lal_dict(self):
+        """Insert ``lambda_1``/``lambda_2`` into the LAL dictionary.
+
+        Called on every generation rather than once at construction, because
+        the deformabilities are SAMPLED parameters -- inserting them at
+        construction would freeze them at their initial values and return the
+        same waveform for every point the sampler proposed.
+        """
+        lal_dict = self.parameters_dict.get('lal_dict')
+        if lal_dict is None:
+            return
+        SimInspiralWaveformParamsInsertTidalLambda1(lal_dict,
+                                                    self._tidal_value(1))
+        SimInspiralWaveformParamsInsertTidalLambda2(lal_dict,
+                                                    self._tidal_value(2))
+
     def capabilities(self):
         """Return the output capabilities advertised by this backend."""
         return {
@@ -109,6 +156,7 @@ class LALWaveformModel(WaveformModel):
     def get_td_waveform(self, **parameters_dict):
 
         self.update_parameters(parameters_dict)
+        self.add_tidal_parameters_to_lal_dict()
 
         hp, hc = SimInspiralChooseTDWaveform(   
                                                 self.mass1*MSUN_SI,
@@ -140,6 +188,7 @@ class LALWaveformModel(WaveformModel):
     def get_fd_waveform(self, approximant=None, **parameters_dict):
 
         self.update_parameters(parameters_dict)
+        self.add_tidal_parameters_to_lal_dict()
 
         hp, hc = SimInspiralFD(   
                                 self.mass1*MSUN_SI,
@@ -173,6 +222,7 @@ class LALWaveformModel(WaveformModel):
     def get_td_waveform_dict(self, **parameters_dict):
 
         self.update_parameters(parameters_dict)
+        self.add_tidal_parameters_to_lal_dict()
 
         hp, hc = SimInspiralChooseTDWaveform(   parameters_dict['mass1']*MSUN_SI,
                                                 parameters_dict['mass2']*MSUN_SI,
@@ -309,6 +359,7 @@ class LALWaveformModel(WaveformModel):
         Tapering conventions: default lal 
         '''
         self.update_parameters(parameters_dict)
+        self.add_tidal_parameters_to_lal_dict()
         apx_domain = self.get_approximant_domain(self.approximant)
 
         if apx_domain == 'fd':
@@ -348,6 +399,7 @@ class LALWaveformModel(WaveformModel):
         Tapering conventions: default lal 
         '''
         self.update_parameters(parameters_dict)
+        self.add_tidal_parameters_to_lal_dict()
         wfm_fd = self._get_fd_waveform_modes_unstandardized()
         return self._standardize_generated_modes(
             wfm_fd,
@@ -380,6 +432,7 @@ class LALWaveformModel(WaveformModel):
         """
 
         self.update_parameters(parameters_dict)
+        self.add_tidal_parameters_to_lal_dict()
         wfm_fd = self._get_fd_waveform_modes_unstandardized()
         wfm_td = lal_fd_modes_to_td_modes(wfm_fd, undo_warp=undo_warp)
 
@@ -421,6 +474,7 @@ class LALWaveformModel(WaveformModel):
         """
 
         self.update_parameters(parameters_dict)
+        self.add_tidal_parameters_to_lal_dict()
         wfm_fd = self._get_fd_waveform_modes_unstandardized()
         wfm_td = lal_fd_modes_to_td_modes(wfm_fd, undo_warp=False)
 
