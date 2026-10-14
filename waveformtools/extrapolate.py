@@ -70,6 +70,9 @@ def waveextract_to_inf_perturbative_twop5_order(
     emm=2,
     degree=24,
     method="CS",
+    rPsi4_lp1m=None,
+    rPsi4_lm1m=None,
+    omega0=0.015,
 ):
     """Extract a numerical waveform to null infinity using perturbative
     techniques.
@@ -86,12 +89,14 @@ def waveextract_to_inf_perturbative_twop5_order(
                The extracted Weyl scalar :math:`r\\Psi_{4\\ell m}` data array
     delta_t: float
              The time stepping.
-    areal_radius: 1d array
-                  The areal radius of the extraction sphere.
+    areal_radius: float
+                  The areal radius of the extraction sphere
+                  (see `r_to_ra_conversion`).
     mass: float
           The total horizon mass of the system.
     spin: float, optional
-          The effective spin of the spacetime. Defaults to 0.
+          The Kerr spin parameter :math:`a` of the spacetime, in units
+          of the total mass (dimensionful, not :math:`\\chi`). Defaults to 0.
     ell: int
          The polar quantum number :math:`\\ell`.
     emm: int
@@ -100,6 +105,19 @@ def waveextract_to_inf_perturbative_twop5_order(
             The method to use for differentiation.
     degree: int
             The degree to use for dfferentiation.
+    rPsi4_lp1m: 1d array, optional
+                :math:`r\\Psi_{4\\,\\ell+1\\,m}` at the same radius and times.
+                Required when `spin` is nonzero.
+    rPsi4_lm1m: 1d array, optional
+                :math:`r\\Psi_{4\\,\\ell-1\\,m}` at the same radius and times.
+                Required when `spin` is nonzero and the coupling to
+                :math:`\\ell-1` does not vanish (it vanishes for
+                :math:`\\ell = 2` and for :math:`|m| = \\ell`).
+    omega0: float, optional
+            Cutoff angular frequency for the fixed-frequency integration.
+            Should lie below the starting angular frequency of the mode.
+            Defaults to 0.015.
+
     Returns
     -------
     rPsi4_inflm: 1d array
@@ -109,28 +127,32 @@ def waveextract_to_inf_perturbative_twop5_order(
     References
     ----------
     This implements the definition in
-    Nakano et al., (2015),  Phys. Rev. D 91, 104022 Eq.[29].
+    Nakano et al., (2015),  Phys. Rev. D 91, 104022, Eq.[29]
+    ("improved extrapolation formula"). The spin terms couple to the
+    neighbouring modes :math:`\\ell \\pm 1` with the same :math:`m`.
     """
 
     from waveformtools.differentiate import differentiate_cwaveform
     from waveformtools.integrate import fixed_frequency_integrator
 
-    # Timeaxis
+    rPsi4_rlm = np.asarray(rPsi4_rlm)
+    # Time axis with exactly one sample per data point.
+    timeaxis = np.arange(len(rPsi4_rlm)) * delta_t
 
-    timeaxis = np.arange(0, len(rPsi4_rlm) * delta_t, delta_t)
     # Assigning the terms. Each set of subterms in
     # a pair of paranthesis is a term.
     term_1_prefac = 1 - 2 * mass / areal_radius
     subterm_1_1 = rPsi4_rlm
-    subterm_1_2_prefac = (ell - 1) * (ell + 2) / (2 * areal_radius)
-    subterm_1_2, _ = fixed_frequency_integrator(
-        rPsi4_rlm, delta_t, omega0=0.015
+    subterm_1_2_prefac = -(ell - 1) * (ell + 2) / (2 * areal_radius)
+    # The integrated samples are the second return value of the FFI.
+    _, subterm_1_2 = fixed_frequency_integrator(
+        rPsi4_rlm, delta_t, omega0=omega0
     )  # Integral_rPsi4_rlm
     subterm_1_3_prefac = (
         (ell - 1) * (ell + 2) * (ell**2 + ell - 4) / (8 * areal_radius**2)
     )
-    subterm_1_3, _ = fixed_frequency_integrator(
-        rPsi4_rlm, delta_t, order=2, omega0=0.015
+    _, subterm_1_3 = fixed_frequency_integrator(
+        rPsi4_rlm, delta_t, order=2, omega0=omega0
     )  # Double_integral_rPsi4_rlm
 
     term_1 = term_1_prefac * (
@@ -139,6 +161,10 @@ def waveextract_to_inf_perturbative_twop5_order(
         + subterm_1_3_prefac * subterm_1_3
     )
 
+    if spin == 0:
+        return term_1
+
+    # Coupling to ell + 1, m.
     term_2_prefac = (2 * 1j * spin / (ell + 1) ** 2) * np.sqrt(
         (ell + 3)
         * (ell - 1)
@@ -146,23 +172,40 @@ def waveextract_to_inf_perturbative_twop5_order(
         * (ell - emm + 1)
         / ((2 * ell + 1) * (2 * ell + 3))
     )
-    subterm_2_1 = differentiate_cwaveform(
-        timeaxis, rPsi4_rlm, method=method, degree=degree
-    )  # Differential of waveform
-    subterm_2_2_prefac = -ell * (ell + 3) / areal_radius
-    subterm_2_2 = subterm_1_1
+    term_2 = 0
+    if term_2_prefac != 0:
+        if rPsi4_lp1m is None:
+            raise ValueError(
+                "spin != 0 needs the (ell + 1, m) mode: pass rPsi4_lp1m."
+            )
+        rPsi4_lp1m = np.asarray(rPsi4_lp1m)
+        subterm_2_1 = differentiate_cwaveform(
+            timeaxis, rPsi4_lp1m, method=method, degree=degree
+        )
+        subterm_2_2_prefac = -ell * (ell + 3) / areal_radius
+        term_2 = term_2_prefac * (
+            subterm_2_1 + subterm_2_2_prefac * rPsi4_lp1m
+        )
 
-    term_2 = term_2_prefac * (subterm_2_1 + subterm_2_2_prefac * subterm_2_2)
-
+    # Coupling to ell - 1, m. The prefactor vanishes for ell = 2 and |m| = ell.
     term_3_prefac = (-2 * 1j * spin / ell**2) * np.sqrt(
         ((ell + 2) * (ell - 2) * (ell + emm) * (ell - emm))
         / ((2 * ell - 1) * (2 * ell + 1))
     )
-    subterm_3_1 = subterm_2_1
-    subterm_3_2_prefac = -(ell - 2) * (ell + 1) / areal_radius
-    subterm_3_2 = subterm_1_1
-
-    term_3 = term_3_prefac * (subterm_3_1 + subterm_3_2_prefac * subterm_3_2)
+    term_3 = 0
+    if term_3_prefac != 0:
+        if rPsi4_lm1m is None:
+            raise ValueError(
+                "spin != 0 needs the (ell - 1, m) mode: pass rPsi4_lm1m."
+            )
+        rPsi4_lm1m = np.asarray(rPsi4_lm1m)
+        subterm_3_1 = differentiate_cwaveform(
+            timeaxis, rPsi4_lm1m, method=method, degree=degree
+        )
+        subterm_3_2_prefac = -(ell - 2) * (ell + 1) / areal_radius
+        term_3 = term_3_prefac * (
+            subterm_3_1 + subterm_3_2_prefac * rPsi4_lm1m
+        )
 
     rPsi4_inflm = term_1 + term_2 + term_3
 
@@ -170,15 +213,16 @@ def waveextract_to_inf_perturbative_twop5_order(
 
 
 def waveextract_to_inf_perturbative_two_order(
-    rPsi4_rlm, delta_t, areal_radius=500, mass=1, ell=2
+    rPsi4_rlm, delta_t, areal_radius=500, mass=1, ell=2, omega0=0.015
 ):
     """Extract a numerical waveform to null infinity using perturbative
-    techniques.
+    techniques, to second order in :math:`1/r` in a Schwarzschild
+    background.
 
-    This is:
-            * accurate to second order in :math:`1/r`.
-            * accurate to first order in Kerr mass and spin.
-            * corrects for spheroidal harmonics
+    This is the Kinnersley-tetrad formula: it has no
+    :math:`(1 - 2M/r)` tetrad factor and no spin terms. For numerical
+    relativity data use `waveextract_to_inf_perturbative_twop5_order`,
+    which includes the tetrad correction.
 
     Parameters
     ----------
@@ -188,20 +232,18 @@ def waveextract_to_inf_perturbative_two_order(
     delta_t: float
              The time stepping.
 
-    areal_radius: 1d array
+    areal_radius: float
                   The areal radius of the extraction sphere.
 
     mass: float
           The total horizon mass of the system.
 
-    spin: float, optional
-          The effective spin of the spacetime. Defaults to 0.
-
     ell: int
          The polar quantum number :math:`\\ell`.
 
-    emm: int
-         The azimuthal quantum number :math:`m`.
+    omega0: float, optional
+            Cutoff angular frequency for the fixed-frequency integration.
+            Defaults to 0.015.
 
     Returns
     -------
@@ -210,27 +252,29 @@ def waveextract_to_inf_perturbative_two_order(
 
     References
     ----------
-    This implements the definition in Nakano et al., (2015),
-    Phys. Rev. D 91, 104022 Eq.[29].
+    This implements Nakano et al., (2015), Phys. Rev. D 91, 104022,
+    the second-order Schwarzschild formula of Sec. II B (the inversion
+    of their asymptotic expansion to order :math:`1/r^2`).
     """
 
-    from integrate import fixed_frequency_integrator
+    from waveformtools.integrate import fixed_frequency_integrator
 
     # Assigning the terms. Each set of subterms in
     # a pair of paranthesis is a term.
     term_1 = rPsi4_rlm
 
     term_2_prefac = -(ell - 1) * (ell + 2) / (2 * areal_radius)
-    subterm_2_1, _ = fixed_frequency_integrator(
-        rPsi4_rlm, delta_t, omega0=0.015
+    # The integrated samples are the second return value of the FFI.
+    _, subterm_2_1 = fixed_frequency_integrator(
+        rPsi4_rlm, delta_t, omega0=omega0
     )  # Integral_rPsi4_rlm
     term_2 = term_2_prefac * subterm_2_1
 
     term_3_prefac = (
         (ell - 1) * (ell + 2) * (ell**2 + ell - 4) / (8 * areal_radius**2)
     )
-    subterm_3_1, _ = fixed_frequency_integrator(
-        rPsi4_rlm, delta_t, order=2, omega0=0.015
+    _, subterm_3_1 = fixed_frequency_integrator(
+        rPsi4_rlm, delta_t, order=2, omega0=omega0
     )  # Double_Integral_rPsi4_rlm
     term_3 = term_3_prefac * subterm_3_1
 

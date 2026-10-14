@@ -60,12 +60,18 @@ def fixed_frequency_integrator(
 
     Returns
     -------
+    time_axis: 1d array
+               The time axis of the integrated samples, as returned by
+               `spectools.fourier.transforms.compute_ifft`.
+
     u_integ_n_time:	1d array
                     The input waveform in time-space,
-                    integrated in frequency space using FFI.
+                    integrated `order` times using FFI.
 
-    u_integ_integ_n: 1d array
-                     The integrated u samples in Fourier space.
+    Notes
+    -----
+    The integrated samples are the *second* return value. The first is
+    the time axis.
 
     """
 
@@ -117,12 +123,26 @@ def fixed_frequency_integrator(
 
     omega_axis = construct_ffi_omega_axis(freq_axis, omega0, zero_index)
 
+    # Integrate in frequency space.
+    #
+    # `utilde_conven` is conjugated (see spectools' set_fft_conven), so the
+    # bin at frequency f holds conj(X(f)) rather than X(f). Dividing it by
+    # (-i omega) is therefore only right for one sign of frequency: complex
+    # data with negative frequencies (e.g. m > 0 modes, h_22 ~ exp(-2 i Phi))
+    # came out with the wrong sign for odd `order`. Do the division in
+    # numpy's convention instead, where X(f) = sum_n x_n exp(-2 pi i f t_n)
+    # and integration is division by (i omega) for every bin, then return
+    # to the stored convention.
+    from spectools.fourier.transforms import set_fft_conven, unset_fft_conven
+
+    utilde_np = unset_fft_conven(utilde_conven)
+    omega_np = np.fft.ifftshift(omega_axis)
+    utilde_np_integ_n = utilde_np / np.power(1j * omega_np, order)
+    utilde_integ_n = set_fft_conven(utilde_np_integ_n)
+
     # Set the zero frequency element separately.
     if zero_index is not None:
-        utilde_conven[zero_index] = zero_mode
-
-    # Integrate in frequency space
-    utilde_integ_n = np.power((-1j / omega_axis), order) * utilde_conven
+        utilde_integ_n[zero_index] = zero_mode
 
     if np.isnan(utilde_integ_n).any():
         message("Nan Found in utilde_integ_n!", message_verbosity=0)
