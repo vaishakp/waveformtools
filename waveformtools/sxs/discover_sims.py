@@ -18,6 +18,7 @@ import pandas as pd
 from simtools.coordinate_transform import CoordinateTransform
 import json
 from simtools.quantities import get_dynamics_from_h5, get_t_ref_from_dynamics_and_freq, get_NR_ref_quantities_at_t_ref
+from simtools.waveform_io import write_to_h5
 
 class SimulationExplorer:
     """Find and load simulations in a given directory.
@@ -1607,7 +1608,7 @@ class SimulationExplorer:
             os.mkdir(wdir)
         wpath = wdir/f"rhOverM_Extrapolated_N{Next}_CoM.h5"
         if not os.path.isfile(wpath):
-            scri.SpEC.file_io.write_to_h5(waveform_modes, str(wpath))
+            write_to_h5(waveform_modes, str(wpath))
 
     def save_waveform_modes(self, waveform_modes, file_dir, file_path):
 
@@ -1615,7 +1616,7 @@ class SimulationExplorer:
             os.mkdir(file_dir)
 
         if not os.path.isfile(file_path):
-            scri.SpEC.file_io.write_to_h5(waveform_modes, str(file_path))
+            write_to_h5(waveform_modes, str(file_path))
 
     def transform_parameters_to_t_ref(self, 
                                       sim_name, 
