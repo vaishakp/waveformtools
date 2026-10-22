@@ -15,10 +15,43 @@ from waveformtools.waveformtools import (
 import subprocess
 import h5py
 import pandas as pd
-from simtools.coordinate_transform import CoordinateTransform
 import json
-from simtools.quantities import get_dynamics_from_h5, get_t_ref_from_dynamics_and_freq, get_NR_ref_quantities_at_t_ref
-from simtools.waveform_io import write_to_h5
+import importlib
+
+
+# simtools is needed only by the methods that read horizon dynamics, transform
+# frames and write waveforms.  It is imported when first used, so that the rest
+# of this module, and of waveformtools, works without it.
+def _simtools_attr(module, name):
+    try:
+        mod = importlib.import_module(f"simtools.{module}")
+    except ImportError as err:
+        raise ImportError(
+            f"simtools.{module}.{name} is needed here but the simtools package "
+            "is not installed"
+        ) from err
+    return getattr(mod, name)
+
+
+def CoordinateTransform(*args, **kwargs):
+    return _simtools_attr("coordinate_transform", "CoordinateTransform")(*args, **kwargs)
+
+
+def get_dynamics_from_h5(*args, **kwargs):
+    return _simtools_attr("quantities", "get_dynamics_from_h5")(*args, **kwargs)
+
+
+def get_t_ref_from_dynamics_and_freq(*args, **kwargs):
+    return _simtools_attr("quantities", "get_t_ref_from_dynamics_and_freq")(*args, **kwargs)
+
+
+def get_NR_ref_quantities_at_t_ref(*args, **kwargs):
+    return _simtools_attr("quantities", "get_NR_ref_quantities_at_t_ref")(*args, **kwargs)
+
+
+def write_to_h5(*args, **kwargs):
+    return _simtools_attr("waveform_io", "write_to_h5")(*args, **kwargs)
+
 
 class SimulationExplorer:
     """Find and load simulations in a given directory.
