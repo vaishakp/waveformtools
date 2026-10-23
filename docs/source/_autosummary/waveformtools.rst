@@ -36,7 +36,6 @@
    memory
    modes_array
    rotation_math
-   rotations
    simulations
    single_mode
    spherical
