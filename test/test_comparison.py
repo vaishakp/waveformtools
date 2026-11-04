@@ -10,7 +10,6 @@ from waveformtools.comparison import (
     AlignmentSpec,
     FittingFactorConfig,
     ModeComparisonConfig,
-    RotationSpec,
     WaveformMetadata,
     canonicalize_modes_for_comparison,
     fixed_candidate_fitting_factor,
@@ -18,7 +17,6 @@ from waveformtools.comparison import (
     mode_match,
     prepare_aligned_mode_data,
     residue_distance,
-    rotate_modes,
     standardize_generated_modes_in_place,
 )
 from waveformtools.modes_array import ModesArray
@@ -66,8 +64,15 @@ def make_test_modes(
     return modes
 
 
-def make_full_ell2_modes(*, time_axis: np.ndarray | None = None) -> ModesArray:
-    """Construct synthetic data with all ell=2 modes populated."""
+def make_full_ell2_modes(
+    *,
+    time_axis: np.ndarray | None = None,
+    orbital_phase: float = 0.0,
+) -> ModesArray:
+    """Construct synthetic data with all ell=2 modes populated.
+
+    ``orbital_phase`` applies ``h_lm -> exp(i m orbital_phase) h_lm``.
+    """
 
     if time_axis is None:
         time_axis = np.linspace(-6.0, 6.0, 160)
@@ -83,7 +88,8 @@ def make_full_ell2_modes(*, time_axis: np.ndarray | None = None) -> ModesArray:
             emm=emm,
             data=amplitude
             * envelope
-            * np.exp(1j * (frequency * time_axis + phase)),
+            * np.exp(1j * (frequency * time_axis + phase))
+            * np.exp(1j * emm * orbital_phase),
         )
     return modes
 
@@ -499,10 +505,7 @@ def test_waveform_model_generation_hook_standardizes_and_merges_metadata(
 def test_continuous_orbital_phase_alignment_refines_grid_result():
     orbital_phase = 0.241
     reference = make_full_ell2_modes()
-    shifted = rotate_modes(
-        reference,
-        RotationSpec(kind="z_axis", angle=orbital_phase),
-    )
+    shifted = make_full_ell2_modes(orbital_phase=orbital_phase)
     grid_alignment = AlignmentSpec(
         time_alignment="none",
         phase_alignment="orbital_phase",
@@ -550,10 +553,7 @@ def test_continuous_orbital_phase_alignment_refines_grid_result():
 def test_continuous_orbital_phase_and_global_refines_grid_result():
     orbital_phase = 0.317
     reference = make_full_ell2_modes()
-    shifted = rotate_modes(
-        reference,
-        RotationSpec(kind="z_axis", angle=orbital_phase),
-    )
+    shifted = make_full_ell2_modes(orbital_phase=orbital_phase)
     grid_alignment = AlignmentSpec(
         time_alignment="none",
         phase_alignment="orbital_phase_and_global",
@@ -592,269 +592,6 @@ def test_continuous_orbital_phase_and_global_refines_grid_result():
 def test_alignment_rejects_unknown_orbital_phase_optimizer():
     with pytest.raises(ValueError, match="orbital_phase_optimizer"):
         AlignmentSpec(orbital_phase_optimizer="not-an-optimizer")
-
-
-def test_z_axis_rotation_applies_one_coherent_mode_phase():
-    angle = 0.4
-    modes = make_test_modes(orbital_phase=0.0)
-
-    rotated = rotate_modes(modes, RotationSpec(kind="z_axis", angle=angle))
-
-    assert np.allclose(
-        rotated.mode(2, 2), np.exp(2j * angle) * modes.mode(2, 2)
-    )
-    assert np.allclose(
-        rotated.mode(2, -2), np.exp(-2j * angle) * modes.mode(2, -2)
-    )
-    assert np.allclose(
-        modes.mode(2, 2), make_test_modes(orbital_phase=0.0).mode(2, 2)
-    )
-
-
-def test_wigner_identity_rotation_matches_input_modes():
-    modes = make_test_modes()
-
-    rotated = rotate_modes(modes, RotationSpec(kind="wigner"))
-
-    assert np.allclose(rotated.mode(2, 2), modes.mode(2, 2))
-    assert np.allclose(rotated.mode(2, -2), modes.mode(2, -2))
-
-
-def test_wigner_z_axis_limit_matches_z_axis_rotation():
-    angle = 0.4
-    modes = make_test_modes()
-
-    z_axis = rotate_modes(modes, RotationSpec(kind="z_axis", angle=angle))
-    wigner = rotate_modes(modes, RotationSpec(kind="wigner", alpha=angle))
-
-    assert np.allclose(wigner.mode(2, 2), z_axis.mode(2, 2))
-    assert np.allclose(wigner.mode(2, -2), z_axis.mode(2, -2))
-
-
-def test_wigner_rotation_preserves_unselected_modes():
-    angle = 0.4
-    modes = make_test_modes()
-    original_m2 = np.array(modes.mode(2, -2), copy=True)
-
-    rotated = rotate_modes(
-        modes,
-        RotationSpec(kind="wigner", alpha=angle),
-        modes=[(2, 2)],
-    )
-
-    assert np.allclose(
-        rotated.mode(2, 2), np.exp(2j * angle) * modes.mode(2, 2)
-    )
-    assert np.allclose(rotated.mode(2, -2), original_m2)
-
-
-def test_wigner_rotation_preserves_same_ell_power():
-    time_axis = np.linspace(-1.0, 1.0, 16)
-    modes = ModesArray(ell_max=2, time_axis=time_axis, spin_weight=-2)
-    modes.create_modes_array(ell_max=2, data_len=len(time_axis))
-    signal = 1.0 + 0.1 * time_axis
-    modes.set_mode_data(ell=2, emm=2, data=signal)
-
-    rotated = rotate_modes(modes, RotationSpec(kind="wigner", beta=0.3))
-
-    original_power = sum(
-        np.abs(modes.mode(2, emm)) ** 2 for emm in range(-2, 3)
-    )
-    rotated_power = sum(
-        np.abs(rotated.mode(2, emm)) ** 2 for emm in range(-2, 3)
-    )
-    assert np.allclose(rotated_power, original_power, atol=1e-12)
-    assert np.max(np.abs(rotated.mode(2, 1))) > 0.0
-
-
-def test_mode_match_accepts_fixed_candidate_rotation():
-    angle = 0.4
-    reference = make_test_modes(orbital_phase=0.0)
-    shifted = make_test_modes(orbital_phase=angle)
-
-    unrotated = mode_match(
-        reference,
-        shifted,
-        time_alignment="none",
-        phase_alignment="none",
-    )
-    rotated = mode_match(
-        reference,
-        shifted,
-        time_alignment="none",
-        phase_alignment="none",
-        rotation={"kind": "z_axis", "angle": -angle},
-    )
-
-    assert unrotated.match < 1.0
-    assert rotated.match == pytest.approx(1.0, abs=1e-12)
-    assert rotated.diagnostics["rotation"]["kind"] == "z_axis"
-    assert rotated.best_parameters["rotation"]["angle"] == pytest.approx(-angle)
-
-
-def test_mode_match_optimizes_one_shared_z_rotation():
-    angle = 0.35
-    reference = make_test_modes(orbital_phase=0.0)
-    shifted = make_test_modes(orbital_phase=angle)
-
-    unoptimized = mode_match(
-        reference,
-        shifted,
-        time_alignment="none",
-        phase_alignment="none",
-    )
-    optimized = mode_match(
-        reference,
-        shifted,
-        time_alignment="none",
-        phase_alignment="none",
-        rotation={
-            "kind": "z_axis",
-            "optimize_angle": True,
-            "angle_bounds": (-0.8, 0.0),
-        },
-    )
-
-    assert optimized.match > unoptimized.match
-    assert optimized.match == pytest.approx(1.0, abs=1e-10)
-    assert optimized.best_parameters["rotation"]["angle"] == pytest.approx(
-        -angle, abs=2e-3
-    )
-    assert optimized.diagnostics["rotation"]["optimize_angle"] is True
-    assert (
-        optimized.diagnostics["rotation_optimization"]["parameter"]
-        == "rotation.angle"
-    )
-    assert optimized.optimizer == "bounded_z_rotation"
-
-
-def test_z_rotation_optimization_rejects_orbital_phase_degeneracy():
-    reference = make_test_modes(orbital_phase=0.0)
-    shifted = make_test_modes(orbital_phase=0.2)
-
-    with pytest.raises(ValueError, match="degenerate"):
-        mode_match(
-            reference,
-            shifted,
-            time_alignment="none",
-            phase_alignment="orbital_phase_and_global",
-            rotation=RotationSpec(kind="z_axis", optimize_angle=True),
-        )
-
-
-def test_mode_match_optimizes_wigner_beta_rotation():
-    reference = make_full_ell2_modes()
-    candidate = rotate_modes(reference, RotationSpec(kind="wigner", beta=0.25))
-
-    unoptimized = mode_match(
-        reference,
-        candidate,
-        time_alignment="none",
-        phase_alignment="none",
-    )
-    optimized = mode_match(
-        reference,
-        candidate,
-        time_alignment="none",
-        phase_alignment="none",
-        rotation=RotationSpec(
-            kind="wigner",
-            optimize_parameters=("beta",),
-            parameter_bounds={"beta": (-0.5, 0.1)},
-        ),
-    )
-
-    assert optimized.match > unoptimized.match
-    assert optimized.match > 0.999
-    assert optimized.best_parameters["rotation"]["beta"] == pytest.approx(
-        -0.25, abs=2e-3
-    )
-    assert optimized.diagnostics["rotation_optimization"]["parameters"] == (
-        "beta",
-    )
-    assert optimized.optimizer == "bounded_wigner_rotation"
-
-
-def test_mode_match_optimizes_full_wigner_rotation():
-    reference = make_full_ell2_modes()
-    alpha = 0.12
-    beta = 0.18
-    gamma = -0.09
-    candidate = rotate_modes(
-        reference,
-        RotationSpec(kind="wigner", alpha=alpha, beta=beta, gamma=gamma),
-    )
-
-    optimized = mode_match(
-        reference,
-        candidate,
-        time_alignment="none",
-        phase_alignment="none",
-        rotation=RotationSpec(
-            kind="wigner",
-            optimize_parameters=("alpha", "beta", "gamma"),
-            parameter_bounds={
-                "alpha": (-0.1, 0.2),
-                "beta": (-0.3, 0.0),
-                "gamma": (-0.2, 0.1),
-            },
-        ),
-    )
-
-    assert optimized.match > 0.999
-    assert optimized.best_parameters["rotation"]["alpha"] == pytest.approx(
-        -gamma, abs=1e-2
-    )
-    assert optimized.best_parameters["rotation"]["beta"] == pytest.approx(
-        -beta, abs=1e-2
-    )
-    assert optimized.best_parameters["rotation"]["gamma"] == pytest.approx(
-        -alpha, abs=1e-2
-    )
-
-
-def test_wigner_rotation_optimization_rejects_phase_degeneracy_by_default():
-    reference = make_full_ell2_modes()
-    candidate = rotate_modes(reference, RotationSpec(kind="wigner", beta=0.1))
-
-    with pytest.raises(ValueError, match="degenerate"):
-        mode_match(
-            reference,
-            candidate,
-            time_alignment="none",
-            phase_alignment="orbital_phase_and_global",
-            rotation=RotationSpec(
-                kind="wigner",
-                optimize_parameters=("alpha", "beta"),
-                parameter_bounds={"alpha": (-0.2, 0.2), "beta": (-0.2, 0.0)},
-            ),
-        )
-
-
-def test_wigner_rotation_optimization_can_opt_into_phase_degeneracy():
-    reference = make_full_ell2_modes()
-    candidate = rotate_modes(reference, RotationSpec(kind="wigner", beta=0.1))
-
-    result = mode_match(
-        reference,
-        candidate,
-        alignment=AlignmentSpec(
-            time_alignment="none",
-            phase_alignment="orbital_phase_and_global",
-            allow_phase_rotation_degeneracy=True,
-        ),
-        rotation=RotationSpec(
-            kind="wigner",
-            optimize_parameters=("alpha", "beta"),
-            parameter_bounds={"alpha": (-0.2, 0.2), "beta": (-0.2, 0.0)},
-        ),
-    )
-
-    assert result.match > 0.999
-    assert (
-        result.diagnostics["rotation_optimization"]["phase_degeneracy_possible"]
-        is True
-    )
 
 
 def test_default_alignment_crops_unequal_lengths_after_peak_alignment():
@@ -1306,49 +1043,6 @@ def test_fixed_candidate_fitting_factor_matches_mode_match():
         fitting.diagnostics["comparison_config"]["alignment"]["time_alignment"]
         == "none"
     )
-
-
-def test_fixed_candidate_fitting_factor_uses_comparison_rotation():
-    angle = 0.4
-    reference = make_test_modes(orbital_phase=0.0)
-    shifted = make_test_modes(orbital_phase=angle)
-    comparison = ModeComparisonConfig(
-        alignment=AlignmentSpec(time_alignment="none", phase_alignment="none"),
-        rotation=RotationSpec(kind="z_axis", angle=-angle),
-    )
-
-    result = fixed_candidate_fitting_factor(
-        reference, shifted, config=comparison
-    )
-
-    assert result.match == pytest.approx(1.0, abs=1e-12)
-    assert result.best_parameters["alignment"]["rotation"]["kind"] == "z_axis"
-    assert result.best_parameters["alignment"]["rotation"][
-        "angle"
-    ] == pytest.approx(-angle)
-
-
-def test_fixed_candidate_fitting_factor_uses_optimized_rotation():
-    angle = 0.35
-    reference = make_test_modes(orbital_phase=0.0)
-    shifted = make_test_modes(orbital_phase=angle)
-    comparison = ModeComparisonConfig(
-        alignment=AlignmentSpec(time_alignment="none", phase_alignment="none"),
-        rotation=RotationSpec(
-            kind="z_axis",
-            optimize_angle=True,
-            angle_bounds=(-0.8, 0.0),
-        ),
-    )
-
-    result = fixed_candidate_fitting_factor(
-        reference, shifted, config=comparison
-    )
-
-    assert result.match == pytest.approx(1.0, abs=1e-10)
-    assert result.best_parameters["alignment"]["rotation"][
-        "angle"
-    ] == pytest.approx(-angle, abs=2e-3)
 
 
 def test_modes_array_fitting_factor_uses_generator_defaults():

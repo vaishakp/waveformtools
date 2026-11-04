@@ -59,7 +59,6 @@ from waveformtools.comparison.results import (
     ComparisonResult,
     FittingFactorResult,
 )
-from waveformtools.comparison.rotation import RotationSpec, rotate_modes
 
 install_modes_array_methods()
 
@@ -74,7 +73,6 @@ __all__ = [
     "ModeComparisonConfig",
     "ModeConventionEntry",
     "PreparedModeData",
-    "RotationSpec",
     "TimeAxisDiagnostics",
     "WaveformMetadata",
     "aligned_mode_arrays",
@@ -96,7 +94,6 @@ __all__ = [
     "prepare_aligned_mode_data",
     "reference_time",
     "residue_distance",
-    "rotate_modes",
     "sampling_interval",
     "standardize_generated_modes_in_place",
 ]

@@ -27,7 +27,7 @@ mode-space comparison objective.
 ## Replay Convention
 
 The candidate waveform alignment parameters returned by `mode_match` must be
-replayable.  After any configured rotation, the candidate is interpreted as
+replayable.  The candidate is interpreted as
 
 ```text
 t_candidate_aligned =
@@ -121,10 +121,6 @@ global_phase = -arg(raw_inner)
 ```
 
 and record a diagnostic flag.
-
-Z-axis rotations are also m-dependent phase transformations.  Simultaneously
-optimizing z-axis-like rotations and `orbital_phase` is degenerate unless the
-caller explicitly opts into that redundancy.
 
 ## Time-Shift Optimization
 

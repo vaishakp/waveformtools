@@ -24,7 +24,6 @@ from waveformtools.comparison.conventions import (
 )
 from waveformtools.comparison.metadata import get_comparison_metadata
 from waveformtools.comparison.results import ComparisonResult
-from waveformtools.comparison.rotation import RotationSpec, rotate_modes
 
 ModeSelector = Sequence[tuple[int, int]] | None
 
@@ -33,7 +32,7 @@ ModeSelector = Sequence[tuple[int, int]] | None
 class AlignedModeData:
     """Replayable aligned arrays from a comparison result.
 
-    Candidate arrays include the configured rotation, time-origin alignment,
+    Candidate arrays include the time-origin alignment,
     ``candidate_time_shift``, ``orbital_phase``, and ``global_phase`` using the
     same conventions as ``mode_match``.
     """
@@ -43,7 +42,6 @@ class AlignedModeData:
     candidate_modes: dict[tuple[int, int], np.ndarray]
     selected_modes: list[tuple[int, int]]
     alignment: AlignmentSpec
-    rotation: RotationSpec
     orbital_phase: float
     global_phase: float
     diagnostics: dict[str, Any]
@@ -211,7 +209,6 @@ def mode_match(
     modes: ModeSelector = None,
     phase_maximize: bool | None = None,
     alignment: AlignmentSpec | dict[str, Any] | None = None,
-    rotation: RotationSpec | dict[str, Any] | None = None,
     time_alignment: str | None = None,
     time_domain_policy: str | None = None,
     phase_alignment: str | None = None,
@@ -224,7 +221,6 @@ def mode_match(
     orbital_phase_optimizer: str | None = None,
     phase_degeneracy_tol: float | None = None,
     time_shift_grid_samples: int | None = None,
-    allow_phase_rotation_degeneracy: bool | None = None,
     canonicalize_mode_conventions: bool = True,
 ) -> ComparisonResult:
     """Compute a normalized mode match with explicit alignment choices.
@@ -249,7 +245,7 @@ def mode_match(
     canonicalize_mode_conventions:
         If true, transform registered approximant-specific raw mode
         conventions into the canonical comparison convention before mode
-        selection, rotation, alignment, and inner products.
+        selection, alignment, and inner products.
     """
 
     t0 = time.perf_counter()
@@ -270,7 +266,6 @@ def mode_match(
         orbital_phase_optimizer=orbital_phase_optimizer,
         phase_degeneracy_tol=phase_degeneracy_tol,
         time_shift_grid_samples=time_shift_grid_samples,
-        allow_phase_rotation_degeneracy=allow_phase_rotation_degeneracy,
     )
 
     comparison_modes_a, target_mode_conventions = (
@@ -292,33 +287,6 @@ def mode_match(
         ell_min=ell_min,
         ell_max=ell_max,
         modes=modes,
-    )
-    rotation_spec = RotationSpec.from_value(rotation)
-    _validate_phase_rotation_degeneracy(alignment_spec, rotation_spec)
-
-    rotation_optimization = None
-    rotation_evaluations = 0
-    if rotation_spec.optimize_angle:
-        rotation_spec, rotation_optimization = _optimize_z_rotation(
-            comparison_modes_a,
-            comparison_modes_b,
-            selected_modes,
-            alignment_spec,
-            rotation_spec,
-        )
-        rotation_evaluations = rotation_optimization["n_evaluations"]
-    elif rotation_spec.optimize_parameters:
-        rotation_spec, rotation_optimization = _optimize_wigner_rotation(
-            comparison_modes_a,
-            comparison_modes_b,
-            selected_modes,
-            alignment_spec,
-            rotation_spec,
-        )
-        rotation_evaluations = rotation_optimization["n_evaluations"]
-
-    comparison_modes_b = rotate_modes(
-        comparison_modes_b, rotation_spec, modes=selected_modes
     )
 
     time_shift_optimization = None
@@ -368,7 +336,6 @@ def mode_match(
         "n_modes": len(selected_modes),
         "modes": selected_modes,
         "alignment": alignment_spec.to_dict(),
-        "rotation": rotation_spec.to_dict(),
         "time_axis": prepared.diagnostics.to_dict(),
         "mode_conventions": {
             "canonicalize_mode_conventions": bool(
@@ -378,13 +345,11 @@ def mode_match(
             "candidate": candidate_mode_conventions,
         },
     }
-    if rotation_optimization is not None:
-        diagnostics["rotation_optimization"] = rotation_optimization
     if time_shift_optimization is not None:
         diagnostics["time_shift_optimization"] = time_shift_optimization
 
-    if rotation_evaluations or time_shift_evaluations:
-        n_evaluations = rotation_evaluations + time_shift_evaluations + 1
+    if time_shift_evaluations:
+        n_evaluations = time_shift_evaluations + 1
 
     return ComparisonResult(
         objective_name="mode_match",
@@ -397,9 +362,8 @@ def mode_match(
             "time_alignment": alignment_spec.time_alignment,
             "time_domain_policy": alignment_spec.time_domain_policy,
             "candidate_time_shift": alignment_spec.candidate_time_shift,
-            "rotation": rotation_spec.to_dict(),
         },
-        optimizer=_optimizer_name(alignment_spec, rotation_spec),
+        optimizer=_optimizer_name(alignment_spec),
         optimizer_status="ok",
         n_objective_evaluations=n_evaluations,
         elapsed_s=time.perf_counter() - t0,
@@ -427,7 +391,7 @@ def prepare_aligned_mode_data(
 
     ``t_candidate_aligned = t_candidate - reference_time_candidate + candidate_time_shift``
 
-    and, after any configured rotation,
+    and
 
     ``h_lm_candidate_aligned = exp(i global_phase) * exp(i m orbital_phase) * h_lm_candidate``.
 
@@ -457,18 +421,12 @@ def prepare_aligned_mode_data(
         result.diagnostics.get("alignment", {}),
         candidate_time_shift=parameters.get("candidate_time_shift", 0.0),
     )
-    rotation = RotationSpec.from_value(
-        parameters.get("rotation", result.diagnostics.get("rotation"))
-    )
     selected_modes = _result_selected_modes(
         reference_modes, candidate_modes, result, modes
     )
-    rotated_candidate = rotate_modes(
-        candidate_modes, rotation, modes=selected_modes
-    )
     prepared = prepare_mode_data(
         reference_modes,
-        rotated_candidate,
+        candidate_modes,
         selected_modes,
         alignment,
     )
@@ -489,13 +447,11 @@ def prepare_aligned_mode_data(
         candidate_modes=aligned_candidate,
         selected_modes=list(prepared.selected_modes),
         alignment=alignment,
-        rotation=rotation,
         orbital_phase=orbital_phase,
         global_phase=global_phase,
         diagnostics={
             "time_axis": prepared.diagnostics.to_dict(),
             "alignment": alignment.to_dict(),
-            "rotation": rotation.to_dict(),
         },
     )
 
@@ -1159,199 +1115,6 @@ def _optimize_time_shift_ifft(
     return _time_shift_grid_search_and_refine(objective, bounds, n_grid, base_alignment)
 
 
-def _optimize_z_rotation(
-    modes_a: Any,
-    modes_b: Any,
-    selected_modes: Sequence[tuple[int, int]],
-    alignment: AlignmentSpec,
-    rotation: RotationSpec,
-) -> tuple[RotationSpec, dict[str, Any]]:
-    bounds = _rotation_angle_bounds(rotation)
-    n_evaluations = 0
-
-    def objective(angle: float) -> float:
-        nonlocal n_evaluations
-        n_evaluations += 1
-        trial_rotation = replace(rotation, kind="z_axis", angle=float(angle))
-        trial_modes_b = rotate_modes(
-            modes_b, trial_rotation, modes=selected_modes
-        )
-        try:
-            evaluation = _evaluate_prepared_match(
-                modes_a,
-                trial_modes_b,
-                selected_modes,
-                alignment,
-            )
-        except ValueError:
-            return np.inf
-        match_value = evaluation["match"]
-        if not np.isfinite(match_value):
-            return np.inf
-        return 1.0 - float(np.clip(match_value, -1.0, 1.0))
-
-    try:
-        from scipy.optimize import minimize_scalar
-    except Exception as exc:  # pragma: no cover - scipy is normally available
-        raise ImportError(
-            "rotation optimize_angle=True requires scipy.optimize.minimize_scalar"
-        ) from exc
-
-    result = minimize_scalar(objective, bounds=bounds, method="bounded")
-    best_angle = float(result.x)
-    best_rotation = replace(rotation, kind="z_axis", angle=best_angle)
-    diagnostics = {
-        "parameter": "rotation.angle",
-        "bounds": tuple(float(item) for item in bounds),
-        "initial_angle": float(rotation.angle),
-        "best_angle": best_angle,
-        "best_mismatch": float(result.fun),
-        "success": bool(result.success),
-        "message": str(result.message),
-        "n_evaluations": int(n_evaluations),
-    }
-    return best_rotation, diagnostics
-
-
-def _optimize_wigner_rotation(
-    modes_a: Any,
-    modes_b: Any,
-    selected_modes: Sequence[tuple[int, int]],
-    alignment: AlignmentSpec,
-    rotation: RotationSpec,
-) -> tuple[RotationSpec, dict[str, Any]]:
-    parameters = tuple(rotation.optimize_parameters)
-    bounds = _wigner_parameter_bounds(rotation, parameters)
-    initial_values = np.array(
-        [float(getattr(rotation, parameter)) for parameter in parameters],
-        dtype=float,
-    )
-    n_evaluations = 0
-
-    def objective(values: np.ndarray) -> float:
-        nonlocal n_evaluations
-        n_evaluations += 1
-        trial_kwargs = {
-            parameter: float(value)
-            for parameter, value in zip(parameters, values)
-        }
-        trial_rotation = replace(rotation, **trial_kwargs)
-        trial_modes_b = rotate_modes(
-            modes_b, trial_rotation, modes=selected_modes
-        )
-        try:
-            evaluation = _evaluate_prepared_match(
-                modes_a,
-                trial_modes_b,
-                selected_modes,
-                alignment,
-            )
-        except ValueError:
-            return np.inf
-        match_value = evaluation["match"]
-        if not np.isfinite(match_value):
-            return np.inf
-        return 1.0 - float(np.clip(match_value, -1.0, 1.0))
-
-    try:
-        from scipy.optimize import minimize
-    except Exception as exc:  # pragma: no cover - scipy is normally available
-        raise ImportError(
-            "rotation optimize_parameters requires scipy.optimize.minimize"
-        ) from exc
-
-    result = minimize(
-        objective,
-        initial_values,
-        bounds=[bounds[parameter] for parameter in parameters],
-        method="L-BFGS-B",
-    )
-    best_values = {
-        parameter: float(value)
-        for parameter, value in zip(parameters, result.x)
-    }
-    best_rotation = replace(rotation, **best_values)
-    diagnostics = {
-        "parameters": parameters,
-        "bounds": bounds,
-        "initial_values": {
-            parameter: float(getattr(rotation, parameter))
-            for parameter in parameters
-        },
-        "best_values": best_values,
-        "best_mismatch": float(result.fun),
-        "success": bool(result.success),
-        "message": str(result.message),
-        "n_evaluations": int(n_evaluations),
-        "phase_degeneracy_possible": _rotation_phase_degeneracy_possible(
-            alignment,
-            parameters,
-        ),
-    }
-    return best_rotation, diagnostics
-
-
-def _rotation_angle_bounds(rotation: RotationSpec) -> tuple[float, float]:
-    if rotation.angle_bounds is not None:
-        return tuple(float(item) for item in rotation.angle_bounds)
-    center = float(rotation.angle)
-    return center - np.pi, center + np.pi
-
-
-def _wigner_parameter_bounds(
-    rotation: RotationSpec,
-    parameters: Sequence[str],
-) -> dict[str, tuple[float, float]]:
-    user_bounds = rotation.parameter_bounds or {}
-    bounds: dict[str, tuple[float, float]] = {}
-    for parameter in parameters:
-        if parameter in user_bounds:
-            bounds[parameter] = tuple(
-                float(item) for item in user_bounds[parameter]
-            )
-            continue
-        center = float(getattr(rotation, parameter))
-        bounds[parameter] = (center - np.pi, center + np.pi)
-    return bounds
-
-
-def _rotation_phase_degeneracy_possible(
-    alignment: AlignmentSpec,
-    parameters: Sequence[str],
-) -> bool:
-    return alignment.phase_alignment in {
-        "orbital_phase",
-        "orbital_phase_and_global",
-    } and bool({"alpha", "gamma"}.intersection(parameters))
-
-
-def _validate_phase_rotation_degeneracy(
-    alignment: AlignmentSpec,
-    rotation: RotationSpec,
-) -> None:
-    if alignment.allow_phase_rotation_degeneracy:
-        return
-    if alignment.phase_alignment not in {
-        "orbital_phase",
-        "orbital_phase_and_global",
-    }:
-        return
-    degenerate = False
-    if rotation.optimize_angle and rotation.kind == "z_axis":
-        degenerate = True
-    if rotation.optimize_parameters and {"alpha", "gamma"}.intersection(
-        rotation.optimize_parameters
-    ):
-        degenerate = True
-    if degenerate:
-        raise ValueError(
-            "Simultaneously optimizing orbital phase and z-axis-like rotation "
-            "is degenerate. Use phase_alignment='global_complex' with z-axis "
-            "rotation optimization, use orbital-phase alignment without z-axis "
-            "rotation optimization, or set allow_phase_rotation_degeneracy=True."
-        )
-
-
 def _time_shift_bounds(
     modes_a: Any, modes_b: Any, alignment: AlignmentSpec
 ) -> tuple[float, float]:
@@ -1589,15 +1352,9 @@ def _phase_optimizer_name(alignment: AlignmentSpec) -> str | None:
     return None
 
 
-def _optimizer_name(
-    alignment: AlignmentSpec, rotation: RotationSpec | None = None
-) -> str | None:
+def _optimizer_name(alignment: AlignmentSpec) -> str | None:
     phase_optimizer = _phase_optimizer_name(alignment)
     parts: list[str] = []
-    if rotation is not None and rotation.optimize_angle:
-        parts.append("bounded_z_rotation")
-    if rotation is not None and rotation.optimize_parameters:
-        parts.append("bounded_wigner_rotation")
     if alignment.optimize_time_shift:
         parts.append("grid_refined_time_shift")
     if phase_optimizer is not None:

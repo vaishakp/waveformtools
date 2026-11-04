@@ -37,7 +37,6 @@ def fixed_candidate_fitting_factor(
         ell_max=comparison.ell_max,
         modes=comparison.modes,
         alignment=comparison.alignment,
-        rotation=comparison.rotation,
         canonicalize_mode_conventions=(
             comparison.canonicalize_mode_conventions
         ),
@@ -91,7 +90,6 @@ def fitting_factor(  # pylint: disable=too-many-locals
             ell_max=ff_config.comparison.ell_max,
             modes=ff_config.comparison.modes,
             alignment=ff_config.comparison.alignment,
-            rotation=ff_config.comparison.rotation,
             canonicalize_mode_conventions=(
                 ff_config.comparison.canonicalize_mode_conventions
             ),
