@@ -117,12 +117,11 @@ coordinates, phase conventions, or any other model-specific settings.  If the
 generator naturally accepts one dictionary instead of keyword arguments, set
 ``generator_call_style="dict"``.
 
-Alignment and frame nuisance parameters are configured separately in
-``ModeComparisonConfig``.  For example, use ``AlignmentSpec`` for common time
-and phase alignment, and ``RotationSpec`` for fixed or optimized z-axis/Wigner
-rotations.  The result stores the best generator parameters under
-``result.best_parameters["generator"]`` and the best alignment/rotation
-parameters under ``result.best_parameters["alignment"]``.
+Alignment nuisance parameters are configured separately in
+``ModeComparisonConfig``: use ``AlignmentSpec`` for common time and phase
+alignment.  The result stores the best generator parameters under
+``result.best_parameters["generator"]`` and the best alignment parameters
+under ``result.best_parameters["alignment"]``.
 
 
 The simple "gen" data format

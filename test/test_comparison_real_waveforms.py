@@ -24,11 +24,9 @@ from waveformtools.comparison import (
     AlignmentSpec,
     FittingFactorConfig,
     ModeComparisonConfig,
-    RotationSpec,
     fixed_candidate_fitting_factor,
     mode_match,
     prepare_aligned_mode_data,
-    rotate_modes,
 )
 
 pytestmark = [pytest.mark.integration, pytest.mark.real_waveform]
@@ -164,117 +162,6 @@ def test_real_waveform_self_match(real_modes):
     ) == pytest.approx(0.0, abs=1e-12)
 
 
-def test_real_waveform_z_rotation_recovery(real_modes):
-    selected_modes = _available_ell2_modes(real_modes)
-    angle = 0.2
-    candidate = rotate_modes(
-        real_modes,
-        RotationSpec(kind="z_axis", angle=angle),
-        modes=selected_modes,
-    )
-
-    result = mode_match(
-        real_modes,
-        candidate,
-        modes=selected_modes,
-        time_alignment="none",
-        time_domain_policy="error",
-        phase_alignment="none",
-        rotation=RotationSpec(
-            kind="z_axis",
-            optimize_angle=True,
-            angle_bounds=(-0.4, 0.0),
-        ),
-    )
-
-    assert result.match > 0.999
-    assert (
-        _normalized_rms_residue(
-            prepare_aligned_mode_data(real_modes, candidate, result)
-        )
-        < 5e-3
-    )
-    assert result.best_parameters["rotation"]["angle"] == pytest.approx(
-        -angle, abs=2e-3
-    )
-
-
-def test_real_waveform_wigner_beta_rotation_recovery(real_modes):
-    selected_modes = _available_ell2_modes(real_modes)
-    if len(selected_modes) < 5:
-        pytest.skip("Need all ell=2 modes for Wigner-mixing recovery.")
-
-    beta = 0.12
-    candidate = rotate_modes(
-        real_modes,
-        RotationSpec(kind="wigner", beta=beta),
-        modes=selected_modes,
-    )
-
-    result = mode_match(
-        real_modes,
-        candidate,
-        modes=selected_modes,
-        time_alignment="none",
-        time_domain_policy="error",
-        phase_alignment="none",
-        rotation=RotationSpec(
-            kind="wigner",
-            optimize_parameters=("beta",),
-            parameter_bounds={"beta": (-0.25, 0.0)},
-        ),
-    )
-
-    assert result.match > 0.999
-    assert (
-        _normalized_rms_residue(
-            prepare_aligned_mode_data(real_modes, candidate, result)
-        )
-        < 5e-3
-    )
-    assert result.best_parameters["rotation"]["beta"] == pytest.approx(
-        -beta, abs=4e-3
-    )
-
-
-def test_real_waveform_fixed_candidate_fitting_factor(real_modes):
-    selected_modes = _available_ell2_modes(real_modes)
-    candidate = rotate_modes(
-        real_modes,
-        RotationSpec(kind="z_axis", angle=0.15),
-        modes=selected_modes,
-    )
-
-    result = fixed_candidate_fitting_factor(
-        real_modes,
-        candidate,
-        config=ModeComparisonConfig(
-            modes=selected_modes,
-            alignment=AlignmentSpec(
-                time_alignment="none",
-                time_domain_policy="error",
-                phase_alignment="none",
-            ),
-            rotation=RotationSpec(
-                kind="z_axis",
-                optimize_angle=True,
-                angle_bounds=(-0.3, 0.0),
-            ),
-        ),
-    )
-
-    assert result.match > 0.999
-    assert (
-        _normalized_rms_residue(
-            prepare_aligned_mode_data(real_modes, candidate, result)
-        )
-        < 5e-3
-    )
-    assert result.best_parameters["alignment"]["rotation"][
-        "angle"
-    ] == pytest.approx(-0.15, abs=2e-3)
-
-
 def test_real_waveform_cross_model_fitting_factor_smoke(real_model_pair):
     nrsur = real_model_pair["NRSur7dq4"]
     phenom = real_model_pair["IMRPhenomXPHM"]
@@ -310,14 +197,9 @@ def test_real_waveform_cross_model_fitting_factor_smoke(real_model_pair):
             alignment=AlignmentSpec(
                 time_alignment="peak_total_news_power",
                 time_domain_policy="resample_to_reference",
-                phase_alignment="global_complex",
+                phase_alignment="orbital_phase_and_global",
                 optimize_time_shift=True,
                 orbital_phase_samples=257,
-            ),
-            rotation=RotationSpec(
-                kind="z_axis",
-                optimize_angle=True,
-                angle_bounds=(-np.pi, np.pi),
             ),
         ),
     )
@@ -339,9 +221,6 @@ def test_real_waveform_cross_model_fitting_factor_smoke(real_model_pair):
     assert optimized.match >= fixed.match - 1e-8
     assert optimized_rms_residue <= fixed_rms_residue + 1e-8
     assert optimized.best_parameters["alignment"]["candidate_time_shift"] != 0.0
-    assert (
-        optimized.best_parameters["alignment"]["rotation"]["kind"] == "z_axis"
-    )
 
 
 def test_real_phenomxphm_fd_to_td_modes_have_physical_scale():
