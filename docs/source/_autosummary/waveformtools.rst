@@ -35,7 +35,6 @@
    legacy
    memory
    modes_array
-   rotation_math
    simulations
    single_mode
    spherical

@@ -20,9 +20,9 @@ The first implemented subset supports:
 - global complex phase maximization,
 - orbital-phase maximization with an ``exp(i m phi)`` factor.
 
-Returned alignment parameters use a replay convention: after any configured
-rotation, the candidate time axis is shifted by ``candidate_time_shift`` and
-candidate modes are multiplied by
+Returned alignment parameters use a replay convention: the candidate time
+axis is shifted by ``candidate_time_shift`` and candidate modes are
+multiplied by
 ``exp(i global_phase) * exp(i m orbital_phase)``.
 """
 
@@ -125,9 +125,6 @@ class AlignmentSpec:
         samples at each end; ``alpha=0.0`` disables tapering (rectangular
         window).  Has no effect for ``"grid"`` or ``"ifft"`` — the latter
         avoids circular artefacts via 2N zero-padding instead.
-    allow_phase_rotation_degeneracy:
-        Opt in to simultaneous orbital-phase and z-axis rotation optimization.
-        By default this degenerate combination raises a clear error.
     """
 
     time_alignment: TimeAlignment = "peak_total_news_power"
@@ -146,7 +143,6 @@ class AlignmentSpec:
     time_shift_grid_samples: int | None = None
     time_shift_method: Literal["grid", "roll", "ifft"] = "grid"
     time_shift_taper_alpha: float = 0.1
-    allow_phase_rotation_degeneracy: bool = False
 
     def __post_init__(self) -> None:
         if self.time_alignment not in _ALLOWED_TIME_ALIGNMENTS:

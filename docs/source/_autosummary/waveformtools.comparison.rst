@@ -18,4 +18,3 @@ waveformtools.comparison
    metadata
    modes_api
    results
-   rotation
