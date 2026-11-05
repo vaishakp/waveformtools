@@ -64,4 +64,4 @@ def read_git_version():
     return vers
 
 
-__version__ = "2026.11.04"
+__version__ = "2026.11.05"
